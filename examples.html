@@ -1,0 +1,194 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Minter JS SDK Examples</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <style>
+        .body {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light">
+    <div class="container">
+        <span class="navbar-brand mb-0 h2">Minter JS SDK Examples</span>
+    </div>
+</nav>
+<div class="container body">
+    <h2>Wallet</h2>
+
+    <h4>Create wallet</h4>
+    ...
+
+    <h4>Export wallet</h4>
+    ...
+
+    <h4>Import wallet</h4>
+    ...
+
+    <h4>Show address</h4>
+    ...
+
+    <h4>Show balance</h4>
+    ...
+
+    <h4>Show transactions</h4>
+    ...
+
+    <hr>
+
+    <h2>Coins</h2>
+    <div class="shadow p-3 mb-5 bg-white rounded border">
+        <h4>Send coins</h4>
+        <form onsubmit="return false">
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" class="form-control" placeholder="Mx...">
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="text" class="form-control" placeholder="0">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Coin</label>
+                        <select class="form-control">
+                            <option>BIP</option>
+                            <option>ABC</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <input type="text" class="form-control" placeholder="">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <small class="form-text text-muted">Fee: 0.00001 MNT</small>
+        </form>
+    </div>
+
+    <div class="shadow p-3 mb-5 bg-white rounded border">
+        <h4>Exchange coins</h4>
+        <form onsubmit="return false">
+
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="text" class="form-control" placeholder="0">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>From Coin</label>
+                        <select class="form-control">
+                            <option>BIP</option>
+                            <option>ABC</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>To Coin</label>
+                <select class="form-control">
+                    <option>BIP</option>
+                    <option>ABC</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Message</label>
+                <input type="text" class="form-control" placeholder="">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <small class="form-text text-muted">Fee: 0.00001 MNT</small>
+        </form>
+    </div>
+
+    <div class="shadow p-3 mb-5 bg-white rounded border">
+        <h4>Create coin</h4>
+        <form onsubmit="return false">
+
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" placeholder="">
+                        <small class="form-text text-muted">Example: My Coin</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Symbol</label>
+                        <input maxlength="10" type="text" class="form-control" placeholder="">
+                        <small class="form-text text-muted">Uppercase, min 3 letters, max 10 letters (Example: MCNT)</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Initial Amount:</label>
+                <input type="text" class="form-control" placeholder="0">
+            </div>
+
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-group">
+                        <label>CRR:</label>
+                        <input type="text" class="form-control" placeholder="">
+                        <small class="form-text text-muted">From 1 to 100% (Example: 10)</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Initial Reserve (in base coin):</label>
+                        <input maxlength="10" type="text" class="form-control" placeholder="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Message</label>
+                <input type="text" class="form-control" placeholder="">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <small class="form-text text-muted">Fee: 0.00001 MNT</small>
+        </form>
+    </div>
+
+    <hr>
+
+    <h2>Checks</h2>
+
+    <h4>Issue Check</h4>
+    ...
+
+    <h4>Redeem Check</h4>
+    ...
+
+    <hr>
+
+    <h2>Validators</h2>
+
+    <h4>Declare Candidacy</h4>
+    ...
+
+    <h4>Delegate</h4>
+    ...
+
+    <h4>Set Candidate On/Off</h4>
+    ...
+
+
+</div>
+</body>
+</html>
