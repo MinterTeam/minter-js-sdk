@@ -5,20 +5,42 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Minter JS SDK Examples</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <style>
         .body {
             margin-top: 30px;
         }
+
+        .bg-light.navbar-light {
+            background-color: #474849 !important;
+        }
+
+        .navbar-brand {
+            color: white !important;
+        }
+
+        .container {
+            max-width: 600px;
+        }
     </style>
 </head>
-<body>
+<body class="bg-light">
 <nav class="navbar navbar-light bg-light">
     <div class="container">
         <span class="navbar-brand mb-0 h2">Minter JS SDK Examples</span>
     </div>
 </nav>
 <div class="container body">
+
+    <h2>Notes</h2>
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <ul class="mb-0">
+            <li>Each tx can be sent for free (with no fee)</li>
+            <li>Each tx has custom field "data" which can be user-defined</li>
+        </ul>
+    </div>
+
     <h2>Wallet</h2>
 
     <h4>Create wallet</h4>
@@ -42,9 +64,9 @@
     <hr>
 
     <h2>Coins</h2>
-    <div class="shadow p-3 mb-5 bg-white rounded border">
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
         <h4>Send coins</h4>
-        <form onsubmit="return false">
+        <form class="form mb-0" onsubmit="return false">
             <div class="form-group">
                 <label>Address</label>
                 <input type="text" class="form-control" placeholder="Mx...">
@@ -70,14 +92,14 @@
                 <label>Message</label>
                 <input type="text" class="form-control" placeholder="">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-dark">Submit</button>
             <small class="form-text text-muted">Fee: 0.00001 MNT</small>
         </form>
     </div>
 
-    <div class="shadow p-3 mb-5 bg-white rounded border">
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
         <h4>Exchange coins</h4>
-        <form onsubmit="return false">
+        <form class="form mb-0" onsubmit="return false">
 
             <div class="form-row">
                 <div class="col">
@@ -109,15 +131,14 @@
                 <label>Message</label>
                 <input type="text" class="form-control" placeholder="">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-dark">Submit</button>
             <small class="form-text text-muted">Fee: 0.00001 MNT</small>
         </form>
     </div>
 
-    <div class="shadow p-3 mb-5 bg-white rounded border">
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
         <h4>Create coin</h4>
-        <form onsubmit="return false">
-
+        <form class="form mb-0" onsubmit="return false">
             <div class="form-row">
                 <div class="col">
                     <div class="form-group">
@@ -126,11 +147,12 @@
                         <small class="form-text text-muted">Example: My Coin</small>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label>Symbol</label>
                         <input maxlength="10" type="text" class="form-control" placeholder="">
-                        <small class="form-text text-muted">Uppercase, min 3 letters, max 10 letters (Example: MCNT)</small>
+                        <small class="form-text text-muted">Uppercase, min 3 letters, max 10 letters (Example: MCNT)
+                        </small>
                     </div>
                 </div>
             </div>
@@ -148,7 +170,7 @@
                         <small class="form-text text-muted">From 1 to 100% (Example: 10)</small>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label>Initial Reserve (in base coin):</label>
                         <input maxlength="10" type="text" class="form-control" placeholder="">
@@ -160,7 +182,7 @@
                 <label>Message</label>
                 <input type="text" class="form-control" placeholder="">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-dark">Submit</button>
             <small class="form-text text-muted">Fee: 0.00001 MNT</small>
         </form>
     </div>
@@ -169,24 +191,213 @@
 
     <h2>Checks</h2>
 
-    <h4>Issue Check</h4>
-    ...
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Issue Check</h4>
+        <form class="form mb-0" onsubmit="return false">
+            <div class="form-group">
+                <label>Nonce</label>
+                <input type="text" class="form-control" placeholder="0">
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="text" class="form-control" placeholder="0">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Coin</label>
+                        <select class="form-control">
+                            <option>BIP</option>
+                            <option>ABC</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="text" class="form-control" placeholder="">
+            </div>
+            <button type="submit" class="btn btn-dark">Submit</button>
+        </form>
+    </div>
 
-    <h4>Redeem Check</h4>
-    ...
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Redeem Check</h4>
+        <form class="form mb-0" onsubmit="return false">
+            <div class="form-group">
+                <label>Check</label>
+                <input type="text" class="form-control" placeholder="Mx...">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="text" class="form-control" placeholder="">
+            </div>
+            <button type="submit" class="btn btn-dark">Submit</button>
+        </form>
+    </div>
 
     <hr>
 
     <h2>Validators</h2>
 
-    <h4>Declare Candidacy</h4>
-    ...
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Show candidate (s)</h4>
 
-    <h4>Delegate</h4>
-    ...
+        <table class="table table-borderless">
+            <tr>
+                <th>Address</th>
+                <td>Mxa93163fdf10724dc4785ff5cbfb9ac0b5949409f</td>
+            </tr>
+            <tr>
+                <th>Public key</th>
+                <td>Mpaaee1dd...6f5dae3979</td>
+            </tr>
+            <tr>
+                <th>Total Stake</th>
+                <td>1,000,000 bips (14%)</td>
+            </tr>
+            <tr>
+                <th>Stakes</th>
+                <td>
+                    Mxa9316...49409f: 100,000 MNT <br>
+                    Mxa9316...49409f: 100,000 MNT
+                </td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>Active/Down</td>
+            </tr>
+            <tr>
+                <th>Missed blocks</th>
+                <td>0..12</td>
+            </tr>
+        </table>
+    </div>
 
-    <h4>Set Candidate On/Off</h4>
-    ...
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Declare Candidacy</h4>
+        <form class="form mb-0" onsubmit="return false">
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" class="form-control" placeholder="Mx...">
+            </div>
+            <div class="form-group">
+                <label>Public key</label>
+                <input type="text" class="form-control" placeholder="Mp...">
+            </div>
+            <div class="form-group">
+                <label>Commission (%)</label>
+                <input type="text" class="form-control" placeholder="20">
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-group">
+                        <label>Initial Stake</label>
+                        <input type="text" class="form-control" placeholder="0">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Coin</label>
+                        <select class="form-control">
+                            <option>BIP</option>
+                            <option>ABC</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <input type="text" class="form-control" placeholder="">
+            </div>
+            <button type="submit" class="btn btn-dark">Submit</button>
+            <small class="form-text text-muted">Fee: 0.00001 MNT</small>
+        </form>
+    </div>
+
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Delegate</h4>
+        <form class="form mb-0" onsubmit="return false">
+            <div class="form-group">
+                <label>Public key</label>
+                <input type="text" class="form-control" placeholder="Mp...">
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-group">
+                        <label>Stake</label>
+                        <input type="text" class="form-control" placeholder="0">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Coin</label>
+                        <select class="form-control">
+                            <option>BIP</option>
+                            <option>ABC</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <input type="text" class="form-control" placeholder="">
+            </div>
+            <button type="submit" class="btn btn-dark">Submit</button>
+            <small class="form-text text-muted">Fee: 0.00001 MNT</small>
+        </form>
+    </div>
+
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Unbound</h4>
+        <form class="form mb-0" onsubmit="return false">
+            <div class="form-group">
+                <label>Public key</label>
+                <input type="text" class="form-control" placeholder="Mp...">
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    <div class="form-group">
+                        <label>Stake</label>
+                        <input type="text" class="form-control" placeholder="0">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Coin</label>
+                        <select class="form-control">
+                            <option>BIP</option>
+                            <option>ABC</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <input type="text" class="form-control" placeholder="">
+            </div>
+            <button type="submit" class="btn btn-dark">Submit</button>
+            <small class="form-text text-muted">Fee: 0.00001 MNT</small>
+        </form>
+    </div>
+
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Set Candidate On/Off</h4>
+        <form class="form mb-0" onsubmit="return false">
+            <div class="form-group">
+                <label>Public key</label>
+                <input type="text" class="form-control" placeholder="Mp...">
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <input type="text" class="form-control" placeholder="">
+            </div>
+            <button type="submit" class="btn btn-dark">Submit</button>
+            <small class="form-text text-muted">Fee: 0.00001 MNT</small>
+        </form>
+    </div>
 
 
 </div>
