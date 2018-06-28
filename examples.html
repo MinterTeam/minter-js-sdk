@@ -37,7 +37,24 @@
     <div class="shadow-sm p-3 mb-5 bg-white rounded">
         <ul class="mb-0">
             <li>Each tx can be sent for free (with no fee)</li>
-            <li>Each tx has custom field "data" which can be user-defined</li>
+            <li>Each tx has custom field "data" which can be user-defined, max 128 bytes</li>
+        </ul>
+    </div>
+
+    <h2>Commissions</h2>
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        All commissions are divided by 10^8. <br>
+        Actual commission is SendTx * 10^8 = 100 000 000 000 PIP = 0,0000001 BIP. <br><br>
+        <ul class="mb-0">
+            <li>SendTx = 1000</li>
+            <li>ConvertTx = 10000</li>
+            <li>CreateTx = 100000</li>
+            <li>DeclareCandidacyTx = 100000</li>
+            <li>DelegateTx = 10000</li>
+            <li>UnboundTx = 10000</li>
+            <li>RedeemCheckTx = 1000</li>
+            <li>PayloadByte = 500</li>
+            <li>ToggleCandidateStatus = 1000</li>
         </ul>
     </div>
 
@@ -86,6 +103,14 @@
 
         <div>
             <table class="table table-borderless">
+                <tr>
+                    <th>Hash</th>
+                    <td>Mt44f31...a9216</td>
+                </tr>
+                <tr>
+                    <th>Block</th>
+                    <td>233</td>
+                </tr>
                 <tr>
                     <th>From</th>
                     <td>Mxa9316...49409f</td>
@@ -408,7 +433,16 @@
             </tr>
             <tr>
                 <th>Status</th>
-                <td>Active/Down</td>
+                <td>
+                    <ul>
+                        <li><b>Active</b> - candidate is active and working</li>
+                        <li><b>Pending</b> - candidate is active, but stake is too small to be included in validators
+                            list
+                        </li>
+                        <li><b>Failed</b> - candidate is missing blocks</li>
+                        <li><b>Offline</b> - candidate is not active</li>
+                    </ul>
+                </td>
             </tr>
             <tr>
                 <th>Missed blocks</th>
