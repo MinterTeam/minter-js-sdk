@@ -21,7 +21,7 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 1000px;
         }
     </style>
 </head>
@@ -43,27 +43,168 @@
 
     <h2>Wallet</h2>
 
-    <h4>Create wallet</h4>
-    ...
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Create wallet</h4>
 
-    <h4>Export wallet</h4>
-    ...
+        <div>
+            There are 2 ways of creating a wallet:
+            <ul>
+                <li><b>Private key</b> - random 64 bytes</li>
+                <li><b>Mnemonic phrase</b> - random 12 words</li>
+            </ul>
+        </div>
+    </div>
 
-    <h4>Import wallet</h4>
-    ...
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Export wallet</h4>
 
-    <h4>Show address</h4>
-    ...
+        <div>
+            There are 3 ways of exporting a wallet:
+            <ul>
+                <li>Export <b>Private key</b> - random 64 bytes</li>
+                <li>Export <b>Mnemonic phrase</b> - random 12 words</li>
+                <li>Export <b>Vault file</b></li>
+            </ul>
+        </div>
+    </div>
 
-    <h4>Show balance</h4>
-    ...
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Import wallet</h4>
 
-    <h4>Show transactions</h4>
-    ...
+        <div>
+            There are 3 ways of importing a wallet:
+            <ul>
+                <li>Import <b>Private key</b> - random 64 bytes</li>
+                <li>Import <b>Mnemonic phrase</b> - random 12 words</li>
+                <li>Import <b>Vault file</b></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Show transaction (s)</h4>
+
+        <div>
+            <table class="table table-borderless">
+                <tr>
+                    <th>From</th>
+                    <td>Mxa9316...49409f</td>
+                </tr>
+                <tr>
+                    <th>Type</th>
+                    <td>Send</td>
+                </tr>
+                <tr>
+                    <th>Message (payload)</th>
+                    <td>Hi there</td>
+                </tr>
+                <tr>
+                    <th>Commission</th>
+                    <td>0.00000001 MNT</td>
+                </tr>
+                <tr>
+                    <th>Data</th>
+                    <td>
+                        Data depends on type of transaction. <br><br>
+
+                        Type <b>Send</b>
+                        <ul>
+                            <li>To</li>
+                            <li>Coin</li>
+                            <li>Value</li>
+                        </ul>
+
+                        Type <b>Convert</b>
+                        <ul>
+                            <li>From Coin</li>
+                            <li>To Coin</li>
+                            <li>Value</li>
+                        </ul>
+
+                        Type <b>Create Coin</b>
+                        <ul>
+                            <li>Name</li>
+                            <li>Symbol</li>
+                            <li>Initial Amount</li>
+                            <li>Initial Reserve</li>
+                            <li>CRR</li>
+                        </ul>
+
+                        Type <b>Declare Candidacy</b>
+                        <ul>
+                            <li>Address</li>
+                            <li>PubKey</li>
+                            <li>Commission</li>
+                            <li>Coin</li>
+                            <li>Stake</li>
+                        </ul>
+
+                        Type <b>Delegate</b>
+                        <ul>
+                            <li>PubKey</li>
+                            <li>Coin</li>
+                            <li>Stake</li>
+                        </ul>
+
+                        Type <b>Unbound</b>
+                        <ul>
+                            <li>PubKey</li>
+                            <li>Coin</li>
+                            <li>Stake</li>
+                        </ul>
+
+                        Type <b>Redeem Check</b>
+                        <ul>
+                            <li>Check</li>
+                            <li>Proof</li>
+                        </ul>
+
+                        Type <b>Set candidate online/offline</b>
+                        <ul>
+                            <li>PubKey</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
 
     <hr>
 
     <h2>Coins</h2>
+
+    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h4>Coin info</h4>
+
+        <table class="table table-borderless">
+            <tr>
+                <th>Name</th>
+                <td>MacCoin</td>
+            </tr>
+            <tr>
+                <th>Symbol</th>
+                <td>MCC</td>
+            </tr>
+            <tr>
+                <th>CRR</th>
+                <td>20%</td>
+            </tr>
+            <tr>
+                <th>Reserve</th>
+                <td>1,000 bip</td>
+            </tr>
+            <tr>
+                <th>Volume</th>
+                <td>1,000 MCC</td>
+            </tr>
+            <tr>
+                <th>Creator</th>
+                <td>Mxa9316...49409f</td>
+            </tr>
+        </table>
+    </div>
+
     <div class="shadow-sm p-3 mb-5 bg-white rounded">
         <h4>Send coins</h4>
         <form class="form mb-0" onsubmit="return false">
