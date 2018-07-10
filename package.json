@@ -4,7 +4,7 @@
   "description": "JS SDK for Minter Blockchain",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,16 @@
   "bugs": {
     "url": "https://github.com/MinterTeam/minter-js-sdk/issues"
   },
-  "homepage": "https://github.com/MinterTeam/minter-js-sdk#readme"
+  "homepage": "https://github.com/MinterTeam/minter-js-sdk#readme",
+  "dependencies": {
+    "ethereumjs-util": "^5.2.0",
+    "minterjs-wallet": "^2.0.0",
+    "safe-buffer": "^5.1.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.2.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^23.3.0"
+  }
 }
