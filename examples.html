@@ -29,6 +29,7 @@
 <nav class="navbar navbar-light bg-light">
     <div class="container">
         <span class="navbar-brand mb-0 h2">Minter JS SDK Examples</span>
+        <a class="text-white" href="https://github.com/MinterTeam/minter-js-sdk" target="_blank">Github</a>
     </div>
 </nav>
 <div class="container body">
@@ -61,10 +62,11 @@
     <h2>Wallet</h2>
 
     <div class="shadow-sm p-3 mb-5 bg-white rounded">
-        <h4>Create wallet</h4>
+        <h4>Generate wallet</h4>
 
         <div>
-            There are 2 ways of creating a wallet:
+            Generates wallet from a random BIP39 mnemonic phrase (uses bip39.generateMnemonic under the hood). <br>
+            So wallet instance will contain:
             <ul>
                 <li><b>Private key</b> - random 64 bytes</li>
                 <li><b>Mnemonic phrase</b> - random 12 words</li>
