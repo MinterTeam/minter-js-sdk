@@ -56,7 +56,4 @@ test('generated wallet have valid mnemonic and private key', function () {
     const wallet = Wallet.generate()
     expect(bip39.validateMnemonic(wallet.getMnemonic())).toBe(true);
     expect(ethUtil.isValidPrivate(wallet.getPrivateKey())).toBe(true);
-})
-
-
-
+});
