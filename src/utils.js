@@ -26,8 +26,9 @@ export function sendTx({nodeUrl, privateKey, txType, txData, message}) {
     if (typeof privateKey === 'string') {
         privateKey = Buffer.from(privateKey, 'hex');
     }
+    const address = ethUtil.privateToAddress(privateKey).toString('hex');
     return new Promise((resolve, reject) => {
-        getNonce(nodeUrl, ethUtil.privateToAddress(privateKey).toString('hex'))
+        getNonce(nodeUrl, address)
             .then((nonce) => {
                 const txParams = {
                     nonce: `0x${nonce.toString(16)}`,
