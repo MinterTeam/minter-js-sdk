@@ -2,7 +2,10 @@
   "name": "minter-js-sdk",
   "version": "0.0.2",
   "description": "JS SDK for Minter Blockchain",
-  "main": "index.js",
+  "main": "src/index.js",
+  "files": [
+    "/src/"
+  ],
   "scripts": {
     "test": "jest"
   },
