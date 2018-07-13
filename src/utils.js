@@ -33,7 +33,7 @@ export function sendTx({nodeUrl, privateKey, txType, txData, message}) {
                     nonce: `0x${nonce.toString(16)}`,
                     gasPrice: '0x01',
                     type: txType,
-                    data: txData.serialize(),
+                    data: txData,
                 };
                 if (message) {
                     txParams.payload = `0x${Buffer.from(message, 'utf-8').toString('hex')}`;
