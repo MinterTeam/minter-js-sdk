@@ -3,6 +3,9 @@ module.exports = {
         "~(.*)$": "<rootDir>/$1",
     },
     "transform": {
-        "^.+\\.jsx?$": "babel-jest"
-    }
+        "^.+\\.jsx?$": "babel-jest",
+    },
+    "transformIgnorePatterns": [
+        "node_modules/(?!(minterjs-tx|date-fns)/)"
+    ],
 };

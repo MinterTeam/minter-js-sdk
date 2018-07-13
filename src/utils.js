@@ -2,6 +2,7 @@ import axios from 'axios';
 import MinterTx from "minterjs-tx";
 import ethUtil from "ethereumjs-util";
 import {Buffer} from "safe-buffer";
+import secp256k1 from "secp256k1";
 
 /**
  * @param nodeUrl
@@ -51,4 +52,24 @@ export function sendTx({nodeUrl, privateKey, txType, txData, message}) {
             })
             .catch(reject)
     })
+}
+
+/**
+ * @param {Buffer} privateKey
+ * @param {string} password
+ * @return {ArrayBuffer}
+ */
+export function getProofWithRecovery(privateKey, password) {
+    const addressBuffer = ethUtil.privateToAddress(privateKey);
+    const addressHash = ethUtil.rlphash([
+        addressBuffer,
+    ]);
+
+    const passphraseBuffer = Buffer.from(ethUtil.sha256(password), 'hex');
+    const proof = secp256k1.sign(addressHash, passphraseBuffer);
+    const proofWithRecovery = new (proof.signature.constructor)(65);
+    proofWithRecovery.set(proof.signature, 0);
+    proofWithRecovery[64] = proof.recovery;
+
+    return proofWithRecovery;
 }

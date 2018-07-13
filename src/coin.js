@@ -5,12 +5,13 @@ import MinterSellCoinTxData from 'minterjs-tx/src/tx-data/sell-coin';
 import MinterBuyCoinTxData from 'minterjs-tx/src/tx-data/buy-coin';
 import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL_COIN, TX_TYPE_BUY_COIN} from 'minterjs-tx/src/tx-types';
 import converter from 'minterjs-tx/src/converter';
-import {formatCoin, mToBuffer} from 'minterjs-tx/src/helpers';
+import {formatCoin} from 'minterjs-tx/src/helpers';
+import {toBuffer} from 'minterjs-util';
 import {sendTx} from "./utils";
 
 export function sendCoins({nodeUrl, privateKey, address, amount = 0, coinSymbol, message}) {
     const txData = new MinterSendTxData({
-        to: mToBuffer(address),
+        to: toBuffer(address),
         coin: formatCoin(coinSymbol),
         value: `0x${converter.convert(amount, 'pip').toString(16)}`,
     });

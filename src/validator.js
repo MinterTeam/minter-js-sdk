@@ -6,13 +6,14 @@ import MinterSetCandidateOnTxData from 'minterjs-tx/src/tx-data/set-candidate-on
 import MinterSetCandidateOffTxData from 'minterjs-tx/src/tx-data/set-candidate-off';
 import {TX_TYPE_DECLARE_CANDIDACY, TX_TYPE_DELEGATE, TX_TYPE_UNBOUND, TX_TYPE_SET_CANDIDATE_ON, TX_TYPE_SET_CANDIDATE_OFF} from 'minterjs-tx/src/tx-types';
 import converter from 'minterjs-tx/src/converter';
-import {formatCoin, mToBuffer} from 'minterjs-tx/src/helpers';
+import {formatCoin} from 'minterjs-tx/src/helpers';
+import {toBuffer} from 'minterjs-util';
 import {sendTx} from "./utils";
 
 export function declareCandidacy({nodeUrl, privateKey, address, publicKey, commission, coinSymbol, stake, message}) {
     const txData = new MinterDeclareCandidacyTxData({
-        address: mToBuffer(address),
-        pubkey: mToBuffer(publicKey),
+        address: toBuffer(address),
+        pubkey: toBuffer(publicKey),
         commission: `0x${ethUtil.padToEven(Number(commission).toString(16))}`,
         coin: formatCoin(coinSymbol),
         stake: `0x${converter.convert(stake, 'pip').toString(16)}`
@@ -29,7 +30,7 @@ export function declareCandidacy({nodeUrl, privateKey, address, publicKey, commi
 
 export function delegate({nodeUrl, privateKey, publicKey, coinSymbol, stake, message}) {
     const txData = new MinterDelegateTxData({
-        pubkey: mToBuffer(publicKey),
+        pubkey: toBuffer(publicKey),
         coin: formatCoin(coinSymbol),
         stake: `0x${converter.convert(stake, 'pip').toString(16)}`,
     });
@@ -45,7 +46,7 @@ export function delegate({nodeUrl, privateKey, publicKey, coinSymbol, stake, mes
 
 export function unbound({nodeUrl, privateKey, publicKey, coinSymbol, stake, message}) {
     const txData = new MinterUnboundTxData({
-        pubkey: mToBuffer(publicKey),
+        pubkey: toBuffer(publicKey),
         coin: formatCoin(coinSymbol),
         stake: `0x${converter.convert(stake, 'pip').toString(16)}`,
     });
@@ -61,7 +62,7 @@ export function unbound({nodeUrl, privateKey, publicKey, coinSymbol, stake, mess
 
 export function setCandidateOn({nodeUrl, privateKey, publicKey, message}) {
     const txData = new MinterSetCandidateOnTxData({
-        pubkey: mToBuffer(publicKey),
+        pubkey: toBuffer(publicKey),
     });
 
     return sendTx({
@@ -75,7 +76,7 @@ export function setCandidateOn({nodeUrl, privateKey, publicKey, message}) {
 
 export function setCandidateOff({nodeUrl, privateKey, publicKey, message}) {
     const txData = new MinterSetCandidateOffTxData({
-        pubkey: mToBuffer(publicKey),
+        pubkey: toBuffer(publicKey),
     });
 
     return sendTx({
