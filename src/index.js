@@ -1,6 +1,6 @@
 import {generateWallet, walletFromMnemonic, walletFromPrivateKey} from 'minterjs-wallet';
 import {issueCheck, redeemCheck} from './check';
-import {sendCoins, createCoin, sellCoin, buyCoin} from './coin';
+import {sendCoins, createCoin, sellCoins, buyCoins} from './coin';
 import {declareCandidacy, delegate, unbound, setCandidateOn, setCandidateOff} from './validator';
 
 
@@ -11,8 +11,8 @@ export {
     // coin
     sendCoins,
     createCoin,
-    sellCoin,
-    buyCoin,
+    sellCoins,
+    buyCoins,
     // validator
     declareCandidacy,
     delegate,

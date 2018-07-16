@@ -43,7 +43,7 @@ export function createCoin({nodeUrl, privateKey, coinName, coinSymbol, initialAm
     });
 }
 
-export function sellCoin({nodeUrl, privateKey, coinFrom, coinTo, sellAmount, message}) {
+export function sellCoins({nodeUrl, privateKey, coinFrom, coinTo, sellAmount, message}) {
     const txData = new MinterSellCoinTxData({
         coin_to_sell: formatCoin(coinFrom),
         coin_to_buy: formatCoin(coinTo),
@@ -59,7 +59,7 @@ export function sellCoin({nodeUrl, privateKey, coinFrom, coinTo, sellAmount, mes
     });
 }
 
-export function buyCoin({nodeUrl, privateKey, coinFrom, coinTo, buyAmount, message}) {
+export function buyCoins({nodeUrl, privateKey, coinFrom, coinTo, buyAmount, message}) {
     const txData = new MinterBuyCoinTxData({
         coin_to_sell: formatCoin(coinFrom),
         coin_to_buy: formatCoin(coinTo),
