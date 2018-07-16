@@ -1,8 +1,8 @@
 import axios from 'axios';
-import MinterTx from "minterjs-tx";
-import ethUtil from "ethereumjs-util";
-import {Buffer} from "safe-buffer";
-import secp256k1 from "secp256k1";
+import MinterTx from 'minterjs-tx';
+import ethUtil from 'ethereumjs-util';
+import {Buffer} from 'safe-buffer';
+import secp256k1 from 'secp256k1';
 
 /**
  * @param nodeUrl
@@ -23,7 +23,7 @@ export function getNonce(nodeUrl, address) {
  * @return {Promise<any>}
  */
 export function sendTx({nodeUrl, privateKey, txType, txData, message}) {
-    //@TODO asserts
+    // @TODO asserts
     if (typeof privateKey === 'string') {
         privateKey = Buffer.from(privateKey, 'hex');
     }
@@ -50,8 +50,8 @@ export function sendTx({nodeUrl, privateKey, txType, txData, message}) {
                     .then(resolve)
                     .catch(reject);
             })
-            .catch(reject)
-    })
+            .catch(reject);
+    });
 }
 
 /**
@@ -65,7 +65,7 @@ export function getProofWithRecovery(privateKey, password) {
         addressBuffer,
     ]);
 
-    const passphraseBuffer = Buffer.from(ethUtil.sha256(password), 'hex');
+    const passphraseBuffer = ethUtil.sha256(password);
     const proof = secp256k1.sign(addressHash, passphraseBuffer);
     const proofWithRecovery = new (proof.signature.constructor)(65);
     proofWithRecovery.set(proof.signature, 0);

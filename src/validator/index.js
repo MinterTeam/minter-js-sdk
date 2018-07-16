@@ -8,7 +8,7 @@ import {TX_TYPE_DECLARE_CANDIDACY, TX_TYPE_DELEGATE, TX_TYPE_UNBOUND, TX_TYPE_SE
 import converter from 'minterjs-tx/src/converter';
 import {formatCoin} from 'minterjs-tx/src/helpers';
 import {toBuffer} from 'minterjs-util';
-import {sendTx} from "./utils";
+import {sendTx} from '../utils/index';
 
 export function declareCandidacy({nodeUrl, privateKey, address, publicKey, commission, coinSymbol, stake, message}) {
     const txData = new MinterDeclareCandidacyTxData({
@@ -16,7 +16,7 @@ export function declareCandidacy({nodeUrl, privateKey, address, publicKey, commi
         pubkey: toBuffer(publicKey),
         commission: `0x${ethUtil.padToEven(Number(commission).toString(16))}`,
         coin: formatCoin(coinSymbol),
-        stake: `0x${converter.convert(stake, 'pip').toString(16)}`
+        stake: `0x${converter.convert(stake, 'pip').toString(16)}`,
     });
 
     return sendTx({
@@ -25,7 +25,7 @@ export function declareCandidacy({nodeUrl, privateKey, address, publicKey, commi
         message,
         txType: TX_TYPE_DECLARE_CANDIDACY,
         txData: txData.serialize(),
-    })
+    });
 }
 
 export function delegate({nodeUrl, privateKey, publicKey, coinSymbol, stake, message}) {
@@ -41,7 +41,7 @@ export function delegate({nodeUrl, privateKey, publicKey, coinSymbol, stake, mes
         message,
         txType: TX_TYPE_DELEGATE,
         txData: txData.serialize(),
-    })
+    });
 }
 
 export function unbound({nodeUrl, privateKey, publicKey, coinSymbol, stake, message}) {
@@ -57,7 +57,7 @@ export function unbound({nodeUrl, privateKey, publicKey, coinSymbol, stake, mess
         message,
         txType: TX_TYPE_UNBOUND,
         txData: txData.serialize(),
-    })
+    });
 }
 
 export function setCandidateOn({nodeUrl, privateKey, publicKey, message}) {
@@ -71,7 +71,7 @@ export function setCandidateOn({nodeUrl, privateKey, publicKey, message}) {
         message,
         txType: TX_TYPE_SET_CANDIDATE_ON,
         txData: txData.serialize(),
-    })
+    });
 }
 
 export function setCandidateOff({nodeUrl, privateKey, publicKey, message}) {
@@ -85,7 +85,5 @@ export function setCandidateOff({nodeUrl, privateKey, publicKey, message}) {
         message,
         txType: TX_TYPE_SET_CANDIDATE_OFF,
         txData: txData.serialize(),
-    })
+    });
 }
-
-

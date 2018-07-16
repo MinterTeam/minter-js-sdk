@@ -1,11 +1,11 @@
 module.exports = {
-    "moduleNameMapper": {
-        "~(.*)$": "<rootDir>/$1",
+    moduleNameMapper: {
+        '~(.*)$': '<rootDir>/$1',
     },
-    "transform": {
-        "^.+\\.jsx?$": "babel-jest",
+    transform: {
+        '^.+\\.jsx?$': 'babel-jest',
     },
-    "transformIgnorePatterns": [
-        "node_modules/(?!(minterjs-tx|date-fns)/)"
+    transformIgnorePatterns: [
+        'node_modules/(?!(minterjs-tx|date-fns)/)',
     ],
 };

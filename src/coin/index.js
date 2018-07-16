@@ -7,7 +7,7 @@ import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL_COIN, TX_TYPE_BUY_COIN} 
 import converter from 'minterjs-tx/src/converter';
 import {formatCoin} from 'minterjs-tx/src/helpers';
 import {toBuffer} from 'minterjs-util';
-import {sendTx} from "./utils";
+import {sendTx} from '../utils/index';
 
 export function sendCoins({nodeUrl, privateKey, address, amount = 0, coinSymbol, message}) {
     const txData = new MinterSendTxData({
@@ -22,7 +22,7 @@ export function sendCoins({nodeUrl, privateKey, address, amount = 0, coinSymbol,
         message,
         txType: TX_TYPE_SEND,
         txData: txData.serialize(),
-    })
+    });
 }
 
 export function createCoin({nodeUrl, privateKey, coinName, coinSymbol, initialAmount, crr, initialReserve, message}) {
@@ -31,7 +31,7 @@ export function createCoin({nodeUrl, privateKey, coinName, coinSymbol, initialAm
         symbol: formatCoin(coinSymbol),
         initialAmount: `0x${ethUtil.padToEven(converter.convert(initialAmount, 'pip').toString(16))}`,
         crr: `0x${ethUtil.padToEven(Number(crr).toString(16))}`,
-        initialReserve: `0x${ethUtil.padToEven(converter.convert(initialReserve, 'pip').toString(16))}`
+        initialReserve: `0x${ethUtil.padToEven(converter.convert(initialReserve, 'pip').toString(16))}`,
     });
 
     return sendTx({
@@ -40,7 +40,7 @@ export function createCoin({nodeUrl, privateKey, coinName, coinSymbol, initialAm
         message,
         txType: TX_TYPE_CREATE_COIN,
         txData: txData.serialize(),
-    })
+    });
 }
 
 export function sellCoin({nodeUrl, privateKey, coinFrom, coinTo, sellAmount, message}) {
@@ -56,7 +56,7 @@ export function sellCoin({nodeUrl, privateKey, coinFrom, coinTo, sellAmount, mes
         message,
         txType: TX_TYPE_SELL_COIN,
         txData: txData.serialize(),
-    })
+    });
 }
 
 export function buyCoin({nodeUrl, privateKey, coinFrom, coinTo, buyAmount, message}) {
@@ -72,5 +72,5 @@ export function buyCoin({nodeUrl, privateKey, coinFrom, coinTo, buyAmount, messa
         message,
         txType: TX_TYPE_BUY_COIN,
         txData: txData.serialize(),
-    })
+    });
 }
