@@ -2,6 +2,7 @@ import ethUtil from 'ethereumjs-util';
 import MinterSendTxData from 'minterjs-tx/src/tx-data/send';
 import MinterCreateCoinTxData from 'minterjs-tx/src/tx-data/create-coin';
 import MinterSellCoinTxData from 'minterjs-tx/src/tx-data/sell-coin';
+import MinterSellAllCoinTxData from 'minterjs-tx/src/tx-data/sell-all-coin';
 import MinterBuyCoinTxData from 'minterjs-tx/src/tx-data/buy-coin';
 import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL_COIN, TX_TYPE_BUY_COIN} from 'minterjs-tx/src/tx-types';
 import converter from 'minterjs-tx/src/converter';
@@ -48,6 +49,21 @@ export function sellCoins({nodeUrl, privateKey, coinFrom, coinTo, sellAmount, me
         coin_to_sell: formatCoin(coinFrom),
         coin_to_buy: formatCoin(coinTo),
         value_to_sell: `0x${converter.convert(sellAmount, 'pip').toString(16)}`,
+    });
+
+    return sendTx({
+        nodeUrl,
+        privateKey,
+        message,
+        txType: TX_TYPE_SELL_COIN,
+        txData: txData.serialize(),
+    });
+}
+
+export function sellAllCoins({nodeUrl, privateKey, coinFrom, coinTo, message}) {
+    const txData = new MinterSellAllCoinTxData({
+        coin_to_sell: formatCoin(coinFrom),
+        coin_to_buy: formatCoin(coinTo),
     });
 
     return sendTx({

@@ -11,7 +11,7 @@ import secp256k1 from 'secp256k1';
  */
 export function getNonce(nodeUrl, address) {
     return axios.get(`${nodeUrl}/api/transactionCount/${address}`)
-        .then((response) => Number(response.data.result) + 1);
+        .then((response) => Number(response.data.result.count) + 1);
 }
 
 /**
