@@ -1,5 +1,6 @@
 import axios from 'axios';
 import MinterTx from 'minterjs-tx';
+import {formatCoin} from 'minterjs-tx/src/helpers';
 import ethUtil from 'ethereumjs-util';
 import {Buffer} from 'safe-buffer';
 import secp256k1 from 'secp256k1';
@@ -17,12 +18,13 @@ export function getNonce(nodeUrl, address) {
 /**
  * @param {string} nodeUrl
  * @param {string|Buffer} privateKey
+ * @param {string} gasCoin
  * @param {string|Buffer} txType
  * @param {Buffer} txData
  * @param {string} message
  * @return {Promise<any>}
  */
-export function sendTx({nodeUrl, privateKey, txType, txData, message}) {
+export function sendTx({nodeUrl, privateKey, gasCoin = 'BIP', txType, txData, message}) {
     // @TODO asserts
     if (typeof privateKey === 'string') {
         privateKey = Buffer.from(privateKey, 'hex');
@@ -34,6 +36,7 @@ export function sendTx({nodeUrl, privateKey, txType, txData, message}) {
                 const txParams = {
                     nonce: `0x${nonce.toString(16)}`,
                     gasPrice: '0x01',
+                    gasCoin: formatCoin(gasCoin),
                     type: txType,
                     data: txData,
                 };

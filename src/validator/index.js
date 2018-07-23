@@ -10,7 +10,19 @@ import {formatCoin} from 'minterjs-tx/src/helpers';
 import {toBuffer} from 'minterjs-util';
 import {sendTx} from '../utils/index';
 
-export function declareCandidacy({nodeUrl, privateKey, address, publicKey, commission, coinSymbol, stake, message}) {
+/**
+ * @param {string} nodeUrl
+ * @param {string} privateKey
+ * @param {string} address
+ * @param {string} publicKey
+ * @param {number} commission
+ * @param {string} coinSymbol
+ * @param {number} stake
+ * @param {string} [feeCoinSymbol] - should be base coin
+ * @param {string} [message]
+ * @return {Promise<any>}
+ */
+export function declareCandidacy({nodeUrl, privateKey, address, publicKey, commission, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterDeclareCandidacyTxData({
         address: toBuffer(address),
         pubkey: toBuffer(publicKey),
@@ -23,43 +35,81 @@ export function declareCandidacy({nodeUrl, privateKey, address, publicKey, commi
         nodeUrl,
         privateKey,
         message,
+        gasCoin: feeCoinSymbol,
         txType: TX_TYPE_DECLARE_CANDIDACY,
         txData: txData.serialize(),
     });
 }
 
-export function delegate({nodeUrl, privateKey, publicKey, coinSymbol, stake, message}) {
+/**
+ * @param {string} nodeUrl
+ * @param {string} privateKey
+ * @param {string} publicKey
+ * @param {string} coinSymbol
+ * @param {number} stake
+ * @param {string} [feeCoinSymbol]
+ * @param {string} [message]
+ * @return {Promise<any>}
+ */
+export function delegate({nodeUrl, privateKey, publicKey, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterDelegateTxData({
         pubkey: toBuffer(publicKey),
         coin: formatCoin(coinSymbol),
         stake: `0x${converter.convert(stake, 'pip').toString(16)}`,
     });
 
+    if (!feeCoinSymbol) {
+        feeCoinSymbol = coinSymbol;
+    }
+
     return sendTx({
         nodeUrl,
         privateKey,
         message,
+        gasCoin: feeCoinSymbol,
         txType: TX_TYPE_DELEGATE,
         txData: txData.serialize(),
     });
 }
 
-export function unbound({nodeUrl, privateKey, publicKey, coinSymbol, stake, message}) {
+/**
+ * @param {string} nodeUrl
+ * @param {string} privateKey
+ * @param {string} publicKey
+ * @param {string} coinSymbol
+ * @param {number} stake
+ * @param {string} [feeCoinSymbol]
+ * @param {string} [message]
+ * @return {Promise<any>}
+ */
+export function unbound({nodeUrl, privateKey, publicKey, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterUnboundTxData({
         pubkey: toBuffer(publicKey),
         coin: formatCoin(coinSymbol),
         stake: `0x${converter.convert(stake, 'pip').toString(16)}`,
     });
 
+    if (!feeCoinSymbol) {
+        feeCoinSymbol = coinSymbol;
+    }
+
     return sendTx({
         nodeUrl,
         privateKey,
         message,
+        gasCoin: feeCoinSymbol,
         txType: TX_TYPE_UNBOUND,
         txData: txData.serialize(),
     });
 }
 
+/**
+ * @param {string} nodeUrl
+ * @param {string} privateKey
+ * @param {string} publicKey
+ * @param {string} [message]
+ * @return {Promise<any>}
+ */
 export function setCandidateOn({nodeUrl, privateKey, publicKey, message}) {
     const txData = new MinterSetCandidateOnTxData({
         pubkey: toBuffer(publicKey),
@@ -74,6 +124,13 @@ export function setCandidateOn({nodeUrl, privateKey, publicKey, message}) {
     });
 }
 
+/**
+ * @param {string} nodeUrl
+ * @param {string} privateKey
+ * @param {string} publicKey
+ * @param {string} [message]
+ * @return {Promise<any>}
+ */
 export function setCandidateOff({nodeUrl, privateKey, publicKey, message}) {
     const txData = new MinterSetCandidateOffTxData({
         pubkey: toBuffer(publicKey),
