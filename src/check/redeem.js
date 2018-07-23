@@ -13,7 +13,7 @@ import {sendTx, getProofWithRecovery} from '../utils/index';
  * @return {Promise<any>}
  */
 export default function redeemCheck({nodeUrl, privateKey, check, password, feeCoinSymbol}) {
-    if (feeCoinSymbol && (feeCoinSymbol.toUpperCase() !== 'MNT' || feeCoinSymbol.toUpperCase() !== 'BIP')) {
+    if (feeCoinSymbol && (feeCoinSymbol.toUpperCase() !== 'MNT' && feeCoinSymbol.toUpperCase() !== 'BIP')) {
         throw new Error('feeCoinSymbol for redeemCheck() should be baseCoin');
     }
     if (typeof privateKey === 'string') {
