@@ -121,6 +121,7 @@ export function sellAllCoins({nodeUrl, privateKey, coinFrom, coinTo, message}) {
         nodeUrl,
         privateKey,
         message,
+        gasCoin: '',
         txType: TX_TYPE_SELL_COIN,
         txData: txData.serialize(),
     });

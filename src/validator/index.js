@@ -18,7 +18,7 @@ import {sendTx} from '../utils/index';
  * @param {number} commission
  * @param {string} coinSymbol
  * @param {number} stake
- * @param {string} [feeCoinSymbol] - should be base coin
+ * @param {string} feeCoinSymbol
  * @param {string} [message]
  * @return {Promise<any>}
  */
@@ -107,10 +107,11 @@ export function unbound({nodeUrl, privateKey, publicKey, coinSymbol, stake, feeC
  * @param {string} nodeUrl
  * @param {string} privateKey
  * @param {string} publicKey
+ * @param {string} feeCoinSymbol
  * @param {string} [message]
  * @return {Promise<any>}
  */
-export function setCandidateOn({nodeUrl, privateKey, publicKey, message}) {
+export function setCandidateOn({nodeUrl, privateKey, publicKey, feeCoinSymbol, message}) {
     const txData = new MinterSetCandidateOnTxData({
         pubkey: toBuffer(publicKey),
     });
@@ -119,6 +120,7 @@ export function setCandidateOn({nodeUrl, privateKey, publicKey, message}) {
         nodeUrl,
         privateKey,
         message,
+        gasCoin: feeCoinSymbol,
         txType: TX_TYPE_SET_CANDIDATE_ON,
         txData: txData.serialize(),
     });
@@ -128,10 +130,11 @@ export function setCandidateOn({nodeUrl, privateKey, publicKey, message}) {
  * @param {string} nodeUrl
  * @param {string} privateKey
  * @param {string} publicKey
+ * @param {string} feeCoinSymbol
  * @param {string} [message]
  * @return {Promise<any>}
  */
-export function setCandidateOff({nodeUrl, privateKey, publicKey, message}) {
+export function setCandidateOff({nodeUrl, privateKey, publicKey, feeCoinSymbol, message}) {
     const txData = new MinterSetCandidateOffTxData({
         pubkey: toBuffer(publicKey),
     });
@@ -140,6 +143,7 @@ export function setCandidateOff({nodeUrl, privateKey, publicKey, message}) {
         nodeUrl,
         privateKey,
         message,
+        gasCoin: feeCoinSymbol,
         txType: TX_TYPE_SET_CANDIDATE_OFF,
         txData: txData.serialize(),
     });
