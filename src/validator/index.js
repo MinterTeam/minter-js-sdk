@@ -20,7 +20,7 @@ import {sendTx} from '../utils/index';
  * @param {number} stake
  * @param {string} feeCoinSymbol
  * @param {string} [message]
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export function declareCandidacy({nodeUrl, privateKey, address, publicKey, commission, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterDeclareCandidacyTxData({
@@ -30,6 +30,10 @@ export function declareCandidacy({nodeUrl, privateKey, address, publicKey, commi
         coin: formatCoin(coinSymbol),
         stake: `0x${converter.convert(stake, 'pip').toString(16)}`,
     });
+
+    if (!feeCoinSymbol) {
+        feeCoinSymbol = coinSymbol;
+    }
 
     return sendTx({
         nodeUrl,
@@ -49,7 +53,7 @@ export function declareCandidacy({nodeUrl, privateKey, address, publicKey, commi
  * @param {number} stake
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export function delegate({nodeUrl, privateKey, publicKey, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterDelegateTxData({
@@ -80,7 +84,7 @@ export function delegate({nodeUrl, privateKey, publicKey, coinSymbol, stake, fee
  * @param {number} stake
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export function unbound({nodeUrl, privateKey, publicKey, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterUnboundTxData({
@@ -109,7 +113,7 @@ export function unbound({nodeUrl, privateKey, publicKey, coinSymbol, stake, feeC
  * @param {string} publicKey
  * @param {string} feeCoinSymbol
  * @param {string} [message]
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export function setCandidateOn({nodeUrl, privateKey, publicKey, feeCoinSymbol, message}) {
     const txData = new MinterSetCandidateOnTxData({
@@ -132,7 +136,7 @@ export function setCandidateOn({nodeUrl, privateKey, publicKey, feeCoinSymbol, m
  * @param {string} publicKey
  * @param {string} feeCoinSymbol
  * @param {string} [message]
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export function setCandidateOff({nodeUrl, privateKey, publicKey, feeCoinSymbol, message}) {
     const txData = new MinterSetCandidateOffTxData({

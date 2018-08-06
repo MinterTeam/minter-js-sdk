@@ -18,7 +18,7 @@ import {sendTx} from '../utils/index';
  * @param {string} coinSymbol
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export function sendCoins({nodeUrl, privateKey, address, amount = 0, coinSymbol, feeCoinSymbol, message}) {
     const txData = new MinterSendTxData({
@@ -51,7 +51,7 @@ export function sendCoins({nodeUrl, privateKey, address, amount = 0, coinSymbol,
  * @param {number} initialReserve
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export function createCoin({nodeUrl, privateKey, coinName, coinSymbol, initialAmount, crr, initialReserve, feeCoinSymbol, message}) {
     const txData = new MinterCreateCoinTxData({
@@ -80,7 +80,7 @@ export function createCoin({nodeUrl, privateKey, coinName, coinSymbol, initialAm
  * @param {string} sellAmount
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export function sellCoins({nodeUrl, privateKey, coinFrom, coinTo, sellAmount, feeCoinSymbol, message}) {
     const txData = new MinterSellCoinTxData({
@@ -109,7 +109,7 @@ export function sellCoins({nodeUrl, privateKey, coinFrom, coinTo, sellAmount, fe
  * @param {string} coinFrom
  * @param {number} coinTo
  * @param {string} [message]
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export function sellAllCoins({nodeUrl, privateKey, coinFrom, coinTo, message}) {
     const txData = new MinterSellAllCoinTxData({
@@ -135,7 +135,7 @@ export function sellAllCoins({nodeUrl, privateKey, coinFrom, coinTo, message}) {
  * @param {string} buyAmount
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export function buyCoins({nodeUrl, privateKey, coinFrom, coinTo, buyAmount, feeCoinSymbol, message}) {
     const txData = new MinterBuyCoinTxData({

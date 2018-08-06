@@ -10,7 +10,7 @@ import {sendTx, getProofWithRecovery} from '../utils/index';
  * @param {string} check
  * @param {string} password
  * @param {string} [feeCoinSymbol] - should be base coin
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export default function redeemCheck({nodeUrl, privateKey, check, password, feeCoinSymbol}) {
     if (feeCoinSymbol && (feeCoinSymbol.toUpperCase() !== 'MNT' && feeCoinSymbol.toUpperCase() !== 'BIP')) {

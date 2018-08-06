@@ -22,7 +22,7 @@ export function getNonce(nodeUrl, address) {
  * @param {string|Buffer} txType
  * @param {Buffer} txData
  * @param {string} message
- * @return {Promise<any>}
+ * @return {Promise}
  */
 export function sendTx({nodeUrl, privateKey, gasCoin = 'BIP', txType, txData, message}) {
     // @TODO asserts
