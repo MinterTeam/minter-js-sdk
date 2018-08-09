@@ -4,7 +4,7 @@ import MinterCreateCoinTxData from 'minterjs-tx/src/tx-data/create-coin';
 import MinterSellCoinTxData from 'minterjs-tx/src/tx-data/sell-coin';
 import MinterSellAllCoinTxData from 'minterjs-tx/src/tx-data/sell-all-coin';
 import MinterBuyCoinTxData from 'minterjs-tx/src/tx-data/buy-coin';
-import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL_COIN, TX_TYPE_BUY_COIN} from 'minterjs-tx/src/tx-types';
+import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL_COIN, TX_TYPE_SELL_ALL_COIN, TX_TYPE_BUY_COIN} from 'minterjs-tx/src/tx-types';
 import converter from 'minterjs-tx/src/converter';
 import {formatCoin} from 'minterjs-tx/src/helpers';
 import {toBuffer} from 'minterjs-util';
@@ -121,8 +121,8 @@ export function sellAllCoins({nodeUrl, privateKey, coinFrom, coinTo, message}) {
         nodeUrl,
         privateKey,
         message,
-        gasCoin: '',
-        txType: TX_TYPE_SELL_COIN,
+        gasCoin: coinFrom,
+        txType: TX_TYPE_SELL_ALL_COIN,
         txData: txData.serialize(),
     });
 }
