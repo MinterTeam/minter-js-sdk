@@ -8,19 +8,17 @@ import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL_COIN, TX_TYPE_SELL_ALL_C
 import converter from 'minterjs-tx/src/converter';
 import {formatCoin} from 'minterjs-tx/src/helpers';
 import {toBuffer} from 'minterjs-util';
-import {sendTx} from '../utils/index';
 
 /**
- * @param {string} nodeUrl
  * @param {string} privateKey
  * @param {string} address
  * @param {number} amount
  * @param {string} coinSymbol
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
- * @return {Promise}
+ * @return {TxParams}
  */
-export function sendCoins({nodeUrl, privateKey, address, amount = 0, coinSymbol, feeCoinSymbol, message}) {
+export function sendCoinsTx({privateKey, address, amount = 0, coinSymbol, feeCoinSymbol, message}) {
     const txData = new MinterSendTxData({
         to: toBuffer(address),
         coin: formatCoin(coinSymbol),
@@ -31,18 +29,16 @@ export function sendCoins({nodeUrl, privateKey, address, amount = 0, coinSymbol,
         feeCoinSymbol = coinSymbol;
     }
 
-    return sendTx({
-        nodeUrl,
+    return {
         privateKey,
         message,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_SEND,
         txData: txData.serialize(),
-    });
+    };
 }
 
 /**
- * @param {string} nodeUrl
  * @param {string} privateKey
  * @param {string} coinName
  * @param {string} coinSymbol
@@ -51,9 +47,9 @@ export function sendCoins({nodeUrl, privateKey, address, amount = 0, coinSymbol,
  * @param {number} initialReserve
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
- * @return {Promise}
+ * @return {TxParams}
  */
-export function createCoin({nodeUrl, privateKey, coinName, coinSymbol, initialAmount, crr, initialReserve, feeCoinSymbol, message}) {
+export function createCoinTx({privateKey, coinName, coinSymbol, initialAmount, crr, initialReserve, feeCoinSymbol, message}) {
     const txData = new MinterCreateCoinTxData({
         name: coinName,
         symbol: formatCoin(coinSymbol),
@@ -62,27 +58,25 @@ export function createCoin({nodeUrl, privateKey, coinName, coinSymbol, initialAm
         initialReserve: `0x${ethUtil.padToEven(converter.convert(initialReserve, 'pip').toString(16))}`,
     });
 
-    return sendTx({
-        nodeUrl,
+    return {
         privateKey,
         message,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_CREATE_COIN,
         txData: txData.serialize(),
-    });
+    };
 }
 
 /**
- * @param {string} nodeUrl
  * @param {string} privateKey
  * @param {string} coinFrom
  * @param {number} coinTo
  * @param {string} sellAmount
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
- * @return {Promise}
+ * @return {TxParams}
  */
-export function sellCoins({nodeUrl, privateKey, coinFrom, coinTo, sellAmount, feeCoinSymbol, message}) {
+export function sellCoinsTx({privateKey, coinFrom, coinTo, sellAmount, feeCoinSymbol, message}) {
     const txData = new MinterSellCoinTxData({
         coin_to_sell: formatCoin(coinFrom),
         coin_to_buy: formatCoin(coinTo),
@@ -93,51 +87,47 @@ export function sellCoins({nodeUrl, privateKey, coinFrom, coinTo, sellAmount, fe
         feeCoinSymbol = coinFrom;
     }
 
-    return sendTx({
-        nodeUrl,
+    return {
         privateKey,
         message,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_SELL_COIN,
         txData: txData.serialize(),
-    });
+    };
 }
 
 /**
- * @param {string} nodeUrl
  * @param {string} privateKey
  * @param {string} coinFrom
  * @param {number} coinTo
  * @param {string} [message]
- * @return {Promise}
+ * @return {TxParams}
  */
-export function sellAllCoins({nodeUrl, privateKey, coinFrom, coinTo, message}) {
+export function sellAllCoinsTx({privateKey, coinFrom, coinTo, message}) {
     const txData = new MinterSellAllCoinTxData({
         coin_to_sell: formatCoin(coinFrom),
         coin_to_buy: formatCoin(coinTo),
     });
 
-    return sendTx({
-        nodeUrl,
+    return {
         privateKey,
         message,
         gasCoin: coinFrom,
         txType: TX_TYPE_SELL_ALL_COIN,
         txData: txData.serialize(),
-    });
+    };
 }
 
 /**
- * @param {string} nodeUrl
  * @param {string} privateKey
  * @param {string} coinFrom
  * @param {number} coinTo
  * @param {string} buyAmount
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
- * @return {Promise}
+ * @return {TxParams}
  */
-export function buyCoins({nodeUrl, privateKey, coinFrom, coinTo, buyAmount, feeCoinSymbol, message}) {
+export function buyCoinsTx({privateKey, coinFrom, coinTo, buyAmount, feeCoinSymbol, message}) {
     const txData = new MinterBuyCoinTxData({
         coin_to_sell: formatCoin(coinFrom),
         coin_to_buy: formatCoin(coinTo),
@@ -148,12 +138,11 @@ export function buyCoins({nodeUrl, privateKey, coinFrom, coinTo, buyAmount, feeC
         feeCoinSymbol = coinFrom;
     }
 
-    return sendTx({
-        nodeUrl,
+    return {
         privateKey,
         message,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_BUY_COIN,
         txData: txData.serialize(),
-    });
+    };
 }

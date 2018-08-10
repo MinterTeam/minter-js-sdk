@@ -93,6 +93,7 @@ class Check {
  * @param {string} coinSymbol
  * @param {number} value
  * @param {number} dueBlock
+ * @return {string}
  */
 export default function issueCheck({privateKey, passPhrase, nonce, coinSymbol, value, dueBlock = 999999999}) {
     if (typeof privateKey === 'string') {
