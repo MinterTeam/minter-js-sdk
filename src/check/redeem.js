@@ -6,14 +6,13 @@ import secp256k1 from 'secp256k1';
 import ethUtil from 'ethereumjs-util';
 
 /**
- * @param {string} nodeUrl
  * @param {string|Buffer} privateKey
  * @param {string} check
  * @param {string} password
  * @param {string} [feeCoinSymbol] - should be base coin
  * @return {TxParams}
  */
-export default function redeemCheckTx({nodeUrl, privateKey, check, password, feeCoinSymbol}) {
+export default function redeemCheckTx({privateKey, check, password, feeCoinSymbol}) {
     if (feeCoinSymbol && (feeCoinSymbol.toUpperCase() !== 'MNT' && feeCoinSymbol.toUpperCase() !== 'BIP')) {
         throw new Error('feeCoinSymbol for redeemCheck() should be baseCoin');
     }
@@ -27,7 +26,6 @@ export default function redeemCheckTx({nodeUrl, privateKey, check, password, fee
     });
 
     return {
-        nodeUrl,
         privateKey,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_REDEEM_CHECK,

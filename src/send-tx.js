@@ -10,7 +10,7 @@ import {Buffer} from 'safe-buffer';
  * @property {string} gasCoin
  * @property {string|Buffer} txType
  * @property {Buffer} txData
- * @property {string} message
+ * @property {string} [message]
  */
 
 /**
