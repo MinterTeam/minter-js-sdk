@@ -31,16 +31,14 @@ export default function SendTx(options) {
      * @return {Promise}
      */
     return function sendTx(txParams) {
-        let {privateKey, gasCoin = 'BIP', txType, txData, message} = txParams;
+        const {privateKey, gasCoin = 'BIP', txType, txData, message} = txParams;
         // @TODO asserts
-        if (typeof privateKey === 'string') {
-            privateKey = Buffer.from(privateKey, 'hex');
-        }
-        const address = ethUtil.privateToAddress(privateKey).toString('hex');
+        const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
+        const address = ethUtil.privateToAddress(privateKeyBuffer).toString('hex');
         return new Promise((resolve, reject) => {
             getNonce(minterNode, address)
                 .then((nonce) => {
-                    const txParams = {
+                    const txProps = {
                         nonce: `0x${nonce.toString(16)}`,
                         gasPrice: '0x01',
                         gasCoin: formatCoin(gasCoin),
@@ -48,11 +46,11 @@ export default function SendTx(options) {
                         data: txData,
                     };
                     if (message) {
-                        txParams.payload = `0x${Buffer.from(message, 'utf-8').toString('hex')}`;
+                        txProps.payload = `0x${Buffer.from(message, 'utf-8').toString('hex')}`;
                     }
 
-                    const tx = new MinterTx(txParams);
-                    tx.sign(privateKey);
+                    const tx = new MinterTx(txProps);
+                    tx.sign(privateKeyBuffer);
 
                     minterNode.post('/api/sendTransaction', {
                         transaction: tx.serialize().toString('hex'),
@@ -62,7 +60,7 @@ export default function SendTx(options) {
                 })
                 .catch(reject);
         });
-    }
+    };
 }
 
 /**
