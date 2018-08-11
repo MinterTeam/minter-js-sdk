@@ -1,27 +1,27 @@
 import {generateWallet, walletFromMnemonic, walletFromPrivateKey} from 'minterjs-wallet';
 import SendTx from './send-tx';
-import {issueCheck, redeemCheckTx} from './check';
-import {sendCoinsTx, sellAllCoinsTx, createCoinTx, sellCoinsTx, buyCoinsTx} from './coin';
-import {declareCandidacyTx, delegateTx, unbondTx, setCandidateOnTx, setCandidateOffTx} from './validator';
+import {issueCheck, RedeemCheckTxParams} from './check';
+import {SendCoinsTxParams, CreateCoinTxParams, SellCoinsTxParams, SellAllCoinsTxParams, BuyCoinsTxParams} from './coin';
+import {DeclareCandidacyTxParams, DelegateTxParams, UnbondTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams} from './validator';
 
 
 export {
     SendTx,
     // check
     issueCheck,
-    redeemCheckTx,
+    RedeemCheckTxParams,
     // coin
-    sendCoinsTx,
-    createCoinTx,
-    sellCoinsTx,
-    sellAllCoinsTx,
-    buyCoinsTx,
+    SendCoinsTxParams,
+    CreateCoinTxParams,
+    SellCoinsTxParams,
+    SellAllCoinsTxParams,
+    BuyCoinsTxParams,
     // validator
-    declareCandidacyTx,
-    delegateTx,
-    unbondTx,
-    setCandidateOnTx,
-    setCandidateOffTx,
+    DeclareCandidacyTxParams,
+    DelegateTxParams,
+    UnbondTxParams,
+    SetCandidateOnTxParams,
+    SetCandidateOffTxParams,
     // wallet
     generateWallet,
     walletFromMnemonic,

@@ -10,6 +10,7 @@ import {formatCoin} from 'minterjs-tx/src/helpers';
 import {toBuffer} from 'minterjs-util';
 
 /**
+ * @constructor
  * @param {string} privateKey
  * @param {string} address
  * @param {string} publicKey
@@ -20,7 +21,7 @@ import {toBuffer} from 'minterjs-util';
  * @param {string} [message]
  * @return {TxParams}
  */
-export function declareCandidacyTx({privateKey, address, publicKey, commission, coinSymbol, stake, feeCoinSymbol, message}) {
+export function DeclareCandidacyTxParams({privateKey, address, publicKey, commission, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterDeclareCandidacyTxData({
         address: toBuffer(address),
         pubkey: toBuffer(publicKey),
@@ -43,6 +44,7 @@ export function declareCandidacyTx({privateKey, address, publicKey, commission, 
 }
 
 /**
+ * @constructor
  * @param {string} privateKey
  * @param {string} publicKey
  * @param {string} coinSymbol
@@ -51,7 +53,7 @@ export function declareCandidacyTx({privateKey, address, publicKey, commission, 
  * @param {string} [message]
  * @return {TxParams}
  */
-export function delegateTx({privateKey, publicKey, coinSymbol, stake, feeCoinSymbol, message}) {
+export function DelegateTxParams({privateKey, publicKey, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterDelegateTxData({
         pubkey: toBuffer(publicKey),
         coin: formatCoin(coinSymbol),
@@ -72,6 +74,7 @@ export function delegateTx({privateKey, publicKey, coinSymbol, stake, feeCoinSym
 }
 
 /**
+ * @constructor
  * @param {string} privateKey
  * @param {string} publicKey
  * @param {string} coinSymbol
@@ -80,7 +83,7 @@ export function delegateTx({privateKey, publicKey, coinSymbol, stake, feeCoinSym
  * @param {string} [message]
  * @return {TxParams}
  */
-export function unbondTx({privateKey, publicKey, coinSymbol, stake, feeCoinSymbol, message}) {
+export function UnbondTxParams({privateKey, publicKey, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterUnbondTxData({
         pubkey: toBuffer(publicKey),
         coin: formatCoin(coinSymbol),
@@ -101,13 +104,14 @@ export function unbondTx({privateKey, publicKey, coinSymbol, stake, feeCoinSymbo
 }
 
 /**
+ * @constructor
  * @param {string} privateKey
  * @param {string} publicKey
  * @param {string} feeCoinSymbol
  * @param {string} [message]
  * @return {TxParams}
  */
-export function setCandidateOnTx({privateKey, publicKey, feeCoinSymbol, message}) {
+export function SetCandidateOnTxParams({privateKey, publicKey, feeCoinSymbol, message}) {
     const txData = new MinterSetCandidateOnTxData({
         pubkey: toBuffer(publicKey),
     });
@@ -122,13 +126,14 @@ export function setCandidateOnTx({privateKey, publicKey, feeCoinSymbol, message}
 }
 
 /**
+ * @constructor
  * @param {string} privateKey
  * @param {string} publicKey
  * @param {string} feeCoinSymbol
  * @param {string} [message]
- * @return {Promise}
+ * @return {TxParams}
  */
-export function setCandidateOffTx({privateKey, publicKey, feeCoinSymbol, message}) {
+export function SetCandidateOffTxParams({privateKey, publicKey, feeCoinSymbol, message}) {
     const txData = new MinterSetCandidateOffTxData({
         pubkey: toBuffer(publicKey),
     });

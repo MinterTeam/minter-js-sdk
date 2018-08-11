@@ -1,4 +1,4 @@
 import issueCheck from './issue';
-import redeemCheckTx from './redeem';
+import RedeemCheckTxParams from './redeem';
 
-export {issueCheck, redeemCheckTx};
+export {issueCheck, RedeemCheckTxParams};
