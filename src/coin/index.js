@@ -73,8 +73,8 @@ export function CreateCoinTxParams({privateKey, coinName, coinSymbol, initialAmo
  * @constructor
  * @param {string} privateKey
  * @param {string} coinFrom
- * @param {number} coinTo
- * @param {string} sellAmount
+ * @param {string} coinTo
+ * @param {number} sellAmount
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
  * @return {TxParams}
@@ -103,20 +103,25 @@ export function SellCoinsTxParams({privateKey, coinFrom, coinTo, sellAmount, fee
  * @constructor
  * @param {string} privateKey
  * @param {string} coinFrom
- * @param {number} coinTo
+ * @param {string} coinTo
+ * @param {string} [feeCoinSymbol]
  * @param {string} [message]
  * @return {TxParams}
  */
-export function SellAllCoinsTxParams({privateKey, coinFrom, coinTo, message}) {
+export function SellAllCoinsTxParams({privateKey, coinFrom, coinTo, feeCoinSymbol, message}) {
     const txData = new MinterSellAllCoinTxData({
         coin_to_sell: formatCoin(coinFrom),
         coin_to_buy: formatCoin(coinTo),
     });
 
+    if (!feeCoinSymbol) {
+        feeCoinSymbol = coinFrom;
+    }
+
     return {
         privateKey,
         message,
-        gasCoin: coinFrom,
+        gasCoin: feeCoinSymbol,
         txType: TX_TYPE_SELL_ALL_COIN,
         txData: txData.serialize(),
     };
@@ -126,8 +131,8 @@ export function SellAllCoinsTxParams({privateKey, coinFrom, coinTo, message}) {
  * @constructor
  * @param {string} privateKey
  * @param {string} coinFrom
- * @param {number} coinTo
- * @param {string} buyAmount
+ * @param {string} coinTo
+ * @param {number} buyAmount
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
  * @return {TxParams}

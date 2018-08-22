@@ -49,14 +49,14 @@ describe('RedeemCheckTxParams', () => {
     };
 
     test('fields', () => {
-        const txParms = new RedeemCheckTxParams({
+        const txParams = new RedeemCheckTxParams({
             privateKey,
             check,
             password: '123',
             feeCoinSymbol: 'MNT',
         });
 
-        expect(txParms)
+        expect(txParams)
             .toEqual({
                 privateKey: Buffer.from(privateKey, 'hex'),
                 gasCoin: 'MNT',
@@ -67,7 +67,7 @@ describe('RedeemCheckTxParams', () => {
                 })).serialize(),
             });
 
-        expect(txParms)
+        expect(txParams)
             .toEqual(validTxParams);
     });
 
