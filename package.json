@@ -8,8 +8,9 @@
   ],
   "scripts": {
     "prepublishOnly": "npm run lint && npm run test",
-    "lint": "eslint --ext .js ./",
-    "lint:fix": "eslint --ext .js ./ --fix",
+    "precommit": "npm run lint",
+    "lint": "eslint --ext .js ./src ./test",
+    "lint:fix": "eslint --ext .js ./src ./test --fix",
     "test": "jest",
     "coverage": "jest --coverage"
   },

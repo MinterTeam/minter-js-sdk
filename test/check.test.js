@@ -30,7 +30,7 @@ describe('issueCheck()', () => {
     test('default dueBlock: 999999', () => {
         expect(issueCheck({
             ...checkParams,
-            dueBlock: undefined
+            dueBlock: undefined,
         })).toEqual(issueCheck({
             ...checkParams,
             dueBlock: 999999999,
@@ -73,6 +73,7 @@ describe('RedeemCheckTxParams', () => {
 
     test('accept only base coin', () => {
         expect(() => {
+            /* eslint-disable-next-line no-new */
             new RedeemCheckTxParams({
                 privateKey,
                 check,
