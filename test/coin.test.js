@@ -1,9 +1,9 @@
 import {Buffer} from 'safe-buffer';
 import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL_COIN, TX_TYPE_SELL_ALL_COIN, TX_TYPE_BUY_COIN} from 'minterjs-tx/src/tx-types';
-import {SendCoinsTxParams, CreateCoinTxParams, SellCoinsTxParams, SellAllCoinsTxParams, BuyCoinsTxParams} from '../src/coin';
+import {SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams} from '../src/coin';
 
 
-describe('SendCoinsTxParams', () => {
+describe('SendTxParams', () => {
     const privateKey = '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da';
     const txParamsData = {
         privateKey,
@@ -22,14 +22,14 @@ describe('SendCoinsTxParams', () => {
     };
 
     test('fields', () => {
-        const txParams = new SendCoinsTxParams(txParamsData);
+        const txParams = new SendTxParams(txParamsData);
 
         expect(txParams)
             .toEqual(validTxParams);
     });
 
     test('default gasCoin', () => {
-        const txParams = new SendCoinsTxParams({
+        const txParams = new SendTxParams({
             ...txParamsData,
             feeCoinSymbol: undefined,
         });
@@ -83,7 +83,7 @@ describe('CreateCoinTxParams', () => {
     });
 });
 
-describe('SellCoinsTxParams', () => {
+describe('SellTxParams', () => {
     const privateKey = '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da';
     const txParamsData = {
         privateKey,
@@ -102,14 +102,14 @@ describe('SellCoinsTxParams', () => {
     };
 
     test('fields', () => {
-        const txParams = new SellCoinsTxParams(txParamsData);
+        const txParams = new SellTxParams(txParamsData);
 
         expect(txParams)
             .toEqual(validTxParams);
     });
 
     test('default gasCoin', () => {
-        const txParams = new SellCoinsTxParams({
+        const txParams = new SellTxParams({
             ...txParamsData,
             feeCoinSymbol: undefined,
         });
@@ -122,7 +122,7 @@ describe('SellCoinsTxParams', () => {
     });
 });
 
-describe('SellAllCoinsTxParams', () => {
+describe('SellAllTxParams', () => {
     const privateKey = '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da';
     const txParamsData = {
         privateKey,
@@ -140,14 +140,14 @@ describe('SellAllCoinsTxParams', () => {
     };
 
     test('fields', () => {
-        const txParams = new SellAllCoinsTxParams(txParamsData);
+        const txParams = new SellAllTxParams(txParamsData);
 
         expect(txParams)
             .toEqual(validTxParams);
     });
 
     test('default gasCoin', () => {
-        const txParams = new SellAllCoinsTxParams({
+        const txParams = new SellAllTxParams({
             ...txParamsData,
             feeCoinSymbol: undefined,
         });
@@ -160,7 +160,7 @@ describe('SellAllCoinsTxParams', () => {
     });
 });
 
-describe('BuyCoinsTxParams', () => {
+describe('BuyTxParams', () => {
     const privateKey = '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da';
     const txParamsData = {
         privateKey,
@@ -179,14 +179,14 @@ describe('BuyCoinsTxParams', () => {
     };
 
     test('fields', () => {
-        const txParams = new BuyCoinsTxParams(txParamsData);
+        const txParams = new BuyTxParams(txParamsData);
 
         expect(txParams)
             .toEqual(validTxParams);
     });
 
     test('default gasCoin', () => {
-        const txParams = new BuyCoinsTxParams({
+        const txParams = new BuyTxParams({
             ...txParamsData,
             feeCoinSymbol: undefined,
         });

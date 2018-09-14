@@ -24,7 +24,7 @@ import {toBuffer} from 'minterjs-util';
 export function DeclareCandidacyTxParams({privateKey, address, publicKey, commission, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterDeclareCandidacyTxData({
         address: toBuffer(address),
-        pubkey: toBuffer(publicKey),
+        pubKey: toBuffer(publicKey),
         commission: `0x${ethUtil.padToEven(Number(commission).toString(16))}`,
         coin: formatCoin(coinSymbol),
         stake: `0x${converter.convert(stake, 'pip').toString(16)}`,
@@ -55,7 +55,7 @@ export function DeclareCandidacyTxParams({privateKey, address, publicKey, commis
  */
 export function DelegateTxParams({privateKey, publicKey, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterDelegateTxData({
-        pubkey: toBuffer(publicKey),
+        pubKey: toBuffer(publicKey),
         coin: formatCoin(coinSymbol),
         stake: `0x${converter.convert(stake, 'pip').toString(16)}`,
     });
@@ -85,7 +85,7 @@ export function DelegateTxParams({privateKey, publicKey, coinSymbol, stake, feeC
  */
 export function UnbondTxParams({privateKey, publicKey, coinSymbol, stake, feeCoinSymbol, message}) {
     const txData = new MinterUnbondTxData({
-        pubkey: toBuffer(publicKey),
+        pubKey: toBuffer(publicKey),
         coin: formatCoin(coinSymbol),
         stake: `0x${converter.convert(stake, 'pip').toString(16)}`,
     });
@@ -113,7 +113,7 @@ export function UnbondTxParams({privateKey, publicKey, coinSymbol, stake, feeCoi
  */
 export function SetCandidateOnTxParams({privateKey, publicKey, feeCoinSymbol, message}) {
     const txData = new MinterSetCandidateOnTxData({
-        pubkey: toBuffer(publicKey),
+        pubKey: toBuffer(publicKey),
     });
 
     return {
@@ -135,7 +135,7 @@ export function SetCandidateOnTxParams({privateKey, publicKey, feeCoinSymbol, me
  */
 export function SetCandidateOffTxParams({privateKey, publicKey, feeCoinSymbol, message}) {
     const txData = new MinterSetCandidateOffTxData({
-        pubkey: toBuffer(publicKey),
+        pubKey: toBuffer(publicKey),
     });
 
     return {

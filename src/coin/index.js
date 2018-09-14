@@ -1,9 +1,9 @@
 import ethUtil from 'ethereumjs-util';
 import MinterSendTxData from 'minterjs-tx/src/tx-data/send';
 import MinterCreateCoinTxData from 'minterjs-tx/src/tx-data/create-coin';
-import MinterSellCoinTxData from 'minterjs-tx/src/tx-data/sell-coin';
-import MinterSellAllCoinTxData from 'minterjs-tx/src/tx-data/sell-all-coin';
-import MinterBuyCoinTxData from 'minterjs-tx/src/tx-data/buy-coin';
+import MinterSellTxData from 'minterjs-tx/src/tx-data/sell';
+import MinterSellAllTxData from 'minterjs-tx/src/tx-data/sell-all';
+import MinterBuyTxData from 'minterjs-tx/src/tx-data/buy';
 import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL_COIN, TX_TYPE_SELL_ALL_COIN, TX_TYPE_BUY_COIN} from 'minterjs-tx/src/tx-types';
 import converter from 'minterjs-tx/src/converter';
 import {formatCoin} from 'minterjs-tx/src/helpers';
@@ -19,7 +19,7 @@ import {toBuffer} from 'minterjs-util';
  * @param {string} [message]
  * @return {TxParams}
  */
-export function SendCoinsTxParams({privateKey, address, amount = 0, coinSymbol, feeCoinSymbol, message}) {
+export function SendTxParams({privateKey, address, amount = 0, coinSymbol, feeCoinSymbol, message}) {
     const txData = new MinterSendTxData({
         to: toBuffer(address),
         coin: formatCoin(coinSymbol),
@@ -45,19 +45,19 @@ export function SendCoinsTxParams({privateKey, address, amount = 0, coinSymbol, 
  * @param {string} coinName
  * @param {string} coinSymbol
  * @param {number} initialAmount
- * @param {number} crr
  * @param {number} initialReserve
+ * @param {number} crr
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
  * @return {TxParams}
  */
-export function CreateCoinTxParams({privateKey, coinName, coinSymbol, initialAmount, crr, initialReserve, feeCoinSymbol, message}) {
+export function CreateCoinTxParams({privateKey, coinName, coinSymbol, initialAmount, initialReserve, crr, feeCoinSymbol, message}) {
     const txData = new MinterCreateCoinTxData({
         name: coinName,
         symbol: formatCoin(coinSymbol),
         initialAmount: `0x${ethUtil.padToEven(converter.convert(initialAmount, 'pip').toString(16))}`,
-        crr: `0x${ethUtil.padToEven(Number(crr).toString(16))}`,
         initialReserve: `0x${ethUtil.padToEven(converter.convert(initialReserve, 'pip').toString(16))}`,
+        constantReserveRatio: `0x${ethUtil.padToEven(Number(crr).toString(16))}`,
     });
 
     return {
@@ -79,11 +79,11 @@ export function CreateCoinTxParams({privateKey, coinName, coinSymbol, initialAmo
  * @param {string} [message]
  * @return {TxParams}
  */
-export function SellCoinsTxParams({privateKey, coinFrom, coinTo, sellAmount, feeCoinSymbol, message}) {
-    const txData = new MinterSellCoinTxData({
-        coin_to_sell: formatCoin(coinFrom),
-        coin_to_buy: formatCoin(coinTo),
-        value_to_sell: `0x${converter.convert(sellAmount, 'pip').toString(16)}`,
+export function SellTxParams({privateKey, coinFrom, coinTo, sellAmount, feeCoinSymbol, message}) {
+    const txData = new MinterSellTxData({
+        coinToSell: formatCoin(coinFrom),
+        coinToBuy: formatCoin(coinTo),
+        valueToSell: `0x${converter.convert(sellAmount, 'pip').toString(16)}`,
     });
 
     if (!feeCoinSymbol) {
@@ -108,10 +108,10 @@ export function SellCoinsTxParams({privateKey, coinFrom, coinTo, sellAmount, fee
  * @param {string} [message]
  * @return {TxParams}
  */
-export function SellAllCoinsTxParams({privateKey, coinFrom, coinTo, feeCoinSymbol, message}) {
-    const txData = new MinterSellAllCoinTxData({
-        coin_to_sell: formatCoin(coinFrom),
-        coin_to_buy: formatCoin(coinTo),
+export function SellAllTxParams({privateKey, coinFrom, coinTo, feeCoinSymbol, message}) {
+    const txData = new MinterSellAllTxData({
+        coinToSell: formatCoin(coinFrom),
+        coinToBuy: formatCoin(coinTo),
     });
 
     if (!feeCoinSymbol) {
@@ -137,11 +137,11 @@ export function SellAllCoinsTxParams({privateKey, coinFrom, coinTo, feeCoinSymbo
  * @param {string} [message]
  * @return {TxParams}
  */
-export function BuyCoinsTxParams({privateKey, coinFrom, coinTo, buyAmount, feeCoinSymbol, message}) {
-    const txData = new MinterBuyCoinTxData({
-        coin_to_sell: formatCoin(coinFrom),
-        coin_to_buy: formatCoin(coinTo),
-        value_to_buy: `0x${converter.convert(buyAmount, 'pip').toString(16)}`,
+export function BuyTxParams({privateKey, coinFrom, coinTo, buyAmount, feeCoinSymbol, message}) {
+    const txData = new MinterBuyTxData({
+        coinToSell: formatCoin(coinFrom),
+        coinToBuy: formatCoin(coinTo),
+        valueToBuy: `0x${converter.convert(buyAmount, 'pip').toString(16)}`,
     });
 
     if (!feeCoinSymbol) {

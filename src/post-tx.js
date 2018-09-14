@@ -18,7 +18,7 @@ import {Buffer} from 'safe-buffer';
  * @param {string} options.baseURL
  * @return {Function<Promise>}
  */
-export default function SendTx(options) {
+export default function PostTx(options) {
     const minterNode = axios.create(options);
 
     /**
@@ -30,7 +30,7 @@ export default function SendTx(options) {
      * @param {string} txParams.message
      * @return {Promise}
      */
-    return function sendTx(txParams) {
+    return function postTx(txParams) {
         const {privateKey, gasCoin = 'BIP', txType, txData, message} = txParams;
         // @TODO asserts
         const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;

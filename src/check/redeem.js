@@ -22,7 +22,7 @@ export default function RedeemCheckTxParams({privateKey, check, password, feeCoi
     }
     const proofWithRecovery = getProofWithRecovery(privateKey, password);
     const txData = new RedeemCheckTxData({
-        check: toBuffer(check),
+        rawCheck: toBuffer(check),
         proof: `0x${proofWithRecovery.toString('hex')}`,
     });
 
