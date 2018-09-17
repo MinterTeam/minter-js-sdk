@@ -1,4 +1,4 @@
-# Minter JS SDK
+![Logo](minter-logo.svg)
 
 [![NPM Package](https://img.shields.io/npm/v/minter-js-sdk.svg?style=flat-square)](https://www.npmjs.org/package/minter-js-sdk)
 [![Build Status](https://img.shields.io/travis/MinterTeam/minter-js-sdk.svg?style=flat-square)](https://travis-ci.org/MinterTeam/minter-js-sdk)
@@ -24,7 +24,7 @@ It is complemented by the following packages:
 
 ## Usage
 
-### Full example
+Post transaction full example
 
 ```js
 import PostTx from "minter-js-sdk";
