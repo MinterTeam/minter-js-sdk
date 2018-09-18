@@ -27,7 +27,7 @@ It is complemented by the following packages:
 Post transaction full example
 
 ```js
-import PostTx from "minter-js-sdk";
+import {PostTx} from "minter-js-sdk";
 import {SendTxParams} from "minter-js-sdk";
 
 const postTx = new PostTx({baseURL: 'http://minter-node-1.testnet.minter.network:8841'});
@@ -59,7 +59,7 @@ Create `postTx` instance from `PostTx` constructor
 `postTx` instance accept tx params object and make asynchronous request to the blockchain API
 
 ```js
-import PostTx from "minter-js-sdk";
+import {PostTx} from "minter-js-sdk";
 
 const postTx = new PostTx({baseURL: 'http://minter-node-1.testnet.minter.network:8841'});
 
