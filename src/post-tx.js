@@ -1,5 +1,6 @@
 import axios from 'axios';
 import MinterTx from 'minterjs-tx';
+import MinterTxSignature from 'minterjs-tx/src/tx-signature';
 import {formatCoin} from 'minterjs-tx/src/helpers';
 import ethUtil from 'ethereumjs-util';
 import {Buffer} from 'safe-buffer';
@@ -44,13 +45,14 @@ export default function PostTx(options) {
                         gasCoin: formatCoin(gasCoin),
                         type: txType,
                         data: txData,
+                        signatureType: '0x01',
                     };
                     if (message) {
                         txProps.payload = `0x${Buffer.from(message, 'utf-8').toString('hex')}`;
                     }
 
                     const tx = new MinterTx(txProps);
-                    tx.sign(privateKeyBuffer);
+                    tx.signatureData = (new MinterTxSignature()).sign(tx.hash(false), privateKeyBuffer).serialize();
 
                     minterNode.post('/api/sendTransaction', {
                         transaction: tx.serialize().toString('hex'),

@@ -1,3 +1,7 @@
+## 0.4.0 - 2018-10-15
+- **BREAKING** update `postTx` to support network with MultiSig transactions 
+- update dependencies
+
 ## 0.3.0 - 2018-09-14
 - **BREAKING** rename `SendTx` -> `PostTx`, `SendCoinsTxParams` -> `SendTxParams`, `SellCoinsTxParams` -> `SellTxParams`, `SellAllCoinsTxParams` -> `SellAllTxParams`, `BuyCoinsTxParams` -> `BuyTxParams` 
 

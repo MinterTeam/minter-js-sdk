@@ -19,7 +19,10 @@ It is complemented by the following packages:
 
 ## Install
 
-`npm install minter-js-sdk`
+```bash
+npm install minter-js-sdk
+```
+
 
 
 ## Usage
