@@ -30,10 +30,9 @@ npm install minter-js-sdk
 Post transaction full example
 
 ```js
-import {PostTx} from "minter-js-sdk";
-import {SendTxParams} from "minter-js-sdk";
+import {PostTx, SendTxParams} from "minter-js-sdk";
 
-const postTx = new PostTx({baseURL: 'http://minter-node-1.testnet.minter.network:8841'});
+const postTx = new PostTx();
 const txParams = new SendTxParams({
     privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
@@ -59,12 +58,23 @@ postTx(txParams)
 Create `postTx` instance from `PostTx` constructor
 `PostTx` accept [axios config](https://github.com/axios/axios#config-defaults) as params and return [axios instance](https://github.com/axios/axios#creating-an-instance)
 
-`postTx` instance accept tx params object and make asynchronous request to the blockchain API
+One extra field of options object is `apiType`, which is one of [`'explorer'`](https://github.com/MinterTeam/minter-php-explorer-api) or [`'node'`](https://minter-go-node.readthedocs.io/en/dev/api.html). It is used to determine what type of API to use. 
+```js
+ // by default use explorer's testnet API
+const postTx = new PostTx();
+// specify explorer url
+const postTxExplorer = new PostTx({apiType: 'explorer', baseURL: 'https://testnet.explorer.minter.network'});
+// specify node url
+const postTxNode = new PostTx({apiType: 'node', baseURL: 'http://minter-node-1.testnet.minter.network:8841'});
+```
+
+
+`postTx` instance accept tx params object (see below) and make asynchronous request to the blockchain API
 
 ```js
 import {PostTx} from "minter-js-sdk";
 
-const postTx = new PostTx({baseURL: 'http://minter-node-1.testnet.minter.network:8841'});
+const postTx = new PostTx();
 
 postTx(txParams)
     .then((response) => {
@@ -262,10 +272,10 @@ import {issueCheck} from "minter-js-sdk";
 const check = issueCheck({
     privateKey: '2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
     passPhrase: 'pass',
-    nonce: 1,
+    nonce: 1, // must be unique for private key
     coinSymbol: 'MNT',
     value: 10,
-    dueBlock: 999999,
+    dueBlock: 999999, // at this block number check will be expired
 });
 console.log(check);
 // => 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee'

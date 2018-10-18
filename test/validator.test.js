@@ -1,6 +1,6 @@
 import {Buffer} from 'safe-buffer';
 import {TX_TYPE_DECLARE_CANDIDACY, TX_TYPE_DELEGATE, TX_TYPE_UNBOND, TX_TYPE_SET_CANDIDATE_ON, TX_TYPE_SET_CANDIDATE_OFF} from 'minterjs-tx/src/tx-types';
-import {DeclareCandidacyTxParams, DelegateTxParams, UnbondTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams} from '../src/validator';
+import {DeclareCandidacyTxParams, DelegateTxParams, UnbondTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams} from '~/src/validator';
 
 
 describe('DeclareCandidacyTxParams', () => {

@@ -1,3 +1,6 @@
+## 0.4.1 - 2018-10-18
+- Add option `apiType` for `PostTx` to work with explorer API
+
 ## 0.4.0 - 2018-10-15
 - **BREAKING** update `postTx` to support network with MultiSig transactions 
 - update dependencies

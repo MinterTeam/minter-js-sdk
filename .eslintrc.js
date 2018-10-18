@@ -12,10 +12,13 @@ module.exports = {
   },
   // https://github.com/standard/standard/blob/master/docs/RULES-en.md
   extends: 'airbnb-base',
-  // required to lint *.vue files
-  // plugins: [
-  //   'html'
-  // ],
+  settings: {
+    'import/resolver': {
+      alias: [
+        ['~/src', './src']
+      ]
+    }
+  },
   // // add your custom rules here
   rules: {
     'indent': ["error", 4],
