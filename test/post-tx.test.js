@@ -4,7 +4,7 @@ import {PostTx, SendTxParams} from '~/src';
 // address Mx7633980c000139dd3bd24a3f54e06474fa941e16
 
 describe('PostTx', () => {
-    const postTxNode = new PostTx({baseURL: 'https://minter-node-2.testnet.minter.network'});
+    const postTxNode = new PostTx({baseURL: 'https://minter-node-1.testnet.minter.network'});
     const txParamsData = {
         privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
         address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
@@ -23,8 +23,11 @@ describe('PostTx', () => {
 
                 expect(txHash).toHaveLength(42);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
+            })
+            .catch((error) => {
+                console.log(error.response);
             });
-    }, 10000);
+    }, 30000);
 
     test('should fail node', () => {
         expect.assertions(1);
@@ -33,7 +36,7 @@ describe('PostTx', () => {
             .catch((error) => {
                 expect(error.response.data.log.length).toBeGreaterThan(0);
             });
-    }, 10000);
+    }, 30000);
 
 
     const postTxExplorer = new PostTx();
@@ -46,8 +49,11 @@ describe('PostTx', () => {
 
                 expect(txHash).toHaveLength(42);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
+            })
+            .catch((error) => {
+                console.log(error.response);
             });
-    }, 10000);
+    }, 30000);
 
     test('should fail explorer', () => {
         expect.assertions(1);
@@ -56,5 +62,5 @@ describe('PostTx', () => {
             .catch((error) => {
                 expect(error.response.data.log.length).toBeGreaterThan(0);
             });
-    }, 10000);
+    }, 30000);
 });

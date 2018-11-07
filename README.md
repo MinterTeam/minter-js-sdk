@@ -9,7 +9,7 @@ This package aims to provide with an easy-to-use JS helping developers to commun
 
 This package should be an aid to any developer working on JS applications with the Minter blockchain.
 
-The author of this package cannot be held responsible for any loss of money or any malintentioned usage forms of this package. Please use this package with caution.
+Please note that this SDK is under active development and is subject to change.
 
 It is complemented by the following packages:
 - [minterjs-wallet](https://github.com/MinterTeam/minterjs-wallet) to create wallet
