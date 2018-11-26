@@ -2,8 +2,8 @@ import {Buffer} from 'safe-buffer';
 import RedeemCheckTxData from 'minterjs-tx/src/tx-data/redeem-check';
 import {TX_TYPE_REDEEM_CHECK} from 'minterjs-tx/src/tx-types';
 import {toBuffer} from 'minterjs-util';
-import {issueCheck, RedeemCheckTxParams} from '~/src/check';
-import {getProofWithRecovery} from '~/src/check/redeem';
+import {issueCheck, RedeemCheckTxParams} from '~/src';
+import {getProofWithRecovery} from '~/src/tx-params/redeem-check';
 
 describe('issueCheck()', () => {
     const checkParams = {

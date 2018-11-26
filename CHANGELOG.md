@@ -1,3 +1,15 @@
+## 0.5.0 - 2018-11-26
+- Add estimation methods `estimateCoinSell`, `estimateCoinBuy`, `estimateTxCommisssion`
+- **BREAKING** refactor file structure
+- **BREAKING** move `postTx` into one of api methods
+
+Instead of `(new PostTx(apiParams))(txParams).then()` use: 
+```js
+import Minter from 'minter-js-sdk';
+const minterSDK = new Minter(apiParams);
+minterSDK.postTx(txParams).then();
+```
+
 ## 0.4.1 - 2018-10-18
 - Add option `apiType` for `PostTx` to work with explorer API
 

@@ -1,9 +1,10 @@
+import {Buffer} from 'safe-buffer';
+import secp256k1 from 'secp256k1';
+import {sha256, rlphash, privateToAddress} from 'ethereumjs-util';
 import RedeemCheckTxData from 'minterjs-tx/src/tx-data/redeem-check';
 import {TX_TYPE_REDEEM_CHECK} from 'minterjs-tx/src/tx-types';
 import {toBuffer} from 'minterjs-util';
-import {Buffer} from 'safe-buffer';
-import secp256k1 from 'secp256k1';
-import ethUtil from 'ethereumjs-util';
+
 
 /**
  * @constructor
@@ -40,12 +41,12 @@ export default function RedeemCheckTxParams({privateKey, check, password, feeCoi
  * @return {ArrayBuffer}
  */
 export function getProofWithRecovery(privateKey, password) {
-    const addressBuffer = ethUtil.privateToAddress(privateKey);
-    const addressHash = ethUtil.rlphash([
+    const addressBuffer = privateToAddress(privateKey);
+    const addressHash = rlphash([
         addressBuffer,
     ]);
 
-    const passphraseBuffer = ethUtil.sha256(password);
+    const passphraseBuffer = sha256(password);
     const proof = secp256k1.sign(addressHash, passphraseBuffer);
     const proofWithRecovery = new (proof.signature.constructor)(65);
     proofWithRecovery.set(proof.signature, 0);

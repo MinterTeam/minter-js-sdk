@@ -30,9 +30,9 @@ npm install minter-js-sdk
 Post transaction full example
 
 ```js
-import {PostTx, SendTxParams} from "minter-js-sdk";
+import {Minter, SendTxParams} from "minter-js-sdk";
 
-const postTx = new PostTx();
+const minterSDK = new Minter();
 const txParams = new SendTxParams({
     privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
@@ -42,7 +42,7 @@ const txParams = new SendTxParams({
     message: 'custom message',
 });
 
-postTx(txParams)
+minterSDK.postTx(txParams)
     .then((response) => {
         const txHash = response.data.result.hash;
         alert(`Tx created: ${txHash}`);
@@ -55,34 +55,140 @@ postTx(txParams)
 
 ### Initialization
 
-Create `postTx` instance from `PostTx` constructor
-`PostTx` accept [axios config](https://github.com/axios/axios#config-defaults) as params and return [axios instance](https://github.com/axios/axios#creating-an-instance)
+Create `minterSDK` instance from `Minter` constructor
+`Minter` accept [axios config](https://github.com/axios/axios#config-defaults) as params and return [axios instance](https://github.com/axios/axios#creating-an-instance)
 
 One extra field of options object is `apiType`, which is one of [`'explorer'`](https://github.com/MinterTeam/minter-php-explorer-api) or [`'node'`](https://minter-go-node.readthedocs.io/en/dev/api.html). It is used to determine what type of API to use. 
+
 ```js
  // by default use explorer's testnet API
-const postTx = new PostTx();
+const minterSDK = new Minter();
 // specify explorer url
-const postTxExplorer = new PostTx({apiType: 'explorer', baseURL: 'https://testnet.explorer.minter.network'});
+const minterExplorer = new Minter({apiType: 'explorer', baseURL: 'https://testnet.explorer.minter.network'});
 // specify node url
-const postTxNode = new PostTx({apiType: 'node', baseURL: 'http://minter-node-1.testnet.minter.network:8841'});
+const minterNode = new Minter({apiType: 'node', baseURL: 'http://minter-node-1.testnet.minter.network:8841'});
 ```
 
+`minterSDK` instance has the following methods:
+ 
+- [postTx](#.postTx())
+- [getNonce](#.getNonce())
+- [estimateCoinSell](#.estimateCoinSell())
+- [estimateCoinBuy](#.estimateCoinBuy())
+- [estimateTxCommission](#.estimateTxCommission())
+- [issueCheck](#.issueCheck())
 
-`postTx` instance accept tx params object (see below) and make asynchronous request to the blockchain API
+
+#### .postTx()
+
+Post new transcation to the blockchain
+Accept [tx params](#Tx params constructors) object and make asynchronous request to the blockchain API.
+Optional nonce param for new tx, if no nonce given, it will be requested by `getNonce` automatically.
+Returns promise that resolves with sent transaction hash.
 
 ```js
-import {PostTx} from "minter-js-sdk";
-
-const postTx = new PostTx();
-
-postTx(txParams)
-    .then((response) => {
-        // ...
+minterSDK.postTx(txParams, nonce)
+    .then((txHash) => {
+        console.log(txHash);
+        // 'Mt...'
     })
     .catch((error) => {
         // ...
     })
+```
+
+#### .getNonce()
+
+Get nonce for the new transaction from given address.
+Accept address string and make asynchronous request to the blockchain API.
+Returns promise that resolves with nonce for new tx (current address tx count + 1).
+
+```js
+minterSDK.getNonce('Mx...')
+    .then((nonce) => {
+        console.log(nonce);
+        // 123
+    })
+    .catch((error) => {
+        // ...
+    })
+```
+
+#### .estimateCoinSell()
+
+Estimate how much coins you will get for selling some other coins.
+
+```js
+minterSDK.estimateCoinSell({
+    coinToSell: 'MNT',
+    valueToSell: '10',
+    coinToBuy: 'MYCOIN',
+})
+    .then((result) => {
+        console.log(result.will_get, result.commission);
+        // 123, 0.1
+    })
+    .catch((error) => {
+        // ...
+    })
+```
+
+#### .estimateCoinBuy()
+
+Estimate how much coins you will pay for buying some other coins.
+
+```js
+minterSDK.estimateCoinBuy({
+    coinToBuy: 'MYCOIN',
+    valueToBuy: '10',
+    coinToSell: 'MNT',
+})
+    .then((result) => {
+        console.log(result.will_pay, result.commission);
+        // 123, 0.1
+    })
+    .catch((error) => {
+        // ...
+    })
+```
+
+#### .estimateTxCommission()
+
+Estimate transaction fee. Useful for transactions with `gasCoin` different from base coin BIP (or MNT).
+Accept string with raw signed tx.
+Resolves with commission value.
+
+```js
+minterSDK.estimateTxCommission()
+    .then((commission) => {
+        console.log(commission);
+        // 0.1
+    })
+    .catch((error) => {
+        // ...
+    })
+```
+
+#### .issueCheck()
+
+[Minter Checks](https://minter-go-node.readthedocs.io/en/dev/checks.html) are issued offline and do not exist in blockchain before “cashing”.
+
+```js
+// Since issuing checks is offline, you can use it standalone without instantiating SDK
+import {issueCheck} from "minter-js-sdk";
+const check = issueCheck({
+    privateKey: '2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
+    passPhrase: 'pass',
+    nonce: 1, // must be unique for private key
+    coinSymbol: 'MNT',
+    value: 10,
+    dueBlock: 999999, // at this block number check will be expired
+});
+console.log(check);
+// => 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee'
+
+// But this method also available on the SDK instance
+const check = minterSDK.issueCheck({...}); 
 ```
 
 
@@ -102,7 +208,7 @@ const txParams = new SendTxParams({
     message: 'custom message',
 });
 
-postTx(txParams);
+minterSDK.postTx(txParams);
 ```
 
 
@@ -118,7 +224,7 @@ const txParams = new SellTxParams({
     message: 'custom message',
 });
 
-postTx(txParams);
+minterSDK.postTx(txParams);
 ```
 
 
@@ -133,7 +239,7 @@ const txParams = new SellAllTxParams({
     message: 'custom message',
 });
 
-postTx(txParams);
+minterSDK.postTx(txParams);
 ```
 
 
@@ -149,7 +255,7 @@ const txParams = new BuyTxParams({
     message: 'custom message',
 });
 
-postTx(txParams);
+minterSDK.postTx(txParams);
 ```
 
 
@@ -167,7 +273,7 @@ const txParams = new CreateCoinTxParams({
     message: 'custom message',
 });
 
-postTx(txParams);
+minterSDK.postTx(txParams);
 ```
 
 
@@ -185,7 +291,7 @@ const txParams = new DeclareCandidacyTxParams({
     message: 'custom message',
 });
 
-postTx(txParams);
+minterSDK.postTx(txParams);
 ```
 
 
@@ -201,7 +307,7 @@ const txParams = new DelegateTxParams({
     message: 'custom message',
 });
 
-postTx(txParams);
+minterSDK.postTx(txParams);
 ```
 
 
@@ -217,7 +323,7 @@ const txParams = new UnbondTxParams({
     message: 'custom message',
 });
 
-postTx(txParams);
+minterSDK.postTx(txParams);
 ```
 
 
@@ -231,7 +337,7 @@ const txParams = new SetCandidateOnTxParams({
     message: 'custom message',
 });
 
-postTx(txParams);
+minterSDK.postTx(txParams);
 ```
 
 
@@ -245,7 +351,7 @@ const txParams = new SetCandidateOffTxParams({
     message: 'custom message',
 });
 
-postTx(txParams);
+minterSDK.postTx(txParams);
 ```
 
 
@@ -259,27 +365,7 @@ const txParams = new RedeemCheckTxParams({
     feeCoinSymbol: 'MNT',
 });
 
-postTx(txParams);
-```
-
-
-#### Issue Check
-
-[Minter Checks](https://minter-go-node.readthedocs.io/en/dev/checks.html) are issued offline and do not exist in blockchain before “cashing”.
-
-```js
-import {issueCheck} from "minter-js-sdk";
-const check = issueCheck({
-    privateKey: '2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
-    passPhrase: 'pass',
-    nonce: 1, // must be unique for private key
-    coinSymbol: 'MNT',
-    value: 10,
-    dueBlock: 999999, // at this block number check will be expired
-});
-console.log(check);
-// => 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee'
-
+minterSDK.postTx(txParams);
 ```
 
 
