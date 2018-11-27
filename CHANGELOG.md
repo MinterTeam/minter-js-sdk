@@ -1,3 +1,6 @@
+## 0.5.3 - 2018-11-27
+- Fix assertions in estimate methods to return rejected promise instead of throwing errors
+
 ## 0.5.2 - 2018-11-27
 - Fix estimation pip conversion
 
@@ -7,7 +10,7 @@
 ## 0.5.0 - 2018-11-26
 - Add estimation methods `estimateCoinSell`, `estimateCoinBuy`, `estimateTxCommisssion`
 - **BREAKING** refactor file structure
-- **BREAKING** move `postTx` into one of api methods
+- **BREAKING** move `postTx` into one of api methods, change Promise resolve data to simple tx hash
 
 Instead of `(new PostTx(apiParams))(txParams).then()` use: 
 ```js

@@ -3,8 +3,8 @@ import {API_TYPE_EXPLORER, API_TYPE_NODE} from '../variables';
 
 /**
  * @typedef {Object} EstimateBuyResult
- * @property {number|string} will_pay
- * @property {number|string} commission
+ * @property {number|string} will_pay - amount of coinToSell
+ * @property {number|string} commission - amount of coinToSell
  */
 
 /**
@@ -29,13 +29,13 @@ export default function EstimateCoinBuy(apiInstance) {
      */
     return function estimateCoinBuy(params) {
         if (!params.coinToBuy && !params.coin_to_buy) {
-            throw new Error('Coin to buy not specified');
+            return Promise.reject(new Error('Coin to buy not specified'));
         }
         if (!params.valueToBuy && !params.value_to_buy) {
-            throw new Error('Value to buy not specified');
+            return Promise.reject(new Error('Value to buy not specified'));
         }
         if (!params.coinToSell && !params.coin_to_sell) {
-            throw new Error('Coin to sell not specified');
+            return Promise.reject(new Error('Coin to sell not specified'));
         }
 
         const url = apiInstance.defaults.apiType === API_TYPE_EXPLORER

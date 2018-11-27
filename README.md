@@ -43,8 +43,7 @@ const txParams = new SendTxParams({
 });
 
 minterSDK.postTx(txParams)
-    .then((response) => {
-        const txHash = response.data.result.hash;
+    .then((txHash) => {
         alert(`Tx created: ${txHash}`);
     }).catch((error) => {
         const errorMessage = error.response.data.log;

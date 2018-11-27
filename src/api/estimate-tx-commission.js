@@ -17,7 +17,7 @@ export default function EstimateTxCommission(apiInstance) {
      */
     return function estimateCoinBuy(params) {
         if (!params.tx && !params.transaction) {
-            throw new Error('Transaction not specified');
+            return Promise.reject(new Error('Transaction not specified'));
         }
 
         const url = apiInstance.defaults.apiType === API_TYPE_EXPLORER
