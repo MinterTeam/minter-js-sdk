@@ -63,10 +63,8 @@ export default function EstimateCoinSell(apiInstance) {
         return apiInstance.get(url, {params})
             .then((response) => {
                 // receive pips from node and convert them
-                if (apiInstance.defaults.apiType === API_TYPE_NODE) {
-                    response.data.result.will_get = convertFromPip(response.data.result.will_get);
-                    response.data.result.commission = convertFromPip(response.data.result.commission);
-                }
+                response.data.result.will_get = convertFromPip(response.data.result.will_get);
+                response.data.result.commission = convertFromPip(response.data.result.commission);
                 return response.data.result;
             });
     };

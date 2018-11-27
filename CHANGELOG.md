@@ -1,3 +1,6 @@
+## 0.5.2 - 2018-11-27
+- Fix estimation pip conversion
+
 ## 0.5.1 - 2018-11-27
 - Fix import paths
 
