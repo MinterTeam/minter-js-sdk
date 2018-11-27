@@ -1,4 +1,4 @@
-import {API_TYPE_EXPLORER} from '~/src/variables';
+import {API_TYPE_EXPLORER} from '../variables';
 
 
 /**

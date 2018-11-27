@@ -1,5 +1,5 @@
-import {API_TYPE_EXPLORER, API_TYPE_NODE} from '~/src/variables';
 import axios from 'axios';
+import {API_TYPE_EXPLORER, API_TYPE_NODE} from '../variables';
 
 /**
  * @typedef {AxiosInstance} MinterApiInstance

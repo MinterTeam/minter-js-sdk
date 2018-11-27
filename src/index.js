@@ -12,10 +12,10 @@ import SellTxParams from './tx-params/convert-sell';
 import SellAllTxParams from './tx-params/convert-sell-all';
 import BuyTxParams from './tx-params/convert-buy';
 import DeclareCandidacyTxParams from './tx-params/candidacy-declare';
-import DelegateTxParams from '~/src/tx-params/stake-delegate';
-import UnbondTxParams from '~/src/tx-params/stake-unbond';
-import SetCandidateOnTxParams from '~/src/tx-params/candidate-set-on';
-import SetCandidateOffTxParams from '~/src/tx-params/candidate-set-off';
+import DelegateTxParams from './tx-params/stake-delegate';
+import UnbondTxParams from './tx-params/stake-unbond';
+import SetCandidateOnTxParams from './tx-params/candidate-set-on';
+import SetCandidateOffTxParams from './tx-params/candidate-set-off';
 
 export default Minter;
 export {

@@ -1,3 +1,6 @@
+## 0.5.1 - 2018-11-27
+- Fix import paths
+
 ## 0.5.0 - 2018-11-26
 - Add estimation methods `estimateCoinSell`, `estimateCoinBuy`, `estimateTxCommisssion`
 - **BREAKING** refactor file structure

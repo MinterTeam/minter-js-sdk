@@ -1,10 +1,10 @@
 import {Buffer} from 'safe-buffer';
 import ethUtil from 'ethereumjs-util';
-import GetNonce from '~/src/api/get-nonce';
 import {formatCoin} from 'minterjs-tx/src/helpers';
 import MinterTx from 'minterjs-tx';
 import MinterTxSignature from 'minterjs-tx/src/tx-signature';
-import {API_TYPE_EXPLORER} from '~/src/variables';
+import GetNonce from './get-nonce';
+import {API_TYPE_EXPLORER} from '../variables';
 
 /**
  * @typedef {Object} TxParams
