@@ -1,3 +1,7 @@
+## 0.5.4 - 2018-11-30
+- Add `CreateMultisigTxParams`
+- Update deps
+
 ## 0.5.3 - 2018-11-27
 - Fix assertions in estimate methods to return rejected promise instead of throwing errors
 

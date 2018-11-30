@@ -2,7 +2,7 @@ import ethUtil from 'ethereumjs-util';
 import secp256k1 from 'secp256k1';
 import {Buffer} from 'safe-buffer';
 import {formatCoin} from 'minterjs-tx/src/helpers';
-import converter from 'minterjs-tx/src/converter';
+import {convertToPip} from 'minterjs-util/src/converter';
 
 class Check {
     constructor(data) {
@@ -103,7 +103,7 @@ export default function issueCheck({privateKey, passPhrase, nonce, coinSymbol, v
     const check = new Check({
         nonce: `0x${nonce.toString(16)}`,
         coin: formatCoin(coinSymbol),
-        value: `0x${converter.convert(value, 'pip').toString(16)}`,
+        value: `0x${convertToPip(value, 'hex')}`,
         dueBlock: `0x${Number(dueBlock).toString(16)}`,
     });
     check.sign(privateKey, passPhrase);

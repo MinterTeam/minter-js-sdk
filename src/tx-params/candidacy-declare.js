@@ -1,7 +1,7 @@
 import {padToEven} from 'ethjs-util';
 import MinterDeclareCandidacyTxData from 'minterjs-tx/src/tx-data/declare-candidacy';
 import {TX_TYPE_DECLARE_CANDIDACY} from 'minterjs-tx/src/tx-types';
-import converter from 'minterjs-tx/src/converter';
+import {convertToPip} from 'minterjs-util/src/converter';
 import {formatCoin} from 'minterjs-tx/src/helpers';
 import {toBuffer} from 'minterjs-util';
 
@@ -23,7 +23,7 @@ export default function DeclareCandidacyTxParams({privateKey, address, publicKey
         pubKey: toBuffer(publicKey),
         commission: `0x${padToEven(Number(commission).toString(16))}`,
         coin: formatCoin(coinSymbol),
-        stake: `0x${converter.convert(stake, 'pip').toString(16)}`,
+        stake: `0x${convertToPip(stake, 'hex')}`,
     });
 
     if (!feeCoinSymbol) {
