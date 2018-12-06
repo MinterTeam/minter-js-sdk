@@ -31,7 +31,16 @@ export default function MinterApi(options = {}) {
         // normalize explorer answer to minter-node format
         options.transformResponse.push((data) => {
             if (typeof data === 'string') {
-                data = JSON.parse(data);
+                try {
+                    data = JSON.parse(data);
+                } catch (e) {
+                    console.log(e);
+                    data = {
+                        error: {
+                            log: 'Invalid response',
+                        },
+                    };
+                }
             }
             // transform `then`
             if (data.data) {

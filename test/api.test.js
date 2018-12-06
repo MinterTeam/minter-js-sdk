@@ -1,11 +1,13 @@
 import {Minter, SendTxParams} from '~/src';
+import {API_TYPE_EXPLORER, API_TYPE_NODE} from '~/src/variables';
 
-// private 5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da
-// address Mx7633980c000139dd3bd24a3f54e06474fa941e16
+// mnemonic: exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone
+// private: 5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da
+// address: Mx7633980c000139dd3bd24a3f54e06474fa941e16
 
 
-const minterNode = new Minter({baseURL: 'https://minter-node-1.testnet.minter.network'});
-const minterExplorer = new Minter();
+const minterNode = new Minter({apiType: API_TYPE_NODE, baseURL: 'https://minter-node-1.testnet.minter.network'});
+const minterExplorer = new Minter({apiType: API_TYPE_EXPLORER, baseURL: 'https://testnet.explorer.minter.network'});
 
 describe('PostTx', () => {
     const txParamsData = {
@@ -18,12 +20,14 @@ describe('PostTx', () => {
     };
 
     test('should work explorer', () => {
-        expect.assertions(2);
+        expect.assertions(1);
         const txParams = new SendTxParams(txParamsData);
         return minterExplorer.postTx(txParams)
             .then((txHash) => {
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
+                console.log(txHash);
+                txHash = txHash.replace(/^Mt/);
+                expect(txHash).toHaveLength(64);
+                // expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
                 console.log(error);
@@ -38,15 +42,17 @@ describe('PostTx', () => {
             .catch((error) => {
                 expect(error.response.data.log.length).toBeGreaterThan(0);
             });
-    }, 30000);
+    }, 70000);
 
     test('should work node', () => {
-        expect.assertions(2);
+        expect.assertions(1);
         const txParams = new SendTxParams(txParamsData);
         return minterNode.postTx(txParams)
             .then((txHash) => {
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
+                console.log(txHash);
+                txHash = txHash.replace(/^Mt/);
+                expect(txHash).toHaveLength(64);
+                // expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
                 console.log(error);

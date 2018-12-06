@@ -1,3 +1,7 @@
+## 0.5.5 - 2018-12-06
+- Use `Mx` prefixed address for `getCount` methods
+- Handle invalid response, when HTML got instead of JSON
+
 ## 0.5.4 - 2018-11-30
 - Add `CreateMultisigTxParams`
 - Update deps

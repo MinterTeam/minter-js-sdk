@@ -1,5 +1,5 @@
 import {Buffer} from 'safe-buffer';
-import ethUtil from 'ethereumjs-util';
+import {privateToAddressString} from 'minterjs-util/src/prefix';
 import {formatCoin} from 'minterjs-tx/src/helpers';
 import MinterTx from 'minterjs-tx';
 import MinterTxSignature from 'minterjs-tx/src/tx-signature';
@@ -35,7 +35,7 @@ export default function PostTx(apiInstance) {
         const {privateKey, gasCoin = 'BIP', txType, txData, message} = txParams;
         // @TODO asserts
         const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
-        const address = ethUtil.privateToAddress(privateKeyBuffer).toString('hex');
+        const address = privateToAddressString(privateKeyBuffer);
         const noncePromise = nonce ? Promise.resolve(nonce) : (new GetNonce(apiInstance))(address);
         return new Promise((resolve, reject) => {
             noncePromise
