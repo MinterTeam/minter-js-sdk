@@ -22,12 +22,12 @@ export default function EstimateTxCommission(apiInstance) {
 
         const url = apiInstance.defaults.apiType === API_TYPE_EXPLORER
             ? '/api/v1/estimate/tx-commission'
-            : '/api/estimateTxCommission';
+            : '/estimate_tx_commission';
 
         params = apiInstance.defaults.apiType === API_TYPE_EXPLORER ? {
             transaction: params.transaction || params.tx,
         } : {
-            tx: params.transaction || params.tx,
+            tx: `0x${params.transaction || params.tx}`,
         };
 
         return apiInstance.get(url, {params})

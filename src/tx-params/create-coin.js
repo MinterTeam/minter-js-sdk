@@ -9,9 +9,9 @@ import {TX_TYPE_CREATE_COIN} from 'minterjs-tx/src/tx-types';
  * @param {string} privateKey
  * @param {string} coinName
  * @param {string} coinSymbol
- * @param {number} initialAmount
- * @param {number} initialReserve
- * @param {number} crr
+ * @param {number|string} initialAmount
+ * @param {number|string} initialReserve
+ * @param {number|string} crr
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
  * @return {TxParams}

@@ -8,7 +8,7 @@ import {toBuffer} from 'minterjs-util';
  * @constructor
  * @param {string} privateKey
  * @param {string} address
- * @param {number} amount
+ * @param {number|string} amount
  * @param {string} coinSymbol
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]

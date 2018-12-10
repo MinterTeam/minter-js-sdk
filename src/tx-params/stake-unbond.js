@@ -9,7 +9,7 @@ import {TX_TYPE_UNBOND} from 'minterjs-tx/src/tx-types';
  * @param {string} privateKey
  * @param {string} publicKey
  * @param {string} coinSymbol
- * @param {number} stake
+ * @param {number|string} stake
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
  * @return {TxParams}

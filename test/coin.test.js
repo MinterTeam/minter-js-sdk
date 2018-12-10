@@ -98,7 +98,7 @@ describe('SellTxParams', () => {
         gasCoin: 'ASD',
         message: 'custom message',
         txType: TX_TYPE_SELL_COIN,
-        txData: Buffer.from([223, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 136, 138, 199, 35, 4, 137, 232, 0, 0, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0]),
+        txData: Buffer.from([224, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 136, 138, 199, 35, 4, 137, 232, 0, 0, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 128]),
     };
 
     test('fields', () => {
@@ -106,6 +106,19 @@ describe('SellTxParams', () => {
 
         expect(txParams)
             .toEqual(validTxParams);
+    });
+
+    test('minBuyAmount', () => {
+        const txParams = new SellTxParams({
+            ...txParamsData,
+            minBuyAmount: 5,
+        });
+
+        expect(txParams)
+            .toEqual({
+                ...validTxParams,
+                txData: Buffer.from([232, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 136, 138, 199, 35, 4, 137, 232, 0, 0, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 136, 69, 99, 145, 130, 68, 244, 0, 0]),
+            });
     });
 
     test('default gasCoin', () => {
@@ -136,7 +149,7 @@ describe('SellAllTxParams', () => {
         gasCoin: 'ASD',
         message: 'custom message',
         txType: TX_TYPE_SELL_ALL_COIN,
-        txData: Buffer.from([214, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0]),
+        txData: Buffer.from([215, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 128]),
     };
 
     test('fields', () => {
@@ -144,6 +157,19 @@ describe('SellAllTxParams', () => {
 
         expect(txParams)
             .toEqual(validTxParams);
+    });
+
+    test('minBuyAmount', () => {
+        const txParams = new SellAllTxParams({
+            ...txParamsData,
+            minBuyAmount: 5,
+        });
+
+        expect(txParams)
+            .toEqual({
+                ...validTxParams,
+                txData: Buffer.from([223, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 136, 69, 99, 145, 130, 68, 244, 0, 0]),
+            });
     });
 
     test('default gasCoin', () => {
@@ -167,6 +193,7 @@ describe('BuyTxParams', () => {
         coinFrom: 'MNT',
         coinTo: 'BELTCOIN',
         buyAmount: 10,
+        maxSellAmount: 0,
         feeCoinSymbol: 'ASD',
         message: 'custom message',
     };
@@ -175,7 +202,7 @@ describe('BuyTxParams', () => {
         gasCoin: 'ASD',
         message: 'custom message',
         txType: TX_TYPE_BUY_COIN,
-        txData: Buffer.from([223, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 136, 138, 199, 35, 4, 137, 232, 0, 0, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0]),
+        txData: Buffer.from([224, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 136, 138, 199, 35, 4, 137, 232, 0, 0, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 128]),
     };
 
     test('fields', () => {
@@ -183,6 +210,32 @@ describe('BuyTxParams', () => {
 
         expect(txParams)
             .toEqual(validTxParams);
+    });
+
+    test('maxSellAmount', () => {
+        const txParams = new BuyTxParams({
+            ...txParamsData,
+            maxSellAmount: 5,
+        });
+
+        expect(txParams)
+            .toEqual({
+                ...validTxParams,
+                txData: Buffer.from([232, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 136, 138, 199, 35, 4, 137, 232, 0, 0, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 136, 69, 99, 145, 130, 68, 244, 0, 0]),
+            });
+    });
+
+    test('default maxSellAmount', () => {
+        const txParams = new BuyTxParams({
+            ...txParamsData,
+            maxSellAmount: undefined,
+        });
+
+        expect(txParams)
+            .toEqual({
+                ...validTxParams,
+                txData: Buffer.from([239, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 136, 138, 199, 35, 4, 137, 232, 0, 0, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 143, 1, 188, 22, 214, 116, 236, 127, 242, 31, 73, 76, 88, 156, 0, 0]),
+            });
     });
 
     test('default gasCoin', () => {

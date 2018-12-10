@@ -8,16 +8,18 @@ import {TX_TYPE_SELL_COIN} from 'minterjs-tx/src/tx-types';
  * @param {string} privateKey
  * @param {string} coinFrom
  * @param {string} coinTo
- * @param {number} sellAmount
+ * @param {number|string} sellAmount
+ * @param {number|string} [minBuyAmount=0]
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
  * @return {TxParams}
  */
-export default function SellTxParams({privateKey, coinFrom, coinTo, sellAmount, feeCoinSymbol, message}) {
+export default function SellTxParams({privateKey, coinFrom, coinTo, sellAmount, minBuyAmount = 0, feeCoinSymbol, message}) {
     const txData = new MinterSellTxData({
         coinToSell: formatCoin(coinFrom),
         coinToBuy: formatCoin(coinTo),
         valueToSell: `0x${convertToPip(sellAmount, 'hex')}`,
+        minimumValueToBuy: `0x${convertToPip(minBuyAmount, 'hex')}`,
     });
 
     if (!feeCoinSymbol) {

@@ -15,9 +15,12 @@ export default function GetNonce(apiInstance) {
     return function getNonce(address) {
         const nonceUrl = apiInstance.defaults.apiType === API_TYPE_EXPLORER
             ? `/api/v1/transaction/get-count/${address}`
-            : `/api/transactionCount/${address}`;
+            : `/address?address=${address}`;
 
         return apiInstance.get(nonceUrl)
-            .then((response) => Number(response.data.result.count) + 1);
+            .then((response) => {
+                const nonce = apiInstance.defaults.apiType === API_TYPE_EXPLORER ? response.data.result.count : response.data.result.transaction_count;
+                return Number(nonce) + 1;
+            });
     };
 }

@@ -8,7 +8,7 @@ import {TX_TYPE_CREATE_MULTISIG} from 'minterjs-tx/src/tx-types';
  * @param {string} privateKey
  * @param {Array} addresses
  * @param {Array} weights
- * @param {number} threshold
+ * @param {number|string} threshold
  * @param {string} [feeCoinSymbol]
  * @param {string} [message]
  * @return {TxParams}

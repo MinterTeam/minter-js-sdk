@@ -1,6 +1,6 @@
 {
   "name": "minter-js-sdk",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "description": "JS SDK for Minter Blockchain",
   "main": "src/index.js",
   "files": [
@@ -36,7 +36,7 @@
     "axios": "^0.18.0",
     "ethereumjs-util": "^6.0.0",
     "ethjs-util": "^0.1.6",
-    "minterjs-tx": "^3.1.0",
+    "minterjs-tx": "^4.0.0",
     "minterjs-util": "0.2.3",
     "minterjs-wallet": "^2.2.1",
     "safe-buffer": "^5.1.2",

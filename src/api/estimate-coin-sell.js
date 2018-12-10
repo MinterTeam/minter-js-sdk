@@ -40,25 +40,17 @@ export default function EstimateCoinSell(apiInstance) {
 
         const url = apiInstance.defaults.apiType === API_TYPE_EXPLORER
             ? '/api/v1/estimate/coin-sell'
-            : '/api/estimateCoinSell';
+            : '/estimate_coin_sell';
 
         params = apiInstance.defaults.apiType === API_TYPE_EXPLORER ? {
             coinToSell: params.coinToSell || params.coin_to_sell,
-            valueToSell: params.valueToSell || params.value_to_sell,
+            valueToSell: convertToPip(params.valueToSell || params.value_to_sell),
             coinToBuy: params.coinToBuy || params.coin_to_buy,
         } : {
-            coin_to_sell: params.coinToSell || params.coin_to_sell,
-            value_to_sell: params.valueToSell || params.value_to_sell,
-            coin_to_buy: params.coinToBuy || params.coin_to_buy,
+            coin_to_sell: `"${params.coinToSell || params.coin_to_sell}"`,
+            value_to_sell: `"${convertToPip(params.valueToSell || params.value_to_sell)}"`,
+            coin_to_buy: `"${params.coinToBuy || params.coin_to_buy}"`,
         };
-
-        // send pips to the node
-        if (apiInstance.defaults.apiType === API_TYPE_EXPLORER) {
-            params.valueToSell = convertToPip(params.valueToSell);
-        }
-        if (apiInstance.defaults.apiType === API_TYPE_NODE) {
-            params.value_to_sell = convertToPip(params.value_to_sell);
-        }
 
         return apiInstance.get(url, {params})
             .then((response) => {

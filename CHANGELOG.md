@@ -1,3 +1,6 @@
+## 0.6.0 - 2018-12-10
+- update for new node API version
+
 ## 0.5.5 - 2018-12-06
 - Use `Mx` prefixed address for `getCount` methods
 - Handle invalid response, when HTML got instead of JSON

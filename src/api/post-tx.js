@@ -55,10 +55,25 @@ export default function PostTx(apiInstance) {
                     const tx = new MinterTx(txProps);
                     tx.signatureData = (new MinterTxSignature()).sign(tx.hash(false), privateKeyBuffer).serialize();
 
-                    apiInstance.post(apiInstance.defaults.apiType === API_TYPE_EXPLORER ? '/api/v1/transaction/push' : '/api/sendTransaction', {
-                        transaction: tx.serialize().toString('hex'),
-                    })
-                        .then((response) => resolve(response.data.result.hash))
+                    let postTxPromise;
+                    if (apiInstance.defaults.apiType === API_TYPE_EXPLORER) {
+                        postTxPromise = apiInstance.post('/api/v1/transaction/push', {
+                            transaction: tx.serialize().toString('hex'),
+                        });
+                    } else {
+                        postTxPromise = apiInstance.get(`/send_transaction?tx=0x${tx.serialize().toString('hex')}`);
+                    }
+
+                    postTxPromise
+                        .then((response) => {
+                            let txHash = response.data.result.hash.toLowerCase();
+                            if (txHash.indexOf('mt') !== 0) {
+                                txHash = `Mt${txHash}`;
+                            } else {
+                                txHash = txHash.replace(/^mt/, 'Mt');
+                            }
+                            resolve(txHash);
+                        })
                         .catch(reject);
                 })
                 .catch(reject);

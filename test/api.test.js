@@ -6,8 +6,10 @@ import {API_TYPE_EXPLORER, API_TYPE_NODE} from '~/src/variables';
 // address: Mx7633980c000139dd3bd24a3f54e06474fa941e16
 
 
-const minterNode = new Minter({apiType: API_TYPE_NODE, baseURL: 'https://minter-node-1.testnet.minter.network'});
-const minterExplorer = new Minter({apiType: API_TYPE_EXPLORER, baseURL: 'https://testnet.explorer.minter.network'});
+// const minterNode = new Minter({apiType: API_TYPE_NODE, baseURL: 'https://minter-node-1.testnet.minter.network'});
+// const minterExplorer = new Minter({apiType: API_TYPE_EXPLORER, baseURL: 'https://testnet.explorer.minter.network'});
+const minterNode = new Minter({apiType: API_TYPE_NODE, baseURL: 'http://159.89.107.246:8841'});
+const minterExplorer = new Minter({apiType: API_TYPE_EXPLORER, baseURL: 'https://testnet2.explorer.minter.network'});
 
 describe('PostTx', () => {
     const txParamsData = {
@@ -20,14 +22,14 @@ describe('PostTx', () => {
     };
 
     test('should work explorer', () => {
-        expect.assertions(1);
+        expect.assertions(2);
         const txParams = new SendTxParams(txParamsData);
         return minterExplorer.postTx(txParams)
             .then((txHash) => {
-                console.log(txHash);
-                txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(64);
-                // expect(txHash.substr(0, 2)).toEqual('Mt');
+                // console.log(txHash);
+                // txHash = txHash.replace(/^Mt/);
+                expect(txHash).toHaveLength(66);
+                expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
                 console.log(error);
@@ -37,22 +39,28 @@ describe('PostTx', () => {
 
     test('should fail explorer', () => {
         expect.assertions(1);
-        const txParams = new SendTxParams({...txParamsData, coinSymbol: 'ASD'});
+        const txParams = new SendTxParams({...txParamsData, coinSymbol: 'ASD999'});
         return minterExplorer.postTx(txParams)
             .catch((error) => {
+                // console.log(error);
+                // console.log(error.response);
                 expect(error.response.data.log.length).toBeGreaterThan(0);
             });
     }, 70000);
 
-    test('should work node', () => {
-        expect.assertions(1);
+    test('should work node', async () => {
+        // wait for getNonce to work correctly
+        await new Promise((resolve) => {
+            setTimeout(resolve, 5000);
+        });
+        expect.assertions(2);
         const txParams = new SendTxParams(txParamsData);
         return minterNode.postTx(txParams)
             .then((txHash) => {
-                console.log(txHash);
-                txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(64);
-                // expect(txHash.substr(0, 2)).toEqual('Mt');
+                // console.log(txHash);
+                // txHash = txHash.replace(/^Mt/);
+                expect(txHash).toHaveLength(66);
+                expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
                 console.log(error);
@@ -62,9 +70,13 @@ describe('PostTx', () => {
 
     test('should fail node', () => {
         expect.assertions(1);
-        const txParams = new SendTxParams({...txParamsData, coinSymbol: 'ASD'});
+        const txParams = new SendTxParams({...txParamsData, amount: Number.MAX_SAFE_INTEGER, coinSymbol: 'ASD999'});
         return minterNode.postTx(txParams)
+            .then((res) => {
+                console.log({res});
+            })
             .catch((error) => {
+                // console.log(error.response.data);
                 expect(error.response.data.log.length).toBeGreaterThan(0);
             });
     }, 30000);
@@ -77,7 +89,7 @@ describe('EstimateCoinSell', () => {
         return minterExplorer.estimateCoinSell({
             coinToSell: 'MNT',
             valueToSell: 1,
-            coinToBuy: 'GORDEEV',
+            coinToBuy: 'TESTCOIN01',
         })
             .then((estimateResult) => {
                 expect(Number(estimateResult.will_get)).toBeGreaterThan(0);
@@ -107,7 +119,7 @@ describe('EstimateCoinSell', () => {
         return minterNode.estimateCoinSell({
             coinToSell: 'MNT',
             valueToSell: 1,
-            coinToBuy: 'GORDEEV',
+            coinToBuy: 'TESTCOIN01',
         })
             .then((estimateResult) => {
                 expect(Number(estimateResult.will_get)).toBeGreaterThan(0);
@@ -139,7 +151,7 @@ describe('EstimateCoinBuy', () => {
         return minterExplorer.estimateCoinBuy({
             coinToSell: 'MNT',
             valueToBuy: 1,
-            coinToBuy: 'GORDEEV',
+            coinToBuy: 'TESTCOIN01',
         })
             .then((estimateResult) => {
                 expect(Number(estimateResult.will_pay)).toBeGreaterThan(0);
@@ -159,6 +171,7 @@ describe('EstimateCoinBuy', () => {
             coinToBuy: 'MNT',
         })
             .catch((error) => {
+                console.log(error);
                 expect(error.response.data.log.length).toBeGreaterThan(0);
             });
     }, 30000);
@@ -169,7 +182,7 @@ describe('EstimateCoinBuy', () => {
         return minterNode.estimateCoinBuy({
             coinToSell: 'MNT',
             valueToBuy: 1,
-            coinToBuy: 'GORDEEV',
+            coinToBuy: 'TESTCOIN01',
         })
             .then((estimateResult) => {
                 expect(Number(estimateResult.will_pay)).toBeGreaterThan(0);

@@ -10,9 +10,9 @@ import {toBuffer} from 'minterjs-util';
  * @param {string} privateKey
  * @param {string} address
  * @param {string} publicKey
- * @param {number} commission
+ * @param {number|string} commission
  * @param {string} coinSymbol
- * @param {number} stake
+ * @param {number|string} stake
  * @param {string} feeCoinSymbol
  * @param {string} [message]
  * @return {TxParams}

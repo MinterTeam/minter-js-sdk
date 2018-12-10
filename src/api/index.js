@@ -1,4 +1,5 @@
 import axios from 'axios';
+import createError from 'axios/lib/core/createError';
 import {API_TYPE_EXPLORER, API_TYPE_NODE} from '../variables';
 
 /**
@@ -22,27 +23,21 @@ export default function MinterApi(options = {}) {
     if (options.apiType === API_TYPE_EXPLORER && !options.baseURL) {
         options.baseURL = 'https://testnet.explorer.minter.network';
     }
-    // transform response from explorer to node api format
-    if (options.apiType === API_TYPE_EXPLORER) {
-        if (!Array.isArray(options.transformResponse)) {
-            options.transformResponse = options.transformResponse ? [options.transformResponse] : [];
-        }
+    if (options.apiType === API_TYPE_NODE) {
+        options.adapter = nodeAdapter;
+    }
 
-        // normalize explorer answer to minter-node format
+    // ensure `options.transformResponse` is array
+    if (!Array.isArray(options.transformResponse)) {
+        options.transformResponse = options.transformResponse ? [options.transformResponse] : [];
+    }
+
+    // transform response from explorer to minter-node api format
+    if (options.apiType === API_TYPE_EXPLORER) {
         options.transformResponse.push((data) => {
-            if (typeof data === 'string') {
-                try {
-                    data = JSON.parse(data);
-                } catch (e) {
-                    console.log(e);
-                    data = {
-                        error: {
-                            log: 'Invalid response',
-                        },
-                    };
-                }
-            }
+            data = parseData(data);
             // transform `then`
+            // `data: {data: {}}` to `data: {result: {}}`
             if (data.data) {
                 data.result = data.data;
                 delete data.data;
@@ -54,5 +49,67 @@ export default function MinterApi(options = {}) {
             return data;
         });
     }
+
+    // transform new node api to old node api format
+    if (options.apiType === API_TYPE_NODE) {
+        options.transformResponse.push((data) => {
+            data = parseData(data);
+            // transform `result` to `error` if its failed
+            if (data.result && data.result.log) {
+                data.error = data.result;
+                delete data.result;
+            }
+            // ensure, that error.log exists
+            if (data.error && data.error.message) {
+                data.error.log = data.error.message;
+            }
+            // transform `catch`
+            if (data.error) {
+                data = data.error;
+            }
+            return data;
+        });
+    }
+
     return axios.create(options);
+}
+
+
+function nodeAdapter(config) {
+    const adapter = (nodeAdapter !== config.adapter && config.adapter) || axios.defaults.adapter;
+
+    return new Promise((resolve, reject) => {
+        adapter(config)
+            .then((response) => {
+                response.data = parseData(response.data);
+                if (response.data.error || (response.data.result && response.data.result.log)) {
+                    reject(createError(
+                        `Request failed with status code ${response.status}`,
+                        response.config,
+                        null,
+                        response.request,
+                        response,
+                    ));
+                }
+
+                resolve(response);
+            })
+            .catch(reject);
+    });
+}
+
+function parseData(data) {
+    if (typeof data === 'string') {
+        try {
+            data = JSON.parse(data);
+        } catch (e) {
+            console.log(e);
+            data = {
+                error: {
+                    log: 'Invalid response',
+                },
+            };
+        }
+    }
+    return data;
 }
