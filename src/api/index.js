@@ -40,12 +40,8 @@ export default function MinterApi(options = {}) {
             // `data: {data: {}}` to `data: {result: {}}`
             if (data.data) {
                 data.result = data.data;
-                delete data.data;
             }
-            // transform `catch`
-            if (data.error) {
-                data = data.error;
-            }
+
             return data;
         });
     }
@@ -57,16 +53,12 @@ export default function MinterApi(options = {}) {
             // transform `result` to `error` if its failed
             if (data.result && data.result.log) {
                 data.error = data.result;
-                delete data.result;
             }
             // ensure, that error.log exists
             if (data.error && data.error.message) {
                 data.error.log = data.error.message;
             }
-            // transform `catch`
-            if (data.error) {
-                data = data.error;
-            }
+
             return data;
         });
     }

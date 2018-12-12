@@ -1,5 +1,9 @@
+## 0.7.0 - 2018-12-10
+- update for new incompatible node API version [0.8.5](https://github.com/MinterTeam/minter-go-node/blob/master/CHANGELOG.md#085)
+- **BREAKING** remove failed response transformation (data.error => data), now `error` field will exist in failed response
+
 ## 0.6.0 - 2018-12-10
-- update for new node API version
+- update for new incompatible node API version: [0.8.0](https://github.com/MinterTeam/minter-go-node/blob/master/CHANGELOG.md#080) (minter-test-network-27)
 
 ## 0.5.5 - 2018-12-06
 - Use `Mx` prefixed address for `getCount` methods

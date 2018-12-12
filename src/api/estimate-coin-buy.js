@@ -42,14 +42,15 @@ export default function EstimateCoinBuy(apiInstance) {
             ? '/api/v1/estimate/coin-buy'
             : '/estimate_coin_buy';
 
+        // @TODO remove quotes from node values
         params = apiInstance.defaults.apiType === API_TYPE_EXPLORER ? {
             coinToBuy: params.coinToBuy || params.coin_to_buy,
             valueToBuy: convertToPip(params.valueToBuy || params.value_to_buy),
             coinToSell: params.coinToSell || params.coin_to_sell,
         } : {
-            coin_to_buy: `"${params.coinToBuy || params.coin_to_buy}"`,
-            value_to_buy: `"${convertToPip(params.valueToBuy || params.value_to_buy)}"`,
-            coin_to_sell: `"${params.coinToSell || params.coin_to_sell}"`,
+            coin_to_buy: `${params.coinToBuy || params.coin_to_buy}`,
+            value_to_buy: `${convertToPip(params.valueToBuy || params.value_to_buy)}`,
+            coin_to_sell: `${params.coinToSell || params.coin_to_sell}`,
         };
 
         return apiInstance.get(url, {params})
