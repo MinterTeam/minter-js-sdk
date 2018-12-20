@@ -46,7 +46,7 @@ minterSDK.postTx(txParams)
     .then((txHash) => {
         alert(`Tx created: ${txHash}`);
     }).catch((error) => {
-        const errorMessage = error.response.data.log;
+        const errorMessage = error.response.data.error.log;
         alert(errorMessage);
     });
 ```

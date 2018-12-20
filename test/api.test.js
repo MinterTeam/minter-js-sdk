@@ -48,7 +48,7 @@ describe('PostTx: send', () => {
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 70000);
 
@@ -81,7 +81,7 @@ describe('PostTx: send', () => {
             })
             .catch((error) => {
                 // console.log(error.response.data);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
@@ -119,7 +119,7 @@ describe('PostTx: sell', () => {
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 70000);
 
@@ -152,7 +152,7 @@ describe('PostTx: sell', () => {
             })
             .catch((error) => {
                 // console.log(error.response.data);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
@@ -191,7 +191,7 @@ describe('PostTx: buy', () => {
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 70000);
 
@@ -224,377 +224,378 @@ describe('PostTx: buy', () => {
             })
             .catch((error) => {
                 // console.log(error.response.data);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
 
 
-describe('PostTx: declare candidacy', () => {
-    const txParamsData = {
-        privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-        address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
-        publicKey: '',
-        coinSymbol: 'MNT',
-        stake: 1,
-        commission: 50,
-        feeCoinSymbol: 'MNT',
-        message: 'custom message',
-    };
+describe('validator', () => {
+    describe('PostTx: declare candidacy', () => {
+        const txParamsData = {
+            privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+            address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+            publicKey: '',
+            coinSymbol: 'MNT',
+            stake: 1,
+            commission: 50,
+            feeCoinSymbol: 'MNT',
+            message: 'custom message',
+        };
 
-    test('should work explorer', async () => {
-        // wait for getNonce to work correctly
-        await new Promise((resolve) => {
-            setTimeout(resolve, 5000);
-        });
-        expect.assertions(2);
-        const txParams = new DeclareCandidacyTxParams({...txParamsData, publicKey: publicKeyExplorer});
-        return minterExplorer.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+        test('should work explorer', async () => {
+            // wait for getNonce to work correctly
+            await new Promise((resolve) => {
+                setTimeout(resolve, 5000);
             });
-    }, 30000);
+            expect.assertions(2);
+            const txParams = new DeclareCandidacyTxParams({...txParamsData, publicKey: publicKeyExplorer});
+            return minterExplorer.postTx(txParams)
+                .then((txHash) => {
+                    // console.log(txHash);
+                    // txHash = txHash.replace(/^Mt/);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response);
+                });
+        }, 30000);
 
-    test('should fail explorer', () => {
-        expect.assertions(1);
-        const txParams = new DeclareCandidacyTxParams(txParamsData); // empty publicKey specified
-        return minterExplorer.postTx(txParams)
-            .catch((error) => {
-                // console.log(error);
-                // console.log(error.response);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+        test('should fail explorer', () => {
+            expect.assertions(1);
+            const txParams = new DeclareCandidacyTxParams(txParamsData); // empty publicKey specified
+            return minterExplorer.postTx(txParams)
+                .catch((error) => {
+                    // console.log(error);
+                    // console.log(error.response);
+                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                });
+        }, 70000);
+
+        test('should work node', async () => {
+            // wait for getNonce to work correctly
+            await new Promise((resolve) => {
+                setTimeout(resolve, 5000);
             });
-    }, 70000);
+            expect.assertions(2);
+            const txParams = new DeclareCandidacyTxParams({...txParamsData, publicKey: publicKeyNode});
+            return minterNode.postTx(txParams)
+                .then((txHash) => {
+                    // console.log(txHash);
+                    // txHash = txHash.replace(/^Mt/);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response);
+                });
+        }, 30000);
 
-    test('should work node', async () => {
-        // wait for getNonce to work correctly
-        await new Promise((resolve) => {
-            setTimeout(resolve, 5000);
-        });
-        expect.assertions(2);
-        const txParams = new DeclareCandidacyTxParams({...txParamsData, publicKey: publicKeyNode});
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+        test('should fail node', () => {
+            expect.assertions(1);
+            const txParams = new DeclareCandidacyTxParams(txParamsData); // empty publicKey specified
+            return minterNode.postTx(txParams)
+                .then((res) => {
+                    console.log({res});
+                })
+                .catch((error) => {
+                    // console.log(error.response.data);
+                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                });
+        }, 30000);
+    });
+
+
+    describe('PostTx: delegate', () => {
+        const txParamsData = {
+            privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+            publicKey: '',
+            coinSymbol: 'MNT',
+            stake: 10,
+            feeCoinSymbol: 'MNT',
+            message: 'custom message',
+        };
+
+        test('should work explorer', () => {
+            expect.assertions(2);
+            const txParams = new DelegateTxParams({...txParamsData, publicKey: publicKeyExplorer});
+            return minterExplorer.postTx(txParams)
+                .then((txHash) => {
+                    // console.log(txHash);
+                    // txHash = txHash.replace(/^Mt/);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response);
+                });
+        }, 30000);
+
+        test('should fail explorer', () => {
+            expect.assertions(1);
+            const txParams = new DelegateTxParams(txParamsData); // empty publicKey specified
+            return minterExplorer.postTx(txParams)
+                .catch((error) => {
+                    // console.log(error);
+                    // console.log(error.response);
+                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                });
+        }, 70000);
+
+        test('should work node', async () => {
+            // wait for getNonce to work correctly
+            await new Promise((resolve) => {
+                setTimeout(resolve, 5000);
             });
-    }, 30000);
+            expect.assertions(2);
+            const txParams = new DelegateTxParams({...txParamsData, publicKey: publicKeyNode});
+            return minterNode.postTx(txParams)
+                .then((txHash) => {
+                    // console.log(txHash);
+                    // txHash = txHash.replace(/^Mt/);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response);
+                });
+        }, 30000);
 
-    test('should fail node', () => {
-        expect.assertions(1);
-        const txParams = new DeclareCandidacyTxParams(txParamsData); // empty publicKey specified
-        return minterNode.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error.response.data);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+        test('should fail node', () => {
+            expect.assertions(1);
+            const txParams = new DelegateTxParams(txParamsData); // empty publicKey specified
+            return minterNode.postTx(txParams)
+                .then((res) => {
+                    console.log({res});
+                })
+                .catch((error) => {
+                    // console.log(error.response.data);
+                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                });
+        }, 30000);
+    });
+
+
+    describe('PostTx: unbond', () => {
+        const txParamsData = {
+            privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+            publicKey: '',
+            coinSymbol: 'MNT',
+            stake: 10,
+            feeCoinSymbol: 'MNT',
+            message: 'custom message',
+        };
+
+
+        test('should work explorer', () => {
+            console.log('unbond from:', publicKeyExplorer);
+            expect.assertions(2);
+            const txParams = new UnbondTxParams({...txParamsData, publicKey: publicKeyExplorer});
+            return minterExplorer.postTx(txParams)
+                .then((txHash) => {
+                    // console.log(txHash);
+                    // txHash = txHash.replace(/^Mt/);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response);
+                });
+        }, 30000);
+
+        test('should fail explorer', () => {
+            expect.assertions(1);
+            const txParams = new UnbondTxParams(txParamsData); // empty publicKey specified
+            return minterExplorer.postTx(txParams)
+                .catch((error) => {
+                    // console.log(error);
+                    // console.log(error.response);
+                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                });
+        }, 70000);
+
+        test('should work node', async () => {
+            // wait for getNonce to work correctly
+            await new Promise((resolve) => {
+                setTimeout(resolve, 5000);
             });
-    }, 30000);
-});
+            expect.assertions(2);
+            const txParams = new UnbondTxParams({...txParamsData, publicKey: publicKeyNode});
+            return minterNode.postTx(txParams)
+                .then((txHash) => {
+                    // console.log(txHash);
+                    // txHash = txHash.replace(/^Mt/);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response);
+                });
+        }, 30000);
+
+        test('should fail node', () => {
+            expect.assertions(1);
+            const txParams = new UnbondTxParams(txParamsData); // empty publicKey specified
+            return minterNode.postTx(txParams)
+                .then((res) => {
+                    console.log({res});
+                })
+                .catch((error) => {
+                    // console.log(error.response.data);
+                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                });
+        }, 30000);
+    });
 
 
-describe('PostTx: delegate', () => {
-    const txParamsData = {
-        privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-        publicKey: '',
-        coinSymbol: 'MNT',
-        stake: 10,
-        feeCoinSymbol: 'MNT',
-        message: 'custom message',
-    };
+    describe('PostTx: set candidate on', () => {
+        const txParamsData = {
+            privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+            publicKey: '',
+            feeCoinSymbol: 'MNT',
+            message: 'custom message',
+        };
 
-    test('should work explorer', () => {
-        console.log('delegate to:', publicKeyExplorer);
-        expect.assertions(2);
-        const txParams = new DelegateTxParams({...txParamsData, publicKey: 'Mp476119cb9498e41d27364a3af0503e7db4f931e59aa712eaef9fbd00d4fba8d0'});
-        return minterExplorer.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+        test('should work explorer', () => {
+            expect.assertions(2);
+            const txParams = new SetCandidateOnTxParams({...txParamsData, publicKey: publicKeyExplorer});
+            return minterExplorer.postTx(txParams)
+                .then((txHash) => {
+                    // console.log(txHash);
+                    // txHash = txHash.replace(/^Mt/);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response);
+                });
+        }, 30000);
+
+        test('should fail explorer', () => {
+            expect.assertions(1);
+            const txParams = new SetCandidateOnTxParams(txParamsData); // empty publicKey specified
+            return minterExplorer.postTx(txParams)
+                .catch((error) => {
+                    // console.log(error);
+                    // console.log(error.response);
+                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                });
+        }, 70000);
+
+        test('should work node', async () => {
+            // wait for getNonce to work correctly
+            await new Promise((resolve) => {
+                setTimeout(resolve, 5000);
             });
-    }, 30000);
+            expect.assertions(2);
+            const txParams = new SetCandidateOnTxParams({...txParamsData, publicKey: publicKeyNode});
+            return minterNode.postTx(txParams)
+                .then((txHash) => {
+                    // console.log(txHash);
+                    // txHash = txHash.replace(/^Mt/);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response);
+                });
+        }, 30000);
 
-    test('should fail explorer', () => {
-        expect.assertions(1);
-        const txParams = new DelegateTxParams(txParamsData); // empty publicKey specified
-        return minterExplorer.postTx(txParams)
-            .catch((error) => {
-                // console.log(error);
-                // console.log(error.response);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+        test('should fail node', () => {
+            expect.assertions(1);
+            const txParams = new SetCandidateOnTxParams(txParamsData); // empty publicKey specified
+            return minterNode.postTx(txParams)
+                .then((res) => {
+                    console.log({res});
+                })
+                .catch((error) => {
+                    // console.log(error.response.data);
+                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                });
+        }, 30000);
+    });
+
+
+    describe('PostTx: set candidate off', () => {
+        const txParamsData = {
+            privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+            publicKey: '',
+            feeCoinSymbol: 'MNT',
+            message: 'custom message',
+        };
+
+        test('should work explorer', () => {
+            expect.assertions(2);
+            const txParams = new SetCandidateOffTxParams({...txParamsData, publicKey: publicKeyExplorer});
+            return minterExplorer.postTx(txParams)
+                .then((txHash) => {
+                    // console.log(txHash);
+                    // txHash = txHash.replace(/^Mt/);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response);
+                });
+        }, 30000);
+
+        test('should fail explorer', () => {
+            expect.assertions(1);
+            const txParams = new SetCandidateOffTxParams(txParamsData); // empty publicKey specified
+            return minterExplorer.postTx(txParams)
+                .then((res) => {
+                    console.log({res});
+                })
+                .catch((error) => {
+                    // console.log(error);
+                    // console.log(error.response);
+                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                });
+        }, 70000);
+
+        test('should work node', async () => {
+            // wait for getNonce to work correctly
+            await new Promise((resolve) => {
+                setTimeout(resolve, 5000);
             });
-    }, 70000);
+            expect.assertions(2);
+            const txParams = new SetCandidateOffTxParams({...txParamsData, publicKey: publicKeyNode});
+            return minterNode.postTx(txParams)
+                .then((txHash) => {
+                    // console.log(txHash);
+                    // txHash = txHash.replace(/^Mt/);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response);
+                });
+        }, 30000);
 
-    test('should work node', async () => {
-        // wait for getNonce to work correctly
-        await new Promise((resolve) => {
-            setTimeout(resolve, 5000);
-        });
-        expect.assertions(2);
-        const txParams = new DelegateTxParams({...txParamsData, publicKey: publicKeyNode});
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        const txParams = new DelegateTxParams(txParamsData); // empty publicKey specified
-        return minterNode.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error.response.data);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
-            });
-    }, 30000);
-});
-
-
-describe('PostTx: unbond', () => {
-    const txParamsData = {
-        privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-        publicKey: '',
-        coinSymbol: 'MNT',
-        stake: 10,
-        feeCoinSymbol: 'MNT',
-        message: 'custom message',
-    };
-
-
-    test('should work explorer', () => {
-        console.log('unbond from:', publicKeyExplorer);
-        expect.assertions(2);
-        const txParams = new UnbondTxParams({...txParamsData, publicKey: 'Mp92bab0c28d2523591f0a5c2534d144f3ac1e7b571d813e0a3dda92eb7694f276'});
-        return minterExplorer.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail explorer', () => {
-        expect.assertions(1);
-        const txParams = new UnbondTxParams(txParamsData); // empty publicKey specified
-        return minterExplorer.postTx(txParams)
-            .catch((error) => {
-                // console.log(error);
-                // console.log(error.response);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
-            });
-    }, 70000);
-
-    test('should work node', async () => {
-        // wait for getNonce to work correctly
-        await new Promise((resolve) => {
-            setTimeout(resolve, 5000);
-        });
-        expect.assertions(2);
-        const txParams = new UnbondTxParams({...txParamsData, publicKey: publicKeyNode});
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        const txParams = new UnbondTxParams(txParamsData); // empty publicKey specified
-        return minterNode.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error.response.data);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
-            });
-    }, 30000);
-});
-
-
-describe('PostTx: set candidate on', () => {
-    const txParamsData = {
-        privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-        publicKey: '',
-        feeCoinSymbol: 'MNT',
-        message: 'custom message',
-    };
-
-    test('should work explorer', () => {
-        expect.assertions(2);
-        const txParams = new SetCandidateOnTxParams({...txParamsData, publicKey: publicKeyExplorer});
-        return minterExplorer.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail explorer', () => {
-        expect.assertions(1);
-        const txParams = new SetCandidateOnTxParams(txParamsData); // empty publicKey specified
-        return minterExplorer.postTx(txParams)
-            .catch((error) => {
-                // console.log(error);
-                // console.log(error.response);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
-            });
-    }, 70000);
-
-    test('should work node', async () => {
-        // wait for getNonce to work correctly
-        await new Promise((resolve) => {
-            setTimeout(resolve, 5000);
-        });
-        expect.assertions(2);
-        const txParams = new SetCandidateOnTxParams({...txParamsData, publicKey: publicKeyNode});
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        const txParams = new SetCandidateOnTxParams(txParamsData); // empty publicKey specified
-        return minterNode.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error.response.data);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
-            });
-    }, 30000);
-});
-
-
-describe('PostTx: set candidate off', () => {
-    const txParamsData = {
-        privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-        publicKey: '',
-        feeCoinSymbol: 'MNT',
-        message: 'custom message',
-    };
-
-    test('should work explorer', () => {
-        expect.assertions(2);
-        const txParams = new SetCandidateOffTxParams({...txParamsData, publicKey: publicKeyExplorer});
-        return minterExplorer.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail explorer', () => {
-        expect.assertions(1);
-        const txParams = new SetCandidateOffTxParams(txParamsData); // empty publicKey specified
-        return minterExplorer.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error);
-                // console.log(error.response);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
-            });
-    }, 70000);
-
-    test('should work node', async () => {
-        // wait for getNonce to work correctly
-        await new Promise((resolve) => {
-            setTimeout(resolve, 5000);
-        });
-        expect.assertions(2);
-        const txParams = new SetCandidateOffTxParams({...txParamsData, publicKey: publicKeyNode});
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        const txParams = new SetCandidateOffTxParams(txParamsData); // empty publicKey specified
-        return minterNode.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error.response.data);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
-            });
-    }, 30000);
+        test('should fail node', () => {
+            expect.assertions(1);
+            const txParams = new SetCandidateOffTxParams(txParamsData); // empty publicKey specified
+            return minterNode.postTx(txParams)
+                .then((res) => {
+                    console.log({res});
+                })
+                .catch((error) => {
+                    // console.log(error.response.data);
+                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                });
+        }, 30000);
+    });
 });
 
 
@@ -639,7 +640,7 @@ describe('PostTx: redeem check', () => {
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 70000);
 
@@ -672,7 +673,7 @@ describe('PostTx: redeem check', () => {
             })
             .catch((error) => {
                 // console.log(error.response.data);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
@@ -710,7 +711,7 @@ describe('PostTx: create multisig', () => {
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 70000);
 
@@ -743,7 +744,7 @@ describe('PostTx: create multisig', () => {
             })
             .catch((error) => {
                 // console.log(error.response.data);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
@@ -777,7 +778,7 @@ describe('EstimateCoinSell', () => {
             coinToBuy: 'MNT',
         })
             .catch((error) => {
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 30000);
 
@@ -807,7 +808,7 @@ describe('EstimateCoinSell', () => {
             coinToBuy: 'MNT',
         })
             .catch((error) => {
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
@@ -840,7 +841,7 @@ describe('EstimateCoinBuy', () => {
         })
             .catch((error) => {
                 // console.log(error);
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 30000);
 
@@ -870,7 +871,7 @@ describe('EstimateCoinBuy', () => {
             coinToBuy: 'MNT',
         })
             .catch((error) => {
-                expect(error.response.data.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.log.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
