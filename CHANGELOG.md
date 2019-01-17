@@ -1,3 +1,7 @@
+## 0.8.0 - 2019-01-17
+- Add `EditCandidateTxParams` for API version 0.10.0
+- Expose `API_TYPE_EXPLORER`, `API_TYPE_NODE` variables
+
 ## 0.7.0 - 2018-12-10
 - update for new incompatible node API version [0.8.5](https://github.com/MinterTeam/minter-go-node/blob/master/CHANGELOG.md#085)
 - **BREAKING** remove failed response transformation (data.error => data), now `error` field will exist in failed response

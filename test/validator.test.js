@@ -1,6 +1,6 @@
 import {Buffer} from 'safe-buffer';
-import {TX_TYPE_DECLARE_CANDIDACY, TX_TYPE_DELEGATE, TX_TYPE_UNBOND, TX_TYPE_SET_CANDIDATE_ON, TX_TYPE_SET_CANDIDATE_OFF} from 'minterjs-tx/src/tx-types';
-import {DeclareCandidacyTxParams, DelegateTxParams, SetCandidateOffTxParams, SetCandidateOnTxParams, UnbondTxParams} from '~/src';
+import {TX_TYPE_DECLARE_CANDIDACY, TX_TYPE_EDIT_CANDIDATE, TX_TYPE_DELEGATE, TX_TYPE_UNBOND, TX_TYPE_SET_CANDIDATE_ON, TX_TYPE_SET_CANDIDATE_OFF} from 'minterjs-tx/src/tx-types';
+import {DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, SetCandidateOffTxParams, SetCandidateOnTxParams, UnbondTxParams} from '~/src';
 
 
 describe('DeclareCandidacyTxParams', () => {
@@ -41,6 +41,32 @@ describe('DeclareCandidacyTxParams', () => {
                 ...validTxParams,
                 gasCoin: txParamsData.coinSymbol,
             });
+    });
+});
+
+describe('EditCandidateTxParams', () => {
+    const privateKey = '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da';
+    const txParamsData = {
+        privateKey,
+        publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+        rewardAddress: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+        ownerAddress: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+        feeCoinSymbol: 'ASD',
+        message: 'custom message',
+    };
+    const validTxParams = {
+        privateKey,
+        gasCoin: 'ASD',
+        message: 'custom message',
+        txType: TX_TYPE_EDIT_CANDIDATE,
+        txData: Buffer.from([248, 75, 160, 249, 224, 54, 131, 154, 41, 247, 251, 162, 213, 57, 75, 212, 137, 237, 169, 39, 204, 185, 90, 204, 153, 229, 6, 230, 136, 228, 136, 128, 130, 179, 163, 148, 118, 51, 152, 12, 0, 1, 57, 221, 59, 210, 74, 63, 84, 224, 100, 116, 250, 148, 30, 22, 148, 118, 51, 152, 12, 0, 1, 57, 221, 59, 210, 74, 63, 84, 224, 100, 116, 250, 148, 30, 22]),
+    };
+
+    test('fields', () => {
+        const txParams = new EditCandidateTxParams(txParamsData);
+
+        expect(txParams)
+            .toEqual(validTxParams);
     });
 });
 
@@ -144,19 +170,6 @@ describe('SetCandidateOnTxParams', () => {
         expect(txParams)
             .toEqual(validTxParams);
     });
-
-    test('default gasCoin', () => {
-        const txParams = new SetCandidateOnTxParams({
-            ...txParamsData,
-            feeCoinSymbol: undefined,
-        });
-
-        expect(txParams)
-            .toEqual({
-                ...validTxParams,
-                gasCoin: txParamsData.coinSymbol,
-            });
-    });
 });
 
 describe('SetCandidateOffTxParams', () => {
@@ -180,18 +193,5 @@ describe('SetCandidateOffTxParams', () => {
 
         expect(txParams)
             .toEqual(validTxParams);
-    });
-
-    test('default gasCoin', () => {
-        const txParams = new SetCandidateOffTxParams({
-            ...txParamsData,
-            feeCoinSymbol: undefined,
-        });
-
-        expect(txParams)
-            .toEqual({
-                ...validTxParams,
-                gasCoin: txParamsData.coinSymbol,
-            });
     });
 });
