@@ -1,6 +1,6 @@
 {
   "name": "minter-js-sdk",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "JS SDK for Minter Blockchain",
   "main": "src/index.js",
   "files": [

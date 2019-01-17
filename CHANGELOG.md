@@ -1,3 +1,6 @@
+## 0.8.1 - 2019-01-17
+- Fix variables import
+
 ## 0.8.0 - 2019-01-17
 - Add `EditCandidateTxParams` for API version 0.10.0
 - Expose `API_TYPE_EXPLORER`, `API_TYPE_NODE` variables

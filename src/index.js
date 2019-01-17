@@ -1,5 +1,5 @@
 import {generateWallet, walletFromMnemonic, walletFromPrivateKey} from 'minterjs-wallet';
-import {API_TYPE_NODE, API_TYPE_EXPLORER} from '~/src/variables';
+import {API_TYPE_NODE, API_TYPE_EXPLORER} from './variables';
 import Minter from './minter';
 import MinterApi from './api';
 import PostTx from './api/post-tx';
