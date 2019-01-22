@@ -1,3 +1,6 @@
+## 0.9.0 - 2019-01-22
+- Move `prepareSignedTx` to separate function from postTx
+
 ## 0.8.1 - 2019-01-17
 - Fix variables import
 

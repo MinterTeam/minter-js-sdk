@@ -49,7 +49,7 @@ beforeAll(async () => {
             customCoin: result.coin_symbol,
         };
     }
-}, 30000);
+}, 40000);
 
 // only one tx from given address can exist in mempool
 beforeEach(async () => {

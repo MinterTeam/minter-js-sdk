@@ -23,6 +23,10 @@ export default function MinterApi(options = {}) {
     if (options.apiType === API_TYPE_EXPLORER && !options.baseURL) {
         options.baseURL = 'https://testnet.explorer.minter.network';
     }
+    if (options.apiType === API_TYPE_EXPLORER) {
+        // explorer may response with 200 status and empty data, reject it
+        options.adapter = nodeAdapter;
+    }
     if (options.apiType === API_TYPE_NODE) {
         options.adapter = nodeAdapter;
     }

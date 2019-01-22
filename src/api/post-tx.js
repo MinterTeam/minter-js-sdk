@@ -1,9 +1,7 @@
 import {Buffer} from 'safe-buffer';
 import {privateToAddressString} from 'minterjs-util/src/prefix';
-import {formatCoin} from 'minterjs-tx/src/helpers';
-import MinterTx from 'minterjs-tx';
-import MinterTxSignature from 'minterjs-tx/src/tx-signature';
 import GetNonce from './get-nonce';
+import prepareSignedTx from '../prepare-tx';
 import {API_TYPE_EXPLORER} from '../variables';
 
 /**
@@ -32,7 +30,7 @@ export default function PostTx(apiInstance) {
      * @return {Promise<string>}
      */
     return function postTx(txParams, nonce) {
-        const {privateKey, gasCoin = 'BIP', txType, txData, message} = txParams;
+        const privateKey = txParams.privateKey;
         // @TODO asserts
         const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
         const address = privateToAddressString(privateKeyBuffer);
@@ -40,20 +38,7 @@ export default function PostTx(apiInstance) {
         return new Promise((resolve, reject) => {
             noncePromise
                 .then((newNonce) => {
-                    const txProps = {
-                        nonce: `0x${newNonce.toString(16)}`,
-                        gasPrice: '0x01',
-                        gasCoin: formatCoin(gasCoin),
-                        type: txType,
-                        data: txData,
-                        signatureType: '0x01',
-                    };
-                    if (message) {
-                        txProps.payload = `0x${Buffer.from(message, 'utf-8').toString('hex')}`;
-                    }
-
-                    const tx = new MinterTx(txProps);
-                    tx.signatureData = (new MinterTxSignature()).sign(tx.hash(false), privateKeyBuffer).serialize();
+                    const tx = prepareSignedTx(txParams, newNonce);
 
                     let postTxPromise;
                     if (apiInstance.defaults.apiType === API_TYPE_EXPLORER) {
