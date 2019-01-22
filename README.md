@@ -368,6 +368,19 @@ minterSDK.postTx(txParams);
 ```
 
 
+### Prepare Signed Transaction
+Used under the hood of PostTx
+```js
+import {prepareSignedTx} from 'minter-js-sdk';
+minterSDK.getNonce('Mx...')
+    .then((nonce) => {
+        const tx = prepareSignedTx(txParams, nonce)
+        console.log('signed tx', tx.serialize().toString('hex'))
+    })
+
+```
+
+
 ## License
 
 MIT License

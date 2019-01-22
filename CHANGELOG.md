@@ -1,3 +1,6 @@
+## 0.9.1 - 2019-01-22
+- Expose `prepareSignedTx` in the index.js
+
 ## 0.9.0 - 2019-01-22
 - Move `prepareSignedTx` to separate function from postTx
 

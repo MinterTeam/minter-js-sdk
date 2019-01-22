@@ -6,6 +6,7 @@ import PostTx from './api/post-tx';
 import EstimateCoinSell from './api/estimate-coin-sell';
 import GetNonce from './api/get-nonce';
 import issueCheck from './issue-check';
+import prepareSignedTx from './prepare-tx';
 import RedeemCheckTxParams from './tx-params/redeem-check';
 import SendTxParams from './tx-params/send';
 import SellTxParams from './tx-params/convert-sell';
@@ -29,6 +30,8 @@ export {
     PostTx,
     EstimateCoinSell,
     GetNonce,
+    //
+    prepareSignedTx,
     // check
     issueCheck,
     RedeemCheckTxParams,
