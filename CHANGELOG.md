@@ -1,3 +1,6 @@
+## 0.10.0 - 2019-01-24
+- Move `error.log` payload field into `error.message` to conform node API [v0.10.0](https://github.com/MinterTeam/minter-go-node/releases/tag/v0.10.0)
+
 ## 0.9.1 - 2019-01-22
 - Expose `prepareSignedTx` in the index.js
 
@@ -8,7 +11,7 @@
 - Fix variables import
 
 ## 0.8.0 - 2019-01-17
-- Add `EditCandidateTxParams` for API version 0.10.0
+- Add `EditCandidateTxParams` for API version [0.10.0](https://github.com/MinterTeam/minter-go-node/releases/tag/v0.10.0)
 - Expose `API_TYPE_EXPLORER`, `API_TYPE_NODE` variables
 
 ## 0.7.0 - 2018-12-10

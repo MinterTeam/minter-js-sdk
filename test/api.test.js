@@ -92,7 +92,7 @@ describe('PostTx: send', () => {
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 70000);
 
@@ -125,7 +125,7 @@ describe('PostTx: send', () => {
             })
             .catch((error) => {
                 // console.log(error.response.data);
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
@@ -163,7 +163,7 @@ describe('PostTx: sell', () => {
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 70000);
 
@@ -196,7 +196,7 @@ describe('PostTx: sell', () => {
             })
             .catch((error) => {
                 // console.log(error.response.data);
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
@@ -238,7 +238,7 @@ describe('PostTx: buy', () => {
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 70000);
 
@@ -271,7 +271,7 @@ describe('PostTx: buy', () => {
             })
             .catch((error) => {
                 // console.log(error.response.data);
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
@@ -317,7 +317,7 @@ describe('validator', () => {
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 70000);
 
@@ -350,7 +350,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     // console.log(error.response.data);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 30000);
     });
@@ -393,7 +393,7 @@ describe('validator', () => {
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 70000);
 
@@ -426,7 +426,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     // console.log(error.response.data);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 30000);
     });
@@ -465,7 +465,7 @@ describe('validator', () => {
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 70000);
 
@@ -498,7 +498,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     // console.log(error.response.data);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 30000);
     });
@@ -539,7 +539,7 @@ describe('validator', () => {
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 70000);
 
@@ -572,7 +572,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     // console.log(error.response.data);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 30000);
     });
@@ -609,7 +609,7 @@ describe('validator', () => {
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 70000);
 
@@ -642,7 +642,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     // console.log(error.response.data);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 30000);
     });
@@ -682,7 +682,7 @@ describe('validator', () => {
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 70000);
 
@@ -715,7 +715,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     // console.log(error.response.data);
-                    expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 30000);
     });
@@ -763,7 +763,7 @@ describe('PostTx: redeem check', () => {
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 70000);
 
@@ -796,7 +796,7 @@ describe('PostTx: redeem check', () => {
             })
             .catch((error) => {
                 // console.log(error.response.data);
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
@@ -834,7 +834,7 @@ describe('PostTx: create multisig', () => {
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 70000);
 
@@ -867,7 +867,7 @@ describe('PostTx: create multisig', () => {
             })
             .catch((error) => {
                 // console.log(error.response.data);
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
@@ -901,7 +901,7 @@ describe('EstimateCoinSell', () => {
             coinToBuy: 'MNT',
         })
             .catch((error) => {
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 30000);
 
@@ -931,7 +931,7 @@ describe('EstimateCoinSell', () => {
             coinToBuy: 'MNT',
         })
             .catch((error) => {
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 30000);
 });
@@ -964,7 +964,7 @@ describe('EstimateCoinBuy', () => {
         })
             .catch((error) => {
                 // console.log(error);
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 30000);
 
@@ -994,7 +994,7 @@ describe('EstimateCoinBuy', () => {
             coinToBuy: 'MNT',
         })
             .catch((error) => {
-                expect(error.response.data.error.log.length).toBeGreaterThan(0);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 30000);
 });

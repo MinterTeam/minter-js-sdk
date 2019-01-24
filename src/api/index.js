@@ -23,13 +23,9 @@ export default function MinterApi(options = {}) {
     if (options.apiType === API_TYPE_EXPLORER && !options.baseURL) {
         options.baseURL = 'https://testnet.explorer.minter.network';
     }
-    if (options.apiType === API_TYPE_EXPLORER) {
-        // explorer may response with 200 status and empty data, reject it
-        options.adapter = nodeAdapter;
-    }
-    if (options.apiType === API_TYPE_NODE) {
-        options.adapter = nodeAdapter;
-    }
+
+    // ensure error payload will be rejected
+    options.adapter = thenableToRejectedAdapter;
 
     // ensure `options.transformResponse` is array
     if (!Array.isArray(options.transformResponse)) {
@@ -50,35 +46,34 @@ export default function MinterApi(options = {}) {
         });
     }
 
-    // transform new node api to old node api format
-    if (options.apiType === API_TYPE_NODE) {
-        options.transformResponse.push((data) => {
-            data = parseData(data);
-            // transform `result` to `error` if its failed
-            if (data.result && data.result.log) {
-                data.error = data.result;
-            }
-            // ensure, that error.log exists
-            if (data.error && data.error.message) {
-                data.error.log = data.error.message;
-            }
+    // ensure, that error.message exists
+    options.transformResponse.push((data) => {
+        data = parseData(data);
+        // transform `result` to `error` if its failed
+        // if (data.result && data.result.log) {
+        //     data.error = data.result;
+        // }
+        // ensure, that error.message exists
+        if (data.error && data.error.log && !data.error.message) {
+            data.error.message = data.error.log;
+        }
 
-            return data;
-        });
-    }
+        return data;
+    });
 
     return axios.create(options);
 }
 
 
-function nodeAdapter(config) {
-    const adapter = (nodeAdapter !== config.adapter && config.adapter) || axios.defaults.adapter;
+// transform thenable response with error payload into rejected
+function thenableToRejectedAdapter(config) {
+    const adapter = (thenableToRejectedAdapter !== config.adapter && config.adapter) || axios.defaults.adapter;
 
     return new Promise((resolve, reject) => {
         adapter(config)
             .then((response) => {
                 response.data = parseData(response.data);
-                if (response.data.error || (response.data.result && response.data.result.log)) {
+                if (response.data.error || (response.data.result && response.data.result.message)) {
                     reject(createError(
                         `Request failed with status code ${response.status}`,
                         response.config,
@@ -102,7 +97,7 @@ function parseData(data) {
             console.log(e);
             data = {
                 error: {
-                    log: 'Invalid response',
+                    message: 'Invalid response',
                 },
             };
         }
