@@ -26,7 +26,7 @@ const ENV_SETTINGS = {
 };
 
 // select environment
-const CURRENT_ENV = ENV_TEST_TESTNET;
+const CURRENT_ENV = ENV_TESTNET;
 let ENV_DATA = ENV_SETTINGS[CURRENT_ENV];
 
 
