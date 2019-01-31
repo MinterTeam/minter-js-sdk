@@ -27,17 +27,6 @@ export default function PostTx(apiInstance) {
 
         return noncePromise
             .then((newNonce) => _postTxEnsureGas(apiInstance, {...txParams, nonce: newNonce}, gasRetryLimit));
-
-        // return new Promise((resolve, reject) => {
-        //     noncePromise
-        //         .then((newNonce) => {
-        //             _postTx(apiInstance, {...txParams, nonce: newNonce})
-        //                 .then(resolve)
-        //                 .catch(reject);
-        //
-        //         })
-        //         .catch(reject);
-        // });
     };
 }
 
