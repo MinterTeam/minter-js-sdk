@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {generateWallet, walletFromMnemonic} from 'minterjs-wallet';
-import {Minter, SendTxParams, SellTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, RedeemCheckTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, CreateCoinTxParams, SellAllTxParams, issueCheck} from '~/src';
+import {Minter, SendTxParams, SellTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, RedeemCheckTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, CreateCoinTxParams, SellAllTxParams, issueCheck, prepareSignedTx} from '~/src';
 import {API_TYPE_EXPLORER, API_TYPE_NODE} from '~/src/variables';
 
 // mnemonic: exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone
@@ -69,12 +69,21 @@ describe('PostTx: send', () => {
         message: 'custom message',
     });
 
+    test('should return signed tx', async () => {
+        const nonce = await minterExplorer.getNonce(ENV_DATA.address);
+        const txParams = new SendTxParams({...txParamsData(), nonce, gasPrice: 0});
+        const tx = prepareSignedTx(txParams);
+        console.log(tx.serialize().toString('hex'));
+        expect(tx.serialize().toString('hex').length)
+            .toBeGreaterThan(0);
+    }, 30000);
+
     test('should work explorer', () => {
         expect.assertions(2);
         const txParams = new SendTxParams(txParamsData());
         return minterExplorer.postTx(txParams)
             .then((txHash) => {
-                // console.log(txHash);
+                console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
@@ -126,6 +135,78 @@ describe('PostTx: send', () => {
             .catch((error) => {
                 // console.log(error.response.data);
                 expect(error.response.data.error.message.length).toBeGreaterThan(0);
+            });
+    }, 30000);
+});
+
+describe('PostTx handle low gasPrice', () => {
+    const txParamsData = () => ({
+        privateKey: ENV_DATA.privateKey,
+        address: ENV_DATA.address,
+        amount: 10,
+        coinSymbol: 'MNT',
+        feeCoinSymbol: 'MNT',
+        gasPrice: 0, // <= low gas
+        message: 'custom message',
+    });
+
+    describe('should fail when 0 retries | explorer', () => {
+        test('should fail with parsable error', () => {
+            expect.assertions(1);
+            const txParams = new SendTxParams(txParamsData());
+            return minterExplorer.postTx(txParams, {gasRetryLimit: 0})
+                .catch((error) => {
+                    // console.log(error);
+                    // console.log(error.response.data);
+                    const errorMessage = (error.response.data.error.tx_result && error.response.data.error.tx_result.message) || error.response.data.error.message;
+                    expect(errorMessage).toMatch(/^Gas price of tx is too low to be included in mempool\. Expected \d+$/);
+                });
+        }, 70000);
+    });
+
+    test('should work with retries | explorer', () => {
+        expect.assertions(2);
+        const txParams = new SendTxParams(txParamsData());
+        return minterExplorer.postTx(txParams)
+            .then((txHash) => {
+                // console.log(txHash);
+                // txHash = txHash.replace(/^Mt/);
+                expect(txHash).toHaveLength(66);
+                expect(txHash.substr(0, 2)).toEqual('Mt');
+            })
+            .catch((error) => {
+                console.log(error);
+                console.log(error.response);
+            });
+    }, 30000);
+
+    describe('should fail when 0 retries | node', () => {
+        test('should fail with parsable error', () => {
+            expect.assertions(1);
+            const txParams = new SendTxParams(txParamsData());
+            return minterNode.postTx(txParams, {gasRetryLimit: 0})
+                .catch((error) => {
+                    // console.log(error);
+                    // console.log(error.response.data);
+                    const errorMessage = (error.response.data.error.tx_result && error.response.data.error.tx_result.message) || error.response.data.error.message;
+                    expect(errorMessage).toMatch(/^Gas price of tx is too low to be included in mempool\. Expected \d+$/);
+                });
+        }, 70000);
+    });
+
+    test('should work with retries | node', () => {
+        expect.assertions(2);
+        const txParams = new SendTxParams(txParamsData());
+        return minterNode.postTx(txParams)
+            .then((txHash) => {
+                // console.log(txHash);
+                // txHash = txHash.replace(/^Mt/);
+                expect(txHash).toHaveLength(66);
+                expect(txHash.substr(0, 2)).toEqual('Mt');
+            })
+            .catch((error) => {
+                console.log(error);
+                console.log(error.response);
             });
     }, 30000);
 });

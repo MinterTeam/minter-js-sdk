@@ -6,15 +6,14 @@ import {TX_TYPE_DELEGATE} from 'minterjs-tx/src/tx-types';
 
 /**
  * @constructor
- * @param {string} privateKey
  * @param {string} publicKey
  * @param {string} coinSymbol
  * @param {number|string} stake
  * @param {string} [feeCoinSymbol]
- * @param {string} [message]
+ * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function DelegateTxParams({privateKey, publicKey, coinSymbol, stake, feeCoinSymbol, message}) {
+export default function DelegateTxParams({publicKey, coinSymbol, stake, feeCoinSymbol, ...otherParams}) {
     const txData = new MinterDelegateTxData({
         pubKey: toBuffer(publicKey),
         coin: formatCoin(coinSymbol),
@@ -26,8 +25,7 @@ export default function DelegateTxParams({privateKey, publicKey, coinSymbol, sta
     }
 
     return {
-        privateKey,
-        message,
+        ...otherParams,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_DELEGATE,
         txData: txData.serialize(),

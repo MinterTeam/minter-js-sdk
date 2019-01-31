@@ -4,15 +4,14 @@ import {toBuffer} from 'minterjs-util';
 
 /**
  * @constructor
- * @param {string} privateKey
  * @param {string} publicKey
  * @param {string} rewardAddress
  * @param {string} ownerAddress
  * @param {string} feeCoinSymbol
- * @param {string} [message]
+ * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function EditCandidateTxParams({privateKey, publicKey, rewardAddress, ownerAddress, feeCoinSymbol, message}) {
+export default function EditCandidateTxParams({publicKey, rewardAddress, ownerAddress, feeCoinSymbol, ...otherParams}) {
     const txData = new MinterEditCandidateTxData({
         pubKey: toBuffer(publicKey),
         rewardAddress: toBuffer(rewardAddress),
@@ -20,8 +19,7 @@ export default function EditCandidateTxParams({privateKey, publicKey, rewardAddr
     });
 
     return {
-        privateKey,
-        message,
+        ...otherParams,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_EDIT_CANDIDATE,
         txData: txData.serialize(),

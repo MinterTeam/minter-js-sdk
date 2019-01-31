@@ -4,20 +4,18 @@ import {TX_TYPE_SET_CANDIDATE_OFF} from 'minterjs-tx/src/tx-types';
 
 /**
  * @constructor
- * @param {string} privateKey
  * @param {string} publicKey
  * @param {string} feeCoinSymbol
- * @param {string} [message]
+ * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function SetCandidateOffTxParams({privateKey, publicKey, feeCoinSymbol, message}) {
+export default function SetCandidateOffTxParams({publicKey, feeCoinSymbol, ...otherParams}) {
     const txData = new MinterSetCandidateOffTxData({
         pubKey: toBuffer(publicKey),
     });
 
     return {
-        privateKey,
-        message,
+        ...otherParams,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_SET_CANDIDATE_OFF,
         txData: txData.serialize(),

@@ -12,9 +12,10 @@ import {toBuffer} from 'minterjs-util';
  * @param {string} check
  * @param {string} password
  * @param {string} [feeCoinSymbol] - should be base coin
+ * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function RedeemCheckTxParams({privateKey, check, password, feeCoinSymbol}) {
+export default function RedeemCheckTxParams({privateKey, check, password, feeCoinSymbol, ...otherParams}) {
     if (feeCoinSymbol && (feeCoinSymbol.toUpperCase() !== 'MNT' && feeCoinSymbol.toUpperCase() !== 'BIP')) {
         throw new Error('feeCoinSymbol should be baseCoin');
     }
@@ -28,6 +29,7 @@ export default function RedeemCheckTxParams({privateKey, check, password, feeCoi
     });
 
     return {
+        ...otherParams,
         privateKey,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_REDEEM_CHECK,

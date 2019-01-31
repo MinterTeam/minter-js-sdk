@@ -6,15 +6,14 @@ import {toBuffer} from 'minterjs-util';
 
 /**
  * @constructor
- * @param {string} privateKey
  * @param {string} address
  * @param {number|string} amount
  * @param {string} coinSymbol
  * @param {string} [feeCoinSymbol]
- * @param {string} [message]
+ * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function SendTxParams({privateKey, address, amount = 0, coinSymbol, feeCoinSymbol, message}) {
+export default function SendTxParams({address, amount = 0, coinSymbol, feeCoinSymbol, ...otherParams}) {
     const txData = new MinterSendTxData({
         to: toBuffer(address),
         coin: formatCoin(coinSymbol),
@@ -26,8 +25,7 @@ export default function SendTxParams({privateKey, address, amount = 0, coinSymbo
     }
 
     return {
-        privateKey,
-        message,
+        ...otherParams,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_SEND,
         txData: txData.serialize(),

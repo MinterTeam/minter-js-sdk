@@ -5,16 +5,15 @@ import {TX_TYPE_BUY_COIN} from 'minterjs-tx/src/tx-types';
 
 /**
  * @constructor
- * @param {string} privateKey
  * @param {string} coinFrom
  * @param {string} coinTo
  * @param {number|string} buyAmount
  * @param {number|string} [maxSellAmount]
  * @param {string} [feeCoinSymbol]
- * @param {string} [message]
+ * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function BuyTxParams({privateKey, coinFrom, coinTo, buyAmount, maxSellAmount = Number.MAX_SAFE_INTEGER, feeCoinSymbol, message}) {
+export default function BuyTxParams({coinFrom, coinTo, buyAmount, maxSellAmount = Number.MAX_SAFE_INTEGER, feeCoinSymbol, ...otherParams}) {
     const txData = new MinterBuyTxData({
         coinToSell: formatCoin(coinFrom),
         coinToBuy: formatCoin(coinTo),
@@ -27,8 +26,7 @@ export default function BuyTxParams({privateKey, coinFrom, coinTo, buyAmount, ma
     }
 
     return {
-        privateKey,
-        message,
+        ...otherParams,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_BUY_COIN,
         txData: txData.serialize(),

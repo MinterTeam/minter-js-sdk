@@ -3,23 +3,29 @@ import MinterTx, {formatCoin} from 'minterjs-tx';
 import MinterTxSignature from 'minterjs-tx/src/tx-signature';
 
 /**
+ * @typedef {Object} TxParams
+ * @property {string|Buffer} privateKey
+ * @property {number} [nonce]
+ * @property {number} [gasPrice]
+ * @property {string} [gasCoin]
+ * @property {string|Buffer} txType
+ * @property {Buffer} txData
+ * @property {string} [message]
+ */
+
+
+/**
  * @param {TxParams} txParams
- * @param {string|Buffer} txParams.privateKey
- * @param {string} txParams.gasCoin
- * @param {string|Buffer} txParams.txType
- * @param {Buffer} txParams.txData
- * @param {string} txParams.message
- * @param {number} nonce
  * @return {MinterTx}
  */
-export default function prepareSignedTx(txParams, nonce) {
-    const {privateKey, gasCoin = 'BIP', txType, txData, message} = txParams;
+export default function prepareSignedTx(txParams) {
+    const {privateKey, nonce = 1, gasPrice = 1, gasCoin = 'BIP', txType, txData, message} = txParams;
     // @TODO asserts
     const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
 
     const txProps = {
         nonce: `0x${nonce.toString(16)}`,
-        gasPrice: '0x01',
+        gasPrice: `0x${gasPrice.toString(16)}`,
         gasCoin: formatCoin(gasCoin),
         type: txType,
         data: txData,

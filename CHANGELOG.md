@@ -1,3 +1,9 @@
+## 0.11.0 - 2019-01-31
+- **BREAKING** move postTx's `nonce` param into `txParams` object
+- allow pass `gasPrice` into `txParams`
+- add retry behavior to `postTx` if it failed with low gas error, `gasRetryLimit` option controls it
+- copy error payload `error.tx_result.log` to `error.tx_result.message`
+
 ## 0.10.0 - 2019-01-24
 - Move `error.log` payload field into `error.message` to conform node API [v0.10.0](https://github.com/MinterTeam/minter-go-node/releases/tag/v0.10.0)
 

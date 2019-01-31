@@ -3,15 +3,18 @@ import createError from 'axios/lib/core/createError';
 import {API_TYPE_EXPLORER, API_TYPE_NODE} from '../variables';
 
 /**
- * @typedef {AxiosInstance} MinterApiInstance
+ * @typedef {Object} MinterApiInstanceType
  * @property {string} defaults.apiType
+ *
+ * @typedef {AxiosInstance | MinterApiInstanceType} MinterApiInstance
  */
 
 /**
  * @param {Object} [options]
  * @param {string} [options.apiType]
  * @param {string} [options.baseURL]
- * @return {MinterApiInstance|AxiosInstance}
+ * @param {...AxiosRequestConfig} [options.*]
+ * @return {MinterApiInstance}
  */
 export default function MinterApi(options = {}) {
     if (!options.apiType && !options.baseURL) {
@@ -53,9 +56,13 @@ export default function MinterApi(options = {}) {
         // if (data.result && data.result.log) {
         //     data.error = data.result;
         // }
-        // ensure, that error.message exists
+        // rename error.log
         if (data.error && data.error.log && !data.error.message) {
             data.error.message = data.error.log;
+        }
+        // rename error.tx_result.log
+        if (data.error && data.error.tx_result && data.error.tx_result.log && !data.error.tx_result.message) {
+            data.error.tx_result.message = data.error.tx_result.log;
         }
 
         return data;

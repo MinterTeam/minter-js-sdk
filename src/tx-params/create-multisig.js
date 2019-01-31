@@ -5,15 +5,14 @@ import {TX_TYPE_CREATE_MULTISIG} from 'minterjs-tx/src/tx-types';
 
 /**
  * @constructor
- * @param {string} privateKey
  * @param {Array} addresses
  * @param {Array} weights
  * @param {number|string} threshold
  * @param {string} [feeCoinSymbol]
- * @param {string} [message]
+ * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function CreateMultisigTxParams({privateKey, addresses, weights, threshold, feeCoinSymbol, message}) {
+export default function CreateMultisigTxParams({addresses, weights, threshold, feeCoinSymbol, ...otherParams}) {
     const txData = new MinterCreateMultisigTxData({
         addresses: addresses.map((address) => toBuffer(address)),
         weights: weights.map((weight) => `0x${padToEven(Number(weight).toString(16))}`),
@@ -21,8 +20,7 @@ export default function CreateMultisigTxParams({privateKey, addresses, weights, 
     });
 
     return {
-        privateKey,
-        message,
+        ...otherParams,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_CREATE_MULTISIG,
         txData: txData.serialize(),

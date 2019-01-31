@@ -6,17 +6,16 @@ import {TX_TYPE_CREATE_COIN} from 'minterjs-tx/src/tx-types';
 
 /**
  * @constructor
- * @param {string} privateKey
  * @param {string} coinName
  * @param {string} coinSymbol
  * @param {number|string} initialAmount
  * @param {number|string} initialReserve
  * @param {number|string} crr
  * @param {string} [feeCoinSymbol]
- * @param {string} [message]
+ * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function CreateCoinTxParams({privateKey, coinName, coinSymbol, initialAmount, initialReserve, crr, feeCoinSymbol, message}) {
+export default function CreateCoinTxParams({coinName, coinSymbol, initialAmount, initialReserve, crr, feeCoinSymbol, ...otherParams}) {
     const txData = new MinterCreateCoinTxData({
         name: coinName,
         symbol: formatCoin(coinSymbol),
@@ -26,8 +25,7 @@ export default function CreateCoinTxParams({privateKey, coinName, coinSymbol, in
     });
 
     return {
-        privateKey,
-        message,
+        ...otherParams,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_CREATE_COIN,
         txData: txData.serialize(),

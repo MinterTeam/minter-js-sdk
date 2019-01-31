@@ -7,17 +7,16 @@ import {toBuffer} from 'minterjs-util';
 
 /**
  * @constructor
- * @param {string} privateKey
  * @param {string} address
  * @param {string} publicKey
  * @param {number|string} commission
  * @param {string} coinSymbol
  * @param {number|string} stake
  * @param {string} feeCoinSymbol
- * @param {string} [message]
+ * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function DeclareCandidacyTxParams({privateKey, address, publicKey, commission, coinSymbol, stake, feeCoinSymbol, message}) {
+export default function DeclareCandidacyTxParams({address, publicKey, commission, coinSymbol, stake, feeCoinSymbol, ...otherParams}) {
     const txData = new MinterDeclareCandidacyTxData({
         address: toBuffer(address),
         pubKey: toBuffer(publicKey),
@@ -31,8 +30,7 @@ export default function DeclareCandidacyTxParams({privateKey, address, publicKey
     }
 
     return {
-        privateKey,
-        message,
+        ...otherParams,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_DECLARE_CANDIDACY,
         txData: txData.serialize(),

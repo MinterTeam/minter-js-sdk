@@ -35,10 +35,12 @@ import {Minter, SendTxParams} from "minter-js-sdk";
 const minterSDK = new Minter();
 const txParams = new SendTxParams({
     privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    nonce: 1,
     address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
     amount: 10,
     coinSymbol: 'MNT',
     feeCoinSymbol: 'ASD',
+    gasPrice: 1,
     message: 'custom message',
 });
 
@@ -82,11 +84,29 @@ const minterNode = new Minter({apiType: 'node', baseURL: 'http://minter-node-1.t
 
 Post new transcation to the blockchain
 Accept [tx params](#Tx params constructors) object and make asynchronous request to the blockchain API.
-Optional nonce param for new tx, if no nonce given, it will be requested by `getNonce` automatically.
+`txParams.nonce` - optional, if no nonce given, it will be requested by `getNonce` automatically.
+`txParams.gasPrice` - 1 by default, if request failed because of low gas, it will be repeated wi 
+`gasRetryLimit` - count of repeating request, 2 by default. If first request fails because of low gas, it will be repeated with updated `gasPrice`
 Returns promise that resolves with sent transaction hash.
 
 ```js
-minterSDK.postTx(txParams, nonce)
+/**
+ * @typedef {Object} TxParams
+ * @property {string|Buffer} privateKey
+ * @property {number} [nonce] - can be omitted, will be received by `getNonce`
+ * @property {number} [gasPrice=1] - can be updated automatically on retry, if gasRetryLimit > 1
+ * @property {string} [gasCoin='BIP']
+ * @property {string|Buffer} txType
+ * @property {Buffer} txData
+ * @property {string} [message]
+ */
+
+/**
+* @param {TxParams} txParams
+* @param {number} [gasRetryLimit=2] - number of retries, if request was failed because of low gas
+* @return {Promise<string>}
+*/
+minterSDK.postTx(txParams, {gasRetryLimit: 2})
     .then((txHash) => {
         console.log(txHash);
         // 'Mt...'
@@ -369,14 +389,18 @@ minterSDK.postTx(txParams);
 
 
 ### Prepare Signed Transaction
-Used under the hood of PostTx
+Used under the hood of PostTx, accepts `txParams` object as argument
 ```js
 import {prepareSignedTx} from 'minter-js-sdk';
+const tx = prepareSignedTx(txParams);
+console.log('signed tx', tx.serialize().toString('hex'));
+
+// get actual nonce first
 minterSDK.getNonce('Mx...')
     .then((nonce) => {
-        const tx = prepareSignedTx(txParams, nonce)
-        console.log('signed tx', tx.serialize().toString('hex'))
-    })
+        const tx = prepareSignedTx({...txParams, nonce});
+        console.log('signed tx', tx.serialize().toString('hex'));
+    });
 
 ```
 
