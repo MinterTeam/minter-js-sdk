@@ -24,6 +24,8 @@ module.exports = {
     'indent': ["error", 4],
     // allow paren-less arrow functions
     'arrow-parens': 0,
+    // allow braces around function body
+    'arrow-body-style': 0,
     // allow async-await
     'generator-star-spacing': 0,
     // allow debugger during development

@@ -9,6 +9,7 @@ import issueCheck from './issue-check';
 import prepareSignedTx from './prepare-tx';
 import RedeemCheckTxParams from './tx-params/redeem-check';
 import SendTxParams from './tx-params/send';
+import MultisendTxParams from './tx-params/multisend';
 import SellTxParams from './tx-params/convert-sell';
 import SellAllTxParams from './tx-params/convert-sell-all';
 import BuyTxParams from './tx-params/convert-buy';
@@ -37,6 +38,7 @@ export {
     RedeemCheckTxParams,
     // coin
     SendTxParams,
+    MultisendTxParams,
     SellTxParams,
     SellAllTxParams,
     BuyTxParams,

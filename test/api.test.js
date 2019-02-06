@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {generateWallet, walletFromMnemonic} from 'minterjs-wallet';
-import {Minter, SendTxParams, SellTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, RedeemCheckTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, CreateCoinTxParams, SellAllTxParams, issueCheck, prepareSignedTx} from '~/src';
+import {Minter, SendTxParams, MultisendTxParams, SellTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, RedeemCheckTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, CreateCoinTxParams, SellAllTxParams, issueCheck, prepareSignedTx} from '~/src';
 import {API_TYPE_EXPLORER, API_TYPE_NODE} from '~/src/variables';
 
 // mnemonic: exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone
@@ -139,6 +139,7 @@ describe('PostTx: send', () => {
     }, 30000);
 });
 
+
 describe('PostTx handle low gasPrice', () => {
     const txParamsData = () => ({
         privateKey: ENV_DATA.privateKey,
@@ -210,6 +211,94 @@ describe('PostTx handle low gasPrice', () => {
             });
     }, 30000);
 });
+
+
+describe('PostTx: multisend', () => {
+    const txParamsData = () => ({
+        privateKey: ENV_DATA.privateKey,
+        list: [
+            {
+                value: 10,
+                coin: 'MNT',
+                to: ENV_DATA.address,
+            },
+            {
+                value: 0.1,
+                coin: 'MNT',
+                to: 'Mxddab6281766ad86497741ff91b6b48fe85012e3c',
+            },
+        ],
+        feeCoinSymbol: 'MNT',
+        message: 'custom message',
+    });
+
+    test('should work explorer', () => {
+        expect.assertions(2);
+        const txParams = new MultisendTxParams(txParamsData());
+        return minterExplorer.postTx(txParams)
+            .then((txHash) => {
+                console.log(txHash);
+                // txHash = txHash.replace(/^Mt/);
+                expect(txHash).toHaveLength(66);
+                expect(txHash.substr(0, 2)).toEqual('Mt');
+            })
+            .catch((error) => {
+                console.log(error);
+                console.log(error.response);
+            });
+    }, 30000);
+
+    test('should fail explorer', () => {
+        expect.assertions(1);
+        const txParamsDataInstance = txParamsData();
+        txParamsDataInstance.list[0].value = Number.MAX_SAFE_INTEGER;
+        txParamsDataInstance.list[0].coin = 'ASD999';
+        const txParams = new MultisendTxParams(txParamsDataInstance);
+        return minterExplorer.postTx(txParams)
+            .catch((error) => {
+                // console.log(error);
+                // console.log(error.response);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
+            });
+    }, 70000);
+
+    test('should work node', async () => {
+        // wait for getNonce to work correctly
+        // await new Promise((resolve) => {
+        //     setTimeout(resolve, 5000);
+        // });
+        expect.assertions(2);
+        const txParams = new MultisendTxParams(txParamsData());
+        return minterNode.postTx(txParams)
+            .then((txHash) => {
+                // console.log(txHash);
+                // txHash = txHash.replace(/^Mt/);
+                expect(txHash).toHaveLength(66);
+                expect(txHash.substr(0, 2)).toEqual('Mt');
+            })
+            .catch((error) => {
+                console.log(error);
+                console.log(error.response);
+            });
+    }, 30000);
+
+    test('should fail node', () => {
+        expect.assertions(1);
+        const txParamsDataInstance = txParamsData();
+        txParamsDataInstance.list[0].value = Number.MAX_SAFE_INTEGER;
+        txParamsDataInstance.list[0].coin = 'ASD999';
+        const txParams = new MultisendTxParams(txParamsDataInstance);
+        return minterNode.postTx(txParams)
+            .then((res) => {
+                console.log({res});
+            })
+            .catch((error) => {
+                // console.log(error.response.data);
+                expect(error.response.data.error.message.length).toBeGreaterThan(0);
+            });
+    }, 30000);
+});
+
 
 describe('PostTx: sell', () => {
     const txParamsData = () => ({

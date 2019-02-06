@@ -1,3 +1,6 @@
+## 0.11.1 - 2019-02-06
+- add `MultisendTxParams`
+
 ## 0.11.0 - 2019-01-31
 - **BREAKING** move postTx's `nonce` param into `txParams` object
 - allow pass `gasPrice` into `txParams`

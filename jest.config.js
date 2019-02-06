@@ -8,4 +8,5 @@ module.exports = {
     transformIgnorePatterns: [
         'node_modules/(?!(minterjs-tx|minterjs-util|minterjs-wallet)/)',
     ],
+    testEnvironment: 'node',
 };
