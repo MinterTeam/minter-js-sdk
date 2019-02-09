@@ -1,4 +1,5 @@
 module.exports = {
+    bail: true,
     moduleNameMapper: {
         '~(.*)$': '<rootDir>/$1',
     },
