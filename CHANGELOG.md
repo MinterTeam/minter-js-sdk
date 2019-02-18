@@ -1,3 +1,7 @@
+## 0.11.2 - 2019-02-18
+- update deps
+- fix ethereumjs-util
+
 ## 0.11.1 - 2019-02-06
 - add `MultisendTxParams`
 

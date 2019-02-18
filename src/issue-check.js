@@ -1,4 +1,4 @@
-import ethUtil from 'ethereumjs-util';
+import {defineProperties, rlphash, sha256, ecsign} from 'ethereumjs-util';
 import secp256k1 from 'secp256k1';
 import {Buffer} from 'safe-buffer';
 import {formatCoin} from 'minterjs-tx/src/helpers';
@@ -62,25 +62,25 @@ class Check {
          * @name serialize
          */
         // attached serialize
-        ethUtil.defineProperties(this, fields, data);
+        defineProperties(this, fields, data);
     }
 
     hash() {
-        return ethUtil.rlphash(this.raw.slice(0, 4));
+        return rlphash(this.raw.slice(0, 4));
     }
 
     sign(privateKey, passphrase) {
         const msgHash = this.hash(false);
 
-        const passphraseBuffer = ethUtil.sha256(passphrase);
+        const passphraseBuffer = sha256(passphrase);
         const lock = secp256k1.sign(msgHash, passphraseBuffer);
         const lockWithRecovery = new (lock.signature.constructor)(65);
         lockWithRecovery.set(lock.signature, 0);
         lockWithRecovery[64] = lock.recovery;
         this.lock = `0x${lockWithRecovery.toString('hex')}`;
 
-        const msgHashWithLock = ethUtil.rlphash(this.raw.slice(0, 5));
-        const sig = ethUtil.ecsign(msgHashWithLock, privateKey);
+        const msgHashWithLock = rlphash(this.raw.slice(0, 5));
+        const sig = ecsign(msgHashWithLock, privateKey);
         Object.assign(this, sig);
     }
 }
