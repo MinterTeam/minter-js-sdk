@@ -1,3 +1,6 @@
+## 0.12.0 - 2019-02-20
+- **BREAKING** now will throw on invalid numeric params
+
 ## 0.11.2 - 2019-02-18
 - update deps
 - fix ethereumjs-util

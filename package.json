@@ -1,6 +1,6 @@
 {
   "name": "minter-js-sdk",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "description": "JS SDK for Minter Blockchain",
   "main": "src/index.js",
   "files": [
@@ -34,10 +34,12 @@
   "homepage": "https://github.com/MinterTeam/minter-js-sdk#readme",
   "dependencies": {
     "axios": "^0.18.0",
+    "big.js": "^5.2.2",
+    "bn.js": "^4.11.8",
     "ethereumjs-util": "^6.1.0",
     "ethjs-util": "^0.1.6",
-    "minterjs-tx": "^4.2.1",
-    "minterjs-util": "0.3.3",
+    "minterjs-tx": "^4.2.2",
+    "minterjs-util": "0.5.0",
     "minterjs-wallet": "^2.2.2",
     "safe-buffer": "^5.1.2",
     "secp256k1": "^3.6.2"
@@ -49,7 +51,7 @@
     "@babel/runtime": "^7.3.1",
     "babel-jest": "^24.1.0",
     "coveralls": "^3.0.2",
-    "eslint": "^5.14.0",
+    "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.16.0",

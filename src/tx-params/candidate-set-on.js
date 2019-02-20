@@ -1,5 +1,5 @@
 import MinterSetCandidateOnTxData from 'minterjs-tx/src/tx-data/set-candidate-on';
-import {toBuffer} from 'minterjs-util';
+import {toBuffer} from 'minterjs-util/src/prefix';
 import {TX_TYPE_SET_CANDIDATE_ON} from 'minterjs-tx/src/tx-types';
 
 /**

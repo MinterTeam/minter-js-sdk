@@ -1,7 +1,7 @@
 import MinterCreateMultisigTxData from 'minterjs-tx/src/tx-data/create-multisig';
-import {padToEven} from 'ethjs-util';
-import {toBuffer} from 'minterjs-util';
+import {toBuffer} from 'minterjs-util/src/prefix';
 import {TX_TYPE_CREATE_MULTISIG} from 'minterjs-tx/src/tx-types';
+import {toHexString} from '../utils';
 
 /**
  * @constructor
@@ -15,8 +15,8 @@ import {TX_TYPE_CREATE_MULTISIG} from 'minterjs-tx/src/tx-types';
 export default function CreateMultisigTxParams({addresses, weights, threshold, feeCoinSymbol, ...otherParams}) {
     const txData = new MinterCreateMultisigTxData({
         addresses: addresses.map((address) => toBuffer(address)),
-        weights: weights.map((weight) => `0x${padToEven(Number(weight).toString(16))}`),
-        threshold: `0x${padToEven(Number(threshold).toString(16))}`,
+        weights: weights.map((weight) => `0x${toHexString(weight)}`),
+        threshold: `0x${toHexString(threshold)}`,
     });
 
     return {

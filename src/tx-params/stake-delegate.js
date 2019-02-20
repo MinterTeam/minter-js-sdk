@@ -1,5 +1,5 @@
 import MinterDelegateTxData from 'minterjs-tx/src/tx-data/delegate';
-import {toBuffer} from 'minterjs-util';
+import {toBuffer} from 'minterjs-util/src/prefix';
 import {formatCoin} from 'minterjs-tx/src/helpers';
 import {convertToPip} from 'minterjs-util/src/converter';
 import {TX_TYPE_DELEGATE} from 'minterjs-tx/src/tx-types';

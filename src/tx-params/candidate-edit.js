@@ -1,6 +1,6 @@
 import MinterEditCandidateTxData from 'minterjs-tx/src/tx-data/edit-candidate';
 import {TX_TYPE_EDIT_CANDIDATE} from 'minterjs-tx/src/tx-types';
-import {toBuffer} from 'minterjs-util';
+import {toBuffer} from 'minterjs-util/src/prefix';
 
 /**
  * @constructor

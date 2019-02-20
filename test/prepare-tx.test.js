@@ -20,4 +20,23 @@ describe('prepareSignedTx', () => {
         expect(tx.serialize().toString('hex'))
             .toEqual(validTxHex);
     });
+
+    test('should throw on invalid amount', () => {
+        expect(() => {
+            const txParams = new SendTxParams({
+                ...txParamsData,
+                amount: '123asd',
+            });
+        }).toThrow();
+    });
+
+    test('should throw on invalid gasPrice', () => {
+        expect(() => {
+            const txParams = new SendTxParams({
+                ...txParamsData,
+                gasPrice: '123asd',
+            });
+            prepareSignedTx(txParams);
+        }).toThrow();
+    });
 });

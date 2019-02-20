@@ -3,7 +3,7 @@ import secp256k1 from 'secp256k1';
 import {sha256, rlphash, privateToAddress} from 'ethereumjs-util';
 import RedeemCheckTxData from 'minterjs-tx/src/tx-data/redeem-check';
 import {TX_TYPE_REDEEM_CHECK} from 'minterjs-tx/src/tx-types';
-import {toBuffer} from 'minterjs-util';
+import {toBuffer} from 'minterjs-util/src/prefix';
 
 
 /**

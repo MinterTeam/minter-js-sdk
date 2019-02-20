@@ -1,6 +1,7 @@
 import {Buffer} from 'safe-buffer';
 import MinterTx, {formatCoin} from 'minterjs-tx';
 import MinterTxSignature from 'minterjs-tx/src/tx-signature';
+import {toHexString} from './utils';
 
 /**
  * @typedef {Object} TxParams
@@ -24,8 +25,8 @@ export default function prepareSignedTx(txParams) {
     const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
 
     const txProps = {
-        nonce: `0x${nonce.toString(16)}`,
-        gasPrice: `0x${gasPrice.toString(16)}`,
+        nonce: `0x${toHexString(nonce)}`,
+        gasPrice: `0x${toHexString(gasPrice)}`,
         gasCoin: formatCoin(gasCoin),
         type: txType,
         data: txData,

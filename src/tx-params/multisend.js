@@ -2,7 +2,7 @@ import MinterMultisendTxData from 'minterjs-tx/src/tx-data/multisend';
 import {TX_TYPE_MULTISEND} from 'minterjs-tx/src/tx-types';
 import {convertToPip} from 'minterjs-util/src/converter';
 import {formatCoin} from 'minterjs-tx/src/helpers';
-import {toBuffer} from 'minterjs-util';
+import {toBuffer} from 'minterjs-util/src/prefix';
 
 /**
  * @constructor

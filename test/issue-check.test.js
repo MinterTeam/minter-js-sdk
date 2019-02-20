@@ -33,4 +33,25 @@ describe('issueCheck()', () => {
             dueBlock: 999999999,
         }));
     });
+
+    test('should throw on invalid dueBlock', () => {
+        expect(() => issueCheck({
+            ...checkParams,
+            dueBlock: '123asd',
+        })).toThrow();
+    });
+
+    test('should throw on invalid nonce', () => {
+        expect(() => issueCheck({
+            ...checkParams,
+            nonce: '123asd',
+        })).toThrow();
+    });
+
+    test('should throw on invalid value', () => {
+        expect(() => issueCheck({
+            ...checkParams,
+            value: '123asd',
+        })).toThrow();
+    });
 });

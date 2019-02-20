@@ -3,6 +3,8 @@ node_js:
   - stable
   - lts/*
 jobs:
+  allow_failures:
+    - stage: Produce Coverage
   include:
   - stage: Produce Coverage
     node_js: stable

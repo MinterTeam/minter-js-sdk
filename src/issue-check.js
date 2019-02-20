@@ -1,8 +1,9 @@
-import {defineProperties, rlphash, sha256, ecsign} from 'ethereumjs-util';
+import {defineProperties, ecsign, rlphash, sha256} from 'ethereumjs-util';
 import secp256k1 from 'secp256k1';
 import {Buffer} from 'safe-buffer';
 import {formatCoin} from 'minterjs-tx/src/helpers';
 import {convertToPip} from 'minterjs-util/src/converter';
+import {isNumericInteger, toHexString} from './utils';
 
 class Check {
     constructor(data) {
@@ -74,6 +75,7 @@ class Check {
 
         const passphraseBuffer = sha256(passphrase);
         const lock = secp256k1.sign(msgHash, passphraseBuffer);
+        /** @type Buffer */
         const lockWithRecovery = new (lock.signature.constructor)(65);
         lockWithRecovery.set(lock.signature, 0);
         lockWithRecovery[64] = lock.recovery;
@@ -96,15 +98,23 @@ class Check {
  * @return {string}
  */
 export default function issueCheck({privateKey, passPhrase, nonce, coinSymbol, value, dueBlock = 999999999}) {
+    // @TODO accept exponential
+    if (!isNumericInteger(nonce)) {
+        throw new Error('Invalid nonce. Should be numeric integer');
+    }
+    if (!isNumericInteger(nonce)) {
+        throw new Error('Invalid nonce. Should be numeric integer');
+    }
+
     if (typeof privateKey === 'string') {
         privateKey = Buffer.from(privateKey, 'hex');
     }
 
     const check = new Check({
-        nonce: `0x${nonce.toString(16)}`,
+        nonce: `0x${toHexString(nonce)}`,
         coin: formatCoin(coinSymbol),
         value: `0x${convertToPip(value, 'hex')}`,
-        dueBlock: `0x${Number(dueBlock).toString(16)}`,
+        dueBlock: `0x${toHexString(dueBlock)}`,
     });
     check.sign(privateKey, passPhrase);
     return `Mc${check.serialize().toString('hex')}`;
