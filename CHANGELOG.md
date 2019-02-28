@@ -1,3 +1,7 @@
+# 0.13.0 - 2019-02-28
+- add UMD and commonjs builds
+- **BREAKING** remove `getProofWithRecovery` export from tx-params/redeem-check.js
+
 ## 0.12.0 - 2019-02-20
 - **BREAKING** now will throw on invalid numeric params
 

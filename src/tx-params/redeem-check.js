@@ -1,9 +1,8 @@
 import {Buffer} from 'safe-buffer';
 import secp256k1 from 'secp256k1';
 import {sha256, rlphash, privateToAddress} from 'ethereumjs-util';
-import RedeemCheckTxData from 'minterjs-tx/src/tx-data/redeem-check';
-import {TX_TYPE_REDEEM_CHECK} from 'minterjs-tx/src/tx-types';
-import {toBuffer} from 'minterjs-util/src/prefix';
+import {MinterTxDataRedeemCheck, TX_TYPE_REDEEM_CHECK} from 'minterjs-tx';
+import {toBuffer} from 'minterjs-util';
 
 
 /**
@@ -23,7 +22,7 @@ export default function RedeemCheckTxParams({privateKey, check, password, feeCoi
         privateKey = Buffer.from(privateKey, 'hex');
     }
     const proofWithRecovery = getProofWithRecovery(privateKey, password);
-    const txData = new RedeemCheckTxData({
+    const txData = new MinterTxDataRedeemCheck({
         rawCheck: toBuffer(check),
         proof: `0x${proofWithRecovery.toString('hex')}`,
     });
@@ -42,7 +41,7 @@ export default function RedeemCheckTxParams({privateKey, check, password, feeCoi
  * @param {string} password
  * @return {ArrayBuffer}
  */
-export function getProofWithRecovery(privateKey, password) {
+function getProofWithRecovery(privateKey, password) {
     const addressBuffer = privateToAddress(privateKey);
     const addressHash = rlphash([
         addressBuffer,

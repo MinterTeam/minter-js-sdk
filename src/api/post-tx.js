@@ -1,5 +1,5 @@
 import {Buffer} from 'safe-buffer';
-import {privateToAddressString} from 'minterjs-util/src/prefix';
+import {privateToAddressString} from 'minterjs-util';
 import GetNonce from './get-nonce';
 import prepareSignedTx from '../prepare-tx';
 import {API_TYPE_EXPLORER} from '../variables';

@@ -1,7 +1,5 @@
-import MinterBuyTxData from 'minterjs-tx/src/tx-data/buy';
-import {formatCoin} from 'minterjs-tx/src/helpers';
-import {convertToPip} from 'minterjs-util/src/converter';
-import {TX_TYPE_BUY_COIN} from 'minterjs-tx/src/tx-types';
+import {MinterTxDataBuy, TX_TYPE_BUY_COIN, formatCoin} from 'minterjs-tx';
+import {convertToPip} from 'minterjs-util';
 
 /**
  * @constructor
@@ -14,7 +12,7 @@ import {TX_TYPE_BUY_COIN} from 'minterjs-tx/src/tx-types';
  * @return {TxParams}
  */
 export default function BuyTxParams({coinFrom, coinTo, buyAmount, maxSellAmount = Number.MAX_SAFE_INTEGER, feeCoinSymbol, ...otherParams}) {
-    const txData = new MinterBuyTxData({
+    const txData = new MinterTxDataBuy({
         coinToSell: formatCoin(coinFrom),
         coinToBuy: formatCoin(coinTo),
         valueToBuy: `0x${convertToPip(buyAmount, 'hex')}`,

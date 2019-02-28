@@ -1,4 +1,4 @@
-import {convertFromPip, convertToPip} from 'minterjs-util/src/converter';
+import {convertFromPip, convertToPip} from 'minterjs-util';
 import {API_TYPE_EXPLORER, API_TYPE_NODE} from '../variables';
 
 /**

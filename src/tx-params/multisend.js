@@ -1,8 +1,5 @@
-import MinterMultisendTxData from 'minterjs-tx/src/tx-data/multisend';
-import {TX_TYPE_MULTISEND} from 'minterjs-tx/src/tx-types';
-import {convertToPip} from 'minterjs-util/src/converter';
-import {formatCoin} from 'minterjs-tx/src/helpers';
-import {toBuffer} from 'minterjs-util/src/prefix';
+import {MinterTxDataMultisend, TX_TYPE_MULTISEND, formatCoin} from 'minterjs-tx';
+import {convertToPip, toBuffer} from 'minterjs-util';
 
 /**
  * @constructor
@@ -12,7 +9,7 @@ import {toBuffer} from 'minterjs-util/src/prefix';
  * @return {TxParams}
  */
 export default function MultisendTxParams({list, feeCoinSymbol, ...otherParams}) {
-    const txData = new MinterMultisendTxData({
+    const txData = new MinterTxDataMultisend({
         list: list.map((item) => {
             return {
                 to: toBuffer(item.to),

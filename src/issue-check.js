@@ -1,8 +1,8 @@
 import {defineProperties, ecsign, rlphash, sha256} from 'ethereumjs-util';
 import secp256k1 from 'secp256k1';
 import {Buffer} from 'safe-buffer';
-import {formatCoin} from 'minterjs-tx/src/helpers';
-import {convertToPip} from 'minterjs-util/src/converter';
+import {formatCoin} from 'minterjs-tx';
+import {convertToPip} from 'minterjs-util';
 import {isNumericInteger, toHexString} from './utils';
 
 class Check {

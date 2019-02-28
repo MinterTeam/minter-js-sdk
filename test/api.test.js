@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {generateWallet, walletFromMnemonic} from 'minterjs-wallet';
-import {Minter, SendTxParams, MultisendTxParams, SellTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, RedeemCheckTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, CreateCoinTxParams, SellAllTxParams, issueCheck, prepareSignedTx} from '~/src';
-import {API_TYPE_EXPLORER, API_TYPE_NODE} from '~/src/variables';
+import {Minter, SendTxParams, MultisendTxParams, SellTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, RedeemCheckTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, CreateCoinTxParams, SellAllTxParams, issueCheck, prepareSignedTx, API_TYPE_EXPLORER, API_TYPE_NODE} from '~/src';
 
 // mnemonic: exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone
 // private: 5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da

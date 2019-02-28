@@ -1,9 +1,8 @@
 import {Buffer} from 'safe-buffer';
-import RedeemCheckTxData from 'minterjs-tx/src/tx-data/redeem-check';
-import {TX_TYPE_REDEEM_CHECK} from 'minterjs-tx/src/tx-types';
+import {MinterTxDataRedeemCheck, TX_TYPE_REDEEM_CHECK} from 'minterjs-tx';
 import {toBuffer} from 'minterjs-util';
 import {RedeemCheckTxParams} from '~/src';
-import {getProofWithRecovery} from '~/src/tx-params/redeem-check';
+// import {getProofWithRecovery} from '~/src/tx-params/redeem-check';
 
 
 describe('RedeemCheckTxParams', () => {
@@ -29,7 +28,7 @@ describe('RedeemCheckTxParams', () => {
                 privateKey: Buffer.from(privateKey, 'hex'),
                 gasCoin: 'MNT',
                 txType: TX_TYPE_REDEEM_CHECK,
-                txData: (new RedeemCheckTxData({
+                txData: (new MinterTxDataRedeemCheck({
                     rawCheck: toBuffer(check),
                     proof: '0x7adcf6a62a66b177b266c767c5ebd906651fb66269401a8c66d053574dc29c67296b93af2e276fbdf5f606a98419ae69191450f67a2d273ee6c5d3016773c16d01',
                 })).serialize(),
@@ -61,15 +60,15 @@ describe('RedeemCheckTxParams', () => {
     });
 });
 
-describe('getProofWithRecovery()', () => {
-    test('should work', () => {
-        const privateKey = Buffer.from('5a34ec45e683c5254f6ef11723b9fd859f14677e04e4a8bb7768409eff12f07d', 'hex');
-        const proof = getProofWithRecovery(privateKey, '123456');
-        expect(proof.toString('hex')).toEqual('7f8b6d3ed18d2fe131bbdc9f9bce3b96724ac354ce2cfb49b4ffc4bd71aabf580a8dfed407a34122e45d290941d855d744a62110fa1c11448078b13d3117bdfc01');
-    });
-    test('should work 123', () => {
-        const privateKey = Buffer.from('5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da', 'hex');
-        const proof = getProofWithRecovery(privateKey, '123');
-        expect(proof.toString('hex')).toEqual('7adcf6a62a66b177b266c767c5ebd906651fb66269401a8c66d053574dc29c67296b93af2e276fbdf5f606a98419ae69191450f67a2d273ee6c5d3016773c16d01');
-    });
-});
+// describe('getProofWithRecovery()', () => {
+//     test('should work', () => {
+//         const privateKey = Buffer.from('5a34ec45e683c5254f6ef11723b9fd859f14677e04e4a8bb7768409eff12f07d', 'hex');
+//         const proof = getProofWithRecovery(privateKey, '123456');
+//         expect(proof.toString('hex')).toEqual('7f8b6d3ed18d2fe131bbdc9f9bce3b96724ac354ce2cfb49b4ffc4bd71aabf580a8dfed407a34122e45d290941d855d744a62110fa1c11448078b13d3117bdfc01');
+//     });
+//     test('should work 123', () => {
+//         const privateKey = Buffer.from('5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da', 'hex');
+//         const proof = getProofWithRecovery(privateKey, '123');
+//         expect(proof.toString('hex')).toEqual('7adcf6a62a66b177b266c767c5ebd906651fb66269401a8c66d053574dc29c67296b93af2e276fbdf5f606a98419ae69191450f67a2d273ee6c5d3016773c16d01');
+//     });
+// });

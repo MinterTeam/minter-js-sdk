@@ -1,6 +1,5 @@
 import {Buffer} from 'safe-buffer';
-import MinterTx, {formatCoin} from 'minterjs-tx';
-import MinterTxSignature from 'minterjs-tx/src/tx-signature';
+import MinterTx, {MinterTxSignature, formatCoin} from 'minterjs-tx';
 import {toHexString} from './utils';
 
 /**
