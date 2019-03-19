@@ -1,10 +1,11 @@
 import {convertFromPip, convertToPip} from 'minterjs-util';
-import {API_TYPE_EXPLORER, API_TYPE_NODE} from '../variables';
+import {API_TYPE_GATE, API_TYPE_NODE} from '../variables';
+import {getData} from './utils';
 
 /**
  * @typedef {Object} EstimateBuyResult
  * @property {number|string} will_pay - amount of coinToSell
- * @property {number|string} commission - amount of coinToSell
+ * @property {number|string} commission - amount of coinToSell to pay fee
  */
 
 /**
@@ -38,27 +39,28 @@ export default function EstimateCoinBuy(apiInstance) {
             return Promise.reject(new Error('Coin to sell not specified'));
         }
 
-        const url = apiInstance.defaults.apiType === API_TYPE_EXPLORER
+        const url = apiInstance.defaults.apiType === API_TYPE_GATE
             ? '/api/v1/estimate/coin-buy'
             : '/estimate_coin_buy';
 
-        // @TODO remove quotes from node values
-        params = apiInstance.defaults.apiType === API_TYPE_EXPLORER ? {
+        params = apiInstance.defaults.apiType === API_TYPE_GATE ? {
             coinToBuy: params.coinToBuy || params.coin_to_buy,
             valueToBuy: convertToPip(params.valueToBuy || params.value_to_buy),
             coinToSell: params.coinToSell || params.coin_to_sell,
         } : {
-            coin_to_buy: `${params.coinToBuy || params.coin_to_buy}`,
-            value_to_buy: `${convertToPip(params.valueToBuy || params.value_to_buy)}`,
-            coin_to_sell: `${params.coinToSell || params.coin_to_sell}`,
+            coin_to_buy: params.coinToBuy || params.coin_to_buy,
+            value_to_buy: convertToPip(params.valueToBuy || params.value_to_buy),
+            coin_to_sell: params.coinToSell || params.coin_to_sell,
         };
 
         return apiInstance.get(url, {params})
             .then((response) => {
-                // receive pips from node and convert them
-                response.data.result.will_pay = convertFromPip(response.data.result.will_pay);
-                response.data.result.commission = convertFromPip(response.data.result.commission);
-                return response.data.result;
+                const resData = getData(response, apiInstance.defaults.apiType);
+                // convert pips
+                return {
+                    will_pay: convertFromPip(resData.will_pay),
+                    commission: convertFromPip(resData.commission),
+                };
             });
     };
 }

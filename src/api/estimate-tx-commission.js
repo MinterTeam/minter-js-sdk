@@ -1,4 +1,5 @@
-import {API_TYPE_EXPLORER} from '../variables';
+import {API_TYPE_GATE} from '../variables';
+import {getData} from './utils';
 
 
 /**
@@ -20,17 +21,20 @@ export default function EstimateTxCommission(apiInstance) {
             return Promise.reject(new Error('Transaction not specified'));
         }
 
-        const url = apiInstance.defaults.apiType === API_TYPE_EXPLORER
+        const url = apiInstance.defaults.apiType === API_TYPE_GATE
             ? '/api/v1/estimate/tx-commission'
             : '/estimate_tx_commission';
 
-        params = apiInstance.defaults.apiType === API_TYPE_EXPLORER ? {
+        params = apiInstance.defaults.apiType === API_TYPE_GATE ? {
             transaction: params.transaction || params.tx,
         } : {
             tx: `0x${params.transaction || params.tx}`,
         };
 
         return apiInstance.get(url, {params})
-            .then((response) => response.data.result.commission);
+            .then((response) => {
+                const resData = getData(response, apiInstance.defaults.apiType);
+                return resData.commission;
+            });
     };
 }

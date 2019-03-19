@@ -1,42 +1,53 @@
 import axios from 'axios';
 import {generateWallet, walletFromMnemonic} from 'minterjs-wallet';
-import {Minter, SendTxParams, MultisendTxParams, SellTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, RedeemCheckTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, CreateCoinTxParams, SellAllTxParams, issueCheck, prepareSignedTx, API_TYPE_EXPLORER, API_TYPE_NODE} from '~/src';
+import {Minter, SendTxParams, MultisendTxParams, SellTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, RedeemCheckTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, CreateCoinTxParams, SellAllTxParams, issueCheck, prepareSignedTx, API_TYPE_GATE, API_TYPE_NODE} from '~/src';
 
 // mnemonic: exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone
 // private: 5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da
 // address: Mx7633980c000139dd3bd24a3f54e06474fa941e16
 
+// tst.gate.minter.network wallets with 1 000 000 000
+// "Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4" // puzzle feed enlist rack cliff divert exist bind swamp kiwi casino pull
+// "Mx634550aa7dc347d5e60888da2529c56f1818e403" // air model item valley auction bullet crisp always erosion paper orient fog
+// "Mx49ca5b11f0055347df169985c0b70914150bb567" // erupt level forum warrior mutual wrap this elephant destroy trim habit annual
+
 const ENV_TESTNET = 'testnet';
 const ENV_TEST_TESTNET = 'test';
+const TEST_TESTNET_MENMONIC = 'puzzle feed enlist rack cliff divert exist bind swamp kiwi casino pull';
 
 const ENV_SETTINGS = {
     [ENV_TESTNET]: {
         nodeBaseUrl: 'https://minter-node-1.testnet.minter.network',
-        explorerBaseUrl: 'https://testnet.explorer.minter.network',
+        gateBaseUrl: 'https://gate.minter.network',
         mnemonic: 'exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone',
         privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
         address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
         customCoin: 'TESTCOIN01',
     },
     [ENV_TEST_TESTNET]: {
-        nodeBaseUrl: 'http://159.89.107.246:8841',
-        explorerBaseUrl: 'https://tst.explorer.minter.network',
+        nodeBaseUrl: 'http://front-de.minter.network:48841',
+        gateBaseUrl: 'https://tst.gate.minter.network',
+        mnemonic: TEST_TESTNET_MENMONIC,
+        privateKey: walletFromMnemonic(TEST_TESTNET_MENMONIC).getPrivateKeyString(),
+        address: 'Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4',
+        customCoin: 'TESTCOIN01',
     },
 };
 
 // select environment
 const CURRENT_ENV = ENV_TEST_TESTNET;
-let ENV_DATA = ENV_SETTINGS[CURRENT_ENV];
+const ENV_DATA = ENV_SETTINGS[CURRENT_ENV];
 
 
 const minterNode = new Minter({apiType: API_TYPE_NODE, baseURL: ENV_DATA.nodeBaseUrl});
-const minterExplorer = new Minter({apiType: API_TYPE_EXPLORER, baseURL: ENV_DATA.explorerBaseUrl});
+const minterGate = new Minter({apiType: API_TYPE_GATE, baseURL: ENV_DATA.gateBaseUrl});
 
-const newCandidatePublicKeyExplorer = generateWallet().getPublicKeyString();
+const newCandidatePublicKeyGate = generateWallet().getPublicKeyString();
 const newCandidatePublicKeyNode = generateWallet().getPublicKeyString();
 
 beforeAll(async () => {
     // fill test ENV_DATA with data from the server
+    /*
     if (CURRENT_ENV === ENV_TEST_TESTNET) {
         const response = await axios.get(`${ENV_DATA.nodeBaseUrl}/make_test_setup?env=bot`);
         const result = response.data.result;
@@ -47,6 +58,24 @@ beforeAll(async () => {
             address: result.address,
             customCoin: result.coin_symbol,
         };
+    }
+    */
+
+    // ensure custom coin exists
+    const txParams = new CreateCoinTxParams({
+        privateKey: ENV_DATA.privateKey,
+        coinName: ENV_DATA.customCoin,
+        coinSymbol: ENV_DATA.customCoin,
+        initialAmount: 500,
+        initialReserve: 1000,
+        crr: 50,
+        feeCoinSymbol: 'MNT',
+        message: 'custom message',
+    });
+    try {
+        await minterGate.postTx(txParams);
+    } catch (e) {
+        console.log(e);
     }
 }, 40000);
 
@@ -69,7 +98,7 @@ describe('PostTx: send', () => {
     });
 
     test('should return signed tx', async () => {
-        const nonce = await minterExplorer.getNonce(ENV_DATA.address);
+        const nonce = await minterGate.getNonce(ENV_DATA.address);
         const txParams = new SendTxParams({...txParamsData(), nonce, gasPrice: 0});
         const tx = prepareSignedTx(txParams);
         console.log(tx.serialize().toString('hex'));
@@ -77,10 +106,10 @@ describe('PostTx: send', () => {
             .toBeGreaterThan(0);
     }, 30000);
 
-    test('should work explorer', () => {
+    test('should work gate', () => {
         expect.assertions(2);
         const txParams = new SendTxParams(txParamsData());
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .then((txHash) => {
                 console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -93,10 +122,10 @@ describe('PostTx: send', () => {
             });
     }, 30000);
 
-    test('should fail explorer', () => {
+    test('should fail gate', () => {
         expect.assertions(1);
         const txParams = new SendTxParams({...txParamsData(), amount: Number.MAX_SAFE_INTEGER, coinSymbol: 'ASD999'});
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
@@ -150,11 +179,11 @@ describe('PostTx handle low gasPrice', () => {
         message: 'custom message',
     });
 
-    describe('should fail when 0 retries | explorer', () => {
+    describe('should fail when 0 retries | gate', () => {
         test('should fail with parsable error', () => {
             expect.assertions(1);
             const txParams = new SendTxParams(txParamsData());
-            return minterExplorer.postTx(txParams, {gasRetryLimit: 0})
+            return minterGate.postTx(txParams, {gasRetryLimit: 0})
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response.data);
@@ -164,10 +193,10 @@ describe('PostTx handle low gasPrice', () => {
         }, 70000);
     });
 
-    test('should work with retries | explorer', () => {
+    test('should work with retries | gate', () => {
         expect.assertions(2);
         const txParams = new SendTxParams(txParamsData());
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -231,10 +260,10 @@ describe('PostTx: multisend', () => {
         message: 'custom message',
     });
 
-    test('should work explorer', () => {
+    test('should work gate', () => {
         expect.assertions(2);
         const txParams = new MultisendTxParams(txParamsData());
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .then((txHash) => {
                 console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -247,13 +276,13 @@ describe('PostTx: multisend', () => {
             });
     }, 30000);
 
-    test('should fail explorer', () => {
+    test('should fail gate', () => {
         expect.assertions(1);
         const txParamsDataInstance = txParamsData();
         txParamsDataInstance.list[0].value = Number.MAX_SAFE_INTEGER;
         txParamsDataInstance.list[0].coin = 'ASD999';
         const txParams = new MultisendTxParams(txParamsDataInstance);
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
@@ -309,10 +338,10 @@ describe('PostTx: sell', () => {
         message: 'custom message',
     });
 
-    test('should work explorer', () => {
+    test('should work gate', () => {
         expect.assertions(2);
         const txParams = new SellTxParams(txParamsData());
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -325,10 +354,10 @@ describe('PostTx: sell', () => {
             });
     }, 30000);
 
-    test('should fail explorer', () => {
+    test('should fail gate', () => {
         expect.assertions(1);
         const txParams = new SellTxParams({...txParamsData(), sellAmount: Number.MAX_SAFE_INTEGER, coinFrom: 'ASD999'});
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
@@ -384,10 +413,10 @@ describe('PostTx: buy', () => {
         message: 'custom message',
     });
 
-    test('should work explorer', () => {
+    test('should work gate', () => {
         expect.assertions(2);
         const txParams = new BuyTxParams(txParamsData());
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -400,10 +429,10 @@ describe('PostTx: buy', () => {
             });
     }, 30000);
 
-    test('should fail explorer', () => {
+    test('should fail gate', () => {
         expect.assertions(1);
         const txParams = new BuyTxParams({...txParamsData(), buyAmount: Number.MAX_SAFE_INTEGER, coinFrom: 'ASD999'});
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
@@ -459,14 +488,14 @@ describe('validator', () => {
             message: 'custom message',
         });
 
-        test('should work explorer', async () => {
+        test('should work gate', async () => {
             // wait for getNonce to work correctly
             // await new Promise((resolve) => {
             //     setTimeout(resolve, 5000);
             // });
             expect.assertions(2);
-            const txParams = new DeclareCandidacyTxParams({...txParamsData(), publicKey: newCandidatePublicKeyExplorer});
-            return minterExplorer.postTx(txParams)
+            const txParams = new DeclareCandidacyTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
+            return minterGate.postTx(txParams)
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -479,10 +508,10 @@ describe('validator', () => {
                 });
         }, 30000);
 
-        test('should fail explorer', () => {
+        test('should fail gate', () => {
             expect.assertions(1);
             const txParams = new DeclareCandidacyTxParams(txParamsData()); // empty publicKey specified
-            return minterExplorer.postTx(txParams)
+            return minterGate.postTx(txParams)
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response);
@@ -535,14 +564,14 @@ describe('validator', () => {
             message: 'custom message',
         });
 
-        test('should work explorer', async () => {
+        test('should work gate', async () => {
             // wait for getNonce to work correctly
             // await new Promise((resolve) => {
             //     setTimeout(resolve, 5000);
             // });
             expect.assertions(2);
-            const txParams = new EditCandidateTxParams({...txParamsData(), publicKey: newCandidatePublicKeyExplorer});
-            return minterExplorer.postTx(txParams)
+            const txParams = new EditCandidateTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
+            return minterGate.postTx(txParams)
                 .then((txHash) => {
                     console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -555,10 +584,10 @@ describe('validator', () => {
                 });
         }, 30000);
 
-        test('should fail explorer', () => {
+        test('should fail gate', () => {
             expect.assertions(1);
             const txParams = new EditCandidateTxParams(txParamsData()); // empty publicKey specified
-            return minterExplorer.postTx(txParams)
+            return minterGate.postTx(txParams)
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response);
@@ -611,10 +640,10 @@ describe('validator', () => {
             message: 'custom message',
         });
 
-        test('should work explorer', () => {
+        test('should work gate', () => {
             expect.assertions(2);
-            const txParams = new DelegateTxParams({...txParamsData(), publicKey: newCandidatePublicKeyExplorer});
-            return minterExplorer.postTx(txParams)
+            const txParams = new DelegateTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
+            return minterGate.postTx(txParams)
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -627,10 +656,10 @@ describe('validator', () => {
                 });
         }, 30000);
 
-        test('should fail explorer', () => {
+        test('should fail gate', () => {
             expect.assertions(1);
             const txParams = new DelegateTxParams(txParamsData()); // empty publicKey specified
-            return minterExplorer.postTx(txParams)
+            return minterGate.postTx(txParams)
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response);
@@ -684,11 +713,11 @@ describe('validator', () => {
         });
 
 
-        test('should work explorer', () => {
-            console.log('unbond from:', newCandidatePublicKeyExplorer);
+        test('should work gate', () => {
+            console.log('unbond from:', newCandidatePublicKeyGate);
             expect.assertions(2);
-            const txParams = new UnbondTxParams({...txParamsData(), publicKey: newCandidatePublicKeyExplorer});
-            return minterExplorer.postTx(txParams)
+            const txParams = new UnbondTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
+            return minterGate.postTx(txParams)
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -701,10 +730,10 @@ describe('validator', () => {
                 });
         }, 30000);
 
-        test('should fail explorer', () => {
+        test('should fail gate', () => {
             expect.assertions(1);
             const txParams = new UnbondTxParams(txParamsData()); // empty publicKey specified
-            return minterExplorer.postTx(txParams)
+            return minterGate.postTx(txParams)
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response);
@@ -755,10 +784,10 @@ describe('validator', () => {
             message: 'custom message',
         });
 
-        test('should work explorer', () => {
+        test('should work gate', () => {
             expect.assertions(2);
-            const txParams = new SetCandidateOnTxParams({...txParamsData(), publicKey: newCandidatePublicKeyExplorer});
-            return minterExplorer.postTx(txParams)
+            const txParams = new SetCandidateOnTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
+            return minterGate.postTx(txParams)
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -771,10 +800,10 @@ describe('validator', () => {
                 });
         }, 30000);
 
-        test('should fail explorer', () => {
+        test('should fail gate', () => {
             expect.assertions(1);
             const txParams = new SetCandidateOnTxParams(txParamsData()); // empty publicKey specified
-            return minterExplorer.postTx(txParams)
+            return minterGate.postTx(txParams)
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response);
@@ -825,10 +854,10 @@ describe('validator', () => {
             message: 'custom message',
         });
 
-        test('should work explorer', () => {
+        test('should work gate', () => {
             expect.assertions(2);
-            const txParams = new SetCandidateOffTxParams({...txParamsData(), publicKey: newCandidatePublicKeyExplorer});
-            return minterExplorer.postTx(txParams)
+            const txParams = new SetCandidateOffTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
+            return minterGate.postTx(txParams)
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -841,10 +870,10 @@ describe('validator', () => {
                 });
         }, 30000);
 
-        test('should fail explorer', () => {
+        test('should fail gate', () => {
             expect.assertions(1);
             const txParams = new SetCandidateOffTxParams(txParamsData()); // empty publicKey specified
-            return minterExplorer.postTx(txParams)
+            return minterGate.postTx(txParams)
                 .then((res) => {
                     console.log({res});
                 })
@@ -909,10 +938,10 @@ describe('PostTx: redeem check', () => {
         feeCoinSymbol: 'MNT',
     });
 
-    test('should work explorer', () => {
+    test('should work gate', () => {
         expect.assertions(2);
         const txParams = new RedeemCheckTxParams({...txParamsData(), check: getRandomCheck()});
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -925,10 +954,10 @@ describe('PostTx: redeem check', () => {
             });
     }, 30000);
 
-    test('should fail explorer', () => {
+    test('should fail gate', () => {
         expect.assertions(1);
         const txParams = new RedeemCheckTxParams(txParamsData()); // empty check specified
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
@@ -980,10 +1009,10 @@ describe('PostTx: create multisig', () => {
         feeCoinSymbol: 'MNT',
     });
 
-    test('should work explorer', () => {
+    test('should work gate', () => {
         expect.assertions(2);
         const txParams = new CreateMultisigTxParams({...txParamsData(), weights: [Math.random().toString().replace(/\D/, ''), Math.random().toString().replace(/\D/, '')]});
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -996,10 +1025,10 @@ describe('PostTx: create multisig', () => {
             });
     }, 30000);
 
-    test('should fail explorer', () => {
+    test('should fail gate', () => {
         expect.assertions(1);
         const txParams = new CreateMultisigTxParams({...txParamsData(), weights: []});
-        return minterExplorer.postTx(txParams)
+        return minterGate.postTx(txParams)
             .catch((error) => {
                 // console.log(error);
                 // console.log(error.response);
@@ -1044,10 +1073,10 @@ describe('PostTx: create multisig', () => {
 // @TODO test multisig tx
 
 describe('EstimateCoinSell', () => {
-    test('should work explorer', () => {
+    test('should work gate', () => {
         expect.assertions(2);
 
-        return minterExplorer.estimateCoinSell({
+        return minterGate.estimateCoinSell({
             coinToSell: 'MNT',
             valueToSell: 1,
             coinToBuy: ENV_DATA.customCoin,
@@ -1062,9 +1091,9 @@ describe('EstimateCoinSell', () => {
             });
     }, 30000);
 
-    test('should fail explorer', () => {
+    test('should fail gate', () => {
         expect.assertions(1);
-        return minterExplorer.estimateCoinSell({
+        return minterGate.estimateCoinSell({
             coinToSell: 'MNT',
             valueToSell: 1,
             coinToBuy: 'MNT',
@@ -1106,10 +1135,10 @@ describe('EstimateCoinSell', () => {
 });
 
 describe('EstimateCoinBuy', () => {
-    test('should work explorer', () => {
+    test('should work gate', () => {
         expect.assertions(2);
 
-        return minterExplorer.estimateCoinBuy({
+        return minterGate.estimateCoinBuy({
             coinToSell: 'MNT',
             valueToBuy: 1,
             coinToBuy: ENV_DATA.customCoin,
@@ -1124,9 +1153,9 @@ describe('EstimateCoinBuy', () => {
             });
     }, 30000);
 
-    test('should fail explorer', () => {
+    test('should fail gate', () => {
         expect.assertions(1);
-        return minterExplorer.estimateCoinBuy({
+        return minterGate.estimateCoinBuy({
             coinToSell: 'MNT',
             valueToBuy: 1,
             coinToBuy: 'MNT',
@@ -1171,10 +1200,10 @@ describe('EstimateCoinBuy', () => {
 describe('EstimateTxCommission', () => {
     const rawTx = 'f8911a018a4d4e540000000000000001aae98a4d4e5400000000000000947633980c000139dd3bd24a3f54e06474fa941e16888ac7230489e800008e637573746f6d206d6573736167658001b845f8431ca0c0716faaac63263c8c6106fa17f863eec2de60431214dd8d775147d4ed972410a05f881fb3938acf69a0a7eb761e5479fbbd60780e1db0c85a0670150eb7b070ab';
 
-    test('should work explorer', () => {
+    test('should work gate', () => {
         expect.assertions(1);
 
-        return minterExplorer.estimateTxCommission({
+        return minterGate.estimateTxCommission({
             transaction: rawTx,
         })
             .then((commission) => {

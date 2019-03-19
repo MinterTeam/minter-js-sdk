@@ -1,6 +1,6 @@
 import axios from 'axios';
 import createError from 'axios/lib/core/createError';
-import {API_TYPE_EXPLORER, API_TYPE_NODE} from '../variables';
+import {API_TYPE_GATE, API_TYPE_NODE} from '../variables';
 
 /**
  * @typedef {Object} MinterApiInstanceType
@@ -17,26 +17,21 @@ import {API_TYPE_EXPLORER, API_TYPE_NODE} from '../variables';
  * @return {MinterApiInstance}
  */
 export default function MinterApi(options = {}) {
-    if (!options.apiType && !options.baseURL) {
-        options.apiType = API_TYPE_EXPLORER;
-    }
-    if (!options.apiType && options.baseURL) {
+    if (!options.apiType) {
         options.apiType = API_TYPE_NODE;
-    }
-    if (options.apiType === API_TYPE_EXPLORER && !options.baseURL) {
-        options.baseURL = 'https://testnet.explorer.minter.network';
     }
 
     // ensure error payload will be rejected
-    options.adapter = thenableToRejectedAdapter;
+    // options.adapter = thenableToRejectedAdapter;
 
     // ensure `options.transformResponse` is array
     if (!Array.isArray(options.transformResponse)) {
         options.transformResponse = options.transformResponse ? [options.transformResponse] : [];
     }
 
-    // transform response from explorer to minter-node api format
-    if (options.apiType === API_TYPE_EXPLORER) {
+    // @TODO duplication with getData
+    // transform response from gate to minter-node api format
+    if (options.apiType === API_TYPE_GATE) {
         options.transformResponse.push((data) => {
             data = parseData(data);
             // transform `then`

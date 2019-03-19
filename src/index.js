@@ -1,5 +1,5 @@
 import {generateWallet, walletFromMnemonic, walletFromPrivateKey} from 'minterjs-wallet';
-import {API_TYPE_NODE, API_TYPE_EXPLORER} from './variables';
+import {API_TYPE_NODE, API_TYPE_GATE} from './variables';
 import Minter from './minter';
 import MinterApi from './api';
 import PostTx from './api/post-tx';
@@ -25,7 +25,7 @@ import CreateMultisigTxParams from './tx-params/create-multisig';
 export default Minter;
 export {
     API_TYPE_NODE,
-    API_TYPE_EXPLORER,
+    API_TYPE_GATE,
     Minter,
     MinterApi,
     PostTx,

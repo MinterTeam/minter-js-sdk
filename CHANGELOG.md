@@ -1,22 +1,27 @@
+# 0.14.0 - 2019-03-19
+- **BREAKING** Changed: connection with [explorer api](https://github.com/MinterTeam/minter-php-explorer-api) removed in favor of [gate api](https://github.com/MinterTeam/explorer-gate)
+- **BREAKING** Removed: `apiType` and `baseURL` options no more have default values  
+- Removed: adapter to reject errors with 200 code, now all api errors should have 400+ code
+
 # 0.13.0 - 2019-02-28
-- add UMD and commonjs builds
-- **BREAKING** remove `getProofWithRecovery` export from tx-params/redeem-check.js
+- Added: UMD and commonjs builds
+- **BREAKING** Removed: `getProofWithRecovery` export from tx-params/redeem-check.js
 
 ## 0.12.0 - 2019-02-20
-- **BREAKING** now will throw on invalid numeric params
+- **BREAKING** Added: now will throw on invalid numeric params
 
 ## 0.11.2 - 2019-02-18
-- update deps
-- fix ethereumjs-util
+- Updated: deps
+- Fixed: ethereumjs-util
 
 ## 0.11.1 - 2019-02-06
-- add `MultisendTxParams`
+- Added: `MultisendTxParams`
 
 ## 0.11.0 - 2019-01-31
-- **BREAKING** move postTx's `nonce` param into `txParams` object
-- allow pass `gasPrice` into `txParams`
-- add retry behavior to `postTx` if it failed with low gas error, `gasRetryLimit` option controls it
-- copy error payload `error.tx_result.log` to `error.tx_result.message`
+- **BREAKING** Changed: move postTx's `nonce` param into `txParams` object
+- Added: allow pass `gasPrice` into `txParams`
+- Added: retry behavior to `postTx` if it failed with low gas error, `gasRetryLimit` option controls it
+- Fixed: copy error payload `error.tx_result.log` to `error.tx_result.message`
 
 ## 0.10.0 - 2019-01-24
 - Move `error.log` payload field into `error.message` to conform node API [v0.10.0](https://github.com/MinterTeam/minter-go-node/releases/tag/v0.10.0)

@@ -2,7 +2,8 @@ import {Buffer} from 'safe-buffer';
 import {privateToAddressString} from 'minterjs-util';
 import GetNonce from './get-nonce';
 import prepareSignedTx from '../prepare-tx';
-import {API_TYPE_EXPLORER} from '../variables';
+import {API_TYPE_GATE} from '../variables';
+import {getData} from '~/src/api/utils';
 
 /**
  * @param {MinterApiInstance} apiInstance
@@ -39,7 +40,7 @@ function _postTx(apiInstance, txParams) {
     const tx = prepareSignedTx(txParams);
 
     let postTxPromise;
-    if (apiInstance.defaults.apiType === API_TYPE_EXPLORER) {
+    if (apiInstance.defaults.apiType === API_TYPE_GATE) {
         postTxPromise = apiInstance.post('/api/v1/transaction/push', {
             transaction: tx.serialize().toString('hex'),
         });
@@ -49,7 +50,9 @@ function _postTx(apiInstance, txParams) {
 
     return postTxPromise
         .then((response) => {
-            let txHash = response.data.result.hash.toLowerCase();
+            const resData = getData(response, apiInstance.defaults.apiType);
+            let txHash = resData.hash.toLowerCase();
+            // @TODO is transform needed?
             if (txHash.indexOf('mt') !== 0) {
                 txHash = `Mt${txHash}`;
             } else {
@@ -71,12 +74,14 @@ function _postTx(apiInstance, txParams) {
 function _postTxEnsureGas(apiInstance, txParams, gasRetryLimit) {
     return _postTx(apiInstance, txParams)
         .catch((error) => {
+            // @TODO limit max gas_price to prevent sending tx with to high fees
             if (gasRetryLimit > 0 && isGasError(error)) {
                 // make retry
                 gasRetryLimit -= 1;
                 const minGas = getMinGas(error);
                 return new Promise((resolve) => {
                     // low gas tx always goes into mempool, so no new tx in this block allowed, wait for new block
+                    // @TODO https://github.com/MinterTeam/minter-go-node/issues/220
                     setTimeout(resolve, 5000);
                 })
                     .then(() => _postTxEnsureGas(apiInstance, {...txParams, gasPrice: minGas}, gasRetryLimit));
@@ -88,12 +93,13 @@ function _postTxEnsureGas(apiInstance, txParams, gasRetryLimit) {
 
 
 /**
+ * Get tx_result data from error
  * @param error
  * @return {Object|undefined}
  */
 function getTxResult(error) {
     error = error.response && error.response.data && error.response.data.error;
-    // explorer moves tx_result into root error, so check it too
+    // gate moves tx_result into root error, so check it too
     return error && (error.tx_result || error);
 }
 
@@ -108,7 +114,7 @@ function isGasError(error) {
 }
 
 /**
- * Retrieve min gas value from error message
+ * Retrieve required min gas value from error message
  * @param error
  * @return {number}
  */
