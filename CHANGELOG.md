@@ -1,3 +1,6 @@
+# 0.14.1 - 2019-04-09
+- Fixed: paths alias
+
 # 0.14.0 - 2019-03-19
 - **BREAKING** Changed: connection with [explorer api](https://github.com/MinterTeam/minter-php-explorer-api) removed in favor of [gate api](https://github.com/MinterTeam/explorer-gate)
 - **BREAKING** Removed: `apiType` and `baseURL` options no more have default values  

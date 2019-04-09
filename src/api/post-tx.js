@@ -3,7 +3,7 @@ import {privateToAddressString} from 'minterjs-util';
 import GetNonce from './get-nonce';
 import prepareSignedTx from '../prepare-tx';
 import {API_TYPE_GATE} from '../variables';
-import {getData} from '~/src/api/utils';
+import {getData} from './utils';
 
 /**
  * @param {MinterApiInstance} apiInstance
