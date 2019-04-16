@@ -1,4 +1,4 @@
-import {MinterTxDataSellAll, TX_TYPE_SELL_ALL_COIN, formatCoin} from 'minterjs-tx';
+import {MinterTxDataSellAll, TX_TYPE_SELL_ALL, formatCoin} from 'minterjs-tx';
 import {convertToPip} from 'minterjs-util';
 
 /**
@@ -24,7 +24,7 @@ export default function SellAllTxParams({coinFrom, coinTo, minBuyAmount = 0, fee
     return {
         ...otherParams,
         gasCoin: feeCoinSymbol,
-        txType: TX_TYPE_SELL_ALL_COIN,
+        txType: TX_TYPE_SELL_ALL,
         txData: txData.serialize(),
     };
 }

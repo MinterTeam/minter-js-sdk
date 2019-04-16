@@ -1,5 +1,5 @@
 import {Buffer} from 'safe-buffer';
-import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL_COIN, TX_TYPE_SELL_ALL_COIN, TX_TYPE_BUY_COIN} from 'minterjs-tx';
+import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL, TX_TYPE_SELL_ALL, TX_TYPE_BUY} from 'minterjs-tx';
 import {SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams} from '~/src';
 
 
@@ -97,7 +97,7 @@ describe('SellTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_SELL_COIN,
+        txType: TX_TYPE_SELL,
         txData: Buffer.from([224, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 136, 138, 199, 35, 4, 137, 232, 0, 0, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 128]),
     };
 
@@ -148,7 +148,7 @@ describe('SellAllTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_SELL_ALL_COIN,
+        txType: TX_TYPE_SELL_ALL,
         txData: Buffer.from([215, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 128]),
     };
 
@@ -201,7 +201,7 @@ describe('BuyTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_BUY_COIN,
+        txType: TX_TYPE_BUY,
         txData: Buffer.from([224, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 136, 138, 199, 35, 4, 137, 232, 0, 0, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 128]),
     };
 

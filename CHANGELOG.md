@@ -1,3 +1,8 @@
+# 0.15.0 - 2019-04-16
+- **BREAKING** add `chainID` tx param to support minter-go-node [0.19.0](https://github.com/MinterTeam/minter-go-node/releases/tag/v0.19.0)
+- **BREAKING** add `chainID` param to `issueCheck`
+- **BREAKING** removed default nonce value from `prepareSignedTx`
+
 # 0.14.1 - 2019-04-09
 - Fixed: paths alias
 

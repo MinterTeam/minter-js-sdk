@@ -16,6 +16,11 @@ class Check {
                 allowLess: true,
                 default: Buffer.from([]),
             }, {
+                name: 'chainID',
+                length: 1,
+                allowLess: true,
+                default: new Buffer([]),
+            }, {
                 name: 'dueBlock',
                 length: 8,
                 allowLess: true,
@@ -67,7 +72,8 @@ class Check {
     }
 
     hash() {
-        return rlphash(this.raw.slice(0, 4));
+        // don't hash last 4 fields (lock and signature)
+        return rlphash(this.raw.slice(0, this.raw.length - 4));
     }
 
     sign(privateKey, passphrase) {
@@ -81,7 +87,8 @@ class Check {
         lockWithRecovery[64] = lock.recovery;
         this.lock = `0x${lockWithRecovery.toString('hex')}`;
 
-        const msgHashWithLock = rlphash(this.raw.slice(0, 5));
+        // don't hash last 3 signature fields
+        const msgHashWithLock = rlphash(this.raw.slice(0, this.raw.length - 3));
         const sig = ecsign(msgHashWithLock, privateKey);
         Object.assign(this, sig);
     }
@@ -92,12 +99,13 @@ class Check {
  * @param {string|Buffer} privateKey - hex or Buffer
  * @param {string} passPhrase - utf8
  * @param {number} nonce
+ * @param {number} [chainID=1]
  * @param {string} coinSymbol
  * @param {number} value
- * @param {number} dueBlock
+ * @param {number} [dueBlock=999999999]
  * @return {string}
  */
-export default function issueCheck({privateKey, passPhrase, nonce, coinSymbol, value, dueBlock = 999999999}) {
+export default function issueCheck({privateKey, passPhrase, nonce, chainID = 1, coinSymbol, value, dueBlock = 999999999} = {}) {
     // @TODO accept exponential
     if (!isNumericInteger(nonce)) {
         throw new Error('Invalid nonce. Should be numeric integer');
@@ -112,6 +120,7 @@ export default function issueCheck({privateKey, passPhrase, nonce, coinSymbol, v
 
     const check = new Check({
         nonce: `0x${toHexString(nonce)}`,
+        chainID: `0x${toHexString(chainID)}`,
         coin: formatCoin(coinSymbol),
         value: `0x${convertToPip(value, 'hex')}`,
         dueBlock: `0x${toHexString(dueBlock)}`,

@@ -36,6 +36,7 @@ const minterSDK = new Minter();
 const txParams = new SendTxParams({
     privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     nonce: 1,
+    chainID: 1,
     address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
     amount: 10,
     coinSymbol: 'MNT',
@@ -94,6 +95,7 @@ Returns promise that resolves with sent transaction hash.
  * @typedef {Object} TxParams
  * @property {string|Buffer} privateKey
  * @property {number} [nonce] - can be omitted, will be received by `getNonce`
+ * @property {number} [chainID=1] - 1 = mainnet, 2 = testnet
  * @property {number} [gasPrice=1] - can be updated automatically on retry, if gasRetryLimit > 1
  * @property {string} [gasCoin='BIP']
  * @property {string|Buffer} txType
@@ -199,6 +201,7 @@ const check = issueCheck({
     privateKey: '2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
     passPhrase: 'pass',
     nonce: 1, // must be unique for private key
+    chainID: 1,
     coinSymbol: 'MNT',
     value: 10,
     dueBlock: 999999, // at this block number check will be expired
