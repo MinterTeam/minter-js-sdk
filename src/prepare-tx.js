@@ -6,7 +6,7 @@ import {toHexString} from './utils';
  * @typedef {Object} TxParams
  * @property {string|Buffer} privateKey
  * @property {number} [nonce]
- * @property {Number} [chainID=1]
+ * @property {Number} [chainId=1]
  * @property {number} [gasPrice=1]
  * @property {string} [gasCoin='BIP']
  * @property {string|Buffer} txType
@@ -20,7 +20,7 @@ import {toHexString} from './utils';
  * @return {MinterTx}
  */
 export default function prepareSignedTx(txParams = {}) {
-    const {privateKey, nonce, chainID = 1, gasPrice = 1, gasCoin = 'BIP', txType, txData, message} = txParams;
+    const {privateKey, nonce, chainId = 1, gasPrice = 1, gasCoin = 'BIP', txType, txData, message} = txParams;
     // throw on falsy nonce except 0
     if (!nonce && typeof nonce !== 'number') {
         throw new Error('Invalid nonce specified, tx can\'t be prepared');
@@ -30,7 +30,7 @@ export default function prepareSignedTx(txParams = {}) {
 
     const txProps = {
         nonce: `0x${toHexString(nonce)}`,
-        chainID: `0x${toHexString(chainID)}`,
+        chainId: `0x${toHexString(chainId)}`,
         gasPrice: `0x${toHexString(gasPrice)}`,
         gasCoin: formatCoin(gasCoin),
         type: txType,

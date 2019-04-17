@@ -64,7 +64,7 @@ beforeAll(async () => {
     // ensure custom coin exists
     const txParams = new CreateCoinTxParams({
         privateKey: ENV_DATA.privateKey,
-        chainID: 2,
+        chainId: 2,
         coinName: ENV_DATA.customCoin,
         coinSymbol: ENV_DATA.customCoin,
         initialAmount: 500,
@@ -91,7 +91,7 @@ beforeEach(async () => {
 describe('PostTx: send', () => {
     const txParamsData = () => ({
         privateKey: ENV_DATA.privateKey,
-        chainID: 2,
+        chainId: 2,
         address: ENV_DATA.address,
         amount: 10,
         coinSymbol: 'MNT',
@@ -173,7 +173,7 @@ describe('PostTx: send', () => {
 describe.skip('PostTx handle low gasPrice', () => {
     const txParamsData = () => ({
         privateKey: ENV_DATA.privateKey,
-        chainID: 2,
+        chainId: 2,
         address: ENV_DATA.address,
         amount: 10,
         coinSymbol: 'MNT',
@@ -247,7 +247,7 @@ describe.skip('PostTx handle low gasPrice', () => {
 describe('PostTx: multisend', () => {
     const txParamsData = () => ({
         privateKey: ENV_DATA.privateKey,
-        chainID: 2,
+        chainId: 2,
         list: [
             {
                 value: 10,
@@ -335,7 +335,7 @@ describe('PostTx: multisend', () => {
 describe('PostTx: sell', () => {
     const txParamsData = () => ({
         privateKey: ENV_DATA.privateKey,
-        chainID: 2,
+        chainId: 2,
         coinFrom: 'MNT',
         coinTo: ENV_DATA.customCoin,
         sellAmount: 1,
@@ -411,7 +411,7 @@ describe('PostTx: sell', () => {
 describe('PostTx: buy', () => {
     const txParamsData = () => ({
         privateKey: ENV_DATA.privateKey,
-        chainID: 2,
+        chainId: 2,
         coinFrom: 'MNT',
         coinTo: ENV_DATA.customCoin,
         buyAmount: 1,
@@ -485,7 +485,7 @@ describe('validator', () => {
     describe('PostTx: declare candidacy', () => {
         const txParamsData = () => ({
             privateKey: ENV_DATA.privateKey,
-            chainID: 2,
+            chainId: 2,
             address: ENV_DATA.address,
             publicKey: '',
             coinSymbol: 'MNT',
@@ -564,7 +564,7 @@ describe('validator', () => {
     describe('PostTx: edit candidate', () => {
         const txParamsData = () => ({
             privateKey: ENV_DATA.privateKey,
-            chainID: 2,
+            chainId: 2,
             publicKey: '',
             rewardAddress: ENV_DATA.address,
             ownerAddress: ENV_DATA.address,
@@ -641,7 +641,7 @@ describe('validator', () => {
     describe('PostTx: delegate', () => {
         const txParamsData = () => ({
             privateKey: ENV_DATA.privateKey,
-            chainID: 2,
+            chainId: 2,
             publicKey: '',
             coinSymbol: 'MNT',
             stake: 10,
@@ -714,7 +714,7 @@ describe('validator', () => {
     describe('PostTx: unbond', () => {
         const txParamsData = () => ({
             privateKey: ENV_DATA.privateKey,
-            chainID: 2,
+            chainId: 2,
             publicKey: '',
             coinSymbol: 'MNT',
             stake: 10,
@@ -789,7 +789,7 @@ describe('validator', () => {
     describe('PostTx: set candidate on', () => {
         const txParamsData = () => ({
             privateKey: ENV_DATA.privateKey,
-            chainID: 2,
+            chainId: 2,
             publicKey: '',
             feeCoinSymbol: 'MNT',
             message: 'custom message',
@@ -860,7 +860,7 @@ describe('validator', () => {
     describe('PostTx: set candidate off', () => {
         const txParamsData = () => ({
             privateKey: ENV_DATA.privateKey,
-            chainID: 2,
+            chainId: 2,
             publicKey: '',
             feeCoinSymbol: 'MNT',
             message: 'custom message',
@@ -936,7 +936,7 @@ describe('PostTx: redeem check', () => {
     function getRandomCheck() {
         return issueCheck({
             privateKey: ENV_DATA.privateKey,
-            chainID: 2,
+            chainId: 2,
             passPhrase: '123',
             nonce: 1,
             coinSymbol: 'MNT',
@@ -946,7 +946,7 @@ describe('PostTx: redeem check', () => {
 
     const txParamsData = () => ({
         privateKey: ENV_DATA.privateKey,
-        chainID: 2,
+        chainId: 2,
         check: '',
         password: '123',
         feeCoinSymbol: 'MNT',
@@ -1017,7 +1017,7 @@ describe('PostTx: redeem check', () => {
 describe('PostTx: create multisig', () => {
     const txParamsData = () => ({
         privateKey: ENV_DATA.privateKey,
-        chainID: 2,
+        chainId: 2,
         addresses: [ENV_DATA.address, 'Mx7633980c000139dd3bd24a3f54e06474fa941e00'],
         weights: [],
         threshold: 100,

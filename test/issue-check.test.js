@@ -7,7 +7,7 @@ describe('issueCheck()', () => {
         privateKey: '2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
         passPhrase: 'pass',
         nonce: 1,
-        chainID: 1,
+        chainId: 1,
         coinSymbol: 'MNT',
         value: 10,
         dueBlock: 999999,
@@ -35,13 +35,13 @@ describe('issueCheck()', () => {
         }));
     });
 
-    test('default chainID: 1', () => {
+    test('default chainId: 1', () => {
         expect(issueCheck({
             ...checkParams,
-            chainID: undefined,
+            chainId: undefined,
         })).toEqual(issueCheck({
             ...checkParams,
-            chainID: 1,
+            chainId: 1,
         }));
     });
 

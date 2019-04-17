@@ -6,7 +6,7 @@ describe('prepareSignedTx', () => {
     const txParamsData = {
         privateKey,
         nonce: 1,
-        chainID: 1,
+        chainId: 1,
         address: 'Mx376615B9A3187747dC7c32e51723515Ee62e37Dc',
         amount: 10,
         coinSymbol: 'MNT',
@@ -23,13 +23,13 @@ describe('prepareSignedTx', () => {
             .toEqual(validTxHex);
     });
 
-    test('default chainID: 1', () => {
+    test('default chainId: 1', () => {
         expect(prepareSignedTx({
             ...new SendTxParams(txParamsData),
-            chainID: undefined,
+            chainId: undefined,
         }).serialize()).toEqual(prepareSignedTx({
             ...new SendTxParams(txParamsData),
-            chainID: 1,
+            chainId: 1,
         }).serialize());
     });
 

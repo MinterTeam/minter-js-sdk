@@ -16,7 +16,7 @@ class Check {
                 allowLess: true,
                 default: Buffer.from([]),
             }, {
-                name: 'chainID',
+                name: 'chainId',
                 length: 1,
                 allowLess: true,
                 default: new Buffer([]),
@@ -99,13 +99,13 @@ class Check {
  * @param {string|Buffer} privateKey - hex or Buffer
  * @param {string} passPhrase - utf8
  * @param {number} nonce
- * @param {number} [chainID=1]
+ * @param {number} [chainId=1]
  * @param {string} coinSymbol
  * @param {number} value
  * @param {number} [dueBlock=999999999]
  * @return {string}
  */
-export default function issueCheck({privateKey, passPhrase, nonce, chainID = 1, coinSymbol, value, dueBlock = 999999999} = {}) {
+export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, coinSymbol, value, dueBlock = 999999999} = {}) {
     // @TODO accept exponential
     if (!isNumericInteger(nonce)) {
         throw new Error('Invalid nonce. Should be numeric integer');
@@ -120,7 +120,7 @@ export default function issueCheck({privateKey, passPhrase, nonce, chainID = 1, 
 
     const check = new Check({
         nonce: `0x${toHexString(nonce)}`,
-        chainID: `0x${toHexString(chainID)}`,
+        chainId: `0x${toHexString(chainId)}`,
         coin: formatCoin(coinSymbol),
         value: `0x${convertToPip(value, 'hex')}`,
         dueBlock: `0x${toHexString(dueBlock)}`,
