@@ -9,6 +9,7 @@ import issueCheck from './issue-check';
 /**
  * @param {Object} [options]
  * @param {string} [options.apiType]
+ * @param {string} [options.chainId]
  * @param {string} [options.baseURL]
  * @constructor
  */

@@ -1,4 +1,7 @@
-## 0.15.0 - 2019-04-17
+## 0.15.2 - 2019-04-17
+- add option to specify default `chainId` in the `Minter` and `MinterApi` constructors
+
+## 0.15.1 - 2019-04-17
 - **BREAKING** rename `chainID` into `chainId`
 
 # 0.15.0 - 2019-04-16

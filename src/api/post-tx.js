@@ -37,6 +37,9 @@ export default function PostTx(apiInstance) {
  * @return {Promise<string>}
  */
 function _postTx(apiInstance, txParams) {
+    if (!txParams.chainId && apiInstance.defaults.chainId) {
+        txParams.chainId = apiInstance.defaults.chainId;
+    }
     const tx = prepareSignedTx(txParams);
 
     let postTxPromise;

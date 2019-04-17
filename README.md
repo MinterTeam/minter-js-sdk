@@ -32,7 +32,7 @@ Post transaction full example
 ```js
 import {Minter, SendTxParams} from "minter-js-sdk";
 
-const minterSDK = new Minter();
+const minterSDK = new Minter({apiType: 'node', baseURL: 'http://minter-node-1.testnet.minter.network:8841'});
 const txParams = new SendTxParams({
     privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     nonce: 1,
@@ -60,16 +60,19 @@ minterSDK.postTx(txParams)
 Create `minterSDK` instance from `Minter` constructor
 `Minter` accept [axios config](https://github.com/axios/axios#config-defaults) as params and return [axios instance](https://github.com/axios/axios#creating-an-instance)
 
-One extra field of options object is `apiType`, which is one of [`'explorer'`](https://github.com/MinterTeam/minter-php-explorer-api) or [`'node'`](https://minter-go-node.readthedocs.io/en/dev/api.html). It is used to determine what type of API to use. 
+One extra field of options object is `apiType`, which is one of [`'gate'`](https://minterteam.github.io/minter-gate-docs/) or [`'node'`](https://docs.minter.network/#tag/Node-API). It is used to determine what type of API to use. 
 
 ```js
- // by default use explorer's testnet API
-const minterSDK = new Minter();
-// specify explorer url
-const minterExplorer = new Minter({apiType: 'explorer', baseURL: 'https://testnet.explorer.minter.network'});
+// specify gate url
+const minterGate = new Minter({apiType: 'gate', baseURL: 'https://gate.minter.network'});
 // specify node url
 const minterNode = new Minter({apiType: 'node', baseURL: 'http://minter-node-1.testnet.minter.network:8841'});
 ```
+
+`Minter` constructor has the following options:
+- `apiType`: 'gate' or 'node'
+- `baseUrl`: API url
+- `chainId`: default chain ID, used if no chainId specified in the tx params
 
 `minterSDK` instance has the following methods:
  
