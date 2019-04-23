@@ -1,6 +1,6 @@
 {
   "name": "minter-js-sdk",
-  "version": "0.15.2",
+  "version": "0.16.0",
   "description": "JS SDK for Minter Blockchain",
   "main": "dist/cjs/index.js",
   "module": "src/index.js",
@@ -17,7 +17,7 @@
     "bundle": "rollup -c build/rollup.config.js",
     "bundle:cjs": "babel src/ -d dist/cjs/ --config-file ./build/babel-cjs.config.js --no-babelrc",
     "bundle:minify": "rollup -c build/rollup.uglify.config.js",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run lint && npm run jest && npm run build",
     "lint": "eslint --ext .js ./src ./test",
     "lint:fix": "eslint --ext .js ./src ./test --fix",
     "test": "npm run jest && npm run test:bundle && npm run test:bundle-cjs",

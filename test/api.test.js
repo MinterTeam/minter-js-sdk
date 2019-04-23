@@ -101,7 +101,7 @@ describe('PostTx: send', () => {
 
     test('should return signed tx', async () => {
         const nonce = await minterGate.getNonce(ENV_DATA.address);
-        const txParams = new SendTxParams({...txParamsData(), nonce, gasPrice: 0});
+        const txParams = new SendTxParams({...txParamsData(), nonce, gasPrice: 1});
         const tx = prepareSignedTx(txParams);
         console.log(tx.serialize().toString('hex'));
         expect(tx.serialize().toString('hex').length)

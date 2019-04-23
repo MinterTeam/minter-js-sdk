@@ -1,3 +1,6 @@
+## 0.16.0 - 2019-04-23
+- add method to post signed tx by passing string as argument
+
 ## 0.15.2 - 2019-04-17
 - add option to specify default `chainId` in the `Minter` and `MinterApi` constructors
 

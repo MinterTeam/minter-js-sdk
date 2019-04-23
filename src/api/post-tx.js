@@ -1,9 +1,8 @@
 import {Buffer} from 'safe-buffer';
 import {privateToAddressString} from 'minterjs-util';
+import PostSignedTx from './post-signed-tx';
 import GetNonce from './get-nonce';
 import prepareSignedTx from '../prepare-tx';
-import {API_TYPE_GATE} from '../variables';
-import {getData} from './utils';
 
 /**
  * @param {MinterApiInstance} apiInstance
@@ -42,28 +41,7 @@ function _postTx(apiInstance, txParams) {
     }
     const tx = prepareSignedTx(txParams);
 
-    let postTxPromise;
-    if (apiInstance.defaults.apiType === API_TYPE_GATE) {
-        postTxPromise = apiInstance.post('/api/v1/transaction/push', {
-            transaction: tx.serialize().toString('hex'),
-        });
-    } else {
-        postTxPromise = apiInstance.get(`/send_transaction?tx=0x${tx.serialize().toString('hex')}`);
-    }
-
-    return postTxPromise
-        .then((response) => {
-            const resData = getData(response, apiInstance.defaults.apiType);
-            let txHash = resData.hash.toLowerCase();
-            // @TODO is transform needed?
-            if (txHash.indexOf('mt') !== 0) {
-                txHash = `Mt${txHash}`;
-            } else {
-                txHash = txHash.replace(/^mt/, 'Mt');
-            }
-
-            return txHash;
-        });
+    return (new PostSignedTx(apiInstance))(tx.serialize().toString('hex'));
 }
 
 /**
