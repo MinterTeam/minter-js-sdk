@@ -1,3 +1,6 @@
+## 0.16.1 - 2019-05-14
+- update deps
+
 ## 0.16.0 - 2019-04-23
 - add method to post signed tx by passing string as argument
 
