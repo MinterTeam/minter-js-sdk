@@ -71,7 +71,7 @@ const minterNode = new Minter({apiType: 'node', baseURL: 'http://minter-node-1.t
 
 `Minter` constructor has the following options:
 - `apiType`: 'gate' or 'node'
-- `baseUrl`: API url
+- `baseURL`: API url
 - `chainId`: default chain ID, used if no chainId specified in the tx params
 
 `minterSDK` instance has the following methods:
