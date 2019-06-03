@@ -32,7 +32,7 @@ Post transaction full example
 ```js
 import {Minter, SendTxParams} from "minter-js-sdk";
 
-const minterSDK = new Minter({apiType: 'node', baseURL: 'http://minter-node-1.testnet.minter.network:8841'});
+const minterSDK = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.testnet.minter.network'});
 const txParams = new SendTxParams({
     privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     nonce: 1,
@@ -60,13 +60,13 @@ minterSDK.postTx(txParams)
 Create `minterSDK` instance from `Minter` constructor
 `Minter` accept [axios config](https://github.com/axios/axios#config-defaults) as params and return [axios instance](https://github.com/axios/axios#creating-an-instance)
 
-One extra field of options object is `apiType`, which is one of [`'gate'`](https://minterteam.github.io/minter-gate-docs/) or [`'node'`](https://docs.minter.network/#tag/Node-API). It is used to determine what type of API to use. 
+One extra field of options object is `apiType`, which is one of [`'gate'`](https://minterteam.github.io/minter-gate-docs/) or [`'node'`](https://docs.minter.network/#tag/Node-API). It is used to determine what type of API to use.
 
 ```js
 // specify gate url
 const minterGate = new Minter({apiType: 'gate', baseURL: 'https://gate.minter.network'});
 // specify node url
-const minterNode = new Minter({apiType: 'node', baseURL: 'http://minter-node-1.testnet.minter.network:8841'});
+const minterNode = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.testnet.minter.network'});
 ```
 
 `Minter` constructor has the following options:
@@ -75,7 +75,7 @@ const minterNode = new Minter({apiType: 'node', baseURL: 'http://minter-node-1.t
 - `chainId`: default chain ID, used if no chainId specified in the tx params
 
 `minterSDK` instance has the following methods:
- 
+
 - [postTx](#.postTx())
 - [postSignedTx](#.postSignedTx())
 - [getNonce](#.getNonce())
@@ -90,7 +90,7 @@ const minterNode = new Minter({apiType: 'node', baseURL: 'http://minter-node-1.t
 Post new transaction to the blockchain
 Accept [tx params](#Tx params constructors) object and make asynchronous request to the blockchain API.
 `txParams.nonce` - optional, if no nonce given, it will be requested by `getNonce` automatically.
-`txParams.gasPrice` - 1 by default, if request failed because of low gas, it will be repeated wi 
+`txParams.gasPrice` - 1 by default, if request failed because of low gas, it will be repeated wi
 `gasRetryLimit` - count of repeating request, 2 by default. If first request fails because of low gas, it will be repeated with updated `gasPrice`
 Returns promise that resolves with sent transaction hash.
 
@@ -237,7 +237,7 @@ console.log(check);
 // => 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee'
 
 // But this method also available on the SDK instance
-const check = minterSDK.issueCheck({...}); 
+const check = minterSDK.issueCheck({...});
 ```
 
 
@@ -476,7 +476,7 @@ const txParams = new CreateMultisigTxParams({
     privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     addresses: ['Mx7633980c000139dd3bd24a3f54e06474fa941e00', 'Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99'],
-    weights: [40, 80], 
+    weights: [40, 80],
     threshold: 100,
     feeCoinSymbol: 'MNT',
 });
