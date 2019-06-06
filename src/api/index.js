@@ -63,8 +63,10 @@ export default function MinterApi(options = {}) {
 
         return data;
     });
-
-    return axios.create(options);
+    const instance = axios.create(options);
+    instance.defaults.apiType = options.apiType;
+    instance.defaults.chainId = options.chainId;
+    return instance;
 }
 
 
