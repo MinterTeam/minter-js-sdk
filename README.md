@@ -75,7 +75,6 @@ const minterNode = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.
 - `chainId`: default chain ID, used if no chainId specified in the tx params
 
 `minterSDK` instance has the following methods:
-
 - [postTx](#.postTx())
 - [postSignedTx](#.postSignedTx())
 - [getNonce](#.getNonce())
@@ -90,7 +89,7 @@ const minterNode = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.
 Post new transaction to the blockchain
 Accept [tx params](#Tx params constructors) object and make asynchronous request to the blockchain API.
 `txParams.nonce` - optional, if no nonce given, it will be requested by `getNonce` automatically.
-`txParams.gasPrice` - 1 by default, if request failed because of low gas, it will be repeated wi
+`txParams.gasPrice` - 1 by default, fee multiplier, should be equal or greater than current mempool's min gas price.
 `gasRetryLimit` - count of repeating request, 2 by default. If first request fails because of low gas, it will be repeated with updated `gasPrice`
 Returns promise that resolves with sent transaction hash.
 
