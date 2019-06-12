@@ -1,5 +1,6 @@
 import {MinterTxDataCreateCoin, TX_TYPE_CREATE_COIN, formatCoin} from 'minterjs-tx';
 import {convertToPip} from 'minterjs-util';
+import {Buffer} from 'safe-buffer';
 import {toHexString} from '../utils';
 
 /**
@@ -15,7 +16,7 @@ import {toHexString} from '../utils';
  */
 export default function CreateCoinTxParams({coinName, coinSymbol, initialAmount, initialReserve, crr, feeCoinSymbol, ...otherParams}) {
     const txData = new MinterTxDataCreateCoin({
-        name: coinName,
+        name: Buffer.from(coinName.toString(), 'utf-8'),
         symbol: formatCoin(coinSymbol),
         initialAmount: `0x${convertToPip(initialAmount, 'hex')}`,
         initialReserve: `0x${convertToPip(initialReserve, 'hex')}`,

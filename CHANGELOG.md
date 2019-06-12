@@ -1,3 +1,6 @@
+## 0.17.0 - 2019-06-12
+- treat check nonce and coin name as utf8 strings
+
 ## 0.16.2 - 2019-06-06
 - update deps
 

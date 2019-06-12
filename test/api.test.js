@@ -13,14 +13,16 @@ import {Minter, SendTxParams, MultisendTxParams, SellTxParams, BuyTxParams, Decl
 
 const ENV_TESTNET = 'testnet';
 const ENV_TEST_TESTNET = 'test';
+const TESTNET_MENMONIC = 'exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone';
 const TEST_TESTNET_MENMONIC = 'puzzle feed enlist rack cliff divert exist bind swamp kiwi casino pull';
 
 const ENV_SETTINGS = {
     [ENV_TESTNET]: {
         nodeBaseUrl: 'https://minter-node-1.testnet.minter.network',
         gateBaseUrl: 'https://gate.minter.network',
-        mnemonic: 'exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone',
-        privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+        mnemonic: TESTNET_MENMONIC,
+        // 5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da
+        privateKey: walletFromMnemonic(TESTNET_MENMONIC).getPrivateKeyString(),
         address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
         customCoin: 'TESTCOIN01',
     },
