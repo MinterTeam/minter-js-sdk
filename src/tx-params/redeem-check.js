@@ -30,6 +30,8 @@ export default function RedeemCheckTxParams({privateKey, check, password, feeCoi
     return {
         ...otherParams,
         privateKey,
+        // only gasPrice: 1 is allowed by blockchain
+        gasPrice: 1,
         gasCoin: feeCoinSymbol,
         txType: TX_TYPE_REDEEM_CHECK,
         txData: txData.serialize(),
