@@ -75,13 +75,13 @@ const minterNode = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.
 - `chainId`: default chain ID, used if no chainId specified in the tx params
 
 `minterSDK` instance has the following methods:
-- [postTx](#.postTx())
-- [postSignedTx](#.postSignedTx())
-- [getNonce](#.getNonce())
-- [estimateCoinSell](#.estimateCoinSell())
-- [estimateCoinBuy](#.estimateCoinBuy())
-- [estimateTxCommission](#.estimateTxCommission())
-- [issueCheck](#.issueCheck())
+- [postTx](#posttx)
+- [postSignedTx](#postsignedtx)
+- [getNonce](#getnonce)
+- [estimateCoinSell](#estimateCoinSell)
+- [estimateCoinBuy](#estimateCoinBuy)
+- [estimateTxCommission](#estimateTxCommission)
+- [issueCheck](#issueCheck)
 
 
 #### .postTx()
@@ -132,7 +132,7 @@ Returns promise that resolves with sent transaction hash.
 * @param {string|Buffer} signedTx
 * @return {Promise<string>}
 */
-minterSDK.postTx('f8920102018a4d4e540000000000000001aae98a4d4e5400000000...')
+minterSDK.postSignedTx('f8920102018a4d4e540000000000000001aae98a4d4e5400000000...')
     .then((txHash) => {
         console.log(txHash);
         // 'Mt...'
