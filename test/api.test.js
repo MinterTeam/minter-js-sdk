@@ -483,7 +483,7 @@ describe('PostTx: buy', () => {
 });
 
 
-describe('validator', () => {
+describe.skip('validator', () => {
     describe('PostTx: declare candidacy', () => {
         const txParamsData = () => ({
             privateKey: ENV_DATA.privateKey,

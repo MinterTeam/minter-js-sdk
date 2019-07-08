@@ -1,5 +1,6 @@
-## wip
+## 0.17.1 - 2019-07-08
 - use gasPrice: 1 in the redeem check tx
+- update deps
 
 ## 0.17.0 - 2019-06-12
 - treat check nonce and coin name as utf8 strings
