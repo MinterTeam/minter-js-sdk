@@ -1,3 +1,8 @@
+## 0.18.0 - 2019-07-31
+- **BREAKING** rename UMD module from `minterJsTx` to `minterSDK`
+- fix browser usage of UMD module
+- tweak bundle tests
+
 ## 0.17.1 - 2019-07-08
 - use gasPrice: 1 in the redeem check tx
 - update deps

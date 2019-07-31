@@ -23,6 +23,15 @@ It is complemented by the following packages:
 npm install minter-js-sdk
 ```
 
+or from browser
+
+```html
+<script src="https://unpkg.com/minter-js-sdk"></script>
+<script>
+const instance = new minterSDK.Minter({...});
+const txParams = new minterSDK.SendTxParams({...});
+</script>
+```
 
 
 ## Usage
