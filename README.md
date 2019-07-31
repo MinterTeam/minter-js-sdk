@@ -214,7 +214,7 @@ Resolves with commission value.
 
 ```js
 minterSDK.estimateTxCommission({
-        transcation: 'f8920101028a4d4e540000000000000001aae98a4d4e...'
+        transaction: 'f8920101028a4d4e540000000000000001aae98a4d4e...'
     })
     .then((commission) => {
         console.log(commission);
