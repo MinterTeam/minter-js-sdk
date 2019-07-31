@@ -172,7 +172,7 @@ describe('PostTx: send', () => {
 });
 
 
-describe.skip('PostTx handle low gasPrice', () => {
+describe('PostTx handle low gasPrice', () => {
     const txParamsData = () => ({
         privateKey: ENV_DATA.privateKey,
         chainId: 2,
@@ -193,12 +193,12 @@ describe.skip('PostTx handle low gasPrice', () => {
                     // console.log(error);
                     // console.log(error.response.data);
                     const errorMessage = (error.response.data.error.tx_result && error.response.data.error.tx_result.message) || error.response.data.error.message;
-                    expect(errorMessage).toMatch(/^Gas price of tx is too low to be included in mempool\. Expected \d+$/);
+                    expect(errorMessage).toMatch(/^Gas price of tx is too low to be included in mempool\. Expected \d+(\.\d+)?$/);
                 });
         }, 70000);
     });
 
-    test('should work with retries | gate', () => {
+    test.skip('should work with retries | gate', () => {
         expect.assertions(2);
         const txParams = new SendTxParams(txParamsData());
         return minterGate.postTx(txParams)

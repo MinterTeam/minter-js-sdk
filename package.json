@@ -25,7 +25,7 @@
     "test:bundle-cjs": "npm run bundle:cjs && npm run jest:bundle-cjs",
     "jest": "jest",
     "jest:bundle": "jest --config jest-bundle.config.js",
-    "jest:bundle-cjs": "jest --config jest-bundle-crmjs.config.js",
+    "jest:bundle-cjs": "jest --config jest-bundle-cjs.config.js",
     "coverage": "jest --coverage",
     "precommit": "echo 'Pre-commit checks...' && npm run lint"
   },
