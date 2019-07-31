@@ -1,3 +1,6 @@
+## 0.18.1 - 2019-07-31
+- ensure fixed dependencies
+
 ## 0.18.0 - 2019-07-31
 - **BREAKING** rename UMD module from `minterJsTx` to `minterSDK`
 - fix browser usage of UMD module
