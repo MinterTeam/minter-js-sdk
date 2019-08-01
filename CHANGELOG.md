@@ -1,3 +1,7 @@
+## 0.19.0 - 2019-08-01
+- **BREAKINK** rename issue-check.js and prepare-tx.js files to check.js and tx.js
+- add `decodeCheck` method
+
 ## 0.18.1 - 2019-07-31
 - ensure fixed dependencies
 

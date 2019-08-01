@@ -19,10 +19,19 @@ export function isNumericInteger(num) {
  * @param {number|string} num
  * @return {string}
  */
-export function toHexString(num) {
+export function integerToHexString(num) {
     // handle exponential values
     num = (new Big(num)).toFixed();
     // convert to hex
     const hexNum = (new BN(num, 10)).toString(16);
     return padToEven(hexNum);
 }
+
+/**
+ * @param {Buffer} buf
+ */
+export function bufferToInteger(buf) {
+    return parseInt(buf.toString('hex'), 16);
+}
+
+export const toHexString = integerToHexString;

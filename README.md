@@ -91,6 +91,7 @@ const minterNode = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.
 - [estimateCoinBuy](#estimateCoinBuy)
 - [estimateTxCommission](#estimateTxCommission)
 - [issueCheck](#issueCheck)
+- [decodeCheck](#decodeCheck)
 
 
 #### .postTx()
@@ -235,17 +236,39 @@ import {issueCheck} from "minter-js-sdk";
 const check = issueCheck({
     privateKey: '2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
     passPhrase: 'pass',
-    nonce: 1, // must be unique for private key
+    nonce: '1', // it is string and must be unique
     chainId: 1,
-    coinSymbol: 'MNT',
+    coin: 'MNT',
     value: 10,
     dueBlock: 999999, // at this block number check will be expired
 });
 console.log(check);
 // => 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee'
 
-// But this method also available on the SDK instance
+// This method also available on the SDK instance
 const check = minterSDK.issueCheck({...});
+```
+
+#### .decodeCheck()
+
+Decode raw check
+
+```js
+// Since issuing checks is offline, you can use it standalone without instantiating SDK
+import {decodeCheck} from "minter-js-sdk";
+const check = decodeCheck('Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee');
+console.log(check);
+// =>
+// {
+//   nonce: '1',
+//   chainId: 1,
+//   coin: 'MNT',
+//   value: '10',
+//   dueBlock: 999999,
+// } 
+
+// This method also available on the SDK instance
+const check = minterSDK.decodeCheck('...');
 ```
 
 

@@ -2,7 +2,7 @@ import {Buffer} from 'safe-buffer';
 import {privateToAddressString} from 'minterjs-util';
 import PostSignedTx from './post-signed-tx';
 import GetNonce from './get-nonce';
-import prepareSignedTx from '../prepare-tx';
+import prepareSignedTx from '../tx';
 
 /**
  * @param {MinterApiInstance} apiInstance

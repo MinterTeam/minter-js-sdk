@@ -1,13 +1,17 @@
 import {defineProperties, ecsign, rlphash, sha256} from 'ethereumjs-util';
 import secp256k1 from 'secp256k1';
 import {Buffer} from 'safe-buffer';
-import {formatCoin} from 'minterjs-tx';
-import {convertToPip} from 'minterjs-util';
-import {isNumericInteger, toHexString} from './utils';
+import {coinToBuffer, bufferToCoin} from 'minterjs-tx';
+import {convertToPip, convertFromPip, mPrefixStrip} from 'minterjs-util';
+import {isNumericInteger, integerToHexString, bufferToInteger} from './utils';
 
 class Check {
     constructor(data) {
         data = data || {};
+        if (typeof data === 'string') {
+            data = mPrefixStrip(data);
+        }
+
         // Define Properties
         const fields = [
             {
@@ -100,12 +104,13 @@ class Check {
  * @param {string} passPhrase - utf8
  * @param {string} nonce
  * @param {number} [chainId=1]
- * @param {string} coinSymbol
- * @param {number} value
+ * @param {string} coin
+ * @param {string} [coinSymbol]
+ * @param {number|string} value
  * @param {number} [dueBlock=999999999]
  * @return {string}
  */
-export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, coinSymbol, value, dueBlock = 999999999} = {}) {
+export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, coin, coinSymbol, value, dueBlock = 999999999} = {}) {
     // @TODO accept exponential
     if (!isNumericInteger(dueBlock)) {
         throw new Error('Invalid due block. Should be a numeric integer');
@@ -115,13 +120,27 @@ export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, 
         privateKey = Buffer.from(privateKey, 'hex');
     }
 
+    coin = coin || coinSymbol;
+
     const check = new Check({
         nonce: Buffer.from(nonce.toString(), 'utf-8'),
-        chainId: `0x${toHexString(chainId)}`,
-        coin: formatCoin(coinSymbol),
+        chainId: `0x${integerToHexString(chainId)}`,
+        coin: coinToBuffer(coin),
         value: `0x${convertToPip(value, 'hex')}`,
-        dueBlock: `0x${toHexString(dueBlock)}`,
+        dueBlock: `0x${integerToHexString(dueBlock)}`,
     });
     check.sign(privateKey, passPhrase);
     return `Mc${check.serialize().toString('hex')}`;
+}
+
+
+export function decodeCheck(rawCheck) {
+    const check = new Check(rawCheck);
+    return {
+        nonce: check.nonce.toString('utf-8'),
+        chainId: bufferToInteger(check.chainId),
+        coin: bufferToCoin(check.coin),
+        value: convertFromPip(bufferToInteger(check.value)),
+        dueBlock: bufferToInteger(check.dueBlock),
+    };
 }
