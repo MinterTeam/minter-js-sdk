@@ -43,6 +43,8 @@ module.exports = {
     'no-use-before-define' : 0,
     // allow single line imports
     'object-curly-newline': 0,
+    // allow Object.assign()
+    'prefer-object-spread': 0,
     // disable for nested destructuring
     "prefer-destructuring": ["error", {
       "AssignmentExpression": {
