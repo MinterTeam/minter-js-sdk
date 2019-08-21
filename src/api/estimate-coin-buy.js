@@ -40,8 +40,8 @@ export default function EstimateCoinBuy(apiInstance) {
         }
 
         const url = apiInstance.defaults.apiType === API_TYPE_GATE
-            ? '/api/v1/estimate/coin-buy'
-            : '/estimate_coin_buy';
+            ? 'estimate/coin-buy'
+            : 'estimate_coin_buy';
 
         params = apiInstance.defaults.apiType === API_TYPE_GATE ? {
             coinToBuy: params.coinToBuy || params.coin_to_buy,

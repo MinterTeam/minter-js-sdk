@@ -40,8 +40,8 @@ export default function EstimateCoinSell(apiInstance) {
         }
 
         const url = apiInstance.defaults.apiType === API_TYPE_GATE
-            ? '/api/v1/estimate/coin-sell'
-            : '/estimate_coin_sell';
+            ? 'estimate/coin-sell'
+            : 'estimate_coin_sell';
 
         params = apiInstance.defaults.apiType === API_TYPE_GATE ? {
             coinToSell: params.coinToSell || params.coin_to_sell,

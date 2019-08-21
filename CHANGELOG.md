@@ -1,3 +1,6 @@
+## 0.20.0 - 2019-08-21
+- **BREAKING** need to specify full path in baseURL, e.g. add `/api/v1/` for gate's baseURL
+
 ## 0.19.1 - 2019-08-15
 - update deps
 

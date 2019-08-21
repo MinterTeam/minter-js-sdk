@@ -15,8 +15,8 @@ export default function GetNonce(apiInstance) {
      */
     return function getNonce(address) {
         const nonceUrl = apiInstance.defaults.apiType === API_TYPE_GATE
-            ? `/api/v1/nonce/${address}`
-            : `/address?address=${address}`;
+            ? `nonce/${address}`
+            : `address?address=${address}`;
 
         return apiInstance.get(nonceUrl)
             .then((response) => {

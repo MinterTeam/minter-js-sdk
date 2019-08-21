@@ -22,8 +22,8 @@ export default function EstimateTxCommission(apiInstance) {
         }
 
         const url = apiInstance.defaults.apiType === API_TYPE_GATE
-            ? '/api/v1/estimate/tx-commission'
-            : '/estimate_tx_commission';
+            ? 'estimate/tx-commission'
+            : 'estimate_tx_commission';
 
         params = apiInstance.defaults.apiType === API_TYPE_GATE ? {
             transaction: params.transaction || params.tx,

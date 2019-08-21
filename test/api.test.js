@@ -18,8 +18,8 @@ const TEST_TESTNET_MENMONIC = 'puzzle feed enlist rack cliff divert exist bind s
 
 const ENV_SETTINGS = {
     [ENV_TESTNET]: {
-        nodeBaseUrl: 'https://minter-node-1.testnet.minter.network',
-        gateBaseUrl: 'https://gate.minter.network',
+        nodeBaseUrl: 'https://minter-node-1.testnet.minter.network/',
+        gateBaseUrl: 'https://gate.minter.network/api/v1/',
         mnemonic: TESTNET_MENMONIC,
         // 5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da
         privateKey: walletFromMnemonic(TESTNET_MENMONIC).getPrivateKeyString(),
@@ -27,8 +27,8 @@ const ENV_SETTINGS = {
         customCoin: 'TESTCOIN01',
     },
     [ENV_TEST_TESTNET]: {
-        nodeBaseUrl: 'http://front-de.minter.network:48841',
-        gateBaseUrl: 'https://tst.gate.minter.network',
+        nodeBaseUrl: 'http://front-de.minter.network:48841/',
+        gateBaseUrl: 'https://tst.gate.minter.network/api/v1/',
         mnemonic: TEST_TESTNET_MENMONIC,
         privateKey: walletFromMnemonic(TEST_TESTNET_MENMONIC).getPrivateKeyString(),
         address: 'Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4',
@@ -51,7 +51,7 @@ beforeAll(async () => {
     // fill test ENV_DATA with data from the server
     /*
     if (CURRENT_ENV === ENV_TEST_TESTNET) {
-        const response = await axios.get(`${ENV_DATA.nodeBaseUrl}/make_test_setup?env=bot`);
+        const response = await axios.get(`${ENV_DATA.nodeBaseUrl}make_test_setup?env=bot`);
         const result = response.data.result;
         ENV_DATA = {
             ...ENV_DATA,

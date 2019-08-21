@@ -19,11 +19,11 @@ export default function PostSignedTx(apiInstance) {
 
         let postTxPromise;
         if (apiInstance.defaults.apiType === API_TYPE_GATE) {
-            postTxPromise = apiInstance.post('/api/v1/transaction/push', {
+            postTxPromise = apiInstance.post('transaction/push', {
                 transaction: signedTx,
             });
         } else {
-            postTxPromise = apiInstance.get(`/send_transaction?tx=0x${signedTx}`);
+            postTxPromise = apiInstance.get(`send_transaction?tx=0x${signedTx}`);
         }
 
         return postTxPromise

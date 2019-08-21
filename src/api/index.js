@@ -63,9 +63,19 @@ export default function MinterApi(options = {}) {
 
         return data;
     });
+
     const instance = axios.create(options);
     instance.defaults.apiType = options.apiType;
     instance.defaults.chainId = options.chainId;
+    // ensure trailing slash on baseURL
+    instance.interceptors.request.use((config) => {
+        if (config.baseURL[config.baseURL.length - 1] !== '/') {
+            config.baseURL += '/';
+        }
+        return config;
+    });
+
+
     return instance;
 }
 

@@ -15,6 +15,7 @@ import {toBuffer} from 'minterjs-util';
  * @return {TxParams}
  */
 export default function RedeemCheckTxParams({privateKey, check, password, feeCoinSymbol, ...otherParams}) {
+    // @TODO set gasCoin automatically after #263 resolved @see https://github.com/MinterTeam/minter-go-node/issues/263
     if (feeCoinSymbol && (feeCoinSymbol.toUpperCase() !== 'MNT' && feeCoinSymbol.toUpperCase() !== 'BIP')) {
         throw new Error('feeCoinSymbol should be baseCoin');
     }

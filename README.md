@@ -41,7 +41,7 @@ Post transaction full example
 ```js
 import {Minter, SendTxParams} from "minter-js-sdk";
 
-const minterSDK = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.testnet.minter.network'});
+const minterSDK = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.testnet.minter.network/'});
 const txParams = new SendTxParams({
     privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     nonce: 1,
@@ -73,15 +73,15 @@ One extra field of options object is `apiType`, which is one of [`'gate'`](https
 
 ```js
 // specify gate url
-const minterGate = new Minter({apiType: 'gate', baseURL: 'https://gate.minter.network'});
+const minterGate = new Minter({chainId: 2, apiType: 'gate', baseURL: 'https://gate.minter.network/api/v1/'});
 // specify node url
-const minterNode = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.testnet.minter.network'});
+const minterNode = new Minter({chainId: 2, apiType: 'node', baseURL: 'https://minter-node-1.testnet.minter.network/'});
 ```
 
 `Minter` constructor has the following options:
 - `apiType`: 'gate' or 'node'
 - `baseURL`: API url
-- `chainId`: default chain ID, used if no chainId specified in the tx params
+- `chainId`: default chain ID, used if no chainId specified in the tx params, 1 - mainnet, 2 - testnet
 
 `minterSDK` instance has the following methods:
 - [postTx](#posttx)
