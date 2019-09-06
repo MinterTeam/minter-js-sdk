@@ -70,6 +70,19 @@ describe('issueCheck()', () => {
             value: '123asd',
         })).toThrow();
     });
+
+    test('lock should be 65 bytes length', () => {
+        const check = issueCheck({
+            privateKey: 'd1505eddc277c911d9cf1c51efa68ab0da901aacba7f02c4fb42da12992fbc14',
+            nonce: '38bf53691699633d',
+            chainId: 2,
+            coinSymbol: 'MNT',
+            value: '10',
+            dueBlock: 99999999,
+            passPhrase: 'e72895deb3af73ef',
+        }, true);
+        expect(check.lock.length).toBe(65);
+    });
 });
 
 describe('decodeCheck()', () => {

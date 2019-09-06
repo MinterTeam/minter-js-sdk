@@ -1,5 +1,8 @@
+## 0.20.1 - 2019-09-06
+- regenerate check with dueBlock increased by 1 if lock not equal 65 bytes length, it is workaround for https://github.com/MinterTeam/minter-go-node/issues/264
+
 ## 0.20.0 - 2019-08-21
-- **BREAKING** need to specify full path in baseURL, e.g. add `/api/v1/` for gate's baseURL
+- **BREAKING** need to specify full path in baseURL, e.g. add `/api/v1/` for gate's baseURL 
 
 ## 0.19.1 - 2019-08-15
 - update deps

@@ -108,9 +108,10 @@ class Check {
  * @param {string} [coinSymbol]
  * @param {number|string} value
  * @param {number} [dueBlock=999999999]
- * @return {string}
+ * @param {boolean} [isReturnObject]
+ * @return {string|Check}
  */
-export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, coin, coinSymbol, value, dueBlock = 999999999} = {}) {
+export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, coin, coinSymbol, value, dueBlock = 999999999} = {}, isReturnObject) {
     // @TODO accept exponential
     if (!isNumericInteger(dueBlock)) {
         throw new Error('Invalid due block. Should be a numeric integer');
@@ -122,7 +123,7 @@ export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, 
 
     coin = coin || coinSymbol;
 
-    const check = new Check({
+    let check = new Check({
         nonce: Buffer.from(nonce.toString(), 'utf-8'),
         chainId: `0x${integerToHexString(chainId)}`,
         coin: coinToBuffer(coin),
@@ -130,7 +131,17 @@ export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, 
         dueBlock: `0x${integerToHexString(dueBlock)}`,
     });
     check.sign(privateKey, passPhrase);
-    return `Mc${check.serialize().toString('hex')}`;
+
+    // @TODO can be removed after https://github.com/MinterTeam/minter-go-node/issues/264 will be fixed
+    if (check.lock.length !== 65) {
+        // eslint-disable-next-line prefer-rest-params
+        const newArgs = Array.from(arguments);
+        newArgs[1] = true;
+        newArgs[0].dueBlock = dueBlock + 1;
+        check = issueCheck(...newArgs);
+    }
+
+    return isReturnObject ? check : `Mc${check.serialize().toString('hex')}`;
 }
 
 
