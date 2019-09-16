@@ -23,13 +23,20 @@ It is complemented by the following packages:
 npm install minter-js-sdk
 ```
 
+```js
+import {Minter, SendTxParams} from "minter-js-sdk";
+
+const minter = new Minter({/* ...options, see Usage */});
+const txParams = new SendTxParams({/* ... */});
+```
+
 or from browser
 
 ```html
 <script src="https://unpkg.com/minter-js-sdk"></script>
 <script>
-const instance = new minterSDK.Minter({...});
-const txParams = new minterSDK.SendTxParams({...});
+const minter = new minterSDK.Minter({/* ...options, see Usage */});
+const txParams = new minterSDK.SendTxParams({/* ... */});
 </script>
 ```
 
@@ -41,7 +48,7 @@ Post transaction full example
 ```js
 import {Minter, SendTxParams} from "minter-js-sdk";
 
-const minterSDK = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.testnet.minter.network/'});
+const minter = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.testnet.minter.network/'});
 const txParams = new SendTxParams({
     privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     nonce: 1,
@@ -54,7 +61,7 @@ const txParams = new SendTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams)
+minter.postTx(txParams)
     .then((txHash) => {
         alert(`Tx created: ${txHash}`);
     }).catch((error) => {
@@ -66,7 +73,7 @@ minterSDK.postTx(txParams)
 
 ### Initialization
 
-Create `minterSDK` instance from `Minter` constructor
+Create `minter` SDK instance from `Minter` constructor
 `Minter` accept [axios config](https://github.com/axios/axios#config-defaults) as params and return [axios instance](https://github.com/axios/axios#creating-an-instance)
 
 One extra field of options object is `apiType`, which is one of [`'gate'`](https://minterteam.github.io/minter-gate-docs/) or [`'node'`](https://docs.minter.network/#tag/Node-API). It is used to determine what type of API to use.
@@ -83,7 +90,7 @@ const minterNode = new Minter({chainId: 2, apiType: 'node', baseURL: 'https://mi
 - `baseURL`: API url
 - `chainId`: default chain ID, used if no chainId specified in the tx params, 1 - mainnet, 2 - testnet
 
-`minterSDK` instance has the following methods:
+`minter` SDK instance has the following methods:
 - [postTx](#posttx)
 - [postSignedTx](#postsignedtx)
 - [getNonce](#getnonce)
@@ -121,7 +128,7 @@ Returns promise that resolves with sent transaction hash.
 * @param {number} [gasRetryLimit=2] - number of retries, if request was failed because of low gas
 * @return {Promise<string>}
 */
-minterSDK.postTx(txParams, {gasRetryLimit: 2})
+minter.postTx(txParams, {gasRetryLimit: 2})
     .then((txHash) => {
         console.log(txHash);
         // 'Mt...'
@@ -142,7 +149,7 @@ Returns promise that resolves with sent transaction hash.
 * @param {string|Buffer} signedTx
 * @return {Promise<string>}
 */
-minterSDK.postSignedTx('f8920102018a4d4e540000000000000001aae98a4d4e5400000000...')
+minter.postSignedTx('f8920102018a4d4e540000000000000001aae98a4d4e5400000000...')
     .then((txHash) => {
         console.log(txHash);
         // 'Mt...'
@@ -159,7 +166,7 @@ Accept address string and make asynchronous request to the blockchain API.
 Returns promise that resolves with nonce for new tx (current address tx count + 1).
 
 ```js
-minterSDK.getNonce('Mx...')
+minter.getNonce('Mx...')
     .then((nonce) => {
         console.log(nonce);
         // 123
@@ -174,7 +181,7 @@ minterSDK.getNonce('Mx...')
 Estimate how much coins you will get for selling some other coins.
 
 ```js
-minterSDK.estimateCoinSell({
+minter.estimateCoinSell({
     coinToSell: 'MNT',
     valueToSell: '10',
     coinToBuy: 'MYCOIN',
@@ -193,7 +200,7 @@ minterSDK.estimateCoinSell({
 Estimate how much coins you will pay for buying some other coins.
 
 ```js
-minterSDK.estimateCoinBuy({
+minter.estimateCoinBuy({
     coinToBuy: 'MYCOIN',
     valueToBuy: '10',
     coinToSell: 'MNT',
@@ -214,7 +221,7 @@ Accept string with raw signed tx.
 Resolves with commission value.
 
 ```js
-minterSDK.estimateTxCommission({
+minter.estimateTxCommission({
         transaction: 'f8920101028a4d4e540000000000000001aae98a4d4e...'
     })
     .then((commission) => {
@@ -246,7 +253,7 @@ console.log(check);
 // => 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee'
 
 // This method also available on the SDK instance
-const check = minterSDK.issueCheck({...});
+const check = minter.issueCheck({...});
 ```
 
 #### .decodeCheck()
@@ -268,7 +275,7 @@ console.log(check);
 // } 
 
 // This method also available on the SDK instance
-const check = minterSDK.decodeCheck('...');
+const check = minter.decodeCheck('...');
 ```
 
 
@@ -289,7 +296,7 @@ const txParams = new SendTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 #### Multisend
@@ -314,7 +321,7 @@ const txParams = new MultisendTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 
@@ -331,7 +338,7 @@ const txParams = new SellTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 
@@ -347,7 +354,7 @@ const txParams = new SellAllTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 
@@ -364,7 +371,7 @@ const txParams = new BuyTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 
@@ -383,7 +390,7 @@ const txParams = new CreateCoinTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 
@@ -402,7 +409,7 @@ const txParams = new DeclareCandidacyTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 #### Edit Candidate
@@ -418,7 +425,7 @@ const txParams = new DeclareCandidacyTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 
@@ -435,7 +442,7 @@ const txParams = new DelegateTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 
@@ -452,7 +459,7 @@ const txParams = new UnbondTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 
@@ -467,7 +474,7 @@ const txParams = new SetCandidateOnTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 
@@ -482,7 +489,7 @@ const txParams = new SetCandidateOffTxParams({
     message: 'custom message',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 
@@ -497,7 +504,7 @@ const txParams = new RedeemCheckTxParams({
     feeCoinSymbol: 'MNT',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 #### Create Multisig
@@ -512,7 +519,7 @@ const txParams = new CreateMultisigTxParams({
     feeCoinSymbol: 'MNT',
 });
 
-minterSDK.postTx(txParams);
+minter.postTx(txParams);
 ```
 
 
@@ -524,7 +531,7 @@ const tx = prepareSignedTx(txParams);
 console.log('signed tx', tx.serialize().toString('hex'));
 
 // get actual nonce first
-minterSDK.getNonce('Mx...')
+minter.getNonce('Mx...')
     .then((nonce) => {
         const tx = prepareSignedTx({...txParams, nonce});
         console.log('signed tx', tx.serialize().toString('hex'));
