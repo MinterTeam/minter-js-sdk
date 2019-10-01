@@ -1,3 +1,6 @@
+## 0.20.2 - 2019-10-01
+- update deps
+
 ## 0.20.1 - 2019-09-06
 - regenerate check with dueBlock increased by 1 if lock not equal 65 bytes length, it is workaround for https://github.com/MinterTeam/minter-go-node/issues/264
 
