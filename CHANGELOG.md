@@ -1,3 +1,6 @@
+## 0.20.3 - 2019-11-05
+- update default `gasCoin` for testnet transaction
+
 ## 0.20.2 - 2019-10-01
 - update deps
 

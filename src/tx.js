@@ -20,10 +20,19 @@ import {integerToHexString} from './utils';
  * @return {MinterTx}
  */
 export default function prepareSignedTx(txParams = {}) {
-    const {privateKey, nonce, chainId = 1, gasPrice = 1, gasCoin = 'BIP', txType, txData, message} = txParams;
+    const {privateKey, nonce, chainId = 1, gasPrice = 1, txType, txData, message} = txParams;
     // throw on falsy nonce except 0
     if (!nonce && typeof nonce !== 'number') {
         throw new Error('Invalid nonce specified, tx can\'t be prepared');
+    }
+
+    let gasCoin = txParams.gasCoin;
+    if (!gasCoin) {
+        if (chainId === 2) {
+            gasCoin = 'MNT';
+        } else {
+            gasCoin = 'BIP';
+        }
     }
     // @TODO asserts
     const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
