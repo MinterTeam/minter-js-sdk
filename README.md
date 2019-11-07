@@ -80,14 +80,14 @@ One extra field of options object is `apiType`, which is one of [`'gate'`](https
 
 ```js
 // specify gate url
-const minterGate = new Minter({chainId: 2, apiType: 'gate', baseURL: 'https://gate.minter.network/api/v1/'});
+const minterGate = new Minter({chainId: 2, apiType: 'gate', baseURL: 'https://gate-api.testnet.minter.network/api/v1/'});
 // specify node url
 const minterNode = new Minter({chainId: 2, apiType: 'node', baseURL: 'https://minter-node-1.testnet.minter.network/'});
 ```
 
 `Minter` constructor has the following options:
-- `apiType`: 'gate' or 'node'
-- `baseURL`: API url
+- `apiType`: [`'gate'`](https://minterteam.github.io/minter-gate-docs/) or [`'node'`](https://docs.minter.network/#tag/Node-API)
+- `baseURL`: API URL
 - `chainId`: default chain ID, used if no chainId specified in the tx params, 1 - mainnet, 2 - testnet
 
 `minter` SDK instance has the following methods:
