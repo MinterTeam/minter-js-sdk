@@ -94,6 +94,7 @@ const minterNode = new Minter({chainId: 2, apiType: 'node', baseURL: 'https://mi
 - [postTx](#posttx)
 - [postSignedTx](#postsignedtx)
 - [getNonce](#getnonce)
+- [getMinGasPrice](#getmingasprice)
 - [estimateCoinSell](#estimateCoinSell)
 - [estimateCoinBuy](#estimateCoinBuy)
 - [estimateTxCommission](#estimateTxCommission)
@@ -170,6 +171,21 @@ minter.getNonce('Mx...')
     .then((nonce) => {
         console.log(nonce);
         // 123
+    })
+    .catch((error) => {
+        // ...
+    })
+```
+
+#### .getMinGasPrice()
+
+Get current minimal gas price.
+
+```js
+minter.getMinGasPrice()
+    .then((gasPrice) => {
+        console.log(gasPrice);
+        // 1
     })
     .catch((error) => {
         // ...
