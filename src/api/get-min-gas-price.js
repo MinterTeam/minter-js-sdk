@@ -1,3 +1,4 @@
+import {API_TYPE_GATE} from '../variables';
 import {getData} from './utils';
 
 /**
@@ -11,7 +12,11 @@ export default function GetMinGasPrice(apiInstance) {
      * @return {Promise<number>}
      */
     return function getMinGasPrice() {
-        return apiInstance.get('min_gas_price')
+        const minGasPriceUrl = apiInstance.defaults.apiType === API_TYPE_GATE
+            ? 'min-gas'
+            : 'min_gas_price';
+
+        return apiInstance.get(minGasPriceUrl)
             .then((response) => {
                 const minGasPrice = getData(response, apiInstance.defaults.apiType);
                 return Number(minGasPrice);
