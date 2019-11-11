@@ -56,7 +56,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['examples/*', 'test/*'],
+      files: ['examples/**/*', 'test/**/*'],
       rules: {
         "import/no-extraneous-dependencies": 0,
         'no-console': 0,

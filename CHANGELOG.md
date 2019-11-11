@@ -1,3 +1,6 @@
+## 0.21.0 - 2019-11-11
+- add `GetMinGasPrice` api method
+
 ## 0.20.3 - 2019-11-05
 - update default `gasCoin` for testnet transaction
 

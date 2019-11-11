@@ -1,5 +1,5 @@
 import axios from 'axios';
-import createError from 'axios/lib/core/createError';
+// import createError from 'axios/lib/core/createError';
 import {API_TYPE_GATE, API_TYPE_NODE} from '../variables';
 
 /**
@@ -81,6 +81,7 @@ export default function MinterApi(options = {}) {
 
 
 // transform thenable response with error payload into rejected
+/*
 function thenableToRejectedAdapter(config) {
     const adapter = (thenableToRejectedAdapter !== config.adapter && config.adapter) || axios.defaults.adapter;
 
@@ -103,6 +104,7 @@ function thenableToRejectedAdapter(config) {
             .catch(reject);
     });
 }
+*/
 
 function parseData(data) {
     if (typeof data === 'string') {

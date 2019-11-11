@@ -18,7 +18,8 @@ export default function GetMinGasPrice(apiInstance) {
 
         return apiInstance.get(minGasPriceUrl)
             .then((response) => {
-                const minGasPrice = getData(response, apiInstance.defaults.apiType);
+                const resData = getData(response, apiInstance.defaults.apiType);
+                const minGasPrice = apiInstance.defaults.apiType === API_TYPE_GATE ? resData.gas : resData;
                 return Number(minGasPrice);
             });
     };
