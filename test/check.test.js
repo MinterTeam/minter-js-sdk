@@ -1,4 +1,3 @@
-import {Buffer} from 'safe-buffer';
 import {issueCheck, decodeCheck} from '~/src';
 
 

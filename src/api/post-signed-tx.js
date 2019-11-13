@@ -1,4 +1,3 @@
-import {Buffer} from 'safe-buffer';
 import {API_TYPE_GATE} from '../variables';
 import {getData} from './utils';
 

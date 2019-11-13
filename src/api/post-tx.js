@@ -1,5 +1,5 @@
-import {Buffer} from 'safe-buffer';
 import {privateToAddressString} from 'minterjs-util';
+// import {privateToAddressString} from 'minterjs-util/src/prefix';
 import PostSignedTx from './post-signed-tx';
 import GetNonce from './get-nonce';
 import prepareSignedTx from '../tx';
@@ -79,7 +79,7 @@ function _postTxEnsureGas(apiInstance, txParams, gasRetryLimit) {
  * @return {Object|undefined}
  */
 function getTxResult(error) {
-    error = error.response && error.response.data && error.response.data.error;
+    error = error.response?.data?.error;
     // gate moves tx_result into root error, so check it too
     return error && (error.tx_result || error);
 }
@@ -91,7 +91,7 @@ function getTxResult(error) {
  */
 function isGasError(error) {
     const txResult = getTxResult(error);
-    return txResult && txResult.code === 114;
+    return txResult?.code === 114;
 }
 
 /**

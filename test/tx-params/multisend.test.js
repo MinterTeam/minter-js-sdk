@@ -1,4 +1,3 @@
-import {Buffer} from 'safe-buffer';
 import {TX_TYPE_MULTISEND} from 'minterjs-tx';
 import {MultisendTxParams} from '~/src';
 

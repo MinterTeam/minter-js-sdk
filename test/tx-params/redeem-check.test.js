@@ -1,4 +1,3 @@
-import {Buffer} from 'safe-buffer';
 import {MinterTxDataRedeemCheck, TX_TYPE_REDEEM_CHECK} from 'minterjs-tx';
 import {toBuffer} from 'minterjs-util';
 import {RedeemCheckTxParams} from '~/src';

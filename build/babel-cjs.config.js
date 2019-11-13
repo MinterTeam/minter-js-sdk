@@ -6,5 +6,8 @@ module.exports = {
                 modules: "cjs",
             }
         ]
-    ]
+    ],
+    "plugins": [
+        "@babel/plugin-proposal-optional-chaining",
+    ],
 };

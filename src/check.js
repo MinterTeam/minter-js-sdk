@@ -1,8 +1,12 @@
-import {defineProperties, ecsign, rlphash, sha256} from 'ethereumjs-util';
+import {defineProperties} from 'ethereumjs-util/dist/object';
+import {ecsign} from 'ethereumjs-util/dist/signature';
+import {rlphash, sha256} from 'ethereumjs-util/dist/hash';
 import secp256k1 from 'secp256k1';
-import {Buffer} from 'safe-buffer';
 import {coinToBuffer, bufferToCoin} from 'minterjs-tx';
+// import {coinToBuffer, bufferToCoin} from 'minterjs-tx/src/helpers';
 import {convertToPip, convertFromPip, mPrefixStrip} from 'minterjs-util';
+// import {convertToPip, convertFromPip} from 'minterjs-util/src/converter';
+// import {mPrefixStrip} from 'minterjs-util/src/prefix';
 import {isNumericInteger, integerToHexString, bufferToInteger} from './utils';
 
 class Check {
@@ -82,6 +86,10 @@ class Check {
 
     sign(privateKey, passphrase) {
         const msgHash = this.hash(false);
+
+        if (typeof passphrase === 'string') {
+            passphrase = Buffer.from(passphrase, 'utf-8');
+        }
 
         const passphraseBuffer = sha256(passphrase);
         const lock = secp256k1.sign(msgHash, passphraseBuffer);

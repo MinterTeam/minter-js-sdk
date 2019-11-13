@@ -1,4 +1,3 @@
-import {Buffer} from 'safe-buffer';
 import {TX_TYPE_CREATE_MULTISIG} from 'minterjs-tx';
 import {CreateMultisigTxParams} from '~/src';
 

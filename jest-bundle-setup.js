@@ -45,7 +45,7 @@ function walkFix(obj, currentDepth = 0) {
 }
 
 /**
- * Convert Buffer implementation of bundled `buffer-es6` to `safe-buffer` implementation used in tests
+ * Convert Buffer implementation of bundled `buffer-es6` to `safe-buffer` implementation used in tests and `safe-buffer` used in rollup's browserify
  * It requires to satisfy jest's `.toEqual()` deep equality check
  * @param value
  * @return {Buffer}

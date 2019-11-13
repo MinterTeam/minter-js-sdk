@@ -1,3 +1,11 @@
+## 0.22.0 - 2019-11-12
+- **BREAKING** tx params which must be Minter prefixed, 0x prefixed or Buffer now will throw on arbitrary string passed
+- update deps
+- drop safe-buffer dependency
+- drop des.js dependency, it have been updated and no more need to be deduped
+- update 'fail' tests to be more accurate
+- update tests to run faster
+
 ## 0.21.0 - 2019-11-11
 - add `GetMinGasPrice` api method
 

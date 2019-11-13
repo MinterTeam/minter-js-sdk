@@ -1,5 +1,7 @@
-import {Buffer} from 'safe-buffer';
-import {MinterTx, MinterTxSignature, formatCoin} from 'minterjs-tx';
+import {MinterTx, MinterTxSignature, coinToBuffer} from 'minterjs-tx';
+// import MinterTx from 'minterjs-tx/src/tx';
+// import MinterTxSignature from 'minterjs-tx/src/tx-signature';
+// import {coinToBuffer} from 'minterjs-tx/src/helpers';
 import {integerToHexString} from './utils';
 
 /**
@@ -20,7 +22,7 @@ import {integerToHexString} from './utils';
  * @return {MinterTx}
  */
 export default function prepareSignedTx(txParams = {}) {
-    const {privateKey, nonce, chainId = 1, gasPrice = 1, txType, txData, message} = txParams;
+    const {privateKey, nonce, chainId = 1, gasPrice = 1, txType, txData} = txParams;
     // throw on falsy nonce except 0
     if (!nonce && typeof nonce !== 'number') {
         throw new Error('Invalid nonce specified, tx can\'t be prepared');
@@ -41,13 +43,18 @@ export default function prepareSignedTx(txParams = {}) {
         nonce: `0x${integerToHexString(nonce)}`,
         chainId: `0x${integerToHexString(chainId)}`,
         gasPrice: `0x${integerToHexString(gasPrice)}`,
-        gasCoin: formatCoin(gasCoin),
+        gasCoin: coinToBuffer(gasCoin),
         type: txType,
         data: txData,
         signatureType: '0x01',
     };
+
+    let message = txParams.message;
     if (message) {
-        txProps.payload = `0x${Buffer.from(message, 'utf-8').toString('hex')}`;
+        if (typeof message === 'string') {
+            message = Buffer.from(message, 'utf-8');
+        }
+        txProps.payload = message;
     }
 
     const tx = new MinterTx(txProps);

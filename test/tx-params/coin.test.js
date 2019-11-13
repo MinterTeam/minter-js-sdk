@@ -1,4 +1,3 @@
-import {Buffer} from 'safe-buffer';
 import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL, TX_TYPE_SELL_ALL, TX_TYPE_BUY} from 'minterjs-tx';
 import {SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams} from '~/src';
 

@@ -8,14 +8,22 @@ import babel from 'rollup-plugin-babel';
 export default {
     input: 'src/index.js',
     plugins: [
+        // nodejs v10 doesn't support optional chaining
+        babel({
+            babelrc: false,
+            configFile: false,
+            "plugins": [
+                "@babel/plugin-proposal-optional-chaining",
+            ],
+        }),
         json(),
         resolve({
             browser: true,
         }),
         commonjs({
-            namedExports: {
-                'node_modules/ethereumjs-util/dist/index.js': [ 'stripHexPrefix', 'padToEven' ],
-            },
+            // namedExports: {
+            //     'node_modules/ethereumjs-util/dist/index.js': [ 'stripHexPrefix', 'padToEven' ],
+            // },
         }),
         globals(),
         builtins({

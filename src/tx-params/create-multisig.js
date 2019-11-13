@@ -1,5 +1,8 @@
 import {MinterTxDataCreateMultisig, TX_TYPE_CREATE_MULTISIG} from 'minterjs-tx';
+// import MinterTxDataCreateMultisig from 'minterjs-tx/src/tx-data/create-multisig';
+// import {TX_TYPE_CREATE_MULTISIG} from 'minterjs-tx/src/tx-types';
 import {toBuffer} from 'minterjs-util';
+// import {toBuffer} from 'minterjs-util/src/prefix';
 import {integerToHexString} from '../utils';
 
 /**

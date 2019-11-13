@@ -5,6 +5,37 @@ import {ENV_DATA, minterGate, minterNode} from './variables';
 const newCandidatePublicKeyGate = generateWallet().getPublicKeyString();
 const newCandidatePublicKeyNode = generateWallet().getPublicKeyString();
 
+const NOT_EXISTENT_COIN = 'ASD09431XC';
+
+const API_TYPE_LIST = [
+    {
+        minterApi: minterGate,
+        privateKey: ENV_DATA.privateKey,
+        address: ENV_DATA.address,
+        customCoin: ENV_DATA.customCoin,
+        newCandidatePublicKey: newCandidatePublicKeyGate,
+        toString() {
+            return 'gate';
+        },
+    },
+    {
+        minterApi: minterNode,
+        privateKey: ENV_DATA.privateKey2,
+        address: ENV_DATA.address2,
+        customCoin: 'TESTCOIN02',
+        newCandidatePublicKey: newCandidatePublicKeyNode,
+        toString() {
+            return 'node';
+        },
+    },
+];
+
+function wait(time) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, time);
+    });
+}
+
 beforeAll(async () => {
     // fill test ENV_DATA with data from the server
     /*
@@ -22,37 +53,41 @@ beforeAll(async () => {
     */
 
     // ensure custom coin exists
-    const txParams = new CreateCoinTxParams({
-        privateKey: ENV_DATA.privateKey,
-        chainId: 2,
-        coinName: ENV_DATA.customCoin,
-        coinSymbol: ENV_DATA.customCoin,
-        initialAmount: 500,
-        initialReserve: 1000,
-        crr: 50,
-        feeCoinSymbol: 'MNT',
-        message: 'custom message',
+    const coinPromises = API_TYPE_LIST.map((apiType) => {
+        const txParams = new CreateCoinTxParams({
+            privateKey: apiType.privateKey,
+            chainId: 2,
+            coinName: 'testcoin',
+            coinSymbol: apiType.customCoin,
+            initialAmount: 500,
+            initialReserve: 1000,
+            crr: 50,
+            feeCoinSymbol: 'MNT',
+            message: 'custom message',
+        });
+        return apiType.minterApi.postTx(txParams);
     });
+
     try {
-        await minterGate.postTx(txParams);
+        await Promise.all(coinPromises);
     } catch (e) {
-        console.log(e);
+        console.log(e, e?.response.data || e.request.data);
     }
 }, 30000);
 
 // only one tx from given address can exist in mempool
-beforeEach(async () => {
-    await new Promise((resolve) => {
-        setTimeout(resolve, 5000);
-    });
-}, 10000);
+// beforeEach(async () => {
+//     await new Promise((resolve) => {
+//         setTimeout(resolve, 5000);
+//     });
+// }, 10000);
 
 
 describe('PostTx: send', () => {
-    const txParamsData = () => ({
-        privateKey: ENV_DATA.privateKey,
+    const txParamsData = (apiType) => ({
+        privateKey: apiType.privateKey,
         chainId: 2,
-        address: ENV_DATA.address,
+        address: apiType.address,
         amount: 10,
         coinSymbol: 'MNT',
         feeCoinSymbol: 'MNT',
@@ -61,17 +96,17 @@ describe('PostTx: send', () => {
 
     test('should return signed tx', async () => {
         const nonce = await minterGate.getNonce(ENV_DATA.address);
-        const txParams = new SendTxParams({...txParamsData(), nonce, gasPrice: 1});
+        const txParams = new SendTxParams({...txParamsData(API_TYPE_LIST[0]), nonce, gasPrice: 1});
         const tx = prepareSignedTx(txParams);
         console.log(tx.serialize().toString('hex'));
         expect(tx.serialize().toString('hex').length)
             .toBeGreaterThan(0);
     }, 30000);
 
-    test('should work gate', () => {
+    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new SendTxParams(txParamsData());
-        return minterGate.postTx(txParams)
+        const txParams = new SendTxParams(txParamsData(apiType));
+        return apiType.minterApi.postTx(txParams)
             .then((txHash) => {
                 console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -80,61 +115,35 @@ describe('PostTx: send', () => {
             })
             .catch((error) => {
                 console.log(error);
-                console.log(error.response);
+                console.log(error.response.data);
             });
     }, 30000);
 
-    test('should fail gate', () => {
-        expect.assertions(1);
-        const txParams = new SendTxParams({...txParamsData(), amount: Number.MAX_SAFE_INTEGER, coinSymbol: 'ASD999'});
-        return minterGate.postTx(txParams)
-            .catch((error) => {
-                // console.log(error);
-                // console.log(error.response);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
-            });
-    }, 70000);
+    describe('wait', () => {
+        // beforeAll(async () => {
+        //     await wait(6000);
+        // }, 30000);
 
-    test('should work node', async () => {
-        // wait for getNonce to work correctly
-        // await new Promise((resolve) => {
-        //     setTimeout(resolve, 5000);
-        // });
-        expect.assertions(2);
-        const txParams = new SendTxParams(txParamsData());
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        const txParams = new SendTxParams({...txParamsData(), amount: Number.MAX_SAFE_INTEGER, coinSymbol: 'ASD999'});
-        return minterNode.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error.response.data);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
-            });
-    }, 30000);
+        test.each(API_TYPE_LIST)('should fail %s', async (apiType) => {
+            expect.assertions(1);
+            const txParams = new SendTxParams({...txParamsData(apiType), amount: Number.MAX_SAFE_INTEGER, coinSymbol: NOT_EXISTENT_COIN});
+            return apiType.minterApi.postTx(txParams)
+                .catch((error) => {
+                    // console.log(error);
+                    console.log(error.response.data);
+                    // Coin not exists
+                    expect(error.response.data.error.code === 102 || error.response.data.error.tx_result.code === 102).toBe(true);
+                });
+        }, 70000);
+    });
 });
 
 
 describe('PostTx handle low gasPrice', () => {
-    const txParamsData = () => ({
-        privateKey: ENV_DATA.privateKey,
+    const txParamsData = (apiType) => ({
+        privateKey: apiType.privateKey,
         chainId: 2,
-        address: ENV_DATA.address,
+        address: apiType.address,
         amount: 10,
         coinSymbol: 'MNT',
         feeCoinSymbol: 'MNT',
@@ -142,24 +151,25 @@ describe('PostTx handle low gasPrice', () => {
         message: 'custom message',
     });
 
-    describe('should fail when 0 retries | gate', () => {
+    describe.each(API_TYPE_LIST)('should fail when 0 retries | %s', (apiType) => {
         test('should fail with parsable error', () => {
             expect.assertions(1);
-            const txParams = new SendTxParams(txParamsData());
-            return minterGate.postTx(txParams, {gasRetryLimit: 0})
+            const txParams = new SendTxParams(txParamsData(apiType));
+            return apiType.minterApi.postTx(txParams, {gasRetryLimit: 0})
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response.data);
-                    const errorMessage = (error.response.data.error.tx_result && error.response.data.error.tx_result.message) || error.response.data.error.message;
+                    const errorMessage = error.response.data.error.tx_result?.message || error.response.data.error.message;
                     expect(errorMessage).toMatch(/^Gas price of tx is too low to be included in mempool\. Expected \d+(\.\d+)?$/);
                 });
         }, 70000);
     });
 
-    test.skip('should work with retries | gate', () => {
+    // @TODO enable after EX-179 will be resolved
+    test.skip.each(API_TYPE_LIST)('should work with retries | %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new SendTxParams(txParamsData());
-        return minterGate.postTx(txParams)
+        const txParams = new SendTxParams(txParamsData(apiType));
+        return apiType.minterApi.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -168,51 +178,21 @@ describe('PostTx handle low gasPrice', () => {
             })
             .catch((error) => {
                 console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    describe('should fail when 0 retries | node', () => {
-        test('should fail with parsable error', () => {
-            expect.assertions(1);
-            const txParams = new SendTxParams(txParamsData());
-            return minterNode.postTx(txParams, {gasRetryLimit: 0})
-                .catch((error) => {
-                    // console.log(error);
-                    // console.log(error.response.data);
-                    const errorMessage = (error.response.data.error.tx_result && error.response.data.error.tx_result.message) || error.response.data.error.message;
-                    expect(errorMessage).toMatch(/^Gas price of tx is too low to be included in mempool\. Expected \d+$/);
-                });
-        }, 70000);
-    });
-
-    test('should work with retries | node', () => {
-        expect.assertions(2);
-        const txParams = new SendTxParams(txParamsData());
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+                console.log(error.response.data);
             });
     }, 30000);
 });
 
 
 describe('PostTx: multisend', () => {
-    const txParamsData = () => ({
-        privateKey: ENV_DATA.privateKey,
+    const txParamsData = (apiType) => ({
+        privateKey: apiType.privateKey,
         chainId: 2,
         list: [
             {
                 value: 10,
                 coin: 'MNT',
-                to: ENV_DATA.address,
+                to: apiType.address,
             },
             {
                 value: 0.1,
@@ -224,10 +204,10 @@ describe('PostTx: multisend', () => {
         message: 'custom message',
     });
 
-    test('should work gate', () => {
+    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new MultisendTxParams(txParamsData());
-        return minterGate.postTx(txParams)
+        const txParams = new MultisendTxParams(txParamsData(apiType));
+        return apiType.minterApi.postTx(txParams)
             .then((txHash) => {
                 console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -236,77 +216,42 @@ describe('PostTx: multisend', () => {
             })
             .catch((error) => {
                 console.log(error);
-                console.log(error.response);
+                console.log(error.response.data);
             });
     }, 30000);
 
-    test('should fail gate', () => {
+    test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParamsDataInstance = txParamsData();
+        const txParamsDataInstance = txParamsData(apiType);
         txParamsDataInstance.list[0].value = Number.MAX_SAFE_INTEGER;
-        txParamsDataInstance.list[0].coin = 'ASD999';
+        txParamsDataInstance.list[0].coin = NOT_EXISTENT_COIN;
         const txParams = new MultisendTxParams(txParamsDataInstance);
-        return minterGate.postTx(txParams)
+        return apiType.minterApi.postTx(txParams)
             .catch((error) => {
                 // console.log(error);
-                // console.log(error.response);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
+                console.log(error.response.data);
+                // Coin not exists
+                expect(error.response.data.error.code === 102 || error.response.data.error.tx_result.code === 102).toBe(true);
             });
     }, 70000);
-
-    test('should work node', async () => {
-        // wait for getNonce to work correctly
-        // await new Promise((resolve) => {
-        //     setTimeout(resolve, 5000);
-        // });
-        expect.assertions(2);
-        const txParams = new MultisendTxParams(txParamsData());
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        const txParamsDataInstance = txParamsData();
-        txParamsDataInstance.list[0].value = Number.MAX_SAFE_INTEGER;
-        txParamsDataInstance.list[0].coin = 'ASD999';
-        const txParams = new MultisendTxParams(txParamsDataInstance);
-        return minterNode.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error.response.data);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
-            });
-    }, 30000);
 });
 
 
 describe('PostTx: sell', () => {
-    const txParamsData = () => ({
-        privateKey: ENV_DATA.privateKey,
+    const txParamsData = (apiType) => ({
+        privateKey: apiType.privateKey,
         chainId: 2,
         coinFrom: 'MNT',
-        coinTo: ENV_DATA.customCoin,
+        coinTo: apiType.customCoin,
         sellAmount: 1,
         feeCoinSymbol: 'MNT',
         message: 'custom message',
     });
 
-    test('should work gate', () => {
+    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new SellTxParams(txParamsData());
-        return minterGate.postTx(txParams)
+        const txParams = new SellTxParams(txParamsData(apiType));
+        return apiType.minterApi.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -315,53 +260,21 @@ describe('PostTx: sell', () => {
             })
             .catch((error) => {
                 console.log(error);
-                console.log(error.response);
+                console.log(error.response.data);
             });
     }, 30000);
 
-    test('should fail gate', () => {
+    test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = new SellTxParams({...txParamsData(), sellAmount: Number.MAX_SAFE_INTEGER, coinFrom: 'ASD999'});
-        return minterGate.postTx(txParams)
+        const txParams = new SellTxParams({...txParamsData(apiType), sellAmount: Number.MAX_SAFE_INTEGER, coinFrom: NOT_EXISTENT_COIN});
+        return apiType.minterApi.postTx(txParams)
             .catch((error) => {
                 // console.log(error);
-                // console.log(error.response);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
+                console.log(error.response.data);
+                // Coin not exists
+                expect(error.response.data.error.code === 102 || error.response.data.error.tx_result.code === 102).toBe(true);
             });
     }, 70000);
-
-    test('should work node', async () => {
-        // wait for getNonce to work correctly
-        // await new Promise((resolve) => {
-        //     setTimeout(resolve, 5000);
-        // });
-        expect.assertions(2);
-        const txParams = new SellTxParams(txParamsData());
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        const txParams = new SellTxParams({...txParamsData(), sellAmount: Number.MAX_SAFE_INTEGER, coinFrom: 'ASD999'});
-        return minterNode.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error.response.data);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
-            });
-    }, 30000);
 });
 
 // @TODO sellAll
@@ -369,20 +282,20 @@ describe('PostTx: sell', () => {
 
 
 describe('PostTx: buy', () => {
-    const txParamsData = () => ({
-        privateKey: ENV_DATA.privateKey,
+    const txParamsData = (apiType) => ({
+        privateKey: apiType.privateKey,
         chainId: 2,
         coinFrom: 'MNT',
-        coinTo: ENV_DATA.customCoin,
+        coinTo: apiType.customCoin,
         buyAmount: 1,
         feeCoinSymbol: 'MNT',
         message: 'custom message',
     });
 
-    test('should work gate', () => {
+    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new BuyTxParams(txParamsData());
-        return minterGate.postTx(txParams)
+        const txParams = new BuyTxParams(txParamsData(apiType));
+        return apiType.minterApi.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -391,63 +304,31 @@ describe('PostTx: buy', () => {
             })
             .catch((error) => {
                 console.log(error);
-                console.log(error.response);
+                console.log(error.response.data);
             });
     }, 30000);
 
-    test('should fail gate', () => {
+    test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = new BuyTxParams({...txParamsData(), buyAmount: Number.MAX_SAFE_INTEGER, coinFrom: 'ASD999'});
-        return minterGate.postTx(txParams)
+        const txParams = new BuyTxParams({...txParamsData(apiType), buyAmount: Number.MAX_SAFE_INTEGER, coinFrom: NOT_EXISTENT_COIN});
+        return apiType.minterApi.postTx(txParams)
             .catch((error) => {
                 // console.log(error);
-                // console.log(error.response);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
+                console.log(error.response.data);
+                // Coin not exists
+                expect(error.response.data.error.code === 102 || error.response.data.error.tx_result.code === 102).toBe(true);
             });
     }, 70000);
-
-    test('should work node', async () => {
-        // wait for getNonce to work correctly
-        // await new Promise((resolve) => {
-        //     setTimeout(resolve, 5000);
-        // });
-        expect.assertions(2);
-        const txParams = new BuyTxParams(txParamsData());
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        const txParams = new BuyTxParams({...txParamsData(), buyAmount: Number.MAX_SAFE_INTEGER, coinFrom: 'ASD999'});
-        return minterNode.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error.response.data);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
-            });
-    }, 30000);
 });
 
 
-describe.skip('validator', () => {
+describe('validator', () => {
     describe('PostTx: declare candidacy', () => {
-        const txParamsData = () => ({
-            privateKey: ENV_DATA.privateKey,
+        const txParamsData = (apiType) => ({
+            privateKey: apiType.privateKey,
             chainId: 2,
-            address: ENV_DATA.address,
-            publicKey: '',
+            address: apiType.address,
+            publicKey: 'Mp00',
             coinSymbol: 'MNT',
             stake: 1,
             commission: 50,
@@ -455,91 +336,51 @@ describe.skip('validator', () => {
             message: 'custom message',
         });
 
-        test('should work gate', async () => {
-            // wait for getNonce to work correctly
-            // await new Promise((resolve) => {
-            //     setTimeout(resolve, 5000);
-            // });
+        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
             expect.assertions(2);
-            const txParams = new DeclareCandidacyTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
-            return minterGate.postTx(txParams)
+            const txParams = new DeclareCandidacyTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams)
                 .then((txHash) => {
-                    // console.log(txHash);
+                    console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
                     console.log(error);
-                    console.log(error.response);
+                    console.log(error.response.data);
                 });
         }, 30000);
 
-        test('should fail gate', () => {
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = new DeclareCandidacyTxParams(txParamsData()); // empty publicKey specified
-            return minterGate.postTx(txParams)
+            const txParams = new DeclareCandidacyTxParams(txParamsData(apiType)); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams)
                 .catch((error) => {
                     // console.log(error);
-                    // console.log(error.response);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
+                    console.log(error.response.data);
+                    // Incorrect PubKey
+                    expect(error.response.data.error.code === 407 || error.response.data.error.tx_result.code === 407).toBe(true);
                 });
         }, 70000);
-
-        test('should work node', async () => {
-            // wait for getNonce to work correctly
-            // await new Promise((resolve) => {
-            //     setTimeout(resolve, 5000);
-            // });
-            expect.assertions(2);
-            const txParams = new DeclareCandidacyTxParams({...txParamsData(), publicKey: newCandidatePublicKeyNode});
-            return minterNode.postTx(txParams)
-                .then((txHash) => {
-                    // console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
-                });
-        }, 30000);
-
-        test('should fail node', () => {
-            expect.assertions(1);
-            const txParams = new DeclareCandidacyTxParams(txParamsData()); // empty publicKey specified
-            return minterNode.postTx(txParams)
-                .then((res) => {
-                    console.log({res});
-                })
-                .catch((error) => {
-                    // console.log(error.response.data);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
-                });
-        }, 30000);
     });
 
 
     describe('PostTx: edit candidate', () => {
-        const txParamsData = () => ({
-            privateKey: ENV_DATA.privateKey,
+        const txParamsData = (apiType) => ({
+            privateKey: apiType.privateKey,
             chainId: 2,
-            publicKey: '',
-            rewardAddress: ENV_DATA.address,
-            ownerAddress: ENV_DATA.address,
+            publicKey: 'Mp00',
+            rewardAddress: apiType.address,
+            ownerAddress: apiType.address,
             feeCoinSymbol: 'MNT',
             message: 'custom message',
         });
 
-        test('should work gate', async () => {
-            // wait for getNonce to work correctly
-            // await new Promise((resolve) => {
-            //     setTimeout(resolve, 5000);
-            // });
+        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
             expect.assertions(2);
-            const txParams = new EditCandidateTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
-            return minterGate.postTx(txParams)
+            const txParams = new EditCandidateTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams)
                 .then((txHash) => {
                     console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -548,71 +389,39 @@ describe.skip('validator', () => {
                 })
                 .catch((error) => {
                     console.log(error);
-                    console.log(error.response);
+                    console.log(error.response.data);
                 });
         }, 30000);
 
-        test('should fail gate', () => {
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = new EditCandidateTxParams(txParamsData()); // empty publicKey specified
-            return minterGate.postTx(txParams)
+            const txParams = new EditCandidateTxParams(txParamsData(apiType)); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams)
                 .catch((error) => {
                     // console.log(error);
-                    // console.log(error.response);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
+                    console.log(error.response.data);
+                    // andidate with such public key (Mp) not found
+                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
                 });
         }, 70000);
-
-        test('should work node', async () => {
-            // wait for getNonce to work correctly
-            // await new Promise((resolve) => {
-            //     setTimeout(resolve, 5000);
-            // });
-            expect.assertions(2);
-            const txParams = new EditCandidateTxParams({...txParamsData(), publicKey: newCandidatePublicKeyNode});
-            return minterNode.postTx(txParams)
-                .then((txHash) => {
-                    console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
-                });
-        }, 30000);
-
-        test('should fail node', () => {
-            expect.assertions(1);
-            const txParams = new EditCandidateTxParams(txParamsData()); // empty publicKey specified
-            return minterNode.postTx(txParams)
-                .then((res) => {
-                    console.log({res});
-                })
-                .catch((error) => {
-                    // console.log(error.response.data);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
-                });
-        }, 30000);
     });
 
 
     describe('PostTx: delegate', () => {
-        const txParamsData = () => ({
-            privateKey: ENV_DATA.privateKey,
+        const txParamsData = (apiType) => ({
+            privateKey: apiType.privateKey,
             chainId: 2,
-            publicKey: '',
+            publicKey: 'Mp00',
             coinSymbol: 'MNT',
             stake: 10,
             feeCoinSymbol: 'MNT',
             message: 'custom message',
         });
 
-        test('should work gate', () => {
+        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
             expect.assertions(2);
-            const txParams = new DelegateTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
-            return minterGate.postTx(txParams)
+            const txParams = new DelegateTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams)
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -621,61 +430,29 @@ describe.skip('validator', () => {
                 })
                 .catch((error) => {
                     console.log(error);
-                    console.log(error.response);
+                    console.log(error.response.data);
                 });
         }, 30000);
 
-        test('should fail gate', () => {
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = new DelegateTxParams(txParamsData()); // empty publicKey specified
-            return minterGate.postTx(txParams)
+            const txParams = new DelegateTxParams(txParamsData(apiType)); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams)
                 .catch((error) => {
                     // console.log(error);
-                    // console.log(error.response);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
+                    console.log(error.response.data);
+                    // Candidate with such public key not found
+                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
                 });
         }, 70000);
-
-        test('should work node', async () => {
-            // wait for getNonce to work correctly
-            // await new Promise((resolve) => {
-            //     setTimeout(resolve, 5000);
-            // });
-            expect.assertions(2);
-            const txParams = new DelegateTxParams({...txParamsData(), publicKey: newCandidatePublicKeyNode});
-            return minterNode.postTx(txParams)
-                .then((txHash) => {
-                    // console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
-                });
-        }, 30000);
-
-        test('should fail node', () => {
-            expect.assertions(1);
-            const txParams = new DelegateTxParams(txParamsData()); // empty publicKey specified
-            return minterNode.postTx(txParams)
-                .then((res) => {
-                    console.log({res});
-                })
-                .catch((error) => {
-                    // console.log(error.response.data);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
-                });
-        }, 30000);
     });
 
 
     describe('PostTx: unbond', () => {
-        const txParamsData = () => ({
-            privateKey: ENV_DATA.privateKey,
+        const txParamsData = (apiType) => ({
+            privateKey: apiType.privateKey,
             chainId: 2,
-            publicKey: '',
+            publicKey: 'Mp00',
             coinSymbol: 'MNT',
             stake: 10,
             feeCoinSymbol: 'MNT',
@@ -683,11 +460,11 @@ describe.skip('validator', () => {
         });
 
 
-        test('should work gate', () => {
-            console.log('unbond from:', newCandidatePublicKeyGate);
+        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+            console.log('unbond from:', apiType.newCandidatePublicKey);
             expect.assertions(2);
-            const txParams = new UnbondTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
-            return minterGate.postTx(txParams)
+            const txParams = new UnbondTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams)
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -696,69 +473,37 @@ describe.skip('validator', () => {
                 })
                 .catch((error) => {
                     console.log(error);
-                    console.log(error.response);
+                    console.log(error.response.data);
                 });
         }, 30000);
 
-        test('should fail gate', () => {
-            expect.assertions(1);
-            const txParams = new UnbondTxParams(txParamsData()); // empty publicKey specified
-            return minterGate.postTx(txParams)
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+            // expect.assertions(1);
+            const txParams = new UnbondTxParams(txParamsData(apiType)); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams)
                 .catch((error) => {
                     // console.log(error);
-                    // console.log(error.response);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
+                    console.log(error.response.data);
+                    // Candidate with such public key not found
+                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
                 });
         }, 70000);
-
-        test('should work node', async () => {
-            // wait for getNonce to work correctly
-            // await new Promise((resolve) => {
-            //     setTimeout(resolve, 5000);
-            // });
-            expect.assertions(2);
-            const txParams = new UnbondTxParams({...txParamsData(), publicKey: newCandidatePublicKeyNode});
-            return minterNode.postTx(txParams)
-                .then((txHash) => {
-                    // console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
-                });
-        }, 30000);
-
-        test('should fail node', () => {
-            expect.assertions(1);
-            const txParams = new UnbondTxParams(txParamsData()); // empty publicKey specified
-            return minterNode.postTx(txParams)
-                .then((res) => {
-                    console.log({res});
-                })
-                .catch((error) => {
-                    // console.log(error.response.data);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
-                });
-        }, 30000);
     });
 
 
     describe('PostTx: set candidate on', () => {
-        const txParamsData = () => ({
-            privateKey: ENV_DATA.privateKey,
+        const txParamsData = (apiType) => ({
+            privateKey: apiType.privateKey,
             chainId: 2,
-            publicKey: '',
+            publicKey: 'Mp00',
             feeCoinSymbol: 'MNT',
             message: 'custom message',
         });
 
-        test('should work gate', () => {
+        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
             expect.assertions(2);
-            const txParams = new SetCandidateOnTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
-            return minterGate.postTx(txParams)
+            const txParams = new SetCandidateOnTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams)
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -767,69 +512,37 @@ describe.skip('validator', () => {
                 })
                 .catch((error) => {
                     console.log(error);
-                    console.log(error.response);
+                    console.log(error.response.data);
                 });
         }, 30000);
 
-        test('should fail gate', () => {
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = new SetCandidateOnTxParams(txParamsData()); // empty publicKey specified
-            return minterGate.postTx(txParams)
+            const txParams = new SetCandidateOnTxParams(txParamsData(apiType)); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams)
                 .catch((error) => {
                     // console.log(error);
-                    // console.log(error.response);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
+                    console.log(error.response.data);
+                    // Candidate with such public key not found
+                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
                 });
         }, 70000);
-
-        test('should work node', async () => {
-            // wait for getNonce to work correctly
-            // await new Promise((resolve) => {
-            //     setTimeout(resolve, 5000);
-            // });
-            expect.assertions(2);
-            const txParams = new SetCandidateOnTxParams({...txParamsData(), publicKey: newCandidatePublicKeyNode});
-            return minterNode.postTx(txParams)
-                .then((txHash) => {
-                    // console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
-                });
-        }, 30000);
-
-        test('should fail node', () => {
-            expect.assertions(1);
-            const txParams = new SetCandidateOnTxParams(txParamsData()); // empty publicKey specified
-            return minterNode.postTx(txParams)
-                .then((res) => {
-                    console.log({res});
-                })
-                .catch((error) => {
-                    // console.log(error.response.data);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
-                });
-        }, 30000);
     });
 
 
     describe('PostTx: set candidate off', () => {
-        const txParamsData = () => ({
-            privateKey: ENV_DATA.privateKey,
+        const txParamsData = (apiType) => ({
+            privateKey: apiType.privateKey,
             chainId: 2,
-            publicKey: '',
+            publicKey: 'Mp00',
             feeCoinSymbol: 'MNT',
             message: 'custom message',
         });
 
-        test('should work gate', () => {
+        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
             expect.assertions(2);
-            const txParams = new SetCandidateOffTxParams({...txParamsData(), publicKey: newCandidatePublicKeyGate});
-            return minterGate.postTx(txParams)
+            const txParams = new SetCandidateOffTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams)
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -838,64 +551,32 @@ describe.skip('validator', () => {
                 })
                 .catch((error) => {
                     console.log(error);
-                    console.log(error.response);
+                    console.log(error.response.data);
                 });
         }, 30000);
 
-        test('should fail gate', () => {
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = new SetCandidateOffTxParams(txParamsData()); // empty publicKey specified
-            return minterGate.postTx(txParams)
+            const txParams = new SetCandidateOffTxParams(txParamsData(apiType)); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams)
                 .then((res) => {
                     console.log({res});
                 })
                 .catch((error) => {
                     // console.log(error);
-                    // console.log(error.response);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
+                    console.log(error.response.data);
+                    // Candidate with such public key not found
+                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
                 });
         }, 70000);
-
-        test('should work node', async () => {
-            // wait for getNonce to work correctly
-            // await new Promise((resolve) => {
-            //     setTimeout(resolve, 5000);
-            // });
-            expect.assertions(2);
-            const txParams = new SetCandidateOffTxParams({...txParamsData(), publicKey: newCandidatePublicKeyNode});
-            return minterNode.postTx(txParams)
-                .then((txHash) => {
-                    // console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
-                });
-        }, 30000);
-
-        test('should fail node', () => {
-            expect.assertions(1);
-            const txParams = new SetCandidateOffTxParams(txParamsData()); // empty publicKey specified
-            return minterNode.postTx(txParams)
-                .then((res) => {
-                    console.log({res});
-                })
-                .catch((error) => {
-                    // console.log(error.response.data);
-                    expect(error.response.data.error.message.length).toBeGreaterThan(0);
-                });
-        }, 30000);
     });
 });
 
 
 describe('PostTx: redeem check', () => {
-    function getRandomCheck() {
+    function getRandomCheck(apiType) {
         return issueCheck({
-            privateKey: ENV_DATA.privateKey,
+            privateKey: apiType.privateKey,
             chainId: 2,
             passPhrase: '123',
             nonce: 1,
@@ -904,18 +585,18 @@ describe('PostTx: redeem check', () => {
         });
     }
 
-    const txParamsData = () => ({
-        privateKey: ENV_DATA.privateKey,
+    const txParamsData = (apiType) => ({
+        privateKey: apiType.privateKey,
         chainId: 2,
-        check: '',
+        check: 'Mcf8993002843b9ac9ff8a4d4e540000000000000080b841ab6a04641d3f732dff72cd6c2435c54aef3ad0f3413d98c8e1f52f4cffb0f5541e09ad0a6b5b67600f3949d47cfb6299e83ded68c4ba825bfe7f7315bfb9958e011ba07b116f57f084df995f0f1a0cb382614a15c149547895af4ef0354d171fc0590ca00f12ab3095a7c3fb0c4ad5e97f1b6cbd92636e67ae9045f35c60740a815703c1',
         password: '123',
         feeCoinSymbol: 'MNT',
     });
 
-    test('should work gate', () => {
+    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new RedeemCheckTxParams({...txParamsData(), check: getRandomCheck()});
-        return minterGate.postTx(txParams)
+        const txParams = new RedeemCheckTxParams({...txParamsData(apiType), check: getRandomCheck(apiType)});
+        return apiType.minterApi.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -924,70 +605,38 @@ describe('PostTx: redeem check', () => {
             })
             .catch((error) => {
                 console.log(error);
-                console.log(error.response);
+                console.log(error.response.data);
             });
     }, 30000);
 
-    test('should fail gate', () => {
+    test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = new RedeemCheckTxParams(txParamsData()); // empty check specified
-        return minterGate.postTx(txParams)
+        const txParams = new RedeemCheckTxParams(txParamsData(apiType)); // empty check specified
+        return apiType.minterApi.postTx(txParams)
             .catch((error) => {
                 // console.log(error);
-                // console.log(error.response);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
+                console.log(error.response.data);
+                // Invalid proof
+                expect(error.response.data.error.code === 501 || error.response.data.error.tx_result.code === 501).toBe(true);
             });
     }, 70000);
-
-    test('should work node', async () => {
-        // wait for getNonce to work correctly
-        // await new Promise((resolve) => {
-        //     setTimeout(resolve, 5000);
-        // });
-        expect.assertions(2);
-        const txParams = new RedeemCheckTxParams({...txParamsData(), check: getRandomCheck()});
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        const txParams = new RedeemCheckTxParams(txParamsData()); // empty check specified
-        return minterNode.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error.response.data);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
-            });
-    }, 30000);
 });
 
 
 describe('PostTx: create multisig', () => {
-    const txParamsData = () => ({
-        privateKey: ENV_DATA.privateKey,
+    const txParamsData = (apiType) => ({
+        privateKey: apiType.privateKey,
         chainId: 2,
-        addresses: [ENV_DATA.address, 'Mx7633980c000139dd3bd24a3f54e06474fa941e00'],
+        addresses: [apiType.address, 'Mx7633980c000139dd3bd24a3f54e06474fa941e00'],
         weights: [],
         threshold: 100,
         feeCoinSymbol: 'MNT',
     });
 
-    test('should work gate', () => {
+    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new CreateMultisigTxParams({...txParamsData(), weights: [Math.random().toString().replace(/\D/, ''), Math.random().toString().replace(/\D/, '')]});
-        return minterGate.postTx(txParams)
+        const txParams = new CreateMultisigTxParams({...txParamsData(apiType), weights: [Math.random().toString().replace(/\D/, ''), Math.random().toString().replace(/\D/, '')]});
+        return apiType.minterApi.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -996,212 +645,21 @@ describe('PostTx: create multisig', () => {
             })
             .catch((error) => {
                 console.log(error);
-                console.log(error.response);
+                console.log(error.response.data);
             });
     }, 30000);
 
-    test('should fail gate', () => {
+    test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = new CreateMultisigTxParams({...txParamsData(), weights: []});
-        return minterGate.postTx(txParams)
+        const txParams = new CreateMultisigTxParams({...txParamsData(apiType), weights: []});
+        return apiType.minterApi.postTx(txParams)
             .catch((error) => {
                 // console.log(error);
-                // console.log(error.response);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
+                console.log(error.response.data);
+                // Incorrect multisig weights
+                expect(error.response.data.error.code === 601 || error.response.data.error.tx_result.code === 601).toBe(true);
             });
     }, 70000);
-
-    test('should work node', async () => {
-        // wait for getNonce to work correctly
-        // await new Promise((resolve) => {
-        //     setTimeout(resolve, 5000);
-        // });
-        expect.assertions(2);
-        const txParams = new CreateMultisigTxParams({...txParamsData(), weights: [Math.random().toString().replace(/\D/, ''), Math.random().toString().replace(/\D/, '')]});
-        return minterNode.postTx(txParams)
-            .then((txHash) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        const txParams = new CreateMultisigTxParams({...txParamsData(), weights: []});
-        return minterNode.postTx(txParams)
-            .then((res) => {
-                console.log({res});
-            })
-            .catch((error) => {
-                // console.log(error.response.data);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
-            });
-    }, 30000);
 });
 
 // @TODO test multisig tx
-
-describe('EstimateCoinSell', () => {
-    test('should work gate', () => {
-        expect.assertions(2);
-
-        return minterGate.estimateCoinSell({
-            coinToSell: 'MNT',
-            valueToSell: 1,
-            coinToBuy: ENV_DATA.customCoin,
-        })
-            .then((estimateResult) => {
-                expect(Number(estimateResult.will_get)).toBeGreaterThan(0);
-                expect(Number(estimateResult.commission)).toBeGreaterThan(0);
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail gate', () => {
-        expect.assertions(1);
-        return minterGate.estimateCoinSell({
-            coinToSell: 'MNT',
-            valueToSell: 1,
-            coinToBuy: 'MNT',
-        })
-            .catch((error) => {
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
-            });
-    }, 30000);
-
-    test('should work node', () => {
-        expect.assertions(2);
-
-        return minterNode.estimateCoinSell({
-            coinToSell: 'MNT',
-            valueToSell: 1,
-            coinToBuy: ENV_DATA.customCoin,
-        })
-            .then((estimateResult) => {
-                expect(Number(estimateResult.will_get)).toBeGreaterThan(0);
-                expect(Number(estimateResult.commission)).toBeGreaterThan(0);
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        return minterNode.estimateCoinSell({
-            coinToSell: 'MNT',
-            valueToSell: 1,
-            coinToBuy: 'MNT',
-        })
-            .catch((error) => {
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
-            });
-    }, 30000);
-});
-
-describe('EstimateCoinBuy', () => {
-    test('should work gate', () => {
-        expect.assertions(2);
-
-        return minterGate.estimateCoinBuy({
-            coinToSell: 'MNT',
-            valueToBuy: 1,
-            coinToBuy: ENV_DATA.customCoin,
-        })
-            .then((estimateResult) => {
-                expect(Number(estimateResult.will_pay)).toBeGreaterThan(0);
-                expect(Number(estimateResult.commission)).toBeGreaterThan(0);
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail gate', () => {
-        expect.assertions(1);
-        return minterGate.estimateCoinBuy({
-            coinToSell: 'MNT',
-            valueToBuy: 1,
-            coinToBuy: 'MNT',
-        })
-            .catch((error) => {
-                // console.log(error);
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
-            });
-    }, 30000);
-
-    test('should work node', () => {
-        expect.assertions(2);
-
-        return minterNode.estimateCoinBuy({
-            coinToSell: 'MNT',
-            valueToBuy: 1,
-            coinToBuy: ENV_DATA.customCoin,
-        })
-            .then((estimateResult) => {
-                expect(Number(estimateResult.will_pay)).toBeGreaterThan(0);
-                expect(Number(estimateResult.commission)).toBeGreaterThan(0);
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should fail node', () => {
-        expect.assertions(1);
-        return minterNode.estimateCoinBuy({
-            coinToSell: 'MNT',
-            valueToBuy: 1,
-            coinToBuy: 'MNT',
-        })
-            .catch((error) => {
-                expect(error.response.data.error.message.length).toBeGreaterThan(0);
-            });
-    }, 30000);
-});
-
-describe('EstimateTxCommission', () => {
-    const rawTx = 'f8920101028a4d4e540000000000000001aae98a4d4e540000000000000094376615b9a3187747dc7c32e51723515ee62e37dc888ac7230489e800008e637573746f6d206d6573736167658001b845f8431ba0647b5465b656962e88cec2e1883830b7e231cacea0fd57bdb329650729144147a015b593a0301dfa4cf6ec9357be065221455b279674944bb7534d6ea650eb35c8';
-
-    test('should work gate', () => {
-        expect.assertions(1);
-
-        return minterGate.estimateTxCommission({
-            transaction: rawTx,
-        })
-            .then((commission) => {
-                expect(Number(commission)).toBeGreaterThan(0);
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-
-    test('should work node', () => {
-        expect.assertions(1);
-
-        return minterNode.estimateTxCommission({
-            transaction: rawTx,
-        })
-            .then((commission) => {
-                expect(Number(commission)).toBeGreaterThan(0);
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response);
-            });
-    }, 30000);
-});
