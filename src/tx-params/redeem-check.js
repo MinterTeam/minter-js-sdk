@@ -12,12 +12,13 @@ import {toBuffer} from 'minterjs-util';
  * @constructor
  * @param {string|Buffer} privateKey
  * @param {string} check
- * @param {string} password
+ * @param {string} [password]
+ * @param {string|Buffer} [proof]
  * @param {string} [feeCoinSymbol] - should be base coin
  * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function RedeemCheckTxParams({privateKey, check, password, feeCoinSymbol, ...otherParams}) {
+export default function RedeemCheckTxParams({privateKey, check, password, proof, feeCoinSymbol, ...otherParams}) {
     // @TODO set gasCoin automatically after #263 resolved @see https://github.com/MinterTeam/minter-go-node/issues/263
     if (feeCoinSymbol && (feeCoinSymbol.toUpperCase() !== 'MNT' && feeCoinSymbol.toUpperCase() !== 'BIP')) {
         throw new Error('feeCoinSymbol should be baseCoin');
@@ -25,10 +26,8 @@ export default function RedeemCheckTxParams({privateKey, check, password, feeCoi
     if (typeof privateKey === 'string') {
         privateKey = Buffer.from(privateKey, 'hex');
     }
-    // if (typeof check === 'string') {
-    //     check = Buffer.from(check, 'hex');
-    // }
-    const proofWithRecovery = getProofWithRecovery(privateKey, password);
+
+    const proofWithRecovery = proof || getProofWithRecovery(privateKey, password);
     const txData = new MinterTxDataRedeemCheck({
         rawCheck: toBuffer(check),
         proof: proofWithRecovery,

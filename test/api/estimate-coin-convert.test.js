@@ -16,8 +16,8 @@ beforeAll(async () => {
     });
     try {
         await minterGate.postTx(txParams);
-    } catch ({response, request}) {
-        console.log(response ? {response} : {request});
+    } catch (e) {
+        console.log(e?.response.data || e);
     }
 }, 30000);
 

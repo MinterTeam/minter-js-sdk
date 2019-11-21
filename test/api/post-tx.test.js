@@ -71,7 +71,7 @@ beforeAll(async () => {
     try {
         await Promise.all(coinPromises);
     } catch (e) {
-        console.log(e, e?.response.data || e.request.data);
+        console.log(e?.response.data || e);
     }
 }, 30000);
 

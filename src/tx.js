@@ -13,6 +13,7 @@ import {integerToHexString} from './utils';
  * @property {string} [gasCoin='BIP']
  * @property {string|Buffer} txType
  * @property {Buffer} txData
+ * @property {string} [payload]
  * @property {string} [message]
  */
 
@@ -49,12 +50,12 @@ export default function prepareSignedTx(txParams = {}) {
         signatureType: '0x01',
     };
 
-    let message = txParams.message;
-    if (message) {
-        if (typeof message === 'string') {
-            message = Buffer.from(message, 'utf-8');
+    let payload = txParams.message || txParams.payload;
+    if (payload) {
+        if (typeof payload === 'string') {
+            payload = Buffer.from(payload, 'utf-8');
         }
-        txProps.payload = message;
+        txProps.payload = payload;
     }
 
     const tx = new MinterTx(txProps);

@@ -1,3 +1,7 @@
+WIP
+- Add: `RedeemCheckTxParams` now accepts direct `proof` param, instead of generation it from password
+- Add: `prepareSignedTx` now accepts `payload` param instead of `message`
+
 ## 0.22.0 - 2019-11-12
 - **BREAKING** tx params which must be Minter prefixed, 0x prefixed or Buffer now will throw on arbitrary string passed
 - update deps

@@ -11,10 +11,14 @@ import {Minter, API_TYPE_GATE, API_TYPE_NODE} from '~/src';
 // "Mx49ca5b11f0055347df169985c0b70914150bb567" // erupt level forum warrior mutual wrap this elephant destroy trim habit annual
 
 const ENV_TESTNET = 'testnet';
-const ENV_TEST_TESTNET = 'test';
+const ENV_QA_TESTNET = 'qa';
+const ENV_TEXAS_TESTNET = 'texas';
 const TESTNET_MENMONIC = 'exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone';
+const TESTNET_MENMONIC_2 = 'balance exist engage bargain slab genuine urge tooth critic slab admit coyote';
 const QA_MNEMONIC = 'puzzle feed enlist rack cliff divert exist bind swamp kiwi casino pull';
 const QA_MNEMONIC_2 = 'air model item valley auction bullet crisp always erosion paper orient fog';
+const TEXAS_MNEMONIC = 'echo figure script juice spell trigger climb south special school biology motor';
+const TEXAS_MNEMONIC_2 = 'measure enhance jealous amateur object cash reflect blood lab dawn oxygen garage';
 
 const ENV_SETTINGS = {
     [ENV_TESTNET]: {
@@ -24,9 +28,12 @@ const ENV_SETTINGS = {
         // 5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da
         privateKey: walletFromMnemonic(TESTNET_MENMONIC).getPrivateKeyString(),
         address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+        mnemonic2: TESTNET_MENMONIC_2,
+        privateKey2: walletFromMnemonic(TESTNET_MENMONIC_2).getPrivateKeyString(),
+        address2: 'Mx116932f4353d643ac2410714f74fc1dfbc9c4053',
         customCoin: 'TESTCOIN01',
     },
-    [ENV_TEST_TESTNET]: {
+    [ENV_QA_TESTNET]: {
         nodeBaseUrl: 'http://front-de.minter.network:48841/',
         gateBaseUrl: 'https://qa.gate-api.minter.network/api/v1/',
         mnemonic: QA_MNEMONIC,
@@ -37,10 +44,21 @@ const ENV_SETTINGS = {
         address2: 'Mx634550aa7dc347d5e60888da2529c56f1818e403',
         customCoin: 'TESTCOIN01',
     },
+    [ENV_TEXAS_TESTNET]: {
+        nodeBaseUrl: 'https://minter-node-2.testnet.minter.network:8841/',
+        gateBaseUrl: 'https://texasnet.gate-api.minter.network/api/v1/',
+        mnemonic: TEXAS_MNEMONIC,
+        privateKey: walletFromMnemonic(TEXAS_MNEMONIC).getPrivateKeyString(),
+        address: 'Mxc5d6b463c18ef37c026b90def5cbd272fb6b2674',
+        mnemonic2: TEXAS_MNEMONIC_2,
+        privateKey2: walletFromMnemonic(TEXAS_MNEMONIC_2).getPrivateKeyString(),
+        address2: 'Mxc2f6e65debb715577ab332c2ed8e671156ee2803',
+        customCoin: 'TESTCOIN01',
+    },
 };
 
 // select environment
-const CURRENT_ENV = ENV_TEST_TESTNET;
+const CURRENT_ENV = ENV_QA_TESTNET;
 export const ENV_DATA = ENV_SETTINGS[CURRENT_ENV];
 
 
