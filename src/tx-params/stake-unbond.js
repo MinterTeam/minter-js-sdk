@@ -1,4 +1,4 @@
-import {MinterTxDataUnbond, TX_TYPE_UNBOND, coinToBuffer} from 'minterjs-tx';
+import {TxDataUnbond, TX_TYPE, coinToBuffer} from 'minterjs-tx';
 import {convertToPip, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
@@ -13,7 +13,7 @@ import {convertToPip, toBuffer} from 'minterjs-util';
  * @return {TxParams}
  */
 export default function UnbondTxParams({publicKey, coinSymbol, stake, feeCoinSymbol, ...otherParams}) {
-    const txData = new MinterTxDataUnbond({
+    const txData = new TxDataUnbond({
         pubKey: toBuffer(publicKey),
         coin: coinToBuffer(coinSymbol),
         stake: `0x${convertToPip(stake, 'hex')}`,
@@ -26,7 +26,7 @@ export default function UnbondTxParams({publicKey, coinSymbol, stake, feeCoinSym
     return {
         ...otherParams,
         gasCoin: feeCoinSymbol,
-        txType: TX_TYPE_UNBOND,
+        txType: TX_TYPE.UNBOND,
         txData: txData.serialize(),
     };
 }

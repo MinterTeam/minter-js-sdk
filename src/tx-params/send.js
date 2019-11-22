@@ -1,4 +1,4 @@
-import {MinterTxDataSend, TX_TYPE_SEND, coinToBuffer} from 'minterjs-tx';
+import {TxDataSend, TX_TYPE, coinToBuffer} from 'minterjs-tx';
 import {convertToPip, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
@@ -13,7 +13,7 @@ import {convertToPip, toBuffer} from 'minterjs-util';
  * @return {TxParams}
  */
 export default function SendTxParams({address, amount = 0, coinSymbol, feeCoinSymbol, ...otherParams}) {
-    const txData = new MinterTxDataSend({
+    const txData = new TxDataSend({
         to: toBuffer(address),
         coin: coinToBuffer(coinSymbol),
         value: `0x${convertToPip(amount, 'hex')}`,
@@ -26,7 +26,7 @@ export default function SendTxParams({address, amount = 0, coinSymbol, feeCoinSy
     return {
         ...otherParams,
         gasCoin: feeCoinSymbol,
-        txType: TX_TYPE_SEND,
+        txType: TX_TYPE.SEND,
         txData: txData.serialize(),
     };
 }

@@ -1,6 +1,6 @@
-import {MinterTxDataEditCandidate, TX_TYPE_EDIT_CANDIDATE} from 'minterjs-tx';
-// import MinterTxDataEditCandidate from 'minterjs-tx/src/tx-data/edit-candidate';
-// import {TX_TYPE_EDIT_CANDIDATE} from 'minterjs-tx/src/tx-types';
+import {TxDataEditCandidate, TX_TYPE} from 'minterjs-tx';
+// import TxDataEditCandidate from 'minterjs-tx/src/tx-data/edit-candidate';
+// import {TX_TYPE} from 'minterjs-tx/src/tx-types';
 import {toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix';
 
@@ -14,7 +14,7 @@ import {toBuffer} from 'minterjs-util';
  * @return {TxParams}
  */
 export default function EditCandidateTxParams({publicKey, rewardAddress, ownerAddress, feeCoinSymbol, ...otherParams}) {
-    const txData = new MinterTxDataEditCandidate({
+    const txData = new TxDataEditCandidate({
         pubKey: toBuffer(publicKey),
         rewardAddress: toBuffer(rewardAddress),
         ownerAddress: toBuffer(ownerAddress),
@@ -23,7 +23,7 @@ export default function EditCandidateTxParams({publicKey, rewardAddress, ownerAd
     return {
         ...otherParams,
         gasCoin: feeCoinSymbol,
-        txType: TX_TYPE_EDIT_CANDIDATE,
+        txType: TX_TYPE.EDIT_CANDIDATE,
         txData: txData.serialize(),
     };
 }

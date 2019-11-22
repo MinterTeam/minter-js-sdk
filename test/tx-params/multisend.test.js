@@ -1,4 +1,4 @@
-import {TX_TYPE_MULTISEND} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-tx';
 import {MultisendTxParams} from '~/src';
 
 
@@ -25,7 +25,7 @@ describe('MultisendTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_MULTISEND,
+        txType: TX_TYPE.MULTISEND,
         txData: Buffer.from('f856f854e98a4d4e540000000000000094fe60014a6e9ac91618f5d1cab3fd58cded61ee9988016345785d8a0000e98a4d4e540000000000000094ddab6281766ad86497741ff91b6b48fe85012e3c8802c68af0bb140000', 'hex'),
     };
 

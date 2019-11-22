@@ -1,4 +1,4 @@
-import {TX_TYPE_SEND, TX_TYPE_CREATE_COIN, TX_TYPE_SELL, TX_TYPE_SELL_ALL, TX_TYPE_BUY} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-tx';
 import {SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams} from '~/src';
 
 
@@ -16,7 +16,7 @@ describe('SendTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_SEND,
+        txType: TX_TYPE.SEND,
         txData: Buffer.from([233, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 148, 118, 51, 152, 12, 0, 1, 57, 221, 59, 210, 74, 63, 84, 224, 100, 116, 250, 148, 30, 22, 136, 138, 199, 35, 4, 137, 232, 0, 0]),
     };
 
@@ -57,7 +57,7 @@ describe('CreateCoinTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_CREATE_COIN,
+        txType: TX_TYPE.CREATE_COIN,
         txData: Buffer.from([231, 135, 77, 121, 32, 67, 111, 105, 110, 138, 77, 89, 67, 79, 73, 78, 0, 0, 0, 0, 136, 69, 99, 145, 130, 68, 244, 0, 0, 137, 1, 21, 142, 70, 9, 19, 208, 0, 0, 10]),
     };
 
@@ -106,7 +106,7 @@ describe('SellTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_SELL,
+        txType: TX_TYPE.SELL,
         txData: Buffer.from([224, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 136, 138, 199, 35, 4, 137, 232, 0, 0, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 128]),
     };
 
@@ -157,7 +157,7 @@ describe('SellAllTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_SELL_ALL,
+        txType: TX_TYPE.SELL_ALL,
         txData: Buffer.from([215, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 128]),
     };
 
@@ -210,7 +210,7 @@ describe('BuyTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_BUY,
+        txType: TX_TYPE.BUY,
         txData: Buffer.from([224, 138, 66, 69, 76, 84, 67, 79, 73, 78, 0, 0, 136, 138, 199, 35, 4, 137, 232, 0, 0, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 128]),
     };
 

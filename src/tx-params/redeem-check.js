@@ -1,9 +1,9 @@
 import secp256k1 from 'secp256k1';
 import {sha256, rlphash} from 'ethereumjs-util/dist/hash';
 import {privateToAddress} from 'ethereumjs-util/dist/account';
-import {MinterTxDataRedeemCheck, TX_TYPE_REDEEM_CHECK} from 'minterjs-tx';
-// import MinterTxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check';
-// import {TX_TYPE_REDEEM_CHECK} from 'minterjs-tx/src/tx-types';
+import {TxDataRedeemCheck, TX_TYPE} from 'minterjs-tx';
+// import TxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check';
+// import {TX_TYPE} from 'minterjs-tx/src/tx-types';
 import {toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix';
 
@@ -28,7 +28,7 @@ export default function RedeemCheckTxParams({privateKey, check, password, proof,
     }
 
     const proofWithRecovery = proof || getProofWithRecovery(privateKey, password);
-    const txData = new MinterTxDataRedeemCheck({
+    const txData = new TxDataRedeemCheck({
         rawCheck: toBuffer(check),
         proof: proofWithRecovery,
     });
@@ -39,7 +39,7 @@ export default function RedeemCheckTxParams({privateKey, check, password, proof,
         // only gasPrice: 1 is allowed by blockchain
         gasPrice: 1,
         gasCoin: feeCoinSymbol,
-        txType: TX_TYPE_REDEEM_CHECK,
+        txType: TX_TYPE.REDEEM_CHECK,
         txData: txData.serialize(),
     };
 }

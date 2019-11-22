@@ -1,4 +1,4 @@
-import {MinterTxDataDelegate, TX_TYPE_DELEGATE, coinToBuffer} from 'minterjs-tx';
+import {TxDataDelegate, TX_TYPE, coinToBuffer} from 'minterjs-tx';
 import {convertToPip, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
@@ -13,7 +13,7 @@ import {convertToPip, toBuffer} from 'minterjs-util';
  * @return {TxParams}
  */
 export default function DelegateTxParams({publicKey, coinSymbol, stake, feeCoinSymbol, ...otherParams}) {
-    const txData = new MinterTxDataDelegate({
+    const txData = new TxDataDelegate({
         pubKey: toBuffer(publicKey),
         coin: coinToBuffer(coinSymbol),
         stake: `0x${convertToPip(stake, 'hex')}`,
@@ -26,7 +26,7 @@ export default function DelegateTxParams({publicKey, coinSymbol, stake, feeCoinS
     return {
         ...otherParams,
         gasCoin: feeCoinSymbol,
-        txType: TX_TYPE_DELEGATE,
+        txType: TX_TYPE.DELEGATE,
         txData: txData.serialize(),
     };
 }

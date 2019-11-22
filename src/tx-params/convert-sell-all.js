@@ -1,6 +1,6 @@
-import {MinterTxDataSellAll, TX_TYPE_SELL_ALL, coinToBuffer} from 'minterjs-tx';
-// import MinterTxDataSellAll from 'minterjs-tx/src/tx-data/sell-all';
-// import {TX_TYPE_SELL_ALL} from 'minterjs-tx/src/tx-types';
+import {TxDataSellAll, TX_TYPE, coinToBuffer} from 'minterjs-tx';
+// import TxDataSellAll from 'minterjs-tx/src/tx-data/sell-all';
+// import {TX_TYPE} from 'minterjs-tx/src/tx-types';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers';
 import {convertToPip} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
@@ -15,7 +15,7 @@ import {convertToPip} from 'minterjs-util';
  * @return {TxParams}
  */
 export default function SellAllTxParams({coinFrom, coinTo, minBuyAmount = 0, feeCoinSymbol, ...otherParams}) {
-    const txData = new MinterTxDataSellAll({
+    const txData = new TxDataSellAll({
         coinToSell: coinToBuffer(coinFrom),
         coinToBuy: coinToBuffer(coinTo),
         minimumValueToBuy: `0x${convertToPip(minBuyAmount, 'hex')}`,
@@ -28,7 +28,7 @@ export default function SellAllTxParams({coinFrom, coinTo, minBuyAmount = 0, fee
     return {
         ...otherParams,
         gasCoin: feeCoinSymbol,
-        txType: TX_TYPE_SELL_ALL,
+        txType: TX_TYPE.SELL_ALL,
         txData: txData.serialize(),
     };
 }

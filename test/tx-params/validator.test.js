@@ -1,4 +1,4 @@
-import {TX_TYPE_DECLARE_CANDIDACY, TX_TYPE_EDIT_CANDIDATE, TX_TYPE_DELEGATE, TX_TYPE_UNBOND, TX_TYPE_SET_CANDIDATE_ON, TX_TYPE_SET_CANDIDATE_OFF} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-tx';
 import {DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, SetCandidateOffTxParams, SetCandidateOnTxParams, UnbondTxParams} from '~/src';
 
 
@@ -18,7 +18,7 @@ describe('DeclareCandidacyTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_DECLARE_CANDIDACY,
+        txType: TX_TYPE.DECLARE_CANDIDACY,
         txData: Buffer.from([248, 76, 148, 118, 51, 152, 12, 0, 1, 57, 221, 59, 210, 74, 63, 84, 224, 100, 116, 250, 148, 30, 22, 160, 249, 224, 54, 131, 154, 41, 247, 251, 162, 213, 57, 75, 212, 137, 237, 169, 39, 204, 185, 90, 204, 153, 229, 6, 230, 136, 228, 136, 128, 130, 179, 163, 10, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 137, 5, 107, 199, 94, 45, 99, 16, 0, 0]),
     };
 
@@ -57,7 +57,7 @@ describe('EditCandidateTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_EDIT_CANDIDATE,
+        txType: TX_TYPE.EDIT_CANDIDATE,
         txData: Buffer.from([248, 75, 160, 249, 224, 54, 131, 154, 41, 247, 251, 162, 213, 57, 75, 212, 137, 237, 169, 39, 204, 185, 90, 204, 153, 229, 6, 230, 136, 228, 136, 128, 130, 179, 163, 148, 118, 51, 152, 12, 0, 1, 57, 221, 59, 210, 74, 63, 84, 224, 100, 116, 250, 148, 30, 22, 148, 118, 51, 152, 12, 0, 1, 57, 221, 59, 210, 74, 63, 84, 224, 100, 116, 250, 148, 30, 22]),
     };
 
@@ -83,7 +83,7 @@ describe('DelegateTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_DELEGATE,
+        txType: TX_TYPE.DELEGATE,
         txData: Buffer.from([246, 160, 249, 224, 54, 131, 154, 41, 247, 251, 162, 213, 57, 75, 212, 137, 237, 169, 39, 204, 185, 90, 204, 153, 229, 6, 230, 136, 228, 136, 128, 130, 179, 163, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 137, 5, 107, 199, 94, 45, 99, 16, 0, 0]),
     };
 
@@ -122,7 +122,7 @@ describe('UnbondTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_UNBOND,
+        txType: TX_TYPE.UNBOND,
         txData: Buffer.from([246, 160, 249, 224, 54, 131, 154, 41, 247, 251, 162, 213, 57, 75, 212, 137, 237, 169, 39, 204, 185, 90, 204, 153, 229, 6, 230, 136, 228, 136, 128, 130, 179, 163, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 137, 5, 107, 199, 94, 45, 99, 16, 0, 0]),
     };
 
@@ -159,7 +159,7 @@ describe('SetCandidateOnTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_SET_CANDIDATE_ON,
+        txType: TX_TYPE.SET_CANDIDATE_ON,
         txData: Buffer.from([225, 160, 249, 224, 54, 131, 154, 41, 247, 251, 162, 213, 57, 75, 212, 137, 237, 169, 39, 204, 185, 90, 204, 153, 229, 6, 230, 136, 228, 136, 128, 130, 179, 163]),
     };
 
@@ -183,7 +183,7 @@ describe('SetCandidateOffTxParams', () => {
         privateKey,
         gasCoin: 'ASD',
         message: 'custom message',
-        txType: TX_TYPE_SET_CANDIDATE_OFF,
+        txType: TX_TYPE.SET_CANDIDATE_OFF,
         txData: Buffer.from([225, 160, 249, 224, 54, 131, 154, 41, 247, 251, 162, 213, 57, 75, 212, 137, 237, 169, 39, 204, 185, 90, 204, 153, 229, 6, 230, 136, 228, 136, 128, 130, 179, 163]),
     };
 

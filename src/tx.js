@@ -1,6 +1,6 @@
-import {MinterTx, MinterTxSignature, coinToBuffer} from 'minterjs-tx';
-// import MinterTx from 'minterjs-tx/src/tx';
-// import MinterTxSignature from 'minterjs-tx/src/tx-signature';
+import {Tx, TxSignature, coinToBuffer} from 'minterjs-tx';
+// import Tx from 'minterjs-tx/src/tx';
+// import TxSignature from 'minterjs-tx/src/tx-signature';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers';
 import {integerToHexString} from './utils';
 
@@ -20,7 +20,7 @@ import {integerToHexString} from './utils';
 
 /**
  * @param {TxParams} txParams
- * @return {MinterTx}
+ * @return {Tx}
  */
 export default function prepareSignedTx(txParams = {}) {
     const {privateKey, nonce, chainId = 1, gasPrice = 1, txType, txData} = txParams;
@@ -58,8 +58,8 @@ export default function prepareSignedTx(txParams = {}) {
         txProps.payload = payload;
     }
 
-    const tx = new MinterTx(txProps);
-    tx.signatureData = (new MinterTxSignature()).sign(tx.hash(false), privateKeyBuffer).serialize();
+    const tx = new Tx(txProps);
+    tx.signatureData = (new TxSignature()).sign(tx.hash(false), privateKeyBuffer).serialize();
 
     return tx;
 }

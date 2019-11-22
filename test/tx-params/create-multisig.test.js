@@ -1,4 +1,4 @@
-import {TX_TYPE_CREATE_MULTISIG} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-tx';
 import {CreateMultisigTxParams} from '~/src';
 
 
@@ -8,7 +8,7 @@ describe('CreateMultisigTxParams', () => {
         privateKey,
         gasCoin: 'MNT',
         message: 'custom message',
-        txType: TX_TYPE_CREATE_MULTISIG,
+        txType: TX_TYPE.CREATE_MULTISIG,
         txData: Buffer.from([248, 70, 7, 195, 1, 3, 5, 248, 63, 148, 238, 129, 52, 114, 17, 199, 37, 36, 51, 143, 150, 128, 7, 42, 249, 7, 68, 51, 49, 70, 148, 238, 129, 52, 114, 17, 199, 37, 36, 51, 143, 150, 128, 7, 42, 249, 7, 68, 51, 49, 69, 148, 238, 129, 52, 114, 17, 199, 37, 36, 51, 143, 150, 128, 7, 42, 249, 7, 68, 51, 49, 68]),
     };
 
