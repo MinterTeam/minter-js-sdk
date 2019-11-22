@@ -1,6 +1,10 @@
-WIP
-- Add: `RedeemCheckTxParams` now accepts direct `proof` param, instead of generation it from password
-- Add: `prepareSignedTx` now accepts `payload` param instead of `message`
+## 0.23.0 - 2019-11-12
+- Add: `prepareLink` and `decodeLink` methods to work with [Minter Link Protocol](https://github.com/MinterTeam/minter-link-protocol)
+- Add: `RedeemCheckTxParams` now accepts direct `proof` param, as alternative to generation it from password
+- Add: `prepareSignedTx` now accepts `payload` param as alias for `message`
+- **BREAKING** Remove: stop reexporting `minterjs-wallet` methods, use it directly 
+
+
 
 ## 0.22.0 - 2019-11-12
 - **BREAKING** tx params which must be Minter prefixed, 0x prefixed or Buffer now will throw on arbitrary string passed
