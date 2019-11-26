@@ -8,8 +8,8 @@ beforeAll(async () => {
         chainId: 2,
         coinName: ENV_DATA.customCoin,
         coinSymbol: ENV_DATA.customCoin,
-        initialAmount: 500,
-        initialReserve: 1000,
+        initialAmount: 5000,
+        initialReserve: 10000,
         crr: 50,
         feeCoinSymbol: 'MNT',
         message: 'custom message',
@@ -17,7 +17,7 @@ beforeAll(async () => {
     try {
         await minterGate.postTx(txParams);
     } catch (e) {
-        console.log(e?.response.data || e);
+        console.log(e?.response?.data ? {data: e.response.data, e} : e);
     }
 }, 30000);
 

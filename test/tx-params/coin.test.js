@@ -1,5 +1,6 @@
 import {TX_TYPE} from 'minterjs-tx';
 import {SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams} from '~/src';
+import {MAX_MAX_SUPPLY} from '~/src/tx-params/create-coin';
 
 
 describe('SendTxParams', () => {
@@ -58,7 +59,7 @@ describe('CreateCoinTxParams', () => {
         gasCoin: 'ASD',
         message: 'custom message',
         txType: TX_TYPE.CREATE_COIN,
-        txData: Buffer.from([231, 135, 77, 121, 32, 67, 111, 105, 110, 138, 77, 89, 67, 79, 73, 78, 0, 0, 0, 0, 136, 69, 99, 145, 130, 68, 244, 0, 0, 137, 1, 21, 142, 70, 9, 19, 208, 0, 0, 10]),
+        txData: Buffer.from([246, 135, 77, 121, 32, 67, 111, 105, 110, 138, 77, 89, 67, 79, 73, 78, 0, 0, 0, 0, 136, 69, 99, 145, 130, 68, 244, 0, 0, 137, 1, 21, 142, 70, 9, 19, 208, 0, 0, 10, 142, 49, 77, 198, 68, 141, 147, 56, 193, 91, 10, 0, 0, 0, 0]),
     };
 
     test('fields', () => {
@@ -66,6 +67,17 @@ describe('CreateCoinTxParams', () => {
 
         expect(txParams)
             .toEqual(validTxParams);
+    });
+
+    test('default maxSupply', () => {
+        expect(new CreateCoinTxParams({
+            ...txParamsData,
+            maxSupply: undefined,
+        }))
+            .toEqual(new CreateCoinTxParams({
+                ...txParamsData,
+                maxSupply: MAX_MAX_SUPPLY,
+            }));
     });
 
     test('default gasCoin', () => {
@@ -89,6 +101,28 @@ describe('CreateCoinTxParams', () => {
             ...txParamsData,
             coinName: '123',
         }));
+    });
+
+    test('throw on too small maxSupply', () => {
+        expect(() => new CreateCoinTxParams({
+            ...txParamsData,
+            maxSupply: 0,
+        })).toThrow();
+    });
+
+    test('throw on too big maxSupply', () => {
+        expect(() => new CreateCoinTxParams({
+            ...txParamsData,
+            maxSupply: Number.MAX_SAFE_INTEGER,
+        })).toThrow();
+    });
+
+    test('throw on initialAmount more than maxSupply', () => {
+        expect(() => new CreateCoinTxParams({
+            ...txParamsData,
+            initialAmount: 100,
+            maxSupply: 10,
+        })).toThrow();
     });
 });
 

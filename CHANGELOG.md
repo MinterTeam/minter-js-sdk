@@ -1,3 +1,8 @@
+## texas.0
+- add `gasCoin` field to check, may be omitted, base coin will be used
+- `redeemCheck` params will check if passed `feeCoinSymbol` is equal to `gasCoin` from check, may be omitted, `gasCoin` from check will be used
+- add `maxSupply` field to `CreateCoinTxParams`
+
 WIP
 - Add: `RedeemCheckTxParams` now accepts direct `proof` param, instead of generation it from password
 - Add: `prepareSignedTx` now accepts `payload` param instead of `message`

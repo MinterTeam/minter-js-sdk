@@ -58,7 +58,7 @@ const ENV_SETTINGS = {
 };
 
 // select environment
-const CURRENT_ENV = ENV_QA_TESTNET;
+const CURRENT_ENV = ENV_TEXAS_TESTNET;
 export const ENV_DATA = ENV_SETTINGS[CURRENT_ENV];
 
 

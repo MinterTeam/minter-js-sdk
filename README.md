@@ -253,17 +253,28 @@ minter.estimateTxCommission({
 
 [Minter Checks](https://minter-go-node.readthedocs.io/en/dev/checks.html) are issued offline and do not exist in blockchain before “cashing”.
 
+Params:
+- `privateKey` - private key of the issuer to sign check. Type: string
+- `passPhrase` - password to protect check. Type: string
+- `nonce` - unique string to allow issue identical checks. Type: string
+- `chainId` - network type to prevent using same check between networks. Type: number. Default: `1`
+- `coin` - coin to transfer. Type: string
+- `value` - amount to transfer. Type: number
+- `gasCoin` - coin to pay fee, fee will be charged from issuer when RedeemCheck tx will be sent by check's recipient. Type: string. Default: network's base coin (`'BIP'` or `'MNT'`)
+- `dueBlock` - number of block, at this block check will be expired. Type: number. Default: `999999999`
+
 ```js
 // Since issuing checks is offline, you can use it standalone without instantiating SDK
 import {issueCheck} from "minter-js-sdk";
 const check = issueCheck({
     privateKey: '2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
     passPhrase: 'pass',
-    nonce: '1', // it is string and must be unique
+    nonce: '1',
     chainId: 1,
     coin: 'MNT',
     value: 10,
-    dueBlock: 999999, // at this block number check will be expired
+    gasCoin: 'MNT',
+    dueBlock: 999999,
 });
 console.log(check);
 // => 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee'
@@ -399,9 +410,9 @@ const txParams = new CreateCoinTxParams({
     chainId: 1,
     coinName: 'My Coin',
     coinSymbol: 'MYCOIN',
-    initialAmount: 5,
+    initialAmount: 5000,
     crr: 10,
-    initialReserve: 20,
+    initialReserve: 10000,
     feeCoinSymbol: 'ASD',
     message: 'custom message',
 });
@@ -517,6 +528,8 @@ const txParams = new RedeemCheckTxParams({
     chainId: 1,
     check: 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee',
     password: '123',
+    // `feeCoinSymbol` may be omitted, `gasCoin` from the check will be used. 
+    // If `feeCoinSymbol` is specified, then it should be same as `gasCoin` from the check
     feeCoinSymbol: 'MNT',
 });
 

@@ -6,6 +6,7 @@ import {TxDataRedeemCheck, TX_TYPE} from 'minterjs-tx';
 // import {TX_TYPE} from 'minterjs-tx/src/tx-types';
 import {toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix';
+import {getGasCoinFromCheck} from '../check';
 
 
 /**
@@ -19,9 +20,11 @@ import {toBuffer} from 'minterjs-util';
  * @return {TxParams}
  */
 export default function RedeemCheckTxParams({privateKey, check, password, proof, feeCoinSymbol, ...otherParams}) {
-    // @TODO set gasCoin automatically after #263 resolved @see https://github.com/MinterTeam/minter-go-node/issues/263
-    if (feeCoinSymbol && (feeCoinSymbol.toUpperCase() !== 'MNT' && feeCoinSymbol.toUpperCase() !== 'BIP')) {
-        throw new Error('feeCoinSymbol should be baseCoin');
+    const checkGasCoin = getGasCoinFromCheck(check);
+    // ensure tx's gasCoin
+    feeCoinSymbol = feeCoinSymbol.toUpperCase() || checkGasCoin;
+    if (feeCoinSymbol !== checkGasCoin) {
+        throw new Error('tx\'s gasCoin should be same as check\'s gasCoin');
     }
     if (typeof privateKey === 'string') {
         privateKey = Buffer.from(privateKey, 'hex');

@@ -59,8 +59,8 @@ beforeAll(async () => {
             chainId: 2,
             coinName: 'testcoin',
             coinSymbol: apiType.customCoin,
-            initialAmount: 500,
-            initialReserve: 1000,
+            initialAmount: 5000,
+            initialReserve: 10000,
             crr: 50,
             feeCoinSymbol: 'MNT',
             message: 'custom message',
@@ -68,10 +68,21 @@ beforeAll(async () => {
         return apiType.minterApi.postTx(txParams);
     });
 
+    // @TODO allSettled is not a function
+    // try {
+    //     await Promise.allSettled(coinPromises);
+    // } catch (e) {
+    //     console.log(e?.response?.data || e);
+    // }
     try {
-        await Promise.all(coinPromises);
+        await coinPromises[0];
     } catch (e) {
-        console.log(e?.response.data || e);
+        console.log(e?.response?.data ? {data: e.response.data, e} : e);
+    }
+    try {
+        await coinPromises[1];
+    } catch (e) {
+        console.log(e?.response?.data ? {data: e.response.data, e} : e);
     }
 }, 30000);
 
@@ -114,8 +125,7 @@ describe('PostTx: send', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response.data);
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
             });
     }, 30000);
 
@@ -129,8 +139,7 @@ describe('PostTx: send', () => {
             const txParams = new SendTxParams({...txParamsData(apiType), amount: Number.MAX_SAFE_INTEGER, coinSymbol: NOT_EXISTENT_COIN});
             return apiType.minterApi.postTx(txParams)
                 .catch((error) => {
-                    // console.log(error);
-                    console.log(error.response.data);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                     // Coin not exists
                     expect(error.response.data.error.code === 102 || error.response.data.error.tx_result.code === 102).toBe(true);
                 });
@@ -177,8 +186,7 @@ describe('PostTx handle low gasPrice', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response.data);
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
             });
     }, 30000);
 });
@@ -215,8 +223,7 @@ describe('PostTx: multisend', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response.data);
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
             });
     }, 30000);
 
@@ -228,8 +235,7 @@ describe('PostTx: multisend', () => {
         const txParams = new MultisendTxParams(txParamsDataInstance);
         return apiType.minterApi.postTx(txParams)
             .catch((error) => {
-                // console.log(error);
-                console.log(error.response.data);
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 // Coin not exists
                 expect(error.response.data.error.code === 102 || error.response.data.error.tx_result.code === 102).toBe(true);
             });
@@ -259,8 +265,7 @@ describe('PostTx: sell', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response.data);
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
             });
     }, 30000);
 
@@ -269,8 +274,7 @@ describe('PostTx: sell', () => {
         const txParams = new SellTxParams({...txParamsData(apiType), sellAmount: Number.MAX_SAFE_INTEGER, coinFrom: NOT_EXISTENT_COIN});
         return apiType.minterApi.postTx(txParams)
             .catch((error) => {
-                // console.log(error);
-                console.log(error.response.data);
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 // Coin not exists
                 expect(error.response.data.error.code === 102 || error.response.data.error.tx_result.code === 102).toBe(true);
             });
@@ -303,8 +307,7 @@ describe('PostTx: buy', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response.data);
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
             });
     }, 30000);
 
@@ -313,8 +316,7 @@ describe('PostTx: buy', () => {
         const txParams = new BuyTxParams({...txParamsData(apiType), buyAmount: Number.MAX_SAFE_INTEGER, coinFrom: NOT_EXISTENT_COIN});
         return apiType.minterApi.postTx(txParams)
             .catch((error) => {
-                // console.log(error);
-                console.log(error.response.data);
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 // Coin not exists
                 expect(error.response.data.error.code === 102 || error.response.data.error.tx_result.code === 102).toBe(true);
             });
@@ -347,8 +349,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response.data);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 });
         }, 30000);
 
@@ -357,10 +358,9 @@ describe('validator', () => {
             const txParams = new DeclareCandidacyTxParams(txParamsData(apiType)); // empty publicKey specified
             return apiType.minterApi.postTx(txParams)
                 .catch((error) => {
-                    // console.log(error);
-                    console.log(error.response.data);
-                    // Incorrect PubKey
-                    expect(error.response.data.error.code === 407 || error.response.data.error.tx_result.code === 407).toBe(true);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
+                    // input string too short for types.Pubkey
+                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
                 });
         }, 70000);
     });
@@ -388,8 +388,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response.data);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 });
         }, 30000);
 
@@ -398,10 +397,9 @@ describe('validator', () => {
             const txParams = new EditCandidateTxParams(txParamsData(apiType)); // empty publicKey specified
             return apiType.minterApi.postTx(txParams)
                 .catch((error) => {
-                    // console.log(error);
-                    console.log(error.response.data);
-                    // andidate with such public key (Mp) not found
-                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
+                    // input string too short for types.Pubkey
+                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
                 });
         }, 70000);
     });
@@ -429,8 +427,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response.data);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 });
         }, 30000);
 
@@ -439,10 +436,9 @@ describe('validator', () => {
             const txParams = new DelegateTxParams(txParamsData(apiType)); // empty publicKey specified
             return apiType.minterApi.postTx(txParams)
                 .catch((error) => {
-                    // console.log(error);
-                    console.log(error.response.data);
-                    // Candidate with such public key not found
-                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
+                    // input string too short for types.Pubkey
+                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
                 });
         }, 70000);
     });
@@ -472,8 +468,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response.data);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 });
         }, 30000);
 
@@ -482,10 +477,9 @@ describe('validator', () => {
             const txParams = new UnbondTxParams(txParamsData(apiType)); // empty publicKey specified
             return apiType.minterApi.postTx(txParams)
                 .catch((error) => {
-                    // console.log(error);
-                    console.log(error.response.data);
-                    // Candidate with such public key not found
-                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
+                    // input string too short for types.Pubkey
+                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
                 });
         }, 70000);
     });
@@ -511,8 +505,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response.data);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 });
         }, 30000);
 
@@ -521,10 +514,9 @@ describe('validator', () => {
             const txParams = new SetCandidateOnTxParams(txParamsData(apiType)); // empty publicKey specified
             return apiType.minterApi.postTx(txParams)
                 .catch((error) => {
-                    // console.log(error);
-                    console.log(error.response.data);
-                    // Candidate with such public key not found
-                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
+                    // input string too short for types.Pubkey
+                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
                 });
         }, 70000);
     });
@@ -550,8 +542,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response.data);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 });
         }, 30000);
 
@@ -563,10 +554,9 @@ describe('validator', () => {
                     console.log({res});
                 })
                 .catch((error) => {
-                    // console.log(error);
-                    console.log(error.response.data);
-                    // Candidate with such public key not found
-                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
+                    console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
+                    // input string too short for types.Pubkey
+                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
                 });
         }, 70000);
     });
@@ -574,7 +564,7 @@ describe('validator', () => {
 
 
 describe('PostTx: redeem check', () => {
-    function getRandomCheck(apiType) {
+    function getRandomCheck(apiType, gasCoin = 'MNT') {
         return issueCheck({
             privateKey: apiType.privateKey,
             chainId: 2,
@@ -582,20 +572,36 @@ describe('PostTx: redeem check', () => {
             nonce: 1,
             coinSymbol: 'MNT',
             value: Math.random(),
+            gasCoin,
         });
     }
 
-    const txParamsData = (apiType) => ({
+    const txParamsData = (apiType, gasCoin = 'MNT') => ({
         privateKey: apiType.privateKey,
         chainId: 2,
-        check: 'Mcf8993002843b9ac9ff8a4d4e540000000000000080b841ab6a04641d3f732dff72cd6c2435c54aef3ad0f3413d98c8e1f52f4cffb0f5541e09ad0a6b5b67600f3949d47cfb6299e83ded68c4ba825bfe7f7315bfb9958e011ba07b116f57f084df995f0f1a0cb382614a15c149547895af4ef0354d171fc0590ca00f12ab3095a7c3fb0c4ad5e97f1b6cbd92636e67ae9045f35c60740a815703c1',
+        check: 'Mcf8ab3102830f423f8a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b8416976dd95728356c46b7e7c25ca36df7c344f3b55a45cb22e32bc66e4e0cccf6347c72aeaea27a9b6e30acffb9e1d082e3047c024db8767b684dc8e39a52f0cd6001ba018a5e1cb47211779847d7ff3de3edb384740621a8456c343e192ad62ecca08a8a00b0ef250a490bdf18a636496512818eec56c072e59adf4ed6c32ba46f3ab74d0',
         password: '123',
-        feeCoinSymbol: 'MNT',
+        feeCoinSymbol: gasCoin,
     });
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
         const txParams = new RedeemCheckTxParams({...txParamsData(apiType), check: getRandomCheck(apiType)});
+        return apiType.minterApi.postTx(txParams)
+            .then((txHash) => {
+                // console.log(txHash);
+                // txHash = txHash.replace(/^Mt/);
+                expect(txHash).toHaveLength(66);
+                expect(txHash.substr(0, 2)).toEqual('Mt');
+            })
+            .catch((error) => {
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
+            });
+    }, 30000);
+
+    test.each(API_TYPE_LIST)('should work with gasPrice %s', (apiType) => {
+        expect.assertions(2);
+        const txParams = new RedeemCheckTxParams({...txParamsData(apiType, apiType.customCoin), check: getRandomCheck(apiType, apiType.customCoin)});
         return apiType.minterApi.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
@@ -611,11 +617,10 @@ describe('PostTx: redeem check', () => {
 
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = new RedeemCheckTxParams(txParamsData(apiType)); // empty check specified
+        const txParams = new RedeemCheckTxParams(txParamsData(apiType));
         return apiType.minterApi.postTx(txParams)
             .catch((error) => {
-                // console.log(error);
-                console.log(error.response.data);
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 // Invalid proof
                 expect(error.response.data.error.code === 501 || error.response.data.error.tx_result.code === 501).toBe(true);
             });
@@ -654,8 +659,7 @@ describe('PostTx: create multisig', () => {
         const txParams = new CreateMultisigTxParams({...txParamsData(apiType), weights: []});
         return apiType.minterApi.postTx(txParams)
             .catch((error) => {
-                // console.log(error);
-                console.log(error.response.data);
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 // Incorrect multisig weights
                 expect(error.response.data.error.code === 601 || error.response.data.error.tx_result.code === 601).toBe(true);
             });

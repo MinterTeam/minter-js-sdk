@@ -1,7 +1,7 @@
-import {issueCheck, decodeCheck} from '~/src';
+import {issueCheck, decodeCheck, getGasCoinFromCheck} from '~/src';
 
 
-const VALID_CHECK = 'Mcf8a03101830f423f8a4d4e5400000000000000888ac7230489e80000b84149eba2361855724bbd3d20eb97a54ea15ad7dc28c1111b8dcf3bb15db26f874f095803cad9f8fc88b2b4eec9ba706325a7929be31b6ccfef01260791a844cb55011ba06c63ad17bfe07b82be8a0144fd4daf8b4144281fdf88f313205ceacf37fd877fa03c243ad79cab6205f4b753bd402c4cfa5d570888659090b2f923071ac52bdf75';
+const VALID_CHECK = 'Mcf8ab3101830f423f8a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b841f69950a210196529f47df938f7af84958cdb336daf304616c37ef8bebca324910910f046e2ff999a7f2ab564bd690c1102ab65a20e0f27b57a93854339b60837011ba00a07cbf311148a6b62c1d1b34a5e0c2b6931a0547ede8b9dfb37aedff4480622a023ac93f7173ca41499624f06dfdd58c4e65d1279ea526777c194ddb623d57027';
 const checkParams = {
     privateKey: '2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
     passPhrase: 'pass',
@@ -9,6 +9,7 @@ const checkParams = {
     chainId: 1,
     coin: 'MNT',
     value: '10',
+    gasCoin: 'MNT',
     dueBlock: 999999,
 };
 
@@ -46,6 +47,16 @@ describe('issueCheck()', () => {
         }));
     });
 
+    test('default gasCoin: "BIP"', () => {
+        expect(issueCheck({
+            ...checkParams,
+            gasCoin: undefined,
+        })).toEqual(issueCheck({
+            ...checkParams,
+            gasCoin: 'BIP',
+        }));
+    });
+
     test('numeric nonce should be treated as string', () => {
         expect(issueCheck({
             ...checkParams,
@@ -70,17 +81,18 @@ describe('issueCheck()', () => {
         })).toThrow();
     });
 
-    test('lock should be 65 bytes length', () => {
-        const check = issueCheck({
-            privateKey: 'd1505eddc277c911d9cf1c51efa68ab0da901aacba7f02c4fb42da12992fbc14',
-            nonce: '38bf53691699633d',
-            chainId: 2,
-            coinSymbol: 'MNT',
-            value: '10',
-            dueBlock: 99999999,
-            passPhrase: 'e72895deb3af73ef',
-        }, true);
-        expect(check.lock.length).toBe(65);
+    test('should throw with invalid gasCoin', () => {
+        expect(() => issueCheck({
+            ...checkParams,
+            gasCoin: true,
+        })).toThrow();
+    });
+
+    test('should throw with short gasCoin', () => {
+        expect(() => issueCheck({
+            ...checkParams,
+            gasCoin: 'AA',
+        })).toThrow();
     });
 });
 
@@ -90,4 +102,11 @@ describe('decodeCheck()', () => {
     delete checkParamsWithoutSensitiveData.privateKey;
 
     expect(decodeCheck(VALID_CHECK)).toEqual(checkParamsWithoutSensitiveData);
+});
+
+describe('getGasCoinFromCheck()', () => {
+    test('should work', () => {
+        const check = issueCheck(checkParams);
+        expect(getGasCoinFromCheck(check)).toEqual('MNT');
+    });
 });

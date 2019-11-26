@@ -4,7 +4,7 @@ import {rlphash, sha256} from 'ethereumjs-util/dist/hash';
 import secp256k1 from 'secp256k1';
 import {coinToBuffer, bufferToCoin} from 'minterjs-tx';
 // import {coinToBuffer, bufferToCoin} from 'minterjs-tx/src/helpers';
-import {convertToPip, convertFromPip, mPrefixStrip} from 'minterjs-util';
+import {convertToPip, convertFromPip, mPrefixStrip, toBuffer} from 'minterjs-util';
 // import {convertToPip, convertFromPip} from 'minterjs-util/src/converter';
 // import {mPrefixStrip} from 'minterjs-util/src/prefix';
 import {isNumericInteger, integerToHexString, bufferToInteger} from './utils';
@@ -44,6 +44,11 @@ class Check {
                 allowZero: true,
                 allowLess: true,
                 default: Buffer.from([]),
+            }, {
+                name: 'gasCoin',
+                length: 10,
+                allowLess: false,
+                default: Buffer.alloc(10),
             }, {
                 name: 'lock',
                 allowZero: true,
@@ -115,11 +120,12 @@ class Check {
  * @param {string} coin
  * @param {string} [coinSymbol]
  * @param {number|string} value
+ * @param {string} gasCoin
  * @param {number} [dueBlock=999999999]
  * @param {boolean} [isReturnObject]
  * @return {string|Check}
  */
-export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, coin, coinSymbol, value, dueBlock = 999999999} = {}, isReturnObject) {
+export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, coin, coinSymbol, value, gasCoin, dueBlock = 999999999} = {}, isReturnObject) {
     // @TODO accept exponential
     if (!isNumericInteger(dueBlock)) {
         throw new Error('Invalid due block. Should be a numeric integer');
@@ -129,6 +135,14 @@ export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, 
         privateKey = Buffer.from(privateKey, 'hex');
     }
 
+    if (!gasCoin) {
+        gasCoin = chainId === 2 ? 'MNT' : 'BIP';
+    }
+
+    if (typeof gasCoin !== 'string' || gasCoin.length < 3) {
+        throw new Error('issueCheck failed: invalid gasCoin given');
+    }
+
     coin = coin || coinSymbol;
 
     let check = new Check({
@@ -136,18 +150,10 @@ export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, 
         chainId: `0x${integerToHexString(chainId)}`,
         coin: coinToBuffer(coin),
         value: `0x${convertToPip(value, 'hex')}`,
+        gasCoin: coinToBuffer(gasCoin),
         dueBlock: `0x${integerToHexString(dueBlock)}`,
     });
     check.sign(privateKey, passPhrase);
-
-    // @TODO can be removed after https://github.com/MinterTeam/minter-go-node/issues/264 will be fixed
-    if (check.lock.length !== 65) {
-        // eslint-disable-next-line prefer-rest-params
-        const newArgs = Array.from(arguments);
-        newArgs[1] = true;
-        newArgs[0].dueBlock = dueBlock + 1;
-        check = issueCheck(...newArgs);
-    }
 
     return isReturnObject ? check : `Mc${check.serialize().toString('hex')}`;
 }
@@ -160,6 +166,16 @@ export function decodeCheck(rawCheck) {
         chainId: bufferToInteger(check.chainId),
         coin: bufferToCoin(check.coin),
         value: convertFromPip(bufferToInteger(check.value)),
+        gasCoin: bufferToCoin(check.gasCoin),
         dueBlock: bufferToInteger(check.dueBlock),
     };
+}
+
+/**
+ * @param {string|Buffer} rawCheck
+ * @return {string}
+ */
+export function getGasCoinFromCheck(rawCheck) {
+    const check = new Check(toBuffer(rawCheck));
+    return bufferToCoin(check.gasCoin);
 }

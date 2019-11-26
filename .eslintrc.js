@@ -21,6 +21,8 @@ module.exports = {
   },
   // // add your custom rules here
   rules: {
+    // @TODO temporary disabled, wait for optional chaining be supported by eslint or babel-eslint
+    camelcase: 0,
     'indent': ["error", 4],
     // allow paren-less arrow functions
     'arrow-parens': 0,

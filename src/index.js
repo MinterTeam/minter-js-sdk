@@ -5,7 +5,7 @@ import MinterApi from './api';
 import PostTx from './api/post-tx';
 import EstimateCoinSell from './api/estimate-coin-sell';
 import GetNonce from './api/get-nonce';
-import issueCheck, {decodeCheck} from './check';
+import issueCheck, {decodeCheck, getGasCoinFromCheck} from './check';
 
 import prepareSignedTx from './tx';
 import RedeemCheckTxParams from './tx-params/redeem-check';
@@ -37,6 +37,7 @@ export {
     // check
     issueCheck,
     decodeCheck,
+    getGasCoinFromCheck,
     RedeemCheckTxParams,
     // coin
     SendTxParams,
