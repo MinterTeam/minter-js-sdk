@@ -1,3 +1,6 @@
+## texas.1
+- remove `gasCoin` param from `RedeemCheckTxParams` and always get gasCoin from check's data
+
 ## texas.0
 - add `gasCoin` field to check, may be omitted, base coin will be used
 - `redeemCheck` params will check if passed `feeCoinSymbol` is equal to `gasCoin` from check, may be omitted, `gasCoin` from check will be used

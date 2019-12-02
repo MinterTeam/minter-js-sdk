@@ -20,7 +20,6 @@ describe('RedeemCheckTxParams', () => {
             privateKey,
             check,
             password: '123',
-            feeCoinSymbol: 'MNT',
         });
 
         expect(txParams)
@@ -39,24 +38,11 @@ describe('RedeemCheckTxParams', () => {
             .toEqual(validTxParams);
     });
 
-    test('accept only base coin', () => {
-        expect(() => {
-            /* eslint-disable-next-line no-new */
-            new RedeemCheckTxParams({
-                privateKey,
-                check,
-                password: '123',
-                feeCoinSymbol: 'ASD',
-            });
-        }).toThrow();
-    });
-
     test('accept buffer private key', () => {
         expect(new RedeemCheckTxParams({
             privateKey: Buffer.from(privateKey, 'hex'),
             check,
             password: '123',
-            feeCoinSymbol: 'MNT',
         })).toEqual(validTxParams);
     });
 });

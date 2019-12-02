@@ -444,7 +444,7 @@ describe('validator', () => {
     });
 
 
-    describe('PostTx: unbond', () => {
+    describe.skip('PostTx: unbond', () => {
         const txParamsData = (apiType) => ({
             privateKey: apiType.privateKey,
             chainId: 2,
@@ -576,12 +576,11 @@ describe('PostTx: redeem check', () => {
         });
     }
 
-    const txParamsData = (apiType, gasCoin = 'MNT') => ({
+    const txParamsData = (apiType) => ({
         privateKey: apiType.privateKey,
         chainId: 2,
         check: 'Mcf8ab3102830f423f8a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b8416976dd95728356c46b7e7c25ca36df7c344f3b55a45cb22e32bc66e4e0cccf6347c72aeaea27a9b6e30acffb9e1d082e3047c024db8767b684dc8e39a52f0cd6001ba018a5e1cb47211779847d7ff3de3edb384740621a8456c343e192ad62ecca08a8a00b0ef250a490bdf18a636496512818eec56c072e59adf4ed6c32ba46f3ab74d0',
         password: '123',
-        feeCoinSymbol: gasCoin,
     });
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
@@ -599,9 +598,9 @@ describe('PostTx: redeem check', () => {
             });
     }, 30000);
 
-    test.each(API_TYPE_LIST)('should work with gasPrice %s', (apiType) => {
+    test.each(API_TYPE_LIST)('should work with custom coin %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new RedeemCheckTxParams({...txParamsData(apiType, apiType.customCoin), check: getRandomCheck(apiType, apiType.customCoin)});
+        const txParams = new RedeemCheckTxParams({...txParamsData(apiType), check: getRandomCheck(apiType, apiType.customCoin)});
         return apiType.minterApi.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);

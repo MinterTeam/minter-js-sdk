@@ -15,17 +15,11 @@ import {getGasCoinFromCheck} from '../check';
  * @param {string} check
  * @param {string} [password]
  * @param {string|Buffer} [proof]
- * @param {string} [feeCoinSymbol] - should be base coin
  * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function RedeemCheckTxParams({privateKey, check, password, proof, feeCoinSymbol, ...otherParams}) {
-    const checkGasCoin = getGasCoinFromCheck(check);
-    // ensure tx's gasCoin
-    feeCoinSymbol = feeCoinSymbol.toUpperCase() || checkGasCoin;
-    if (feeCoinSymbol !== checkGasCoin) {
-        throw new Error('tx\'s gasCoin should be same as check\'s gasCoin');
-    }
+export default function RedeemCheckTxParams({privateKey, check, password, proof, ...otherParams}) {
+    const gasCoin = getGasCoinFromCheck(check);
     if (typeof privateKey === 'string') {
         privateKey = Buffer.from(privateKey, 'hex');
     }
@@ -41,7 +35,7 @@ export default function RedeemCheckTxParams({privateKey, check, password, proof,
         privateKey,
         // only gasPrice: 1 is allowed by blockchain
         gasPrice: 1,
-        gasCoin: feeCoinSymbol,
+        gasCoin,
         txType: TX_TYPE.REDEEM_CHECK,
         txData: txData.serialize(),
     };

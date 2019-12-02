@@ -59,13 +59,8 @@ function _postTxEnsureGas(apiInstance, txParams, gasRetryLimit) {
             if (gasRetryLimit > 0 && isGasError(error)) {
                 // make retry
                 gasRetryLimit -= 1;
-                const minGas = getMinGas(error);
-                return new Promise((resolve) => {
-                    // low gas tx always goes into mempool, so no new tx in this block allowed, wait for new block
-                    // @TODO https://github.com/MinterTeam/minter-go-node/issues/220
-                    setTimeout(resolve, 5000);
-                })
-                    .then(() => _postTxEnsureGas(apiInstance, {...txParams, gasPrice: minGas}, gasRetryLimit));
+                const minGas = getMinGasFromError(error);
+                return _postTxEnsureGas(apiInstance, {...txParams, gasPrice: minGas}, gasRetryLimit);
             } else {
                 throw error;
             }
@@ -99,7 +94,7 @@ function isGasError(error) {
  * @param error
  * @return {number}
  */
-function getMinGas(error) {
+function getMinGasFromError(error) {
     const txResult = getTxResult(error);
     return Number(txResult.message.replace('Gas price of tx is too low to be included in mempool. Expected ', ''));
 }

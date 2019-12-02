@@ -28,8 +28,6 @@ export default function PostSignedTx(apiInstance) {
         return postTxPromise
             .then((response) => {
                 const resData = getData(response, apiInstance.defaults.apiType);
-                console.log(resData);
-                console.log(response);
                 let txHash = resData.hash.toLowerCase();
                 // @TODO is transform needed?
                 if (txHash.indexOf('mt') !== 0) {
