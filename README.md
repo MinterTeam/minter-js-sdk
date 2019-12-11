@@ -16,8 +16,44 @@ It is complemented by the following packages:
 - [minterjs-tx](https://github.com/MinterTeam/minterjs-tx) create, manipulate and sign transactions
 - [minterjs-util](https://github.com/MinterTeam/minterjs-util) utility functions
 
+Contents:
+- [Install](#nstall)
+- [Usage](#usage)
+  - [SDK instance](#sdk-instance)
+    - [postTx](#posttx)
+    - [postSignedTx](#postsignedtx)
+    - [getNonce](#getnonce)
+    - [getMinGasPrice](#getmingasprice)
+    - [estimateCoinSell](#estimatecoinsell)
+    - [estimateCoinBuy](#estimatecoinbuy)
+    - [estimateTxCommission](#estimatetxcommission)
+  - [Tx params constructors](#tx-params-constructors)
+    - [Send](#send)
+    - [Multisend](#multisend)
+    - [Sell](#sell)
+    - [Sell All](#sell-all)
+    - [Buy](#buy)
+    - [Create Coin](#create-coin)
+    - [Declare Candidacy](#declare-candidacy)
+    - [Edit Candidate](#edit-candidate)
+    - [Delegate](#delegate)
+    - [Unbond](#unbond)
+    - [Set Candidate On](#set-candidate-on)
+    - [Set Candidate Off](#set-candidate-off)
+    - [Redeem Check](#redeem-check)
+    - [Create Multisig](#create-multisig)
+  - [Prepare Signed Transaction](#prepare-signed-transaction)
+  - [Minter Check](minter-check)
+    - [issueCheck](#issuecheck)
+    - [decodeCheck](#decodecheck)
+  - [Minter Link](#minter-link)
+    - [prepareLink](#preparelink)
+    - [decodeLink](#decodelink)
+  - [Minter Wallet](#minter-wallet)
+- [License](#license)
 
-## Install
+
+# Install
 
 ```bash
 npm install minter-js-sdk
@@ -41,7 +77,7 @@ const txParams = new minterSDK.SendTxParams({/* ... */});
 ```
 
 
-## Usage
+# Usage
 
 Post transaction full example
 
@@ -71,7 +107,7 @@ minter.postTx(txParams)
 ```
 
 
-### Initialization
+## SDK instance
 
 Create `minter` SDK instance from `Minter` constructor
 `Minter` accept [axios config](https://github.com/axios/axios#config-defaults) as params and return [axios instance](https://github.com/axios/axios#creating-an-instance)
@@ -95,14 +131,14 @@ const minterNode = new Minter({chainId: 2, apiType: 'node', baseURL: 'https://mi
 - [postSignedTx](#postsignedtx)
 - [getNonce](#getnonce)
 - [getMinGasPrice](#getmingasprice)
-- [estimateCoinSell](#estimateCoinSell)
-- [estimateCoinBuy](#estimateCoinBuy)
-- [estimateTxCommission](#estimateTxCommission)
-- [issueCheck](#issueCheck)
-- [decodeCheck](#decodeCheck)
+- [estimateCoinSell](#estimatecoinsell)
+- [estimateCoinBuy](#estimatecoinbuy)
+- [estimateTxCommission](#estimatetxcommission)
+- [issueCheck](#issuecheck)
+- [decodeCheck](#decodecheck)
 
 
-#### .postTx()
+### .postTx()
 
 Post new transaction to the blockchain
 Accept [tx params](#Tx params constructors) object and make asynchronous request to the blockchain API.
@@ -139,7 +175,7 @@ minter.postTx(txParams, {gasRetryLimit: 2})
     })
 ```
 
-#### .postSignedTx()
+### .postSignedTx()
 
 Post new transaction to the blockchain
 Accept signed tx string or Buffer and make asynchronous request to the blockchain API.
@@ -160,7 +196,7 @@ minter.postSignedTx('f8920102018a4d4e540000000000000001aae98a4d4e5400000000...')
     })
 ```
 
-#### .getNonce()
+### .getNonce()
 
 Get nonce for the new transaction from given address.
 Accept address string and make asynchronous request to the blockchain API.
@@ -177,7 +213,7 @@ minter.getNonce('Mx...')
     })
 ```
 
-#### .getMinGasPrice()
+### .getMinGasPrice()
 
 Get current minimal gas price.
 
@@ -192,7 +228,7 @@ minter.getMinGasPrice()
     })
 ```
 
-#### .estimateCoinSell()
+### .estimateCoinSell()
 
 Estimate how much coins you will get for selling some other coins.
 
@@ -211,7 +247,7 @@ minter.estimateCoinSell({
     })
 ```
 
-#### .estimateCoinBuy()
+### .estimateCoinBuy()
 
 Estimate how much coins you will pay for buying some other coins.
 
@@ -230,7 +266,7 @@ minter.estimateCoinBuy({
     })
 ```
 
-#### .estimateTxCommission()
+### .estimateTxCommission()
 
 Estimate transaction fee. Useful for transactions with `gasCoin` different from base coin BIP (or MNT).
 Accept string with raw signed tx.
@@ -249,9 +285,276 @@ minter.estimateTxCommission({
     })
 ```
 
-#### .issueCheck()
 
-[Minter Checks](https://minter-go-node.readthedocs.io/en/dev/checks.html) are issued offline and do not exist in blockchain before “cashing”.
+## Tx params constructors
+
+Get params object from constructor and pass it to `postTx` method to post transaction to the blockchain
+
+### Send
+```js
+import {SendTxParams} from "minter-js-sdk";
+const txParams = new SendTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+    amount: 10,
+    coinSymbol: 'MNT',
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+### Multisend
+```js
+import {MultisendTxParams} from "minter-js-sdk";
+const txParams = new MultisendTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    list: [
+        {
+            value: 10,
+            coin: 'MNT',
+            to: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+        },
+        {
+            value: 2,
+            coin: 'MNT',
+            to: 'Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99',
+        }
+    ],
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+
+### Sell
+```js
+import {SellTxParams} from "minter-js-sdk";
+const txParams = new SellTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    coinFrom: 'MNT',
+    coinTo: 'BELTCOIN',
+    sellAmount: 10,
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+
+### Sell All
+```js
+import {SellAllTxParams} from "minter-js-sdk";
+const txParams = new SellAllTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    coinFrom: 'MNT',
+    coinTo: 'BELTCOIN',
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+
+### Buy
+```js
+import {BuyTxParams} from "minter-js-sdk";
+const txParams = new BuyTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    coinFrom: 'MNT',
+    coinTo: 'BELTCOIN',
+    buyAmount: 10,
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+
+### Create Coin
+```js
+import {CreateCoinTxParams} from "minter-js-sdk";
+const txParams = new CreateCoinTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    coinName: 'My Coin',
+    coinSymbol: 'MYCOIN',
+    initialAmount: 5000,
+    crr: 10,
+    initialReserve: 10000,
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+
+### Declare Candidacy
+```js
+import {DeclareCandidacyTxParams} from "minter-js-sdk";
+const txParams = new DeclareCandidacyTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+    commission: 10,
+    coinSymbol: 'MNT',
+    stake: 100,
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+### Edit Candidate
+```js
+import {EditCandidateTxParams} from "minter-js-sdk";
+const txParams = new DeclareCandidacyTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+    rewardAddress: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+    ownerAddress: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+
+### Delegate
+```js
+import {DelegateTxParams} from "minter-js-sdk";
+const txParams = new DelegateTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+    coinSymbol: 'MNT',
+    stake: 100,
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+
+### Unbond
+```js
+import {UnbondTxParams} from "minter-js-sdk";
+const txParams = new UnbondTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+    coinSymbol: 'MNT',
+    stake: 100,
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+
+### Set Candidate On
+```js
+import {SetCandidateOnTxParams} from "minter-js-sdk";
+const txParams = new SetCandidateOnTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+
+### Set Candidate Off
+```js
+import {SetCandidateOffTxParams} from "minter-js-sdk";
+const txParams = new SetCandidateOffTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+    feeCoinSymbol: 'ASD',
+    message: 'custom message',
+});
+
+minter.postTx(txParams);
+```
+
+
+### Redeem Check
+```js
+import {RedeemCheckTxParams} from "minter-js-sdk";
+const txParams = new RedeemCheckTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    check: 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee',
+    password: '123',
+    // `feeCoinSymbol` may be omitted, `gasCoin` from the check will be used. 
+    // If `feeCoinSymbol` is specified, then it should be same as `gasCoin` from the check
+    feeCoinSymbol: 'MNT',
+});
+
+minter.postTx(txParams);
+```
+
+### Create Multisig
+```js
+import {CreateMultisigTxParams} from "minter-js-sdk";
+const txParams = new CreateMultisigTxParams({
+    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
+    chainId: 1,
+    addresses: ['Mx7633980c000139dd3bd24a3f54e06474fa941e00', 'Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99'],
+    weights: [40, 80],
+    threshold: 100,
+    feeCoinSymbol: 'MNT',
+});
+
+minter.postTx(txParams);
+```
+
+
+## Prepare Signed Transaction
+Used under the hood of PostTx, accepts `txParams` object as argument
+```js
+import {prepareSignedTx} from 'minter-js-sdk';
+const tx = prepareSignedTx(txParams);
+console.log('signed tx', tx.serialize().toString('hex'));
+
+// get actual nonce first
+minter.getNonce('Mx...')
+    .then((nonce) => {
+        const tx = prepareSignedTx({...txParams, nonce});
+        console.log('signed tx', tx.serialize().toString('hex'));
+    });
+```
+
+
+## Minter Check
+
+[Minter Check](https://minter-go-node.readthedocs.io/en/dev/checks.html) is like an ordinary bank check. Each user of network can issue check with any amount of coins and pass it to another person. Receiver will be able to cash a check from arbitrary account. 
+
+### `issueCheck()`
+
+Checks are issued offline and do not exist in blockchain before “cashing”.
 
 Params:
 - `privateKey` - private key of the issuer to sign check. Type: string
@@ -283,12 +586,11 @@ console.log(check);
 const check = minter.issueCheck({...});
 ```
 
-#### .decodeCheck()
+### `decodeCheck()`
 
 Decode raw check
 
 ```js
-// Since issuing checks is offline, you can use it standalone without instantiating SDK
 import {decodeCheck} from "minter-js-sdk";
 const check = decodeCheck('Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee');
 console.log(check);
@@ -306,269 +608,49 @@ const check = minter.decodeCheck('...');
 ```
 
 
-### Tx params constructors
+## Minter Link
+[Minter Link Protocol](https://github.com/MinterTeam/minter-link-protocol) describes how to represent transaction data into a simple link, which can be easily consumed by user as a link or as QR. Then link is being processed by [bip.to](https://bip.to) web app or any associated mobile app. App retrieves data from the link, generate valid transaction using logged user's private key and send it.
 
-Get params object from constructor and pass it to `postTx` method to post transaction to the blockchain
+So everything a user needs to do to send a transaction is to click on the link or scan QR code.  
 
-#### Send
+### `prepareLink()`
+Create link from transaction params
+
 ```js
-import {SendTxParams} from "minter-js-sdk";
-const txParams = new SendTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
+import {prepareLink, SendTxParams} from 'minter-js-sdk';
+
+const txParamsData = {
     address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
     amount: 10,
     coinSymbol: 'MNT',
     feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
-
-minter.postTx(txParams);
+    payload: 'custom message',
+};
+prepareLink(new SendTxParams(txParamsData));
+// => 'https://bip.to/tx?d=f84801aae98a4d4e5400000000000000947633980c000139dd3bd24a3f54e06474fa941e16888ac7230489e800008e637573746f6d206d65737361676580808a41534400000000000000'
 ```
 
-#### Multisend
+### `decodeLink()`
+Decode link into transaction params
+
 ```js
-import {MultisendTxParams} from "minter-js-sdk";
-const txParams = new MultisendTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    list: [
-        {
-            value: 10,
-            coin: 'MNT',
-            to: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
-        },
-        {
-            value: 2,
-            coin: 'MNT',
-            to: 'Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99',
-        }
-    ],
-    feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
+import {decodeLink} from 'minter-js-sdk';
 
-minter.postTx(txParams);
+decodeLink('https://bip.to/tx?d=f84801aae98a4d4e5400000000000000947633980c000139dd3bd24a3f54e06474fa941e16888ac7230489e800008e637573746f6d206d65737361676580808a41534400000000000000');
+// =>
+// {
+// gasCoin: 'ASD',
+// txType: '0x01',
+// txData: <Buffer e9 8a 4d 4e 54 00 00 00 00 00 00 00 94 76 33 98 0c 00 01 39 dd 3b d2 4a 3f 54 e0 64 74 fa 94 1e 16 88 8a c7 23 04 89 e8 00 00>,
+// payload: 'custom message',
+// }
 ```
 
 
-#### Sell
-```js
-import {SellTxParams} from "minter-js-sdk";
-const txParams = new SellTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    coinFrom: 'MNT',
-    coinTo: 'BELTCOIN',
-    sellAmount: 10,
-    feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
-
-minter.postTx(txParams);
-```
+## Minter Wallet
+Use [minterjs-wallet](https://github.com/MinterTeam/minterjs-wallet)
 
 
-#### Sell All
-```js
-import {SellAllTxParams} from "minter-js-sdk";
-const txParams = new SellAllTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    coinFrom: 'MNT',
-    coinTo: 'BELTCOIN',
-    feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
-
-minter.postTx(txParams);
-```
-
-
-#### Buy
-```js
-import {BuyTxParams} from "minter-js-sdk";
-const txParams = new BuyTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    coinFrom: 'MNT',
-    coinTo: 'BELTCOIN',
-    buyAmount: 10,
-    feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
-
-minter.postTx(txParams);
-```
-
-
-#### Create Coin
-```js
-import {CreateCoinTxParams} from "minter-js-sdk";
-const txParams = new CreateCoinTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    coinName: 'My Coin',
-    coinSymbol: 'MYCOIN',
-    initialAmount: 5000,
-    crr: 10,
-    initialReserve: 10000,
-    feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
-
-minter.postTx(txParams);
-```
-
-
-#### Declare Candidacy
-```js
-import {DeclareCandidacyTxParams} from "minter-js-sdk";
-const txParams = new DeclareCandidacyTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
-    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
-    commission: 10,
-    coinSymbol: 'MNT',
-    stake: 100,
-    feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
-
-minter.postTx(txParams);
-```
-
-#### Edit Candidate
-```js
-import {EditCandidateTxParams} from "minter-js-sdk";
-const txParams = new DeclareCandidacyTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
-    rewardAddress: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
-    ownerAddress: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
-    feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
-
-minter.postTx(txParams);
-```
-
-
-#### Delegate
-```js
-import {DelegateTxParams} from "minter-js-sdk";
-const txParams = new DelegateTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
-    coinSymbol: 'MNT',
-    stake: 100,
-    feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
-
-minter.postTx(txParams);
-```
-
-
-#### Unbond
-```js
-import {UnbondTxParams} from "minter-js-sdk";
-const txParams = new UnbondTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
-    coinSymbol: 'MNT',
-    stake: 100,
-    feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
-
-minter.postTx(txParams);
-```
-
-
-#### Set Candidate On
-```js
-import {SetCandidateOnTxParams} from "minter-js-sdk";
-const txParams = new SetCandidateOnTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
-    feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
-
-minter.postTx(txParams);
-```
-
-
-#### Set Candidate Off
-```js
-import {SetCandidateOffTxParams} from "minter-js-sdk";
-const txParams = new SetCandidateOffTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
-    feeCoinSymbol: 'ASD',
-    message: 'custom message',
-});
-
-minter.postTx(txParams);
-```
-
-
-#### Redeem Check
-```js
-import {RedeemCheckTxParams} from "minter-js-sdk";
-const txParams = new RedeemCheckTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    check: 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee',
-    password: '123',
-    // `feeCoinSymbol` may be omitted, `gasCoin` from the check will be used. 
-    // If `feeCoinSymbol` is specified, then it should be same as `gasCoin` from the check
-    feeCoinSymbol: 'MNT',
-});
-
-minter.postTx(txParams);
-```
-
-#### Create Multisig
-```js
-import {CreateMultisigTxParams} from "minter-js-sdk";
-const txParams = new CreateMultisigTxParams({
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
-    chainId: 1,
-    addresses: ['Mx7633980c000139dd3bd24a3f54e06474fa941e00', 'Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99'],
-    weights: [40, 80],
-    threshold: 100,
-    feeCoinSymbol: 'MNT',
-});
-
-minter.postTx(txParams);
-```
-
-
-### Prepare Signed Transaction
-Used under the hood of PostTx, accepts `txParams` object as argument
-```js
-import {prepareSignedTx} from 'minter-js-sdk';
-const tx = prepareSignedTx(txParams);
-console.log('signed tx', tx.serialize().toString('hex'));
-
-// get actual nonce first
-minter.getNonce('Mx...')
-    .then((nonce) => {
-        const tx = prepareSignedTx({...txParams, nonce});
-        console.log('signed tx', tx.serialize().toString('hex'));
-    });
-
-```
-
-
-## License
+# License
 
 MIT License

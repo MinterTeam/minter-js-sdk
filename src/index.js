@@ -1,4 +1,3 @@
-import {generateWallet, walletFromMnemonic, walletFromPrivateKey} from 'minterjs-wallet';
 import {API_TYPE_NODE, API_TYPE_GATE} from './variables';
 import Minter from './minter';
 import MinterApi from './api';
@@ -6,6 +5,7 @@ import PostTx from './api/post-tx';
 import EstimateCoinSell from './api/estimate-coin-sell';
 import GetNonce from './api/get-nonce';
 import issueCheck, {decodeCheck, getGasCoinFromCheck} from './check';
+import {prepareLink, decodeLink} from './link';
 
 import prepareSignedTx from './tx';
 import RedeemCheckTxParams from './tx-params/redeem-check';
@@ -34,29 +34,29 @@ export {
     GetNonce,
     //
     prepareSignedTx,
+    // link
+    prepareLink,
+    decodeLink,
     // check
     issueCheck,
     decodeCheck,
     getGasCoinFromCheck,
     RedeemCheckTxParams,
-    // coin
+    // tx params
+    // - coin
     SendTxParams,
     MultisendTxParams,
     SellTxParams,
     SellAllTxParams,
     BuyTxParams,
     CreateCoinTxParams,
-    // validator
+    // - validator
     DeclareCandidacyTxParams,
     SetCandidateOnTxParams,
     SetCandidateOffTxParams,
     EditCandidateTxParams,
     DelegateTxParams,
     UnbondTxParams,
-    // multisig
+    // - multisig
     CreateMultisigTxParams,
-    // wallet
-    generateWallet,
-    walletFromMnemonic,
-    walletFromPrivateKey,
 };

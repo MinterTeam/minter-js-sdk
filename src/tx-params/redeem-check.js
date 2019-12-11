@@ -10,9 +10,10 @@ import {getGasCoinFromCheck} from '../check';
 
 
 /**
+ * //@TODO https://github.com/MinterTeam/minter-js-sdk/issues/13 to allow easy `prepareLink` without proof
  * @constructor
  * @param {string|Buffer} privateKey
- * @param {string} check
+ * @param {string|Buffer} check
  * @param {string} [password]
  * @param {string|Buffer} [proof]
  * @param {...TxParams} otherParams
