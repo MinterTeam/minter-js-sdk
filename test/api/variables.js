@@ -45,7 +45,7 @@ const ENV_SETTINGS = {
         customCoin: 'TESTCOIN01',
     },
     [ENV_TEXAS_TESTNET]: {
-        nodeBaseUrl: 'https://minter-node-2.testnet.minter.network:8841/',
+        nodeBaseUrl: 'https://texasnet.node-api.minter.network/',
         gateBaseUrl: 'https://texasnet.gate-api.minter.network/api/v1/',
         mnemonic: TEXAS_MNEMONIC,
         privateKey: walletFromMnemonic(TEXAS_MNEMONIC).getPrivateKeyString(),

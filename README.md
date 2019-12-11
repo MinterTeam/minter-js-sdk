@@ -517,6 +517,11 @@ minter.postTx(txParams);
 ```
 
 ### Create Multisig
+[Multisig docs](https://docs.minter.network/#section/Multisignatures)
+
+Addresses count must not be greater than 32.  
+Weights count must be equal to addresses count.  
+Weights must be between 0-1023.
 ```js
 import {CreateMultisigTxParams} from "minter-js-sdk";
 const txParams = new CreateMultisigTxParams({

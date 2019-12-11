@@ -631,15 +631,18 @@ describe('PostTx: create multisig', () => {
     const txParamsData = (apiType) => ({
         privateKey: apiType.privateKey,
         chainId: 2,
-        addresses: [apiType.address, 'Mx7633980c000139dd3bd24a3f54e06474fa941e00'],
-        weights: [],
+        addresses: [apiType.address, 'Mx7633980c000139dd3bd24a3f54e06474fa941e01'],
+        weights: [1, 2],
         threshold: 100,
         feeCoinSymbol: 'MNT',
     });
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new CreateMultisigTxParams({...txParamsData(apiType), weights: [Math.random().toString().replace(/\D/, ''), Math.random().toString().replace(/\D/, '')]});
+        const txParams = new CreateMultisigTxParams({
+            ...txParamsData(apiType),
+            weights: [Math.random(), Math.random()].map((item) => item.toString().replace(/\D/, '').substr(0, 3)),
+        });
         return apiType.minterApi.postTx(txParams)
             .then((txHash) => {
                 // console.log(txHash);
@@ -655,12 +658,12 @@ describe('PostTx: create multisig', () => {
 
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = new CreateMultisigTxParams({...txParamsData(apiType), weights: []});
+        const txParams = new CreateMultisigTxParams({...txParamsData(apiType), threshold: 100000000000000000000});
         return apiType.minterApi.postTx(txParams)
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
-                // Incorrect multisig weights
-                expect(error.response.data.error.code === 601 || error.response.data.error.tx_result.code === 601).toBe(true);
+                // rlp: input string too long for uint, decoding into (transaction.CreateMultisigData).Threshold
+                expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
             });
     }, 70000);
 });

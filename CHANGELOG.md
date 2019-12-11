@@ -1,3 +1,7 @@
+## texas.2
+- Add: changes from [0.23.0](https://github.com/MinterTeam/minter-js-sdk/releases/tag/v0.23.0)
+- Add: create-multisig weights and addresses validation
+
 ## texas.1
 - remove `gasCoin` param from `RedeemCheckTxParams` and always get gasCoin from check's data
 
@@ -11,9 +15,6 @@
 - Add: `RedeemCheckTxParams` now accepts direct `proof` param, as alternative to generation it from password
 - Add: `prepareSignedTx` now accepts `payload` param as alias for `message`
 - **BREAKING** Remove: stop reexporting `minterjs-wallet` methods, use it directly 
-
-
-
 
 ## 0.22.0 - 2019-11-12
 - **BREAKING** tx params which must be Minter prefixed, 0x prefixed or Buffer now will throw on arbitrary string passed
