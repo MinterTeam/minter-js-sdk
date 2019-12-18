@@ -1,9 +1,6 @@
-import {TxDataCreateMultisig, TX_TYPE} from 'minterjs-tx';
-// import TxDataCreateMultisig from 'minterjs-tx/src/tx-data/create-multisig';
+import {TX_TYPE} from 'minterjs-tx';
 // import {TX_TYPE} from 'minterjs-tx/src/tx-types';
-import {toBuffer} from 'minterjs-util';
-// import {toBuffer} from 'minterjs-util/src/prefix';
-import {integerToHexString} from '../utils';
+import CreateMultisigTxData from '../tx-data/create-multisig';
 
 /**
  * @constructor
@@ -15,10 +12,10 @@ import {integerToHexString} from '../utils';
  * @return {TxParams}
  */
 export default function CreateMultisigTxParams({addresses, weights, threshold, feeCoinSymbol, ...otherParams}) {
-    const txData = new TxDataCreateMultisig({
-        addresses: addresses.map((address) => toBuffer(address)),
-        weights: weights.map((weight) => `0x${integerToHexString(weight)}`),
-        threshold: `0x${integerToHexString(threshold)}`,
+    const txData = new CreateMultisigTxData({
+        addresses,
+        weights,
+        threshold,
     });
 
     return {

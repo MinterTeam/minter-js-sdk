@@ -633,7 +633,7 @@ describe('PostTx: create multisig', () => {
         feeCoinSymbol: 'MNT',
     });
 
-    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+    test.skip.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
         const txParams = new CreateMultisigTxParams({...txParamsData(apiType), weights: [Math.random().toString().replace(/\D/, ''), Math.random().toString().replace(/\D/, '')]});
         return apiType.minterApi.postTx(txParams)
@@ -649,7 +649,7 @@ describe('PostTx: create multisig', () => {
             });
     }, 30000);
 
-    test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+    test.skip.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
         const txParams = new CreateMultisigTxParams({...txParamsData(apiType), weights: []});
         return apiType.minterApi.postTx(txParams)

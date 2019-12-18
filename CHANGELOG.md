@@ -1,3 +1,7 @@
+## 0.24.0 - 2019-12-23
+- Add: tx data constructors with ability to encode and decode
+- skip multisig tests
+
 ## 0.23.0 - 2019-11-12
 - Add: `prepareLink` and `decodeLink` methods to work with [Minter Link Protocol](https://github.com/MinterTeam/minter-link-protocol)
 - Add: `RedeemCheckTxParams` now accepts direct `proof` param, as alternative to generation it from password
