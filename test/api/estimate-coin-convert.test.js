@@ -6,11 +6,11 @@ beforeAll(async () => {
     const txParams = new CreateCoinTxParams({
         privateKey: ENV_DATA.privateKey,
         chainId: 2,
-        coinName: ENV_DATA.customCoin,
-        coinSymbol: ENV_DATA.customCoin,
+        name: ENV_DATA.customCoin,
+        symbol: ENV_DATA.customCoin,
         initialAmount: 5000,
         initialReserve: 10000,
-        crr: 50,
+        constantReserveRatio: 50,
         feeCoinSymbol: 'MNT',
         message: 'custom message',
     });

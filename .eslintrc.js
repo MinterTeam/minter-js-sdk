@@ -15,7 +15,8 @@ module.exports = {
   settings: {
     'import/resolver': {
       alias: [
-        ['~/src', './src']
+        ['~/src', './src'],
+        ['~/test', './test'],
       ]
     }
   },

@@ -1,7 +1,5 @@
-import {TxDataUnbond, TX_TYPE, coinToBuffer} from 'minterjs-tx';
-import {convertToPip, toBuffer} from 'minterjs-util';
-// import {convertToPip} from 'minterjs-util/src/converter';
-// import {toBuffer} from 'minterjs-util/src/prefix';
+import {TX_TYPE} from 'minterjs-tx';
+import UnbondTxData from '../tx-data/stake-unbond';
 
 /**
  * @constructor
@@ -13,10 +11,10 @@ import {convertToPip, toBuffer} from 'minterjs-util';
  * @return {TxParams}
  */
 export default function UnbondTxParams({publicKey, coinSymbol, stake, feeCoinSymbol, ...otherParams}) {
-    const txData = new TxDataUnbond({
-        pubKey: toBuffer(publicKey),
-        coin: coinToBuffer(coinSymbol),
-        stake: `0x${convertToPip(stake, 'hex')}`,
+    const txData = new UnbondTxData({
+        publicKey,
+        coin: coinSymbol,
+        stake,
     });
 
     if (!feeCoinSymbol) {

@@ -1,6 +1,6 @@
 import {TX_TYPE} from 'minterjs-tx';
 import {SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams} from '~/src';
-import {MAX_MAX_SUPPLY} from '~/src/tx-params/create-coin';
+import {MAX_MAX_SUPPLY} from '~/src/tx-data/create-coin';
 
 
 describe('SendTxParams', () => {
@@ -46,10 +46,10 @@ describe('CreateCoinTxParams', () => {
     const privateKey = '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da';
     const txParamsData = {
         privateKey,
-        coinName: 'My Coin',
-        coinSymbol: 'MYCOIN',
+        name: 'My Coin',
+        symbol: 'MYCOIN',
         initialAmount: 5,
-        crr: 10,
+        constantReserveRatio: 10,
         initialReserve: 20,
         feeCoinSymbol: 'ASD',
         message: 'custom message',
@@ -96,10 +96,10 @@ describe('CreateCoinTxParams', () => {
     test('numeric coin name should be treated as string', () => {
         expect(new CreateCoinTxParams({
             ...txParamsData,
-            coinName: 123,
+            name: 123,
         })).toEqual(new CreateCoinTxParams({
             ...txParamsData,
-            coinName: '123',
+            name: '123',
         }));
     });
 

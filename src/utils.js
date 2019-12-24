@@ -28,10 +28,11 @@ export function integerToHexString(num) {
 }
 
 /**
+ * @TODO accepts 0x prefixed hex strings?
  * @param {Buffer} buf
  */
 export function bufferToInteger(buf) {
-    return parseInt(buf.toString('hex'), 16);
+    return parseInt(buf.toString('hex'), 16) || 0;
 }
 
 export const toHexString = integerToHexString;

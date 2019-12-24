@@ -115,7 +115,7 @@ export function decodeLink(url, privateKey) {
     }
     if (password && privateKey) {
         const dataWithCheck = new TxData(tx.data, tx.type);
-        const {txData} = new RedeemCheckTxParams({privateKey, check: dataWithCheck.rawCheck, password});
+        const {txData} = new RedeemCheckTxParams({privateKey, check: dataWithCheck.check, password});
         tx.data = txData;
     }
     // const txData = new TxData(tx.data, tx.type);

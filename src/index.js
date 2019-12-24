@@ -23,6 +23,21 @@ import UnbondTxParams from './tx-params/stake-unbond';
 import CreateCoinTxParams from './tx-params/create-coin';
 import CreateMultisigTxParams from './tx-params/create-multisig';
 
+// import RedeemCheckTxData from './tx-data/redeem-check';
+// import SendTxData from './tx-data/send';
+// import MultisendTxData from './tx-data/multisend';
+// import SellTxData from './tx-data/convert-sell';
+// import SellAllTxData from './tx-data/convert-sell-all';
+// import BuyTxData from './tx-data/convert-buy';
+// import DeclareCandidacyTxData from './tx-data/candidacy-declare';
+// import SetCandidateOnTxData from './tx-data/candidate-set-on';
+// import SetCandidateOffTxData from './tx-data/candidate-set-off';
+// import EditCandidateTxData from './tx-data/candidate-edit';
+// import DelegateTxData from './tx-data/stake-delegate';
+// import UnbondTxData from './tx-data/stake-unbond';
+// import CreateCoinTxData from './tx-data/create-coin';
+// import CreateMultisigTxData from './tx-data/create-multisig';
+
 export default Minter;
 export {
     API_TYPE_NODE,
@@ -41,7 +56,6 @@ export {
     issueCheck,
     decodeCheck,
     getGasCoinFromCheck,
-    RedeemCheckTxParams,
     // tx params
     // - coin
     SendTxParams,
@@ -57,6 +71,28 @@ export {
     EditCandidateTxParams,
     DelegateTxParams,
     UnbondTxParams,
+    // - check
+    RedeemCheckTxParams,
     // - multisig
     CreateMultisigTxParams,
+    // not sure if it should be exported
+    // tx data
+    // // - coin
+    // SendTxData,
+    // MultisendTxData,
+    // SellTxData,
+    // SellAllTxData,
+    // BuyTxData,
+    // CreateCoinTxData,
+    // // - validator
+    // DeclareCandidacyTxData,
+    // SetCandidateOnTxData,
+    // SetCandidateOffTxData,
+    // EditCandidateTxData,
+    // DelegateTxData,
+    // UnbondTxData,
+    // // - check
+    // RedeemCheckTxData,
+    // // - multisig
+    // CreateMultisigTxData,
 };

@@ -1,11 +1,6 @@
-import {TxDataDeclareCandidacy, TX_TYPE, coinToBuffer} from 'minterjs-tx';
-// import TxDataDeclareCandidacy from 'minterjs-tx/src/tx-data/declare-candidacy';
+import {TX_TYPE} from 'minterjs-tx';
 // import {TX_TYPE} from 'minterjs-tx/src/tx-types';
-// import {coinToBuffer} from 'minterjs-tx/src/helpers';
-import {convertToPip, toBuffer} from 'minterjs-util';
-// import {convertToPip} from 'minterjs-util/src/converter';
-// import {toBuffer} from 'minterjs-util/src/prefix';
-import {integerToHexString} from '../utils';
+import DeclareCandidacyTxData from '../tx-data/candidacy-declare';
 
 /**
  * @constructor
@@ -19,12 +14,12 @@ import {integerToHexString} from '../utils';
  * @return {TxParams}
  */
 export default function DeclareCandidacyTxParams({address, publicKey, commission, coinSymbol, stake, feeCoinSymbol, ...otherParams}) {
-    const txData = new TxDataDeclareCandidacy({
-        address: toBuffer(address),
-        pubKey: toBuffer(publicKey),
-        commission: `0x${integerToHexString(commission)}`,
-        coin: coinToBuffer(coinSymbol),
-        stake: `0x${convertToPip(stake, 'hex')}`,
+    const txData = new DeclareCandidacyTxData({
+        address,
+        publicKey,
+        commission,
+        coin: coinSymbol,
+        stake,
     });
 
     if (!feeCoinSymbol) {

@@ -29,7 +29,7 @@ describe('RedeemCheckTxParams', () => {
                 gasCoin: 'MNT',
                 txType: TX_TYPE.REDEEM_CHECK,
                 txData: (new TxDataRedeemCheck({
-                    rawCheck: toBuffer(check),
+                    check: toBuffer(check),
                     proof: '0x7adcf6a62a66b177b266c767c5ebd906651fb66269401a8c66d053574dc29c67296b93af2e276fbdf5f606a98419ae69191450f67a2d273ee6c5d3016773c16d01',
                 })).serialize(),
             });

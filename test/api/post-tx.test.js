@@ -22,7 +22,7 @@ const API_TYPE_LIST = [
         minterApi: minterNode,
         privateKey: ENV_DATA.privateKey2,
         address: ENV_DATA.address2,
-        customCoin: 'TESTCOIN02',
+        customCoin: 'TESTCOIN03',
         newCandidatePublicKey: newCandidatePublicKeyNode,
         toString() {
             return 'node';
@@ -57,11 +57,11 @@ beforeAll(async () => {
         const txParams = new CreateCoinTxParams({
             privateKey: apiType.privateKey,
             chainId: 2,
-            coinName: 'testcoin',
-            coinSymbol: apiType.customCoin,
+            name: 'testcoin',
+            symbol: apiType.customCoin,
             initialAmount: 5000,
             initialReserve: 10000,
-            crr: 50,
+            constantReserveRatio: 50,
             feeCoinSymbol: 'MNT',
             message: 'custom message',
         });
@@ -637,7 +637,7 @@ describe('PostTx: create multisig', () => {
         feeCoinSymbol: 'MNT',
     });
 
-    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+    test.skip.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
         const txParams = new CreateMultisigTxParams({
             ...txParamsData(apiType),
@@ -656,7 +656,7 @@ describe('PostTx: create multisig', () => {
             });
     }, 30000);
 
-    test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+    test.skip.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
         const txParams = new CreateMultisigTxParams({...txParamsData(apiType), threshold: 100000000000000000000});
         return apiType.minterApi.postTx(txParams)

@@ -1,8 +1,6 @@
-import {TxDataSetCandidateOff, TX_TYPE} from 'minterjs-tx';
-// import TxDataSetCandidateOff from 'minterjs-tx/src/tx-data/set-candidate-off';
+import {TX_TYPE} from 'minterjs-tx';
 // import {TX_TYPE} from 'minterjs-tx/src/tx-types';
-import {toBuffer} from 'minterjs-util';
-// import {toBuffer} from 'minterjs-util/src/prefix';
+import SetCandidateOffTxData from '../tx-data/candidate-set-off';
 
 /**
  * @constructor
@@ -12,8 +10,8 @@ import {toBuffer} from 'minterjs-util';
  * @return {TxParams}
  */
 export default function SetCandidateOffTxParams({publicKey, feeCoinSymbol, ...otherParams}) {
-    const txData = new TxDataSetCandidateOff({
-        pubKey: toBuffer(publicKey),
+    const txData = new SetCandidateOffTxData({
+        publicKey,
     });
 
     return {
