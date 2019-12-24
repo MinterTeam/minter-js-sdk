@@ -1,9 +1,8 @@
-import {TxDataUnbond, coinToBuffer, bufferToCoin, TxDataDelegate} from 'minterjs-tx';
+import {TxDataUnbond, coinToBuffer, bufferToCoin} from 'minterjs-tx';
 import {convertToPip, convertFromPip, toBuffer, publicToString} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
 import {bufferToInteger} from '../utils';
-import tx from '~/src/tx';
 
 /**
  * @param {string} publicKey

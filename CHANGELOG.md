@@ -14,6 +14,9 @@
 - `redeemCheck` params will check if passed `feeCoinSymbol` is equal to `gasCoin` from check, may be omitted, `gasCoin` from check will be used
 - add `maxSupply` field to `CreateCoinTxParams`
 
+## 0.24.1 - 2019-12-24
+- Fix: unbond tx-data
+
 ## 0.24.0 - 2019-12-23
 - Add: tx data constructors with ability to encode and decode
 - skip multisig tests
