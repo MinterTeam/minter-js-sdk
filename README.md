@@ -17,7 +17,7 @@ It is complemented by the following packages:
 - [minterjs-util](https://github.com/MinterTeam/minterjs-util) utility functions
 
 Contents:
-- [Install](#nstall)
+- [Install](#install)
 - [Usage](#usage)
   - [SDK instance](#sdk-instance)
     - [postTx](#posttx)
@@ -388,10 +388,10 @@ import {CreateCoinTxParams} from "minter-js-sdk";
 const txParams = new CreateCoinTxParams({
     privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
-    coinName: 'My Coin',
-    coinSymbol: 'MYCOIN',
+    name: 'My Coin',
+    symbol: 'MYCOIN',
     initialAmount: 5000,
-    crr: 10,
+    constantReserveRatio: 10,
     initialReserve: 10000,
     feeCoinSymbol: 'ASD',
     message: 'custom message',

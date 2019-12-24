@@ -1,3 +1,7 @@
+## texas.3
+- **BREAKING** Change: rename create coin params: coinName -> name, coinSymbol -> symbol, crr -> constantReserveRatio
+- enable multisig tests
+
 ## texas.2
 - Add: changes from [0.23.0](https://github.com/MinterTeam/minter-js-sdk/releases/tag/v0.23.0)
 - Add: create-multisig weights and addresses validation
