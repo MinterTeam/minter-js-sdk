@@ -58,7 +58,6 @@ function removeProofFromData(txParams) {
 describe('decodeLink()', () => {
     test('should work', () => {
         const txParams = decodeLink(LINK_SEND);
-        console.log(txParams);
         expect(txParams).toEqual(new SendTxParams(TX_PARAMS_DATA_SEND));
     });
 

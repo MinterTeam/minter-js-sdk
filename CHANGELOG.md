@@ -1,3 +1,6 @@
+## 0.24.0 - 2019-12-24
+- Fix: unbond tx-data
+
 ## 0.24.0 - 2019-12-23
 - Add: tx data constructors with ability to encode and decode
 - skip multisig tests
