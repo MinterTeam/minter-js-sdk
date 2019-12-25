@@ -563,7 +563,7 @@ Checks are issued offline and do not exist in blockchain before “cashing”.
 
 Params:
 - `privateKey` - private key of the issuer to sign check. Type: string
-- `passPhrase` - password to protect check. Type: string
+- `password` - password to protect check. Type: string
 - `nonce` - unique string to allow issue identical checks. Type: string
 - `chainId` - network type to prevent using same check between networks. Type: number. Default: `1`
 - `coin` - coin to transfer. Type: string
@@ -576,7 +576,7 @@ Params:
 import {issueCheck} from "minter-js-sdk";
 const check = issueCheck({
     privateKey: '2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
-    passPhrase: 'pass',
+    password: 'pass',
     nonce: '1',
     chainId: 1,
     coin: 'MNT',

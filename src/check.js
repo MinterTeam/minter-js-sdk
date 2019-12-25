@@ -89,15 +89,15 @@ class Check {
         return rlphash(this.raw.slice(0, this.raw.length - 4));
     }
 
-    sign(privateKey, passphrase) {
+    sign(privateKey, password) {
         const msgHash = this.hash(false);
 
-        if (typeof passphrase === 'string') {
-            passphrase = Buffer.from(passphrase, 'utf-8');
+        if (typeof password === 'string') {
+            password = Buffer.from(password, 'utf-8');
         }
 
-        const passphraseBuffer = sha256(passphrase);
-        const lock = secp256k1.sign(msgHash, passphraseBuffer);
+        const passwordBuffer = sha256(password);
+        const lock = secp256k1.sign(msgHash, passwordBuffer);
         /** @type Buffer */
         const lockWithRecovery = new (lock.signature.constructor)(65);
         lockWithRecovery.set(lock.signature, 0);
@@ -114,7 +114,7 @@ class Check {
 /**
  *
  * @param {string|Buffer} privateKey - hex or Buffer
- * @param {string} passPhrase - utf8
+ * @param {string} password - utf8
  * @param {string} nonce
  * @param {number} [chainId=1]
  * @param {string} coin
@@ -125,7 +125,7 @@ class Check {
  * @param {boolean} [isReturnObject]
  * @return {string|Check}
  */
-export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, coin, coinSymbol, value, gasCoin, dueBlock = 999999999} = {}, isReturnObject) {
+export default function issueCheck({privateKey, password, nonce, chainId = 1, coin, coinSymbol, value, gasCoin, dueBlock = 999999999} = {}, isReturnObject) {
     // @TODO accept exponential
     if (!isNumericInteger(dueBlock)) {
         throw new Error('Invalid due block. Should be a numeric integer');
@@ -153,7 +153,7 @@ export default function issueCheck({privateKey, passPhrase, nonce, chainId = 1, 
         gasCoin: coinToBuffer(gasCoin),
         dueBlock: `0x${integerToHexString(dueBlock)}`,
     });
-    check.sign(privateKey, passPhrase);
+    check.sign(privateKey, password);
 
     return isReturnObject ? check : `Mc${check.serialize().toString('hex')}`;
 }

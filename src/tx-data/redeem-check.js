@@ -69,8 +69,8 @@ function getProofWithRecovery(privateKey, password) {
         password = Buffer.from(password, 'utf-8');
     }
 
-    const passphraseBuffer = sha256(password);
-    const proof = secp256k1.sign(addressHash, passphraseBuffer);
+    const passwordBuffer = sha256(password);
+    const proof = secp256k1.sign(addressHash, passwordBuffer);
     const proofWithRecovery = new (proof.signature.constructor)(65);
     proofWithRecovery.set(proof.signature, 0);
     proofWithRecovery[64] = proof.recovery;

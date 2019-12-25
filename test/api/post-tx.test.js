@@ -568,7 +568,7 @@ describe('PostTx: redeem check', () => {
         return issueCheck({
             privateKey: apiType.privateKey,
             chainId: 2,
-            passPhrase: '123',
+            password: '123',
             nonce: 1,
             coinSymbol: 'MNT',
             value: Math.random(),

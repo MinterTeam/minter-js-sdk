@@ -1,3 +1,6 @@
+## texas.5
+- **BREAKING** Change: rename `issueCheck` argument `passPhrase` to `password` 
+
 ## texas.3
 - **BREAKING** Change: rename create coin params: coinName -> name, coinSymbol -> symbol, crr -> constantReserveRatio
 - enable multisig tests
