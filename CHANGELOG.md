@@ -1,3 +1,8 @@
+## 0.25.0 - 2019-12-25
+- **BREAKING** Change: `decodeLink` now decode `txData` too
+- Add: `getTxData` method which return TxData constructor by txType
+- Fix: `decodeLink` now decodes `nonce` no number instead of string
+
 ## 0.24.1 - 2019-12-24
 - Fix: unbond tx-data
 

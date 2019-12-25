@@ -2,7 +2,7 @@ import {TxDataCreateMultisig} from 'minterjs-tx';
 // import TxDataCreateMultisig from 'minterjs-tx/src/tx-data/create-multisig';
 import {addressToString, toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix';
-import {bufferToInteger, integerToHexString} from '../utils';
+import {addTxDataFields, bufferToInteger, integerToHexString} from '../utils';
 
 /**
  * @param {Array} addresses
@@ -20,6 +20,8 @@ export default function CreateMultisigTxData({addresses, weights, threshold}) {
         weights: weights.map((weight) => `0x${integerToHexString(weight)}`),
         threshold: `0x${integerToHexString(threshold)}`,
     });
+
+    addTxDataFields(this);
 
     // proxy TxDataCreateMultisig
     this.raw = this.txData.raw;

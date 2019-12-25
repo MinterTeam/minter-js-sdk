@@ -1,6 +1,7 @@
 import {defineProperties} from 'ethereumjs-util/dist/object';
 import {encode as rlpEncode, decode as rlpDecode} from 'rlp';
-import {bufferToCoin, coinToBuffer, TxData} from 'minterjs-tx';
+import {bufferToCoin, coinToBuffer, TxDataRedeemCheck, TX_TYPE} from 'minterjs-tx';
+import getTxData from './tx-data';
 import {bufferToInteger, integerToHexString} from './utils';
 import RedeemCheckTxParams from './tx-params/redeem-check';
 
@@ -110,22 +111,33 @@ export function decodeLink(url, privateKey) {
     const passwordHex = url.indexOf('&p=') >= 0 ? url.replace(/^.*&p=/, '') : '';
     const password = passwordHex ? rlpDecode(Buffer.from(passwordHex, 'hex')) : '';
     const tx = new Link(txString);
-    if (password && !privateKey) {
+    const txType = `0x${tx.type.toString('hex')}`;
+    if (txType === TX_TYPE.REDEEM_CHECK && password && !privateKey) {
         throw new Error('privateKey param required if link has password');
     }
-    if (password && privateKey) {
-        const dataWithCheck = new TxData(tx.data, tx.type);
-        const {txData} = new RedeemCheckTxParams({privateKey, check: dataWithCheck.rawCheck, password});
+    if (txType === TX_TYPE.REDEEM_CHECK && password && privateKey) {
+        // get check from data
+        const {rawCheck} = new TxDataRedeemCheck(tx.data);
+        // proof from password
+        const {txData} = new RedeemCheckTxParams({privateKey, check: rawCheck, password});
         tx.data = txData;
     }
-    // const txData = new TxData(tx.data, tx.type);
+    const txData = getTxData(tx.type).fromRlp(tx.data).fields;
+    // fix rawCheck
+    if (txType === TX_TYPE.REDEEM_CHECK) {
+        txData.check = getTxData(tx.type).fromRlp(tx.data).check;
+    }
+    // fix pubKey
+    if (txType === TX_TYPE.DECLARE_CANDIDACY || txType === TX_TYPE.EDIT_CANDIDATE || txType === TX_TYPE.DELEGATE || txType === TX_TYPE.UNBOND) {
+        txData.publicKey = getTxData(tx.type).fromRlp(tx.data).publicKey;
+    }
 
     return {
-        nonce: tx.nonce.length ? tx.nonce.toString('utf-8') : undefined,
+        nonce: tx.nonce.length ? bufferToInteger(tx.nonce) : undefined,
         gasPrice: tx.gasPrice.length ? bufferToInteger(tx.gasPrice) : undefined,
         gasCoin: tx.gasCoin.length ? bufferToCoin(tx.gasCoin) : undefined,
-        txType: `0x${tx.type.toString('hex')}`,
-        txData: tx.data,
+        txType,
+        txData,
         payload: tx.payload.toString('utf-8'),
         ...(privateKey ? {privateKey} : {}),
     };

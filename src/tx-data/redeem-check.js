@@ -4,6 +4,7 @@ import {privateToAddress} from 'ethereumjs-util/dist/account';
 import {TxDataRedeemCheck} from 'minterjs-tx';
 // import TxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check';
 import {toBuffer, checkToString} from 'minterjs-util';
+import {addTxDataFields} from '../utils';
 
 
 /**
@@ -27,6 +28,8 @@ export default function RedeemCheckTxData({privateKey, check, password, proof}) 
         proof: proofWithRecovery,
     });
     this.proof = `0x${proofWithRecovery.toString('hex')}`;
+
+    addTxDataFields(this);
 
     // proxy TxDataRedeemCheck
     this.raw = this.txData.raw;

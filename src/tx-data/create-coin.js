@@ -3,7 +3,7 @@ import {TxDataCreateCoin, coinToBuffer, bufferToCoin} from 'minterjs-tx';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers';
 import {convertFromPip, convertToPip, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
-import {bufferToInteger, integerToHexString} from '../utils';
+import {addTxDataFields, bufferToInteger, integerToHexString} from '../utils';
 
 /**
  * @param {string} name
@@ -27,6 +27,8 @@ export default function CreateCoinTxData({name, symbol, initialAmount, initialRe
         initialReserve: `0x${convertToPip(initialReserve, 'hex')}`,
         constantReserveRatio: `0x${integerToHexString(constantReserveRatio)}`,
     });
+
+    addTxDataFields(this);
 
     // proxy TxDataSend
     this.raw = this.txData.raw;

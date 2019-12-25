@@ -4,7 +4,7 @@ import {TxDataDeclareCandidacy, coinToBuffer, bufferToCoin} from 'minterjs-tx';
 import {addressToString, convertFromPip, convertToPip, publicToString, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
-import {bufferToInteger, integerToHexString} from '../utils';
+import {addTxDataFields, bufferToInteger, integerToHexString} from '../utils';
 
 /**
  * @param {string} address
@@ -28,6 +28,8 @@ export default function DeclareCandidacyTxData({address, publicKey, commission, 
         coin: coinToBuffer(coin),
         stake: `0x${convertToPip(stake, 'hex')}`,
     });
+
+    addTxDataFields(this);
 
     // proxy TxDataDeclareCandidacy
     this.raw = this.txData.raw;

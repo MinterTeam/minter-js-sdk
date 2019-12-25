@@ -628,7 +628,11 @@ decodeLink('https://bip.to/tx?d=f84801aae98a4d4e5400000000000000947633980c000139
 // {
 // gasCoin: 'ASD',
 // txType: '0x01',
-// txData: <Buffer e9 8a 4d 4e 54 00 00 00 00 00 00 00 94 76 33 98 0c 00 01 39 dd 3b d2 4a 3f 54 e0 64 74 fa 94 1e 16 88 8a c7 23 04 89 e8 00 00>,
+// txData: {
+//    address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+//    coin: 'MNT',
+//    value: '10',
+// },
 // payload: 'custom message',
 // }
 ```

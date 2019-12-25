@@ -1,6 +1,6 @@
 import {TxDataBuy, coinToBuffer, bufferToCoin} from 'minterjs-tx';
 import {convertFromPip, convertToPip, toBuffer} from 'minterjs-util';
-import {bufferToInteger} from '../utils';
+import {addTxDataFields, bufferToInteger} from '../utils';
 // import {convertToPip} from 'minterjs-util/src/converter';
 
 /**
@@ -26,6 +26,8 @@ export default function BuyTxData({coinToSell, coinToBuy, valueToBuy, maximumVal
         valueToBuy: `0x${convertToPip(valueToBuy, 'hex')}`,
         maximumValueToSell: `0x${convertToPip(maximumValueToSell, 'hex')}`,
     });
+
+    addTxDataFields(this);
 
     // proxy TxDataBuy
     this.raw = this.txData.raw;

@@ -2,7 +2,7 @@ import {TxDataDelegate, coinToBuffer, bufferToCoin, TxDataSend, TxDataUnbond} fr
 import {convertToPip, convertFromPip, toBuffer, publicToString} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
-import {bufferToInteger} from '../utils';
+import {addTxDataFields, bufferToInteger} from '../utils';
 
 /**
  * @param {string} publicKey
@@ -20,6 +20,8 @@ export default function DelegateTxData({publicKey, coin, stake}) {
         coin: coinToBuffer(coin),
         stake: `0x${convertToPip(stake, 'hex')}`,
     });
+
+    addTxDataFields(this);
 
     // proxy TxDataDelegate
     this.raw = this.txData.raw;

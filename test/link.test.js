@@ -1,5 +1,6 @@
 import {TxDataRedeemCheck} from 'minterjs-tx';
 import {prepareLink, decodeLink, SendTxParams, RedeemCheckTxParams} from '~/src';
+import getTxData from '~/src/tx-data';
 
 const TX_PARAMS_DATA_SEND = {
     address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
@@ -58,13 +59,17 @@ function removeProofFromData(txParams) {
 describe('decodeLink()', () => {
     test('should work', () => {
         const txParams = decodeLink(LINK_SEND);
-        expect(txParams).toEqual(new SendTxParams(TX_PARAMS_DATA_SEND));
+        const sendTxParams = new SendTxParams(TX_PARAMS_DATA_SEND);
+        sendTxParams.txData = getTxData(sendTxParams.txType).fromRlp(sendTxParams.txData).fields;
+        expect(txParams).toEqual(sendTxParams);
     });
 
     describe('check', () => {
         test('should work with proof', () => {
             const txParams = decodeLink(LINK_CHECK);
             const validTxParams = new RedeemCheckTxParams(TX_PARAMS_DATA_CHECK);
+            const txData = getTxData(validTxParams.txType).fromRlp(validTxParams.txData);
+            validTxParams.txData = {check: txData.check, proof: txData.proof};
             // clean valid params
             delete validTxParams.privateKey;
             // ensure string payload
@@ -75,6 +80,8 @@ describe('decodeLink()', () => {
         test('should work with password', () => {
             const txParams = decodeLink(LINK_CHECK_PASSWORD, TX_PARAMS_DATA_CHECK.privateKey);
             const validTxParams = new RedeemCheckTxParams(TX_PARAMS_DATA_CHECK);
+            const txData = getTxData(validTxParams.txType).fromRlp(validTxParams.txData);
+            validTxParams.txData = {check: txData.check, proof: txData.proof};
             // ensure string private key
             validTxParams.privateKey = validTxParams.privateKey.toString('hex');
             // ensure string payload

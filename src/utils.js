@@ -36,3 +36,16 @@ export function bufferToInteger(buf) {
 }
 
 export const toHexString = integerToHexString;
+
+export function addTxDataFields(txData) {
+    Object.defineProperty(txData, 'fields', {
+        get() {
+            const fields = {};
+            txData.txData._fields.forEach((key) => {
+                fields[key] = txData[key];
+            });
+            return fields;
+        },
+        enumerable: true,
+    });
+}

@@ -2,7 +2,7 @@ import {TxDataSellAll, coinToBuffer, bufferToCoin} from 'minterjs-tx';
 // import TxDataSellAll from 'minterjs-tx/src/tx-data/sell-all';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers';
 import {convertFromPip, convertToPip, toBuffer} from 'minterjs-util';
-import {bufferToInteger} from '../utils';
+import {addTxDataFields, bufferToInteger} from '../utils';
 // import {convertToPip} from 'minterjs-util/src/converter';
 
 /**
@@ -21,6 +21,8 @@ export default function SellAllTxData({coinToSell, coinToBuy, minimumValueToBuy 
         coinToBuy: coinToBuffer(coinToBuy),
         minimumValueToBuy: `0x${convertToPip(minimumValueToBuy, 'hex')}`,
     });
+
+    addTxDataFields(this);
 
     // proxy TxDataSellAll
     this.raw = this.txData.raw;
