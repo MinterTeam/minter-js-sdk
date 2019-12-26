@@ -5,6 +5,7 @@ import {convertToPip, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
 import SendTxData from './send';
+import {addTxDataFields} from '../utils';
 
 /**
  * @param {Array} list
@@ -22,6 +23,8 @@ export default function MultisendTxData({list}) {
             };
         }),
     });
+
+    addTxDataFields(this);
 
     // proxy TxDataMultisend
     this.raw = this.txData.raw;

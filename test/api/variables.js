@@ -34,7 +34,7 @@ const ENV_SETTINGS = {
         customCoin: 'TESTCOIN01',
     },
     [ENV_QA_TESTNET]: {
-        nodeBaseUrl: 'http://front-de.minter.network:48841/',
+        nodeBaseUrl: 'https://qa.node-api.minter.network/',
         gateBaseUrl: 'https://qa.gate-api.minter.network/api/v1/',
         mnemonic: QA_MNEMONIC,
         privateKey: walletFromMnemonic(QA_MNEMONIC).getPrivateKeyString(),

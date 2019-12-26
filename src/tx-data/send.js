@@ -2,7 +2,7 @@ import {TxDataSend, coinToBuffer, bufferToCoin} from 'minterjs-tx';
 import {convertToPip, convertFromPip, toBuffer, addressToString} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
-import {bufferToInteger} from '../utils';
+import {bufferToInteger, addTxDataFields} from '../utils';
 
 
 /**
@@ -22,6 +22,8 @@ export default function SendTxData({to, value = 0, coin}) {
         coin: coinToBuffer(coin),
         value: `0x${convertToPip(value, 'hex')}`,
     });
+
+    addTxDataFields(this);
 
     // proxy TxDataSend
     this.raw = this.txData.raw;
