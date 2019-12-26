@@ -1,5 +1,4 @@
 import SellAllTxData from '~/src/tx-data/convert-sell-all';
-import {clearData} from '~/test/utils';
 
 describe('SellAllTxData', () => {
     const txParamsData = {
@@ -9,9 +8,9 @@ describe('SellAllTxData', () => {
     const txData = new SellAllTxData(txParamsData).serialize();
 
     test('.fromRlp', () => {
-        const params = clearData(SellAllTxData.fromRlp(txData));
+        const params = SellAllTxData.fromRlp(txData).fields;
         delete params.minimumValueToBuy;
         expect(params)
-            .toEqual(clearData(txParamsData));
+            .toEqual(txParamsData);
     });
 });

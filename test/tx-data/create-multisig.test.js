@@ -1,5 +1,4 @@
 import CreateMultisigTxData from '~/src/tx-data/create-multisig';
-import {clearData} from '~/test/utils';
 
 describe('CreateMultisigTxData', () => {
     const txParamsData = {
@@ -10,8 +9,8 @@ describe('CreateMultisigTxData', () => {
     const txData = new CreateMultisigTxData(txParamsData).serialize();
 
     test('.fromRlp', () => {
-        const params = clearData(CreateMultisigTxData.fromRlp(txData));
+        const params = CreateMultisigTxData.fromRlp(txData).fields;
         expect(params)
-            .toEqual(clearData(txParamsData));
+            .toEqual(txParamsData);
     });
 });

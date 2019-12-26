@@ -42,7 +42,12 @@ export function addTxDataFields(txData) {
         get() {
             const fields = {};
             txData.txData._fields.forEach((key) => {
-                fields[key] = txData[key];
+                if (Array.isArray(txData[key])) {
+                    // cast multisend items to fields
+                    fields[key] = txData[key].map((item) => item.fields || item);
+                } else {
+                    fields[key] = txData[key];
+                }
             });
             return fields;
         },

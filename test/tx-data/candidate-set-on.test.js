@@ -1,5 +1,4 @@
 import SetCandidateOnTxData from '~/src/tx-data/candidate-set-on';
-import {clearData} from '~/test/utils';
 
 describe('SetCandidateOnTxData', () => {
     const txParamsData = {
@@ -8,8 +7,8 @@ describe('SetCandidateOnTxData', () => {
     const txData = new SetCandidateOnTxData(txParamsData).serialize();
 
     test('.fromRlp', () => {
-        const params = clearData(SetCandidateOnTxData.fromRlp(txData));
+        const params = SetCandidateOnTxData.fromRlp(txData).fields;
         expect(params)
-            .toEqual(clearData(txParamsData));
+            .toEqual(txParamsData);
     });
 });

@@ -5,14 +5,14 @@ describe('BuyTxData', () => {
     const txParamsData = {
         coinToSell: 'MNT',
         coinToBuy: 'BELTCOIN',
-        valueToBuy: 20,
+        valueToBuy: '20',
     };
     const txData = new BuyTxData(txParamsData).serialize();
 
     test('.fromRlp', () => {
-        const params = clearData(BuyTxData.fromRlp(txData));
+        const params = BuyTxData.fromRlp(txData).fields;
         delete params.maximumValueToSell;
         expect(params)
-            .toEqual(clearData(txParamsData));
+            .toEqual(txParamsData);
     });
 });

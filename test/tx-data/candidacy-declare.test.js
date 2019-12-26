@@ -7,13 +7,13 @@ describe('DeclareCandidacyTxData', () => {
         publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
         commission: 10,
         coin: 'MNT',
-        stake: 100,
+        stake: '100',
     };
     const txData = new DeclareCandidacyTxData(txParamsData).serialize();
 
     test('.fromRlp', () => {
-        const params = clearData(DeclareCandidacyTxData.fromRlp(txData));
+        const params = DeclareCandidacyTxData.fromRlp(txData).fields;
         expect(params)
-            .toEqual(clearData(txParamsData));
+            .toEqual(txParamsData);
     });
 });

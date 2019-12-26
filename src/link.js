@@ -123,14 +123,6 @@ export function decodeLink(url, privateKey) {
         tx.data = txData;
     }
     const txData = getTxData(tx.type).fromRlp(tx.data).fields;
-    // fix rawCheck
-    if (txType === TX_TYPE.REDEEM_CHECK) {
-        txData.check = getTxData(tx.type).fromRlp(tx.data).check;
-    }
-    // fix pubKey
-    if (txType === TX_TYPE.DECLARE_CANDIDACY || txType === TX_TYPE.EDIT_CANDIDATE || txType === TX_TYPE.DELEGATE || txType === TX_TYPE.UNBOND) {
-        txData.publicKey = getTxData(tx.type).fromRlp(tx.data).publicKey;
-    }
 
     return {
         nonce: tx.nonce.length ? bufferToInteger(tx.nonce) : undefined,

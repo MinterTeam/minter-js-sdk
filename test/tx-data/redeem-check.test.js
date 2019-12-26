@@ -1,5 +1,4 @@
 import RedeemCheckTxData from '~/src/tx-data/redeem-check';
-import {clearData} from '~/test/utils';
 
 describe('RedeemCheckTxData', () => {
     const privateKey = '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da';
@@ -10,17 +9,17 @@ describe('RedeemCheckTxData', () => {
 
     test('.fromRlp (proof)', () => {
         const txData = new RedeemCheckTxData({check, proof}).serialize();
-        const params = clearData(RedeemCheckTxData.fromRlp(txData));
+        const params = RedeemCheckTxData.fromRlp(txData).fields;
 
         expect(params)
-            .toEqual(clearData(txParamsData));
+            .toEqual(txParamsData);
     });
 
     test('.fromRlp (password)', () => {
         const txData = new RedeemCheckTxData({check, password, privateKey}).serialize();
-        const params = clearData(RedeemCheckTxData.fromRlp(txData));
+        const params = RedeemCheckTxData.fromRlp(txData).fields;
 
         expect(params)
-            .toEqual(clearData(txParamsData));
+            .toEqual(txParamsData);
     });
 });

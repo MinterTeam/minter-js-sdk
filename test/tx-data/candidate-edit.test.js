@@ -1,5 +1,4 @@
 import EditCandidateTxData from '~/src/tx-data/candidate-edit';
-import {clearData} from '~/test/utils';
 
 describe('EditCandidateTxData', () => {
     const txParamsData = {
@@ -10,8 +9,8 @@ describe('EditCandidateTxData', () => {
     const txData = new EditCandidateTxData(txParamsData).serialize();
 
     test('.fromRlp', () => {
-        const params = clearData(EditCandidateTxData.fromRlp(txData));
+        const params = EditCandidateTxData.fromRlp(txData).fields;
         expect(params)
-            .toEqual(clearData(txParamsData));
+            .toEqual(txParamsData);
     });
 });
