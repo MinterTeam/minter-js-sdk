@@ -1,3 +1,11 @@
+## 0.26.0 - 2029-01-10
+- **BREAKING** Change: `decodeLink` now returns `data` instead of `txData` and `type` instead of `txType` fields
+- **BREAKING** Remove: `privateKey` fields from `decodeLink` result
+- Add: `postTx`, `prepareSignedTx`, and `prepareLink` now accepts `data` and `type` fields, `txData` and `txType` are deprecated
+- Add: `postTx` and `prepareSignedTx` now also accept data object for `data` field, not only Buffer
+- Add: `postTx` and `prepareSignedTx` now decorate txParams as TxParamsConstructors previously do
+- Add: reexport `TX_TYPE` from `minterjs-tx`
+
 ## 0.25.0 - 2019-12-25
 - **BREAKING** Change: `decodeLink` now decode `txData` too
 - Add: `getTxData` method which return TxData constructor by txType

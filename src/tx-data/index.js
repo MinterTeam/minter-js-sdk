@@ -40,3 +40,23 @@ export default function getTxData(txType) {
 
     return TX_DATA_CONSTRUCTOR[txType];
 }
+
+/**
+ * @param {Buffer|TxData|Object} txData
+ * @param {TX_TYPE} txType
+ * @return {Buffer}
+ */
+export function ensureBufferData(txData, txType) {
+    // serialize, if it TxData
+    if (typeof txData.serialize === 'function') {
+        txData = txData.serialize();
+    }
+    // make buffer from object
+    if (typeof txData.length === 'undefined') {
+        const TxData = getTxData(txType);
+        txData = new TxData(txData);
+        txData = txData.serialize();
+    }
+
+    return txData;
+}

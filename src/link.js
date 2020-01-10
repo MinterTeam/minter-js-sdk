@@ -1,7 +1,7 @@
 import {defineProperties} from 'ethereumjs-util/dist/object';
 import {encode as rlpEncode, decode as rlpDecode} from 'rlp';
 import {bufferToCoin, coinToBuffer, TxDataRedeemCheck, TX_TYPE} from 'minterjs-tx';
-import getTxData from './tx-data';
+import getTxData, {ensureBufferData} from './tx-data';
 import {bufferToInteger, integerToHexString} from './utils';
 import RedeemCheckTxParams from './tx-params/redeem-check';
 
@@ -61,10 +61,12 @@ class Link {
  * @property {number} [nonce]
  * @property {number} [gasPrice]
  * @property {string} [gasCoin]
- * @property {string|Buffer} txType
- * @property {Buffer} txData
- * @property {string} [payload]
- * @property {string} [message]
+ * @property {string|Buffer|TX_TYPE} type
+ * @property {string|Buffer|TX_TYPE} [txType] - deprecated
+ * @property {Buffer|Object|TxData} data
+ * @property {Buffer} [txData] - deprecated
+ * @property {string} payload
+ * @property {string} [message] - deprecated
  * @property {string} [password]
  */
 
@@ -73,14 +75,14 @@ class Link {
  * @return {string}
  */
 export function prepareLink(txParams = {}) {
-    const {nonce, gasPrice, gasCoin, txType, txData, password} = txParams;
+    const {nonce, gasPrice, gasCoin, type, txType, data, txData, password} = txParams;
 
     const txProps = {
         nonce: nonce && `0x${integerToHexString(nonce)}`,
         gasPrice: gasPrice && `0x${integerToHexString(gasPrice)}`,
         gasCoin: gasCoin && coinToBuffer(gasCoin),
-        type: txType,
-        data: txData,
+        type: type || txType,
+        data: ensureBufferData(data || txData, type || txType),
     };
 
     let payload = txParams.message || txParams.payload;
@@ -136,9 +138,8 @@ export function decodeLink(url, privateKey) {
         nonce: tx.nonce.length ? bufferToInteger(tx.nonce) : undefined,
         gasPrice: tx.gasPrice.length ? bufferToInteger(tx.gasPrice) : undefined,
         gasCoin: tx.gasCoin.length ? bufferToCoin(tx.gasCoin) : undefined,
-        txType,
-        txData,
+        type: txType,
+        data: txData,
         payload: tx.payload.toString('utf-8'),
-        ...(privateKey ? {privateKey} : {}),
     };
 }
