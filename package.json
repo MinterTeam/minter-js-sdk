@@ -55,26 +55,25 @@
     "elliptic": "^6.5.2",
     "ethereumjs-util": "^6.2.0",
     "ethjs-util": "^0.1.6",
-    "minterjs-tx": "^7.2.0",
+    "minterjs-tx": "^7.2.1",
     "minterjs-util": "^0.15.0",
     "parse-asn1": "github:shrpne/parse-asn1#update-asn1",
     "rlp": "^2.2.4",
     "secp256k1": "^3.8.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.7",
-    "@babel/core": "^7.7.7",
-    "@babel/plugin-proposal-optional-chaining": "^7.7.5",
-    "@babel/plugin-transform-runtime": "^7.7.6",
-    "@babel/preset-env": "^7.7.7",
-    "@babel/runtime": "^7.7.7",
+    "@babel/cli": "^7.8.3",
+    "@babel/core": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/runtime": "^7.8.3",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
     "coveralls": "^3.0.9",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-import": "^2.20.0",
     "jest": "^24.9.0",
     "minterjs-wallet": "^4.0.4",
     "pre-commit": "^1.2.2",
@@ -85,6 +84,6 @@
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^5.1.3"
+    "rollup-plugin-terser": "^5.2.0"
   }
 }

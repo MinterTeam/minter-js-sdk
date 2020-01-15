@@ -1,6 +1,7 @@
-## 0.26.0 - 2029-01-10
+## 0.26.0 - 2029-01-15
 - **BREAKING** Change: `decodeLink` now returns `data` instead of `txData` and `type` instead of `txType` fields
 - **BREAKING** Remove: `privateKey` fields from `decodeLink` result
+- **BREAKINK** Remove: `issueCheck` and `decodeCheck` from `Minter` instance
 - Add: `postTx`, `prepareSignedTx`, and `prepareLink` now accepts `data` and `type` fields, `txData` and `txType` are deprecated
 - Add: `postTx` and `prepareSignedTx` now also accept data object for `data` field, not only Buffer
 - Add: `postTx` and `prepareSignedTx` now decorate txParams as TxParamsConstructors previously do

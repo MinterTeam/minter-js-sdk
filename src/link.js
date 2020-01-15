@@ -1,6 +1,6 @@
 import {defineProperties} from 'ethereumjs-util/dist/object';
 import {encode as rlpEncode, decode as rlpDecode} from 'rlp';
-import {bufferToCoin, coinToBuffer, TxDataRedeemCheck, TX_TYPE} from 'minterjs-tx';
+import {bufferToCoin, coinToBuffer, TxDataRedeemCheck, TX_TYPE, normalizeTxType} from 'minterjs-tx';
 import getTxData, {ensureBufferData} from './tx-data';
 import {bufferToInteger, integerToHexString} from './utils';
 import RedeemCheckTxParams from './tx-params/redeem-check';
@@ -65,7 +65,7 @@ class Link {
  * @property {string|Buffer|TX_TYPE} [txType] - deprecated
  * @property {Buffer|Object|TxData} data
  * @property {Buffer} [txData] - deprecated
- * @property {string} payload
+ * @property {string} [payload]
  * @property {string} [message] - deprecated
  * @property {string} [password]
  */
@@ -113,7 +113,7 @@ export function decodeLink(url, privateKey) {
     const passwordHex = url.indexOf('&p=') >= 0 ? url.replace(/^.*&p=/, '') : '';
     const password = passwordHex ? rlpDecode(Buffer.from(passwordHex, 'hex')) : '';
     const tx = new Link(txString);
-    const txType = `0x${tx.type.toString('hex')}`;
+    const txType = normalizeTxType(tx.type);
     if (txType === TX_TYPE.REDEEM_CHECK && password && !privateKey) {
         throw new Error('privateKey param required if link has password');
     }

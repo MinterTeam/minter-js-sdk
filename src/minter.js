@@ -5,7 +5,6 @@ import PostTx from './api/post-tx';
 import EstimateCoinSell from './api/estimate-coin-sell';
 import EstimateCoinBuy from './api/estimate-coin-buy';
 import EstimateTxCommission from './api/estimate-tx-commission';
-import issueCheck, {decodeCheck} from './check';
 
 /**
  * @param {Object} [options]
@@ -28,8 +27,4 @@ export default function (options) {
     this.estimateCoinBuy = new EstimateCoinBuy(apiInstance);
 
     this.estimateTxCommission = new EstimateTxCommission(apiInstance);
-
-    this.issueCheck = issueCheck;
-
-    this.decodeCheck = decodeCheck;
 }

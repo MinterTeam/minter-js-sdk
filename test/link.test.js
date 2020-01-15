@@ -13,6 +13,26 @@ const TX_PARAMS_SEND = {
     payload: 'custom message',
 };
 const LINK_SEND = 'https://bip.to/tx?d=f84801aae98a4d4e5400000000000000947633980c000139dd3bd24a3f54e06474fa941e16888ac7230489e800008e637573746f6d206d65737361676580808a41534400000000000000';
+
+const TX_PARAMS_MULTISEND = {
+    type: TX_TYPE.MULTISEND,
+    data: {
+        list: [
+            {
+                value: 0.1,
+                coin: 'MNT',
+                to: 'Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99',
+            },
+            {
+                value: 0.2,
+                coin: 'MNT',
+                to: 'Mxddab6281766ad86497741ff91b6b48fe85012e3c',
+            },
+        ],
+    },
+};
+const LINK_MULTISEND = 'https://bip.to/tx?d=f85f0db858f856f854e98a4d4e540000000000000094fe60014a6e9ac91618f5d1cab3fd58cded61ee9988016345785d8a0000e98a4d4e540000000000000094ddab6281766ad86497741ff91b6b48fe85012e3c8802c68af0bb14000080808080';
+
 const TX_PARAMS_CHECK = {
     type: TX_TYPE.REDEEM_CHECK,
     data: {
@@ -29,6 +49,13 @@ describe('prepareLink()', () => {
     test('should work', () => {
         const link = prepareLink(TX_PARAMS_SEND);
         expect(link).toEqual(LINK_SEND);
+    });
+
+    describe('multisend', () => {
+        test('should work', () => {
+            const link = prepareLink(TX_PARAMS_MULTISEND);
+            expect(link).toEqual(LINK_MULTISEND);
+        });
     });
 
     describe('check', () => {
@@ -57,7 +84,7 @@ describe('decodeLink()', () => {
             const txParams = decodeLink(LINK_CHECK);
             const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
             // @TODO remove when rawCheck renamed
-            validTxParams.data.check = TX_PARAMS_CHECK.data.check;
+            validTxParams.data.check = `Mc${(new RedeemCheckTxData(TX_PARAMS_CHECK.data)).txData.rawCheck.toString('hex')}`;
             // ensure string payload
             validTxParams.payload = validTxParams.payload || '';
             expect(txParams).toEqual(validTxParams);
