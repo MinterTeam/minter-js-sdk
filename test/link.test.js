@@ -1,6 +1,7 @@
 import {TX_TYPE} from 'minterjs-tx';
 import {prepareLink, decodeLink} from '~/src';
 import RedeemCheckTxData from '~/src/tx-data/redeem-check';
+import {VALID_CHECK} from '~/test/check.test';
 
 const TX_PARAMS_SEND = {
     type: TX_TYPE.SEND,
@@ -36,13 +37,13 @@ const LINK_MULTISEND = 'https://bip.to/tx?d=f85f0db858f856f854e98a4d4e5400000000
 const TX_PARAMS_CHECK = {
     type: TX_TYPE.REDEEM_CHECK,
     data: {
-        check: 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee',
-        password: '123',
+        check: VALID_CHECK,
+        password: 'pass',
         privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     },
 };
-const LINK_CHECK = 'https://bip.to/tx?d=f8f009b8e9f8e7b8a2f8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296eeb8417adcf6a62a66b177b266c767c5ebd906651fb66269401a8c66d053574dc29c67296b93af2e276fbdf5f606a98419ae69191450f67a2d273ee6c5d3016773c16d0180808080';
-const LINK_CHECK_PASSWORD = 'https://bip.to/tx?d=f8ae09b8a7f8a5b8a2f8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee8080808080&p=83313233';
+const LINK_CHECK = 'https://bip.to/tx?d=f8f009b8e9f8e7b8a2f8a03101830f423f8a4d4e5400000000000000888ac7230489e80000b84149eba2361855724bbd3d20eb97a54ea15ad7dc28c1111b8dcf3bb15db26f874f095803cad9f8fc88b2b4eec9ba706325a7929be31b6ccfef01260791a844cb55011ba06c63ad17bfe07b82be8a0144fd4daf8b4144281fdf88f313205ceacf37fd877fa03c243ad79cab6205f4b753bd402c4cfa5d570888659090b2f923071ac52bdf75b8410497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d0180808080';
+const LINK_CHECK_PASSWORD = 'https://bip.to/tx?d=f8ae09b8a7f8a5b8a2f8a03101830f423f8a4d4e5400000000000000888ac7230489e80000b84149eba2361855724bbd3d20eb97a54ea15ad7dc28c1111b8dcf3bb15db26f874f095803cad9f8fc88b2b4eec9ba706325a7929be31b6ccfef01260791a844cb55011ba06c63ad17bfe07b82be8a0144fd4daf8b4144281fdf88f313205ceacf37fd877fa03c243ad79cab6205f4b753bd402c4cfa5d570888659090b2f923071ac52bdf758080808080&p=8470617373';
 
 
 describe('prepareLink()', () => {
@@ -66,8 +67,12 @@ describe('prepareLink()', () => {
         });
 
         test('should work with password', () => {
-            const link = prepareLink(TX_PARAMS_CHECK);
-            expect(link).toEqual(LINK_CHECK);
+            const link = prepareLink({
+                type: TX_PARAMS_CHECK.type,
+                data: {check: TX_PARAMS_CHECK.data.check, password: TX_PARAMS_CHECK.data.password},
+                password: TX_PARAMS_CHECK.data.password,
+            });
+            expect(link).toEqual(LINK_CHECK_PASSWORD);
         });
     });
 
@@ -98,9 +103,8 @@ describe('decodeLink()', () => {
     describe('check', () => {
         test('should work with proof', () => {
             const txParams = decodeLink(LINK_CHECK);
+            // add proof
             const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
-            // @TODO remove when rawCheck renamed
-            validTxParams.data.check = `Mc${(new RedeemCheckTxData(TX_PARAMS_CHECK.data)).txData.rawCheck.toString('hex')}`;
             // ensure string payload
             validTxParams.payload = validTxParams.payload || '';
             expect(txParams).toEqual(validTxParams);
@@ -108,9 +112,8 @@ describe('decodeLink()', () => {
 
         test('should work with password', () => {
             const txParams = decodeLink(LINK_CHECK_PASSWORD, TX_PARAMS_CHECK.data.privateKey);
+            // add proof
             const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
-            // @TODO remove when rawCheck renamed
-            validTxParams.data.check = TX_PARAMS_CHECK.data.check;
             // ensure string payload
             validTxParams.payload = validTxParams.payload || '';
             expect(txParams).toEqual(validTxParams);
