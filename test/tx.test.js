@@ -1,4 +1,4 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE, bufferToCoin} from 'minterjs-tx';
 import {prepareSignedTx, SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, MultisendTxParams, RedeemCheckTxParams} from '~/src';
 
 
@@ -100,13 +100,13 @@ describe('prepareSignedTx', () => {
         const txParamsData = {
             privateKey,
             nonce: 11111,
-            coinName: 'My Coin',
-            coinSymbol: 'MYCOIN',
+            name: 'My Coin',
+            symbol: 'MYCOIN',
             initialAmount: 5,
-            crr: 10,
+            constantReserveRatio: 10,
             initialReserve: 20,
             feeCoinSymbol: 'ASD',
-            message: 'custom message',
+            payload: 'custom message',
         };
         const txParamsRaw = {
             privateKey,
@@ -122,7 +122,7 @@ describe('prepareSignedTx', () => {
             gasCoin: 'ASD',
             payload: 'custom message',
         };
-        const validTxHex = 'f892822b6701018a4153440000000000000005a8e7874d7920436f696e8a4d59434f494e00000000884563918244f400008901158e460913d000000a8e637573746f6d206d6573736167658001b845f8431ca0c37235cf4b9c17843a412ef3b19cfbcf73f19e396290c889fd06d754e5b7ad9ea056538f80ae17f8234ab5239f74f70ebff4651307e16b719694e7d41bfef5a417';
+        const validTxHex = 'f8a1822b6701018a4153440000000000000005b7f6874d7920436f696e8a4d59434f494e00000000884563918244f400008901158e460913d000000a8e314dc6448d9338c15b0a000000008e637573746f6d206d6573736167658001b845f8431ba06946f3b3b081c038324c18085202f55554aa5511f514179906b6d4e46e4e22b9a05219c1511a43900bc9a5aa4a07644dd1a8a717654150fbaffe795ab67f79eca1';
 
         test('should work tx params', () => {
             const txParams = new CreateCoinTxParams(txParamsData);
@@ -593,25 +593,23 @@ describe('prepareSignedTx', () => {
     });
 
     describe('redeem check', () => {
-        const check = 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee';
+        const check = 'Mcf8ab3101830f423f8a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b841f69950a210196529f47df938f7af84958cdb336daf304616c37ef8bebca324910910f046e2ff999a7f2ab564bd690c1102ab65a20e0f27b57a93854339b60837011ba00a07cbf311148a6b62c1d1b34a5e0c2b6931a0547ede8b9dfb37aedff4480622a023ac93f7173ca41499624f06dfdd58c4e65d1279ea526777c194ddb623d57027';
         const txParamsData = {
             privateKey,
-            nonce: 11111,
+            nonce: 1,
             check,
-            password: '123',
-            feeCoinSymbol: 'MNT',
+            password: 'pass',
         };
         const txParamsRaw = {
             privateKey,
-            nonce: 11111,
+            nonce: 1,
             type: TX_TYPE.REDEEM_CHECK,
             data: {
                 check,
-                password: '123',
+                password: 'pass',
             },
-            gasCoin: 'MNT',
         };
-        const validTxHex = 'f90146822b6701018a4d4e540000000000000009b8e9f8e7b8a2f8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296eeb8417adcf6a62a66b177b266c767c5ebd906651fb66269401a8c66d053574dc29c67296b93af2e276fbdf5f606a98419ae69191450f67a2d273ee6c5d3016773c16d01808001b845f8431ba0a1be7bd13988de85039b1afed88d5863f042b661a1476207a9dc07c000d9bd37a03603628e7f6bf1f3cefa506f9497703f4b35cfb5f69982ff9ea3ed5d4126043f';
+        const validTxHex = 'f9014f0101018a4d4e540000000000000009b8f4f8f2b8adf8ab3101830f423f8a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b841f69950a210196529f47df938f7af84958cdb336daf304616c37ef8bebca324910910f046e2ff999a7f2ab564bd690c1102ab65a20e0f27b57a93854339b60837011ba00a07cbf311148a6b62c1d1b34a5e0c2b6931a0547ede8b9dfb37aedff4480622a023ac93f7173ca41499624f06dfdd58c4e65d1279ea526777c194ddb623d57027b8410497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d01808001b845f8431ba0ce81610fe58f581c84d744d98ac0fc75eebc1bba515ca2d82eff012feb3c41b2a02824f54d075e8aa789d611b6c14fd99b2b9a19d6437c8e6388ffd1943029cb03';
 
         test('should work tx params', () => {
             const txParams = new RedeemCheckTxParams(txParamsData);
@@ -626,6 +624,21 @@ describe('prepareSignedTx', () => {
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
+        });
+
+        test('should work with custom gasCoin', () => {
+            const tx = prepareSignedTx({
+                ...txParamsRaw,
+                data: {
+                    ...txParamsRaw.data,
+                    // check with TESTCOIN01 gasCoin
+                    check: 'Mcf8ab3101830f423f8a4d4e5400000000000000888ac7230489e800008a54455354434f494e3031b84189f86abe44c82ccee1964abcdf8a4aea6f4abffd4c709a3a9157951dfe8ead5805b15cf8359e2c6c5ae842d8e27ee21a46467df01ee1fead399c241682547b0e011ba0d1ca0e59e5d23edf41afa22f5258aeadf80f329d7ce8f32d30034ec614b292dda02f136ee0a48911e2470b170cc2ff3a2362c4c17f69360ada11efecd62f35c595',
+                },
+            });
+
+            expect(bufferToCoin(tx.gasCoin)).toEqual('TESTCOIN01');
+            expect(tx.serialize().toString('hex'))
+                .toEqual('f9014f0101018a54455354434f494e303109b8f4f8f2b8adf8ab3101830f423f8a4d4e5400000000000000888ac7230489e800008a54455354434f494e3031b84189f86abe44c82ccee1964abcdf8a4aea6f4abffd4c709a3a9157951dfe8ead5805b15cf8359e2c6c5ae842d8e27ee21a46467df01ee1fead399c241682547b0e011ba0d1ca0e59e5d23edf41afa22f5258aeadf80f329d7ce8f32d30034ec614b292dda02f136ee0a48911e2470b170cc2ff3a2362c4c17f69360ada11efecd62f35c595b8410497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d01808001b845f8431ba0b38607701ae1d1081315545fe9f74eee42bd740d446f4ff6ad2342c716e6043fa005372587886f4b7aa4f9d2dc1a7387c63ebb6eea6fdde424016d5e6c8d10c834');
         });
     });
 });

@@ -28,6 +28,13 @@ describe('issueCheck()', () => {
         expect(check).toEqual(VALID_CHECK);
     });
 
+    test('should work with custom gasCoin', () => {
+        expect(issueCheck({
+            ...checkParams,
+            gasCoin: 'TESTCOIN01',
+        })).toEqual('Mcf8ab3101830f423f8a4d4e5400000000000000888ac7230489e800008a54455354434f494e3031b84189f86abe44c82ccee1964abcdf8a4aea6f4abffd4c709a3a9157951dfe8ead5805b15cf8359e2c6c5ae842d8e27ee21a46467df01ee1fead399c241682547b0e011ba0d1ca0e59e5d23edf41afa22f5258aeadf80f329d7ce8f32d30034ec614b292dda02f136ee0a48911e2470b170cc2ff3a2362c4c17f69360ada11efecd62f35c595');
+    });
+
     test('default dueBlock: 999999', () => {
         expect(issueCheck({
             ...checkParams,
