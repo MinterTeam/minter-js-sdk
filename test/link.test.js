@@ -70,6 +70,22 @@ describe('prepareLink()', () => {
             expect(link).toEqual(LINK_CHECK);
         });
     });
+
+    describe('host', () => {
+        const testnetLink = LINK_SEND.replace('https://bip.to', 'https://testnet.bip.to');
+        test('should work with custom host', () => {
+            const link = prepareLink(TX_PARAMS_SEND, 'https://testnet.bip.to');
+            expect(link).toEqual(testnetLink);
+        });
+        test('should work with ending slash', () => {
+            const link = prepareLink(TX_PARAMS_SEND, 'https://testnet.bip.to/');
+            expect(link).toEqual(testnetLink);
+        });
+        test('should work without scheme', () => {
+            const link = prepareLink(TX_PARAMS_SEND, 'testnet.bip.to');
+            expect(link).toEqual(testnetLink);
+        });
+    });
 });
 
 

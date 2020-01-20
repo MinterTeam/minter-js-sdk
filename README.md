@@ -647,6 +647,16 @@ So everything a user needs to do to send a transaction is to click on the link o
 ### `prepareLink()`
 Create link from transaction params
 
+Options:
+- `txParams` - object with [params](https://github.com/MinterTeam/minter-link-protocol#params) of transaction
+- `txParams.type`
+- `txParams.data`
+- `txParams.payload` - optional
+- `txParams.nonce` - optional
+- `txParams.gasPrice` - optional
+- `txParams.gasCoin` - optional
+- `linkHost` - optional, custom hostname of the link, leave undefined to use default 'https://bip.to' 
+
 ```js
 import {prepareLink, TX_TYPE} from 'minter-js-sdk';
 

@@ -5,7 +5,7 @@ import getTxData, {ensureBufferData} from './tx-data';
 import {bufferToInteger, integerToHexString} from './utils';
 import RedeemCheckTxParams from './tx-params/redeem-check';
 
-const LINK_BASE = 'https://bip.to/tx';
+const DEFAULT_LINK_HOST = 'https://bip.to';
 
 
 class Link {
@@ -68,13 +68,14 @@ class Link {
  * @property {string} [payload]
  * @property {string} [message] - deprecated
  * @property {string} [password]
+ * @property {string} [linkHost]
  */
 
 /**
  * @param {LinkParams} txParams
  * @return {string}
  */
-export function prepareLink(txParams = {}) {
+export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
     const {nonce, gasPrice, gasCoin, type, txType, data, txData, password} = txParams;
 
     const txProps = {
@@ -93,12 +94,19 @@ export function prepareLink(txParams = {}) {
         txProps.payload = payload;
     }
 
-    let result = LINK_BASE;
+    // ensure no ending slash
+    linkHost = linkHost.replace(/\/$/, '');
+    // ensure scheme
+    if (linkHost.indexOf('://') === -1) {
+        linkHost = `https://${linkHost}`;
+    }
+
     const tx = new Link(txProps);
-    result += `?d=${tx.serialize().toString('hex')}`;
+    let result = `${linkHost}/tx?d=${tx.serialize().toString('hex')}`;
     if (password) {
         result += `&p=${rlpEncode(password).toString('hex')}`;
     }
+
     return result;
 }
 

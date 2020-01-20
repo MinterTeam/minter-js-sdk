@@ -1,4 +1,7 @@
-## 0.26.0 - 2029-01-15
+## 0.26.1 - 2020-01-20
+- Add: option for `prepareLink` to allow setting custom hostname
+
+## 0.26.0 - 2020-01-15
 - **BREAKING** Change: `decodeLink` now returns `data` instead of `txData` and `type` instead of `txType` fields
 - **BREAKING** Remove: `privateKey` fields from `decodeLink` result
 - **BREAKINK** Remove: `issueCheck` and `decodeCheck` from `Minter` instance
