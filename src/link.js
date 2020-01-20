@@ -1,11 +1,11 @@
 import {defineProperties} from 'ethereumjs-util/dist/object';
 import {encode as rlpEncode, decode as rlpDecode} from 'rlp';
-import {bufferToCoin, coinToBuffer, TxDataRedeemCheck, TX_TYPE} from 'minterjs-tx';
-import getTxData from './tx-data';
+import {bufferToCoin, coinToBuffer, TxDataRedeemCheck, TX_TYPE, normalizeTxType} from 'minterjs-tx';
+import getTxData, {ensureBufferData} from './tx-data';
 import {bufferToInteger, integerToHexString} from './utils';
 import RedeemCheckTxParams from './tx-params/redeem-check';
 
-const LINK_BASE = 'https://bip.to/tx';
+const DEFAULT_LINK_HOST = 'https://bip.to';
 
 
 class Link {
@@ -61,26 +61,29 @@ class Link {
  * @property {number} [nonce]
  * @property {number} [gasPrice]
  * @property {string} [gasCoin]
- * @property {string|Buffer} txType
- * @property {Buffer} txData
+ * @property {string|Buffer|TX_TYPE} type
+ * @property {string|Buffer|TX_TYPE} [txType] - deprecated
+ * @property {Buffer|Object|TxData} data
+ * @property {Buffer} [txData] - deprecated
  * @property {string} [payload]
- * @property {string} [message]
+ * @property {string} [message] - deprecated
  * @property {string} [password]
+ * @property {string} [linkHost]
  */
 
 /**
  * @param {LinkParams} txParams
  * @return {string}
  */
-export function prepareLink(txParams = {}) {
-    const {nonce, gasPrice, gasCoin, txType, txData, password} = txParams;
+export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
+    const {nonce, gasPrice, gasCoin, type, txType, data, txData, password} = txParams;
 
     const txProps = {
         nonce: nonce && `0x${integerToHexString(nonce)}`,
         gasPrice: gasPrice && `0x${integerToHexString(gasPrice)}`,
         gasCoin: gasCoin && coinToBuffer(gasCoin),
-        type: txType,
-        data: txData,
+        type: type || txType,
+        data: ensureBufferData(data || txData, type || txType),
     };
 
     let payload = txParams.message || txParams.payload;
@@ -91,12 +94,19 @@ export function prepareLink(txParams = {}) {
         txProps.payload = payload;
     }
 
-    let result = LINK_BASE;
+    // ensure no ending slash
+    linkHost = linkHost.replace(/\/$/, '');
+    // ensure scheme
+    if (linkHost.indexOf('://') === -1) {
+        linkHost = `https://${linkHost}`;
+    }
+
     const tx = new Link(txProps);
-    result += `?d=${tx.serialize().toString('hex')}`;
+    let result = `${linkHost}/tx?d=${tx.serialize().toString('hex')}`;
     if (password) {
         result += `&p=${rlpEncode(password).toString('hex')}`;
     }
+
     return result;
 }
 
@@ -111,13 +121,13 @@ export function decodeLink(url, privateKey) {
     const passwordHex = url.indexOf('&p=') >= 0 ? url.replace(/^.*&p=/, '') : '';
     const password = passwordHex ? rlpDecode(Buffer.from(passwordHex, 'hex')) : '';
     const tx = new Link(txString);
-    const txType = `0x${tx.type.toString('hex')}`;
+    const txType = normalizeTxType(tx.type);
     if (txType === TX_TYPE.REDEEM_CHECK && password && !privateKey) {
         throw new Error('privateKey param required if link has password');
     }
     if (txType === TX_TYPE.REDEEM_CHECK && password && privateKey) {
         // get check from data
-        const {check} = new TxDataRedeemCheck(tx.data, tx.type);
+        const {check} = new TxDataRedeemCheck(tx.data);
         // proof from password
         const {txData} = new RedeemCheckTxParams({privateKey, check, password});
         tx.data = txData;
@@ -128,9 +138,8 @@ export function decodeLink(url, privateKey) {
         nonce: tx.nonce.length ? bufferToInteger(tx.nonce) : undefined,
         gasPrice: tx.gasPrice.length ? bufferToInteger(tx.gasPrice) : undefined,
         gasCoin: tx.gasCoin.length ? bufferToCoin(tx.gasCoin) : undefined,
-        txType,
-        txData,
+        type: txType,
+        data: txData,
         payload: tx.payload.toString('utf-8'),
-        ...(privateKey ? {privateKey} : {}),
     };
 }

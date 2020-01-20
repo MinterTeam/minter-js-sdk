@@ -1,3 +1,5 @@
+import {TX_TYPE} from 'minterjs-tx';
+
 import {API_TYPE_NODE, API_TYPE_GATE} from './variables';
 import Minter from './minter';
 import MinterApi from './api';
@@ -40,6 +42,7 @@ import CreateMultisigTxParams from './tx-params/create-multisig';
 
 export default Minter;
 export {
+    TX_TYPE,
     API_TYPE_NODE,
     API_TYPE_GATE,
     Minter,

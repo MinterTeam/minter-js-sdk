@@ -11,23 +11,32 @@ import {addTxDataFields} from '../utils';
  * //@TODO https://github.com/MinterTeam/minter-js-sdk/issues/13 to allow easy `prepareLink` without proof
  * @param {string|Buffer} [privateKey]
  * @param {string|Buffer} check
- * @param {string} [password]
+ * @param {string|Buffer} [password]
  * @param {string|Buffer} [proof]
  * @constructor
  */
 export default function RedeemCheckTxData({privateKey, check, password, proof}) {
+    // Buffer or UintArray to string
+    if (typeof password !== 'string') {
+        password = toBuffer(password).toString('utf8');
+    }
     this.check = checkToString(check);
 
-    if (typeof privateKey === 'string') {
+    if (typeof privateKey === 'string' && privateKey.length) {
         privateKey = Buffer.from(privateKey, 'hex');
     }
 
-    const proofWithRecovery = proof ? toBuffer(proof) : getProofWithRecovery(privateKey, password);
+    if (proof) {
+        proof = toBuffer(proof);
+    } else if (privateKey) {
+        proof = getProofWithRecovery(privateKey, password);
+    }
+
     this.txData = new TxDataRedeemCheck({
         check: toBuffer(check),
-        proof: proofWithRecovery,
+        proof,
     });
-    this.proof = `0x${proofWithRecovery.toString('hex')}`;
+    this.proof = proof ? `0x${proof.toString('hex')}` : undefined;
 
     addTxDataFields(this);
 
@@ -60,7 +69,7 @@ RedeemCheckTxData.fromRlp = function fromRlp(data) {
 /**
  * @param {Buffer} privateKey
  * @param {string} password
- * @return {ArrayBuffer}
+ * @return {ArrayBuffer|Buffer}
  */
 function getProofWithRecovery(privateKey, password) {
     const addressBuffer = privateToAddress(privateKey);

@@ -17,15 +17,9 @@ export default function PostTx(apiInstance) {
      * @return {Promise<string>}
      */
     return function postTx(txParams, {gasRetryLimit = 2} = {}) {
-        const privateKey = txParams.privateKey;
-        const nonce = txParams.nonce;
         // @TODO asserts
-        // ensure nonce
-        const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
-        const address = privateToAddressString(privateKeyBuffer);
-        const noncePromise = nonce ? Promise.resolve(nonce) : (new GetNonce(apiInstance))(address);
 
-        return noncePromise
+        return ensureNonce(apiInstance, txParams)
             .then((newNonce) => _postTxEnsureGas(apiInstance, {...txParams, nonce: newNonce}, gasRetryLimit));
     };
 }
@@ -65,6 +59,21 @@ function _postTxEnsureGas(apiInstance, txParams, gasRetryLimit) {
                 throw error;
             }
         });
+}
+
+/**
+ * @param {MinterApiInstance} apiInstance
+ * @param {TxParams} txParams
+ * @return {Promise<number>}
+ */
+function ensureNonce(apiInstance, txParams) {
+    const privateKey = txParams.privateKey;
+    const nonce = txParams.nonce;
+    // @TODO asserts
+    // ensure nonce
+    const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
+    const address = privateToAddressString(privateKeyBuffer);
+    return nonce ? Promise.resolve(nonce) : (new GetNonce(apiInstance))(address);
 }
 
 

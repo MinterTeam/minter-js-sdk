@@ -1,8 +1,10 @@
-import {Tx, TxSignature, coinToBuffer} from 'minterjs-tx';
+import {Tx, TxSignature, coinToBuffer, normalizeTxType, TX_TYPE} from 'minterjs-tx';
 // import Tx from 'minterjs-tx/src/tx';
 // import TxSignature from 'minterjs-tx/src/tx-signature';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers';
 import {integerToHexString} from './utils';
+import decorateTxParams from './tx-decorator';
+import {ensureBufferData} from './tx-data';
 
 /**
  * @typedef {Object} TxParams
@@ -11,10 +13,12 @@ import {integerToHexString} from './utils';
  * @property {Number} [chainId=1]
  * @property {number} [gasPrice=1]
  * @property {string} [gasCoin='BIP']
- * @property {string|Buffer} txType
- * @property {Buffer} txData
- * @property {string} [payload]
- * @property {string} [message]
+ * @property {string|Buffer|TX_TYPE} type
+ * @property {string|Buffer|TX_TYPE} [txType] - deprecated
+ * @property {Buffer|TxData|Object} data
+ * @property {Buffer|TxData|Object} [txData] - deprecated
+ * @property {string} payload
+ * @property {string} [message] - deprecated
  */
 
 
@@ -23,13 +27,20 @@ import {integerToHexString} from './utils';
  * @return {Tx}
  */
 export default function prepareSignedTx(txParams = {}) {
-    const {privateKey, nonce, chainId = 1, gasPrice = 1, txType, txData} = txParams;
+    txParams = {
+        ...txParams,
+        data: txParams.data || txParams.txData,
+        type: normalizeTxType(txParams.type || txParams.txType),
+        payload: txParams.payload || txParams.message,
+    };
+    txParams = decorateTxParams(txParams);
+    const {privateKey, nonce, chainId = 1, gasPrice = 1, type: txType} = txParams;
+    let {gasCoin, payload, data: txData} = txParams;
     // throw on falsy nonce except 0
     if (!nonce && typeof nonce !== 'number') {
         throw new Error('Invalid nonce specified, tx can\'t be prepared');
     }
 
-    let gasCoin = txParams.gasCoin;
     if (!gasCoin) {
         if (chainId === 2) {
             gasCoin = 'MNT';
@@ -39,6 +50,13 @@ export default function prepareSignedTx(txParams = {}) {
     }
     // @TODO asserts
     const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
+
+    // pass privateKey from params to data for redeemCheck
+    if (txType === TX_TYPE.REDEEM_CHECK && !txData.privateKey) {
+        txData.privateKey = privateKey;
+    }
+
+    txData = ensureBufferData(txData, txType);
 
     const txProps = {
         nonce: `0x${integerToHexString(nonce)}`,
@@ -50,7 +68,6 @@ export default function prepareSignedTx(txParams = {}) {
         signatureType: '0x01',
     };
 
-    let payload = txParams.message || txParams.payload;
     if (payload) {
         if (typeof payload === 'string') {
             payload = Buffer.from(payload, 'utf-8');
