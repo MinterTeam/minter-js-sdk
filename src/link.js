@@ -127,9 +127,9 @@ export function decodeLink(url, privateKey) {
     }
     if (txType === TX_TYPE.REDEEM_CHECK && password && privateKey) {
         // get check from data
-        const {check} = new TxDataRedeemCheck(tx.data);
+        const {rawCheck} = new TxDataRedeemCheck(tx.data);
         // proof from password
-        const {txData} = new RedeemCheckTxParams({privateKey, check, password});
+        const {txData} = new RedeemCheckTxParams({privateKey, check: rawCheck, password});
         tx.data = txData;
     }
     const txData = getTxData(tx.type).fromRlp(tx.data).fields;

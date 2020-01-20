@@ -1,5 +1,4 @@
-## 0.27.0 - 2020-01-20
-- **BREAKING** Rename: all `rawCheck` fields to `check`
+## 0.27.1 - 2020-01-20
 - Update: allow use `RedeemCheckTxData` without `proof` and `privateKey` it will lead to empty proof
 
 ## 0.26.1 - 2020-01-20

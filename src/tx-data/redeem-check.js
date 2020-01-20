@@ -33,7 +33,7 @@ export default function RedeemCheckTxData({privateKey, check, password, proof}) 
     }
 
     this.txData = new TxDataRedeemCheck({
-        check: toBuffer(check),
+        rawCheck: toBuffer(check),
         proof,
     });
     this.proof = proof ? `0x${proof.toString('hex')}` : undefined;
@@ -63,7 +63,9 @@ RedeemCheckTxData.fromBufferFields = function fromBufferFields({check, proof}) {
  * @return {RedeemCheckTxData}
  */
 RedeemCheckTxData.fromRlp = function fromRlp(data) {
-    return RedeemCheckTxData.fromBufferFields(new TxDataRedeemCheck(data));
+    const txData = new TxDataRedeemCheck(data);
+    txData.check = txData.rawCheck;
+    return RedeemCheckTxData.fromBufferFields(txData);
 };
 
 /**

@@ -105,6 +105,8 @@ describe('decodeLink()', () => {
             const txParams = decodeLink(LINK_CHECK);
             // add proof
             const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
+            // @TODO remove when rawCheck renamed
+            validTxParams.data.check = `Mc${(new RedeemCheckTxData(TX_PARAMS_CHECK.data)).txData.rawCheck.toString('hex')}`;
             // ensure string payload
             validTxParams.payload = validTxParams.payload || '';
             expect(txParams).toEqual(validTxParams);
@@ -114,6 +116,8 @@ describe('decodeLink()', () => {
             const txParams = decodeLink(LINK_CHECK_PASSWORD, TX_PARAMS_CHECK.data.privateKey);
             // add proof
             const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
+            // @TODO remove when rawCheck renamed
+            validTxParams.data.check = TX_PARAMS_CHECK.data.check;
             // ensure string payload
             validTxParams.payload = validTxParams.payload || '';
             expect(txParams).toEqual(validTxParams);
