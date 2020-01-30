@@ -1,7 +1,7 @@
 import {TX_TYPE} from 'minterjs-tx';
-// import TxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check';
-// import {TX_TYPE} from 'minterjs-tx/src/tx-types';
-import RedeemCheckTxData from '../tx-data/redeem-check';
+// import TxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check.js';
+// import {TX_TYPE} from 'minterjs-tx/src/tx-types.js';
+import RedeemCheckTxData from '../tx-data/redeem-check.js';
 
 
 /**

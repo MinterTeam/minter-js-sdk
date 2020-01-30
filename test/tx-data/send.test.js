@@ -1,4 +1,4 @@
-import SendTxData from '~/src/tx-data/send';
+import {SendTxData} from '~/src';
 import {clearData} from '~/test/utils';
 
 describe('SendTxData', () => {

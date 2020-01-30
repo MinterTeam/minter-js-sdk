@@ -1,8 +1,8 @@
 import {privateToAddressString} from 'minterjs-util';
-// import {privateToAddressString} from 'minterjs-util/src/prefix';
-import PostSignedTx from './post-signed-tx';
-import GetNonce from './get-nonce';
-import prepareSignedTx from '../tx';
+// import {privateToAddressString} from 'minterjs-util/src/prefix.js';
+import PostSignedTx from './post-signed-tx.js';
+import GetNonce from './get-nonce.js';
+import prepareSignedTx from '../tx.js';
 
 /**
  * @param {MinterApiInstance} apiInstance

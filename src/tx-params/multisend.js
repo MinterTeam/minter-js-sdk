@@ -1,6 +1,6 @@
 import {TX_TYPE} from 'minterjs-tx';
-// import {TX_TYPE} from 'minterjs-tx/src/tx-types';
-import MultisendTxData from '../tx-data/multisend';
+// import {TX_TYPE} from 'minterjs-tx/src/tx-types.js';
+import MultisendTxData from '../tx-data/multisend.js';
 
 /**
  * @constructor

@@ -1,6 +1,5 @@
 import {TX_TYPE} from 'minterjs-tx';
-import {prepareLink, decodeLink} from '~/src';
-import RedeemCheckTxData from '~/src/tx-data/redeem-check';
+import {prepareLink, decodeLink, RedeemCheckTxData} from '~/src';
 import {VALID_CHECK} from '~/test/check.test';
 
 const TX_PARAMS_SEND = {

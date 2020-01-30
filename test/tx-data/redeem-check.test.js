@@ -1,4 +1,4 @@
-import RedeemCheckTxData from '~/src/tx-data/redeem-check';
+import {RedeemCheckTxData} from '~/src';
 import {clearData} from '~/test/utils';
 
 describe('RedeemCheckTxData', () => {

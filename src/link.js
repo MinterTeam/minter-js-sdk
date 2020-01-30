@@ -1,9 +1,9 @@
 import {defineProperties} from 'ethereumjs-util/dist/object';
 import {encode as rlpEncode, decode as rlpDecode} from 'rlp';
 import {bufferToCoin, coinToBuffer, TxDataRedeemCheck, TX_TYPE, normalizeTxType} from 'minterjs-tx';
-import getTxData, {ensureBufferData} from './tx-data';
-import {bufferToInteger, integerToHexString} from './utils';
-import RedeemCheckTxParams from './tx-params/redeem-check';
+import getTxData, {ensureBufferData} from './tx-data/index.js';
+import {bufferToInteger, integerToHexString} from './utils.js';
+import RedeemCheckTxParams from './tx-params/redeem-check.js';
 
 const DEFAULT_LINK_HOST = 'https://bip.to';
 

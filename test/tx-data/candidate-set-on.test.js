@@ -1,4 +1,4 @@
-import SetCandidateOnTxData from '~/src/tx-data/candidate-set-on';
+import {SetCandidateOnTxData} from '~/src';
 import {clearData} from '~/test/utils';
 
 describe('SetCandidateOnTxData', () => {

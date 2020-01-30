@@ -1,4 +1,4 @@
-import DeclareCandidacyTxData from '~/src/tx-data/candidacy-declare';
+import {DeclareCandidacyTxData} from '~/src';
 import {clearData} from '~/test/utils';
 
 describe('DeclareCandidacyTxData', () => {

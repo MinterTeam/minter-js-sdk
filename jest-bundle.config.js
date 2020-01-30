@@ -1,6 +1,7 @@
 module.exports = {
     moduleNameMapper: {
         '~\/src$': '<rootDir>/dist/index.js',
+        '~\/test\/(.*)$': '<rootDir>/test/$1',
     },
     transform: {
         '^.+\\.jsx?$': 'babel-jest',

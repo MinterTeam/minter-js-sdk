@@ -1,4 +1,4 @@
-import SellTxData from '~/src/tx-data/convert-sell';
+import {SellTxData} from '~/src';
 import {clearData} from '~/test/utils';
 
 describe('SellTxData', () => {

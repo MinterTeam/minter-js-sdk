@@ -1,7 +1,7 @@
 import {TxDataBuy, TX_TYPE, coinToBuffer} from 'minterjs-tx';
 import {convertToPip} from 'minterjs-util';
-// import {convertToPip} from 'minterjs-util/src/converter';
-import BuyTxData from '../tx-data/convert-buy';
+// import {convertToPip} from 'minterjs-util/src/converter.js';
+import BuyTxData from '../tx-data/convert-buy.js';
 
 /**
  * @constructor

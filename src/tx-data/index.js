@@ -1,18 +1,18 @@
 import {TX_TYPE, normalizeTxType} from 'minterjs-tx';
-import SendTxData from './send';
-import MultisendTxData from './multisend';
-import SellTxData from './convert-sell';
-import BuyTxData from './convert-buy';
-import SellAllTxData from './convert-sell-all';
-import CreateCoinTxData from './create-coin';
-import DeclareCandidacyTxData from './candidacy-declare';
-import EditCandidateTxData from './candidate-edit';
-import SetCandidateOnTxData from './candidate-set-on';
-import SetCandidateOffTxData from './candidate-set-off';
-import DelegateTxData from './stake-delegate';
-import UnbondTxData from './stake-unbond';
-import RedeemCheckTxData from './redeem-check';
-import CreateMultisigTxData from './create-multisig';
+import SendTxData from './send.js';
+import MultisendTxData from './multisend.js';
+import SellTxData from './convert-sell.js';
+import BuyTxData from './convert-buy.js';
+import SellAllTxData from './convert-sell-all.js';
+import CreateCoinTxData from './create-coin.js';
+import DeclareCandidacyTxData from './candidacy-declare.js';
+import EditCandidateTxData from './candidate-edit.js';
+import SetCandidateOnTxData from './candidate-set-on.js';
+import SetCandidateOffTxData from './candidate-set-off.js';
+import DelegateTxData from './stake-delegate.js';
+import UnbondTxData from './stake-unbond.js';
+import RedeemCheckTxData from './redeem-check.js';
+import CreateMultisigTxData from './create-multisig.js';
 
 const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.SEND]: SendTxData,

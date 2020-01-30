@@ -1,5 +1,5 @@
 import {TX_TYPE} from 'minterjs-tx';
-import SendTxData from '../tx-data/send';
+import SendTxData from '../tx-data/send.js';
 
 /**
  * @constructor

@@ -1,6 +1,6 @@
 import {TX_TYPE} from 'minterjs-tx';
-// import {TX_TYPE} from 'minterjs-tx/src/tx-types';
-import SellTxData from '../tx-data/convert-sell';
+// import {TX_TYPE} from 'minterjs-tx/src/tx-types.js';
+import SellTxData from '../tx-data/convert-sell.js';
 
 /**
  * @constructor

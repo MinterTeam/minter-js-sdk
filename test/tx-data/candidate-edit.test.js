@@ -1,4 +1,4 @@
-import EditCandidateTxData from '~/src/tx-data/candidate-edit';
+import {EditCandidateTxData} from '~/src';
 import {clearData} from '~/test/utils';
 
 describe('EditCandidateTxData', () => {

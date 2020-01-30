@@ -1,6 +1,6 @@
 import {TX_TYPE} from 'minterjs-tx';
-// import {TX_TYPE} from 'minterjs-tx/src/tx-types';
-import CreateMultisigTxData from '../tx-data/create-multisig';
+// import {TX_TYPE} from 'minterjs-tx/src/tx-types.js';
+import CreateMultisigTxData from '../tx-data/create-multisig.js';
 
 /**
  * @constructor

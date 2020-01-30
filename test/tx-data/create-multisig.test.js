@@ -1,4 +1,4 @@
-import CreateMultisigTxData from '~/src/tx-data/create-multisig';
+import {CreateMultisigTxData} from '~/src';
 import {clearData} from '~/test/utils';
 
 describe('CreateMultisigTxData', () => {
