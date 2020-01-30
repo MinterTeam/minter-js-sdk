@@ -43,7 +43,7 @@ Contents:
     - [Redeem Check](#redeem-check)
     - [Create Multisig](#create-multisig)
   - [Prepare Signed Transaction](#prepare-signed-transaction)
-  - [Minter Check](minter-check)
+  - [Minter Check](#minter-check)
     - [issueCheck](#issuecheck)
     - [decodeCheck](#decodecheck)
   - [Minter Link](#minter-link)
