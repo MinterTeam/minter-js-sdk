@@ -1,3 +1,6 @@
+## 0.27.3 - 2020-01-30
+- Fix: candidate-set-on/off tx data constructors
+
 ## 0.27.2 - 2020-01-30
 - Add: expose `.postSignedTx` method on `Minter` instance
 - Add: expose data constructors in index.js

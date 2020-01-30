@@ -330,7 +330,7 @@ describe('validator', () => {
             address: apiType.address,
             publicKey: 'Mp00',
             coinSymbol: 'MNT',
-            stake: 1.2,
+            stake: 1.21,
             commission: 50,
             feeCoinSymbol: 'MNT',
             message: 'custom message',
