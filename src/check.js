@@ -1,6 +1,6 @@
-import {defineProperties} from 'ethereumjs-util/dist/object';
-import {ecsign} from 'ethereumjs-util/dist/signature';
-import {rlphash, sha256} from 'ethereumjs-util/dist/hash';
+import {defineProperties} from 'ethereumjs-util/dist/object.js';
+import {ecsign} from 'ethereumjs-util/dist/signature.js';
+import {rlphash, sha256} from 'ethereumjs-util/dist/hash.js';
 import secp256k1 from 'secp256k1';
 import {coinToBuffer, bufferToCoin} from 'minterjs-tx';
 // import {coinToBuffer, bufferToCoin} from 'minterjs-tx/src/helpers.js';

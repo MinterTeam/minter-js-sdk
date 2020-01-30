@@ -1,4 +1,4 @@
-import {defineProperties} from 'ethereumjs-util/dist/object';
+import {defineProperties} from 'ethereumjs-util/dist/object.js';
 import {encode as rlpEncode, decode as rlpDecode} from 'rlp';
 import {bufferToCoin, coinToBuffer, TxDataRedeemCheck, TX_TYPE, normalizeTxType} from 'minterjs-tx';
 import getTxData, {ensureBufferData} from './tx-data/index.js';
