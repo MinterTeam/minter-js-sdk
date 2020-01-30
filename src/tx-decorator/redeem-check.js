@@ -1,5 +1,5 @@
-import {getGasCoinFromCheck} from '../check';
-import RedeemCheckTxData from '../tx-data/redeem-check';
+import {getGasCoinFromCheck} from '../check.js';
+import RedeemCheckTxData from '../tx-data/redeem-check.js';
 
 /**
  * @param {TxParams} params

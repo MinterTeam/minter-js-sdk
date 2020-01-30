@@ -1,10 +1,10 @@
 import {Tx, TxSignature, coinToBuffer, normalizeTxType, TX_TYPE} from 'minterjs-tx';
 // import Tx from 'minterjs-tx/src/tx';
-// import TxSignature from 'minterjs-tx/src/tx-signature';
-// import {coinToBuffer} from 'minterjs-tx/src/helpers';
-import {integerToHexString} from './utils';
-import decorateTxParams from './tx-decorator';
-import {ensureBufferData} from './tx-data';
+// import TxSignature from 'minterjs-tx/src/tx-signature.js';
+// import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
+import {integerToHexString} from './utils.js';
+import decorateTxParams from './tx-decorator/index.js';
+import {ensureBufferData} from './tx-data/index.js';
 
 /**
  * @typedef {Object} TxParams

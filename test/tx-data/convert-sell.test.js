@@ -1,4 +1,4 @@
-import SellTxData from '~/src/tx-data/convert-sell';
+import {SellTxData} from '~/src';
 
 describe('SellTxData', () => {
     const txParamsData = {

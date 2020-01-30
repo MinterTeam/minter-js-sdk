@@ -1,8 +1,8 @@
 import {TxDataCreateMultisig} from 'minterjs-tx';
-// import TxDataCreateMultisig from 'minterjs-tx/src/tx-data/create-multisig';
+// import TxDataCreateMultisig from 'minterjs-tx/src/tx-data/create-multisig.js';
 import {addressToString, toBuffer} from 'minterjs-util';
-// import {toBuffer} from 'minterjs-util/src/prefix';
-import {addTxDataFields, bufferToInteger, integerToHexString} from '../utils';
+// import {toBuffer} from 'minterjs-util/src/prefix.js';
+import {addTxDataFields, bufferToInteger, integerToHexString} from '../utils.js';
 
 /**
  * @param {Array} addresses

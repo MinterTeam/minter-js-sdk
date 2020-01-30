@@ -1,4 +1,4 @@
-import {API_TYPE_GATE, API_TYPE_NODE} from '../variables';
+import {API_TYPE_GATE, API_TYPE_NODE} from '../variables.js';
 
 /* eslint-disable-next-line import/prefer-default-export */
 export function getData(response, apiType) {

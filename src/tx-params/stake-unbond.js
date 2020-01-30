@@ -1,5 +1,5 @@
 import {TX_TYPE} from 'minterjs-tx';
-import UnbondTxData from '../tx-data/stake-unbond';
+import UnbondTxData from '../tx-data/stake-unbond.js';
 
 /**
  * @constructor

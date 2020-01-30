@@ -1,4 +1,4 @@
-import SetCandidateOffTxData from '~/src/tx-data/candidate-set-off';
+import {SetCandidateOffTxData} from '~/src';
 
 describe('SetCandidateOffTxData', () => {
     const txParamsData = {

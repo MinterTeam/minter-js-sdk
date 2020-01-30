@@ -1,9 +1,9 @@
 import {TxDataCreateCoin, coinToBuffer, bufferToCoin} from 'minterjs-tx';
-// import TxDataCreateCoin from 'minterjs-tx/src/tx-data/create-coin';
-// import {coinToBuffer} from 'minterjs-tx/src/helpers';
+// import TxDataCreateCoin from 'minterjs-tx/src/tx-data/create-coin.js';
+// import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
 import {convertFromPip, convertToPip, toBuffer} from 'minterjs-util';
-// import {convertToPip} from 'minterjs-util/src/converter';
-import {addTxDataFields, bufferToInteger, integerToHexString} from '../utils';
+// import {convertToPip} from 'minterjs-util/src/converter.js';
+import {addTxDataFields, bufferToInteger, integerToHexString} from '../utils.js';
 
 // limit in bips
 export const MAX_MAX_SUPPLY = 10 ** 15;

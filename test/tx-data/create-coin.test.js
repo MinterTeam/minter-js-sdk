@@ -1,4 +1,4 @@
-import CreateCoinTxData from '~/src/tx-data/create-coin';
+import {CreateCoinTxData} from '~/src';
 
 describe('CreateCoinTxData', () => {
     const txParamsData = {

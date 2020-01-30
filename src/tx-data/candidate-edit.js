@@ -1,8 +1,8 @@
 import {TxDataEditCandidate} from 'minterjs-tx';
-// import TxDataEditCandidate from 'minterjs-tx/src/tx-data/edit-candidate';
+// import TxDataEditCandidate from 'minterjs-tx/src/tx-data/edit-candidate.js';
 import {addressToString, publicToString, toBuffer} from 'minterjs-util';
-// import {toBuffer} from 'minterjs-util/src/prefix';
-import {addTxDataFields} from '../utils';
+// import {toBuffer} from 'minterjs-util/src/prefix.js';
+import {addTxDataFields} from '../utils.js';
 
 /**
  * @param {string} publicKey

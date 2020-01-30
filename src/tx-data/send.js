@@ -1,8 +1,8 @@
 import {TxDataSend, coinToBuffer, bufferToCoin} from 'minterjs-tx';
 import {convertToPip, convertFromPip, toBuffer, addressToString} from 'minterjs-util';
-// import {convertToPip} from 'minterjs-util/src/converter';
-// import {toBuffer} from 'minterjs-util/src/prefix';
-import {bufferToInteger, addTxDataFields} from '../utils';
+// import {convertToPip} from 'minterjs-util/src/converter.js';
+// import {toBuffer} from 'minterjs-util/src/prefix.js';
+import {bufferToInteger, addTxDataFields} from '../utils.js';
 
 
 /**

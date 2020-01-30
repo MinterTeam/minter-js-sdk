@@ -1,4 +1,4 @@
-import RedeemCheckTxData from '~/src/tx-data/redeem-check';
+import {RedeemCheckTxData} from '~/src';
 
 describe('RedeemCheckTxData', () => {
     const privateKey = '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da';

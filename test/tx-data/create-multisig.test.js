@@ -1,4 +1,4 @@
-import CreateMultisigTxData from '~/src/tx-data/create-multisig';
+import {CreateMultisigTxData} from '~/src';
 
 describe('CreateMultisigTxData', () => {
     const txParamsData = {

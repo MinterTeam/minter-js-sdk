@@ -3,11 +3,11 @@ import {ecsign} from 'ethereumjs-util/dist/signature';
 import {rlphash, sha256} from 'ethereumjs-util/dist/hash';
 import secp256k1 from 'secp256k1';
 import {coinToBuffer, bufferToCoin} from 'minterjs-tx';
-// import {coinToBuffer, bufferToCoin} from 'minterjs-tx/src/helpers';
+// import {coinToBuffer, bufferToCoin} from 'minterjs-tx/src/helpers.js';
 import {convertToPip, convertFromPip, mPrefixStrip, toBuffer} from 'minterjs-util';
-// import {convertToPip, convertFromPip} from 'minterjs-util/src/converter';
-// import {mPrefixStrip} from 'minterjs-util/src/prefix';
-import {isNumericInteger, integerToHexString, bufferToInteger} from './utils';
+// import {convertToPip, convertFromPip} from 'minterjs-util/src/converter.js';
+// import {mPrefixStrip} from 'minterjs-util/src/prefix.js';
+import {isNumericInteger, integerToHexString, bufferToInteger} from './utils.js';
 
 class Check {
     constructor(data) {

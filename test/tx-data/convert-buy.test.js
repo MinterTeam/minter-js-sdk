@@ -1,4 +1,4 @@
-import BuyTxData from '~/src/tx-data/convert-buy';
+import {BuyTxData} from '~/src';
 import {clearData} from '~/test/utils';
 
 describe('BuyTxData', () => {

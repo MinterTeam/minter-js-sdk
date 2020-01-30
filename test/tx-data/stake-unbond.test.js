@@ -1,4 +1,4 @@
-import UnbondTxData from '~/src/tx-data/stake-unbond';
+import {UnbondTxData} from '~/src';
 
 describe('UnbondTxData', () => {
     const txParamsData = {

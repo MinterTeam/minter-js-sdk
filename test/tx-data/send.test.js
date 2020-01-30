@@ -1,4 +1,4 @@
-import SendTxData from '~/src/tx-data/send';
+import {SendTxData} from '~/src';
 
 describe('SendTxData', () => {
     const txParamsData = {

@@ -1,10 +1,10 @@
 import secp256k1 from 'secp256k1';
-import {sha256, rlphash} from 'ethereumjs-util/dist/hash';
-import {privateToAddress} from 'ethereumjs-util/dist/account';
+import {sha256, rlphash} from 'ethereumjs-util/dist/hash.js';
+import {privateToAddress} from 'ethereumjs-util/dist/account.js';
 import {TxDataRedeemCheck} from 'minterjs-tx';
-// import TxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check';
+// import TxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check.js';
 import {toBuffer, checkToString} from 'minterjs-util';
-import {addTxDataFields} from '../utils';
+import {addTxDataFields} from '../utils.js';
 
 
 /**

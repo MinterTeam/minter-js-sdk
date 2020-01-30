@@ -1,4 +1,4 @@
-import SellAllTxData from '~/src/tx-data/convert-sell-all';
+import {SellAllTxData} from '~/src';
 
 describe('SellAllTxData', () => {
     const txParamsData = {

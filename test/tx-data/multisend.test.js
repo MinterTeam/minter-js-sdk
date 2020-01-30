@@ -1,4 +1,4 @@
-import MultisendTxData from '~/src/tx-data/multisend';
+import {MultisendTxData} from '~/src';
 
 describe('MultisendTxData', () => {
     const txParamsData = {

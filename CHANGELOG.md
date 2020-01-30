@@ -17,6 +17,11 @@
 - `redeemCheck` params will check if passed `feeCoinSymbol` is equal to `gasCoin` from check, may be omitted, `gasCoin` from check will be used
 - add `maxSupply` field to `CreateCoinTxParams`
 
+## 0.27.2 - 2020-01-30
+- Add: expose `.postSignedTx` method on `Minter` instance
+- Add: expose data constructors in index.js
+- minor refactor
+
 ## 0.27.1 - 2020-01-20
 - Update: allow use `RedeemCheckTxData` without `proof` and `privateKey` it will lead to empty proof
 

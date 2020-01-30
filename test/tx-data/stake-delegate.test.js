@@ -1,4 +1,4 @@
-import DelegateTxData from '~/src/tx-data/stake-delegate';
+import {DelegateTxData} from '~/src';
 
 describe('DelegateTxData', () => {
     const txParamsData = {

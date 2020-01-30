@@ -1,8 +1,8 @@
 import {TxDataDelegate, TxDataSetCandidateOn} from 'minterjs-tx';
-// import TxDataSetCandidateOn from 'minterjs-tx/src/tx-data/set-candidate-On';
+// import TxDataSetCandidateOn from 'minterjs-tx/src/tx-data/set-candidate-on.js';
 import {publicToString, toBuffer} from 'minterjs-util';
-// import {toBuffer} from 'minterjs-util/src/prefix';
-import {addTxDataFields} from '../utils';
+// import {toBuffer} from 'minterjs-util/src/prefix.js';
+import {addTxDataFields} from '../utils.js';
 
 /**
  * @param {string} publicKey

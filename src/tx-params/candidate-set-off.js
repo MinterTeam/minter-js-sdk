@@ -1,6 +1,6 @@
 import {TX_TYPE} from 'minterjs-tx';
-// import {TX_TYPE} from 'minterjs-tx/src/tx-types';
-import SetCandidateOffTxData from '../tx-data/candidate-set-off';
+// import {TX_TYPE} from 'minterjs-tx/src/tx-types.js';
+import SetCandidateOffTxData from '../tx-data/candidate-set-off.js';
 
 /**
  * @constructor

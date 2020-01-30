@@ -1,7 +1,7 @@
 import {TxDataBuy, coinToBuffer, bufferToCoin} from 'minterjs-tx';
 import {convertFromPip, convertToPip, toBuffer} from 'minterjs-util';
-import {addTxDataFields, bufferToInteger} from '../utils';
-// import {convertToPip} from 'minterjs-util/src/converter';
+import {addTxDataFields, bufferToInteger} from '../utils.js';
+// import {convertToPip} from 'minterjs-util/src/converter.js';
 
 /**
  * @param {string} coinToSell
