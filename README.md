@@ -17,7 +17,7 @@ It is complemented by the following packages:
 - [minterjs-util](https://github.com/MinterTeam/minterjs-util) utility functions
 
 Contents:
-- [Install](#nstall)
+- [Install](#install)
 - [Usage](#usage)
   - [SDK instance](#sdk-instance)
     - [postTx](#posttx)
