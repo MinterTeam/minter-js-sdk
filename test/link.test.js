@@ -44,6 +44,16 @@ const TX_PARAMS_CHECK = {
 const LINK_CHECK = 'https://bip.to/tx?d=f8f009b8e9f8e7b8a2f8a03101830f423f8a4d4e5400000000000000888ac7230489e80000b84149eba2361855724bbd3d20eb97a54ea15ad7dc28c1111b8dcf3bb15db26f874f095803cad9f8fc88b2b4eec9ba706325a7929be31b6ccfef01260791a844cb55011ba06c63ad17bfe07b82be8a0144fd4daf8b4144281fdf88f313205ceacf37fd877fa03c243ad79cab6205f4b753bd402c4cfa5d570888659090b2f923071ac52bdf75b8410497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d0180808080';
 const LINK_CHECK_PASSWORD = 'https://bip.to/tx?d=f8ae09b8a7f8a5b8a2f8a03101830f423f8a4d4e5400000000000000888ac7230489e80000b84149eba2361855724bbd3d20eb97a54ea15ad7dc28c1111b8dcf3bb15db26f874f095803cad9f8fc88b2b4eec9ba706325a7929be31b6ccfef01260791a844cb55011ba06c63ad17bfe07b82be8a0144fd4daf8b4144281fdf88f313205ceacf37fd877fa03c243ad79cab6205f4b753bd402c4cfa5d570888659090b2f923071ac52bdf758080808080&p=8470617373';
 
+const TX_PARAMS_SET_CANDIDATE_OFF = {
+    type: TX_TYPE.SET_CANDIDATE_OFF,
+    data: {
+        publicKey: 'Mp0eb98ea04ae466d8d38f490db3c99b3996a90e24243952ce9822c6dc1e2c1a43',
+    },
+    gasCoin: 'MNT',
+    gasPrice: 1,
+};
+const LINK_SET_CANDIDATE_OFF = 'https://bip.to/tx?d=eb0ba2e1a00eb98ea04ae466d8d38f490db3c99b3996a90e24243952ce9822c6dc1e2c1a43808001834d4e54';
+
 
 describe('prepareLink()', () => {
     test('should work', () => {
@@ -124,6 +134,14 @@ describe('decodeLink()', () => {
 
         test('should throw on password without private key', () => {
             expect(() => decodeLink(LINK_CHECK_PASSWORD)).toThrow();
+        });
+    });
+
+    test('set candidate off', () => {
+        const txParams = decodeLink(LINK_SET_CANDIDATE_OFF);
+        expect(txParams).toEqual({
+            ...TX_PARAMS_SET_CANDIDATE_OFF,
+            payload: TX_PARAMS_SET_CANDIDATE_OFF.payload || '',
         });
     });
 });

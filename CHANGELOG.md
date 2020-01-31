@@ -1,3 +1,6 @@
+## 0.27.4 - 2020-01-31
+- Fix: decodeLink for candidate-set-on/off transactions 
+
 ## 0.27.3 - 2020-01-30
 - Fix: candidate-set-on/off tx data constructors
 

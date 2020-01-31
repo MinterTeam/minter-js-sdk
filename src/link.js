@@ -138,7 +138,7 @@ export function decodeLink(url, privateKey) {
         txData.check = getTxData(tx.type).fromRlp(tx.data).check;
     }
     // fix pubKey
-    if (txType === TX_TYPE.DECLARE_CANDIDACY || txType === TX_TYPE.EDIT_CANDIDATE || txType === TX_TYPE.DELEGATE || txType === TX_TYPE.UNBOND) {
+    if (txType === TX_TYPE.DECLARE_CANDIDACY || txType === TX_TYPE.EDIT_CANDIDATE || txType === TX_TYPE.DELEGATE || txType === TX_TYPE.UNBOND || txType === TX_TYPE.SET_CANDIDATE_ON || txType === TX_TYPE.SET_CANDIDATE_OFF) {
         txData.publicKey = getTxData(tx.type).fromRlp(tx.data).publicKey;
     }
 
