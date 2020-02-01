@@ -7,7 +7,7 @@ import {coinToBuffer, bufferToCoin} from 'minterjs-tx';
 import {convertToPip, convertFromPip, mPrefixStrip} from 'minterjs-util';
 // import {convertToPip, convertFromPip} from 'minterjs-util/src/converter.js';
 // import {mPrefixStrip} from 'minterjs-util/src/prefix.js';
-import {isNumericInteger, integerToHexString, bufferToInteger} from './utils.js';
+import {isNumericInteger, integerToHexString, bufferToInteger, bufferToBigInteger} from './utils.js';
 
 class Check {
     constructor(data) {
@@ -159,7 +159,7 @@ export function decodeCheck(rawCheck) {
         nonce: check.nonce.toString('utf-8'),
         chainId: bufferToInteger(check.chainId),
         coin: bufferToCoin(check.coin),
-        value: convertFromPip(bufferToInteger(check.value)),
+        value: convertFromPip(bufferToBigInteger(check.value)),
         dueBlock: bufferToInteger(check.dueBlock),
     };
 }

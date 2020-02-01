@@ -35,6 +35,10 @@ export function bufferToInteger(buf) {
     return parseInt(buf.toString('hex'), 16) || 0;
 }
 
+export function bufferToBigInteger(buf) {
+    return BigInt('0x'+buf.toString('hex')) || 0;
+}
+
 export const toHexString = integerToHexString;
 
 export function addTxDataFields(txData) {
