@@ -1,6 +1,6 @@
 {
   "name": "minter-js-sdk",
-  "version": "0.27.4",
+  "version": "0.28.0",
   "description": "JS SDK for Minter Blockchain",
   "main": "dist/cjs/index.js",
   "module": "src/index.js",
@@ -21,6 +21,9 @@
     "lint": "eslint --ext .js ./src ./test",
     "lint:fix": "eslint --ext .js ./src ./test --fix",
     "test": "npm run jest && npm run test:bundle && npm run test:bundle-cjs",
+    "test:src": "jest",
+    "test:src-unit": "jest --testPathIgnorePatterns='<rootDir>/test/api'",
+    "test:src-e2e": "jest --testPathPattern='api\/'",
     "test:bundle": "npm run bundle && npm run jest:bundle",
     "test:bundle-cjs": "npm run bundle:cjs && npm run jest:bundle-cjs",
     "jest": "jest",

@@ -1,5 +1,5 @@
 import {TX_TYPE} from 'minterjs-tx';
-import {prepareLink, decodeLink, RedeemCheckTxData} from '~/src';
+import {prepareLink, decodeLink, RedeemCheckTxData, issueCheck, decodeCheck} from '~/src';
 import {VALID_CHECK} from '~/test/check.test';
 
 const TX_PARAMS_SEND = {
@@ -19,12 +19,12 @@ const TX_PARAMS_MULTISEND = {
     data: {
         list: [
             {
-                value: 0.1,
+                value: '0.1',
                 coin: 'MNT',
                 to: 'Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99',
             },
             {
-                value: 0.2,
+                value: '0.2',
                 coin: 'MNT',
                 to: 'Mxddab6281766ad86497741ff91b6b48fe85012e3c',
             },
@@ -50,7 +50,7 @@ const TX_PARAMS_SET_CANDIDATE_OFF = {
         publicKey: 'Mp0eb98ea04ae466d8d38f490db3c99b3996a90e24243952ce9822c6dc1e2c1a43',
     },
     gasCoin: 'MNT',
-    gasPrice: 1,
+    gasPrice: '1',
 };
 const LINK_SET_CANDIDATE_OFF = 'https://bip.to/tx?d=eb0ba2e1a00eb98ea04ae466d8d38f490db3c99b3996a90e24243952ce9822c6dc1e2c1a43808001834d4e54';
 
@@ -143,5 +143,14 @@ describe('decodeLink()', () => {
             ...TX_PARAMS_SET_CANDIDATE_OFF,
             payload: TX_PARAMS_SET_CANDIDATE_OFF.payload || '',
         });
+    });
+
+    test('should not lose precision', () => {
+        const bigValue = '123456789012345.123456789012345678';
+        const link = prepareLink({
+            ...TX_PARAMS_SEND,
+            data: {...TX_PARAMS_SEND.data, value: bigValue},
+        });
+        expect(decodeLink(link).data.value).toEqual(bigValue);
     });
 });

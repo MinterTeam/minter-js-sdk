@@ -7,10 +7,10 @@ const checkParams = {
     privateKey: '2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
     passPhrase: 'pass',
     nonce: '1',
-    chainId: 1,
+    chainId: '1',
     coin: 'MNT',
     value: '10',
-    dueBlock: 999999,
+    dueBlock: '999999',
 };
 
 describe('issueCheck()', () => {
@@ -90,5 +90,13 @@ describe('decodeCheck()', () => {
     delete checkParamsWithoutSensitiveData.passPhrase;
     delete checkParamsWithoutSensitiveData.privateKey;
 
-    expect(decodeCheck(VALID_CHECK)).toEqual(checkParamsWithoutSensitiveData);
+    test('should work', () => {
+        expect(decodeCheck(VALID_CHECK)).toEqual(checkParamsWithoutSensitiveData);
+    });
+
+    test('should not lose precision', () => {
+        const bigValue = '123456789012345.123456789012345678';
+        const check = issueCheck({...checkParams, value: bigValue});
+        expect(decodeCheck(check).value).toEqual(bigValue);
+    });
 });

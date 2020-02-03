@@ -1,3 +1,6 @@
+## 0.28.0 - 2020-02-03
+- **BREAKING** Fix: `decodeCheck`, `decodeLink` and `bufferToInteger` now returns string values for numbers. It will fix precision loss for big numbers.
+
 ## 0.27.4 - 2020-01-31
 - Fix: decodeLink for candidate-set-on/off transactions 
 
