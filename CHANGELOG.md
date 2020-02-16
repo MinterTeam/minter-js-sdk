@@ -1,3 +1,15 @@
+## 0.29.0 - 2020-02-14
+- **BREAKING** Change: `decodeLink` 2nd param private key now is object with `privateKey` field
+```js
+// old 
+decodeLink('https://bip.to/tx...', 'f812...');
+
+// new
+decodeLink('https://bip.to/tx...', {privateKey: 'f812...'});
+```
+- Add: `decodeTx` method to decode RLP serialized tx
+- Add: `decodeTx` and `decodeLink` methods now has `decodeCheck` param, it adds `checkData` field next to `check` field for redeemCheck tx data 
+
 ## 0.28.0 - 2020-02-03
 - **BREAKING** Fix: `decodeCheck`, `decodeLink` and `bufferToInteger` now returns string values for numbers. It will fix precision loss for big numbers.
 

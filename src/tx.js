@@ -1,10 +1,10 @@
-import {Tx, TxSignature, coinToBuffer, normalizeTxType, TX_TYPE} from 'minterjs-tx';
+import {Tx, TxSignature, coinToBuffer, normalizeTxType, TX_TYPE, bufferToCoin} from 'minterjs-tx';
 // import Tx from 'minterjs-tx/src/tx';
 // import TxSignature from 'minterjs-tx/src/tx-signature.js';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
-import {integerToHexString} from './utils.js';
+import {bufferToInteger, integerToHexString} from './utils.js';
 import decorateTxParams from './tx-decorator/index.js';
-import {ensureBufferData} from './tx-data/index.js';
+import {decodeTxData, ensureBufferData} from './tx-data/index.js';
 
 /**
  * @typedef {Object} TxParams
@@ -79,4 +79,29 @@ export default function prepareSignedTx(txParams = {}) {
     tx.signatureData = (new TxSignature()).sign(tx.hash(false), privateKeyBuffer).serialize();
 
     return tx;
+}
+
+
+/**
+ * @param {string} txRlp
+ * @param {boolean} [decodeCheck]
+ * @return {TxParams}
+ */
+export function decodeTx(txRlp, {decodeCheck} = {}) {
+    const txString = txRlp.replace('0x', '');
+    const tx = new Tx(txString);
+    const txType = normalizeTxType(tx.type);
+    const txData = decodeTxData(tx.type, tx.data, {decodeCheck});
+
+    return {
+        nonce: tx.nonce.length ? bufferToInteger(tx.nonce) : undefined,
+        chainId: tx.chainId.length ? bufferToInteger(tx.chainId) : undefined,
+        gasPrice: tx.gasPrice.length ? bufferToInteger(tx.gasPrice) : undefined,
+        gasCoin: tx.gasCoin.length ? bufferToCoin(tx.gasCoin) : undefined,
+        type: txType,
+        data: txData,
+        payload: tx.payload.toString('utf-8'),
+        signatureType: tx.signatureType.length ? bufferToInteger(tx.signatureType) : undefined,
+        signatureData: `0x${tx.signatureData.toString('hex')}`,
+    };
 }

@@ -121,8 +121,28 @@ describe('decodeLink()', () => {
             expect(txParams).toEqual(validTxParams);
         });
 
+        test('should work decodeCheck', () => {
+            console.log(LINK_CHECK);
+            console.log(decodeLink(LINK_CHECK, {decodeCheck: true}));
+            const txParams = decodeLink(LINK_CHECK, {decodeCheck: true});
+            // add proof
+            const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
+            validTxParams.data.checkData = {
+                chainId: '1',
+                coin: 'MNT',
+                dueBlock: '999999',
+                nonce: '1',
+                value: '10',
+            };
+            // @TODO remove when rawCheck renamed
+            validTxParams.data.check = `Mc${(new RedeemCheckTxData(TX_PARAMS_CHECK.data)).txData.rawCheck.toString('hex')}`;
+            // ensure string payload
+            validTxParams.payload = validTxParams.payload || '';
+            expect(txParams).toEqual(validTxParams);
+        });
+
         test('should work with password', () => {
-            const txParams = decodeLink(LINK_CHECK_PASSWORD, TX_PARAMS_CHECK.data.privateKey);
+            const txParams = decodeLink(LINK_CHECK_PASSWORD, {privateKey: TX_PARAMS_CHECK.data.privateKey});
             // add proof
             const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
             // @TODO remove when rawCheck renamed

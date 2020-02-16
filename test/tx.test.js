@@ -1,5 +1,6 @@
 import {TX_TYPE} from 'minterjs-tx';
-import {prepareSignedTx, SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, MultisendTxParams, RedeemCheckTxParams} from '~/src';
+import {prepareSignedTx, decodeTx, SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, MultisendTxParams, RedeemCheckTxParams} from '~/src';
+import {VALID_CHECK} from '~/test/check.test.js';
 
 
 describe('prepareSignedTx', () => {
@@ -593,11 +594,10 @@ describe('prepareSignedTx', () => {
     });
 
     describe('redeem check', () => {
-        const check = 'Mcf8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296ee';
         const txParamsData = {
             privateKey,
             nonce: 11111,
-            check,
+            check: VALID_CHECK,
             password: '123',
             feeCoinSymbol: 'MNT',
         };
@@ -606,12 +606,12 @@ describe('prepareSignedTx', () => {
             nonce: 11111,
             type: TX_TYPE.REDEEM_CHECK,
             data: {
-                check,
+                check: VALID_CHECK,
                 password: '123',
             },
             gasCoin: 'MNT',
         };
-        const validTxHex = 'f90146822b6701018a4d4e540000000000000009b8e9f8e7b8a2f8a002843b9ac9ff8a4d4e5400000000000000888ac7230489e80000b841ed4e21035ad4d56901422c19e7fc867a63dcab709d6d0dcc0b6333cb7365d187519e1291bbc002189e7030dedfbbc4feb733da73f9409de4f01365dd3f5f4927011ca0507210c64b3aeb7c81a2db06204b935814c28482175dee756b1f05414d18e594a06173c7c8ee51ad76e9704a39ffc5c0ab11514d8b68efcbc8df1db194d9e296eeb8417adcf6a62a66b177b266c767c5ebd906651fb66269401a8c66d053574dc29c67296b93af2e276fbdf5f606a98419ae69191450f67a2d273ee6c5d3016773c16d01808001b845f8431ba0a1be7bd13988de85039b1afed88d5863f042b661a1476207a9dc07c000d9bd37a03603628e7f6bf1f3cefa506f9497703f4b35cfb5f69982ff9ea3ed5d4126043f';
+        const validTxHex = 'f90146822b6701018a4d4e540000000000000009b8e9f8e7b8a2f8a03101830f423f8a4d4e5400000000000000888ac7230489e80000b84149eba2361855724bbd3d20eb97a54ea15ad7dc28c1111b8dcf3bb15db26f874f095803cad9f8fc88b2b4eec9ba706325a7929be31b6ccfef01260791a844cb55011ba06c63ad17bfe07b82be8a0144fd4daf8b4144281fdf88f313205ceacf37fd877fa03c243ad79cab6205f4b753bd402c4cfa5d570888659090b2f923071ac52bdf75b8417adcf6a62a66b177b266c767c5ebd906651fb66269401a8c66d053574dc29c67296b93af2e276fbdf5f606a98419ae69191450f67a2d273ee6c5d3016773c16d01808001b845f8431ca0a8513cffcd642540ccf2f56d76898de62a7f312c41418410ffa77b93a78edd6aa01fc3a03e19a1db7bd8b6c08681632b5373d4d5e38995ae73e0cf9d880bed677e';
 
         test('should work tx params', () => {
             const txParams = new RedeemCheckTxParams(txParamsData);
@@ -626,6 +626,53 @@ describe('prepareSignedTx', () => {
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
+        });
+    });
+});
+
+describe('decodeTx', () => {
+    test('should work', () => {
+        expect(decodeTx('0xf87e818102018a42414e414e415445535402a3e28a42414e414e41544553548a067d59060c9f4d7282328a4d4e540000000000000080808001b845f8431ca01d568386460de1dd40a7c73084a84be68bbf4696aea0208530d3bae2ccf47e4ba059cb6cbfb12e56d7f5f4f8c367a76a867aff09afca15e8d61a7ef4cf7e0d26be')).toEqual({
+            nonce: '129',
+            chainId: '2',
+            gasPrice: '1',
+            gasCoin: 'BANANATEST',
+            type: '0x02',
+            data:
+                { coinToSell: 'BANANATEST',
+                    valueToSell: '30646.456735029139767858',
+                    coinToBuy: 'MNT',
+                    minimumValueToBuy: '0' },
+            payload: '',
+            signatureType: '1',
+            signatureData: '0xf8431ca01d568386460de1dd40a7c73084a84be68bbf4696aea0208530d3bae2ccf47e4ba059cb6cbfb12e56d7f5f4f8c367a76a867aff09afca15e8d61a7ef4cf7e0d26be',
+        });
+    });
+
+    test('should work decodeCheckt', () => {
+        console.log(decodeTx('f90146822b6701018a4d4e540000000000000009b8e9f8e7b8a2f8a03101830f423f8a4d4e5400000000000000888ac7230489e80000b84149eba2361855724bbd3d20eb97a54ea15ad7dc28c1111b8dcf3bb15db26f874f095803cad9f8fc88b2b4eec9ba706325a7929be31b6ccfef01260791a844cb55011ba06c63ad17bfe07b82be8a0144fd4daf8b4144281fdf88f313205ceacf37fd877fa03c243ad79cab6205f4b753bd402c4cfa5d570888659090b2f923071ac52bdf75b8417adcf6a62a66b177b266c767c5ebd906651fb66269401a8c66d053574dc29c67296b93af2e276fbdf5f606a98419ae69191450f67a2d273ee6c5d3016773c16d01808001b845f8431ca0a8513cffcd642540ccf2f56d76898de62a7f312c41418410ffa77b93a78edd6aa01fc3a03e19a1db7bd8b6c08681632b5373d4d5e38995ae73e0cf9d880bed677e', {decodeCheck: true}));
+
+        expect(decodeTx('f90146822b6701018a4d4e540000000000000009b8e9f8e7b8a2f8a03101830f423f8a4d4e5400000000000000888ac7230489e80000b84149eba2361855724bbd3d20eb97a54ea15ad7dc28c1111b8dcf3bb15db26f874f095803cad9f8fc88b2b4eec9ba706325a7929be31b6ccfef01260791a844cb55011ba06c63ad17bfe07b82be8a0144fd4daf8b4144281fdf88f313205ceacf37fd877fa03c243ad79cab6205f4b753bd402c4cfa5d570888659090b2f923071ac52bdf75b8417adcf6a62a66b177b266c767c5ebd906651fb66269401a8c66d053574dc29c67296b93af2e276fbdf5f606a98419ae69191450f67a2d273ee6c5d3016773c16d01808001b845f8431ca0a8513cffcd642540ccf2f56d76898de62a7f312c41418410ffa77b93a78edd6aa01fc3a03e19a1db7bd8b6c08681632b5373d4d5e38995ae73e0cf9d880bed677e', {decodeCheck: true})).toEqual({
+            nonce: '11111',
+            chainId: '1',
+            gasPrice: '1',
+            gasCoin: 'MNT',
+            type: '0x09',
+            data: {
+                proof: '0x7adcf6a62a66b177b266c767c5ebd906651fb66269401a8c66d053574dc29c67296b93af2e276fbdf5f606a98419ae69191450f67a2d273ee6c5d3016773c16d01',
+                check:
+                    'Mcf8a03101830f423f8a4d4e5400000000000000888ac7230489e80000b84149eba2361855724bbd3d20eb97a54ea15ad7dc28c1111b8dcf3bb15db26f874f095803cad9f8fc88b2b4eec9ba706325a7929be31b6ccfef01260791a844cb55011ba06c63ad17bfe07b82be8a0144fd4daf8b4144281fdf88f313205ceacf37fd877fa03c243ad79cab6205f4b753bd402c4cfa5d570888659090b2f923071ac52bdf75',
+                checkData: {
+                    nonce: '1',
+                    chainId: '1',
+                    coin: 'MNT',
+                    value: '10',
+                    dueBlock: '999999',
+                },
+            },
+            payload: '',
+            signatureType: '1',
+            signatureData: '0xf8431ca0a8513cffcd642540ccf2f56d76898de62a7f312c41418410ffa77b93a78edd6aa01fc3a03e19a1db7bd8b6c08681632b5373d4d5e38995ae73e0cf9d880bed677e',
         });
     });
 });
