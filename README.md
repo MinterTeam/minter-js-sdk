@@ -42,7 +42,9 @@ Contents:
     - [Set Candidate Off](#set-candidate-off)
     - [Redeem Check](#redeem-check)
     - [Create Multisig](#create-multisig)
-  - [Prepare Signed Transaction](#prepare-signed-transaction)
+  - [Transaction](#transaction)
+    - [Prepare Signed Transaction](#prepare-signed-transaction)
+    - [DecodeTransaction](#decode-transaction)
   - [Minter Check](#minter-check)
     - [issueCheck](#issuecheck)
     - [decodeCheck](#decodecheck)
@@ -579,7 +581,8 @@ minter.postTx(txParams);
 ```
 
 
-## Prepare Signed Transaction
+## Transaction
+### Prepare Signed Transaction
 Used under the hood of PostTx, accepts `txParams` object as argument
 ```js
 import {prepareSignedTx} from 'minter-js-sdk';
@@ -592,6 +595,34 @@ minter.getNonce('Mx...')
         const tx = prepareSignedTx({...txParams, nonce});
         console.log('signed tx', tx.serialize().toString('hex'));
     });
+```
+
+### Decode Transaction
+Decode RLP serialized tx into params object
+
+Params:
+`tx` - string, RLP decoded tx
+`options` - object with extra options
+`options.decodeCheck` - boolean, adds `checkData` field next to `check` field for redeemCheck tx data
+```js
+import {decodeTx} from 'minter-js-sdk';
+decodeTx('0xf87e818102018a42414e414e415445535402a3e28a42414e414e41544553548a067d59060c9f4d7282328a4d4e540000000000000080808001b845f8431ca01d568386460de1dd40a7c73084a84be68bbf4696aea0208530d3bae2ccf47e4ba059cb6cbfb12e56d7f5f4f8c367a76a867aff09afca15e8d61a7ef4cf7e0d26be');
+//  {
+//      nonce: '129',
+//      chainId: '2',
+//      gasPrice: '1',
+//      gasCoin: 'BANANATEST',
+//      type: '0x02',
+//      data: { 
+//          coinToSell: 'BANANATEST',
+//          valueToSell: '30646.456735029139767858',
+//          coinToBuy: 'MNT',
+//          minimumValueToBuy: '0',
+//      },
+//      payload: '',
+//      signatureType: '1',
+//      signatureData: '0xf8431ca01d568386460de1dd40a7c73084a84be68bbf4696aea0208530d3bae2ccf47e4ba059cb6cbfb12e56d7f5f4f8c367a76a867aff09afca15e8d61a7ef4cf7e0d26be',
+//  }
 ```
 
 
@@ -694,6 +725,13 @@ prepareLink(txParams);
 ### `decodeLink()`
 Decode link into transaction params
 
+Params:
+`url` - string with link
+`options` - object with extra options
+`options.decodeCheck` - boolean, adds `checkData` field next to `check` field for redeemCheck tx data
+`options.privateKey` - links with `password` and without `proof` require privateKey to generate valid `proof`
+
+
 ```js
 import {decodeLink} from 'minter-js-sdk';
 
@@ -709,7 +747,30 @@ decodeLink('https://bip.to/tx?d=f84801aae98a4d4e5400000000000000947633980c000139
 // },
 // payload: 'custom message',
 // }
+
+const LINK_CHECK = 'https://bip.to/tx?d=f8f009b8e9f8e7b8a2f8a03101830f423f8a4d4e5400000000000000888ac7230489e80000b84149eba2361855724bbd3d20eb97a54ea15ad7dc28c1111b8dcf3bb15db26f874f095803cad9f8fc88b2b4eec9ba706325a7929be31b6ccfef01260791a844cb55011ba06c63ad17bfe07b82be8a0144fd4daf8b4144281fdf88f313205ceacf37fd877fa03c243ad79cab6205f4b753bd402c4cfa5d570888659090b2f923071ac52bdf75b8410497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d0180808080'; 
+decodeLink(LINK_CHECK, {decodeCheck: true})
+// { 
+//     type: '0x09',
+//     data: { 
+//         proof: '0x0497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d01',
+//         check: 'Mcf8a03101830f423f8a4d4e5400000000000000888ac7230489e80000b84149eba2361855724bbd3d20eb97a54ea15ad7dc28c1111b8dcf3bb15db26f874f095803cad9f8fc88b2b4eec9ba706325a7929be31b6ccfef01260791a844cb55011ba06c63ad17bfe07b82be8a0144fd4daf8b4144281fdf88f313205ceacf37fd877fa03c243ad79cab6205f4b753bd402c4cfa5d570888659090b2f923071ac52bdf75',
+//         checkData: {
+//            nonce: '1',
+//            chainId: '1',
+//            coin: 'MNT',
+//            value: '10',
+//            dueBlock: '999999',
+//         },
+//     },
+//     payload: '',
+// }
+
 ```
+
+
+
+
 
 
 ## Minter Wallet

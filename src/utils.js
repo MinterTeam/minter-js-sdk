@@ -28,11 +28,24 @@ export function integerToHexString(num) {
 }
 
 /**
- * @TODO accepts 0x prefixed hex strings?
- * @param {Buffer} buf
+ * @param {Buffer|Uint8Array|string} buf
+ * @return {string}
  */
 export function bufferToInteger(buf) {
-    return parseInt(buf.toString('hex'), 16) || 0;
+    let str;
+    if (typeof buf === 'string') {
+        str = buf.replace('0x', '');
+    } else if (buf.length !== undefined) {
+        if (!Buffer.isBuffer(buf)) {
+            // Uint8Array to Buffer
+            buf = Buffer.from(buf);
+        }
+        str = buf.toString('hex');
+    } else {
+        throw new Error('Invalid value passed, it should be Buffer, Uint8Array or hex string');
+    }
+
+    return (new BN(str, 16)).toString(10);
 }
 
 export const toHexString = integerToHexString;

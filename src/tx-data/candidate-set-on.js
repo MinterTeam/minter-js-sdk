@@ -1,4 +1,4 @@
-import {TxDataDelegate, TxDataSetCandidateOn} from 'minterjs-tx';
+import {TxDataSetCandidateOn} from 'minterjs-tx';
 // import TxDataSetCandidateOn from 'minterjs-tx/src/tx-data/set-candidate-on.js';
 import {publicToString, toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
@@ -37,5 +37,5 @@ SetCandidateOnTxData.fromBufferFields = function fromBufferFields({publicKey}) {
  * @return {SetCandidateOnTxData}
  */
 SetCandidateOnTxData.fromRlp = function fromRlp(data) {
-    return SetCandidateOnTxData.fromBufferFields(new TxDataDelegate(data));
+    return SetCandidateOnTxData.fromBufferFields(new TxDataSetCandidateOn(data));
 };

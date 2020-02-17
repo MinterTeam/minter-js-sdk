@@ -13,6 +13,7 @@ import DelegateTxData from './stake-delegate.js';
 import UnbondTxData from './stake-unbond.js';
 import RedeemCheckTxData from './redeem-check.js';
 import CreateMultisigTxData from './create-multisig.js';
+import {decodeCheck} from '../check.js';
 
 const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.SEND]: SendTxData,
@@ -59,4 +60,30 @@ export function ensureBufferData(txData, txType) {
     }
 
     return txData;
+}
+
+/**
+ * Decode rlp txData into fields
+ * @param {TX_TYPE} txType
+ * @param {string|Buffer|Uint8Array} txData
+ * @param {boolean} [decodeCheck]
+ */
+export function decodeTxData(txType, txData, {decodeCheck: isDecodeCheck} = {}) {
+    txType = normalizeTxType(txType);
+    let txDataDecoded = getTxData(txType).fromRlp(txData);
+    let fields = txDataDecoded.fields;
+    // fix rawCheck
+    if (txType === TX_TYPE.REDEEM_CHECK) {
+        fields.check = txDataDecoded.check;
+    }
+    // fix pubKey
+    if (txType === TX_TYPE.DECLARE_CANDIDACY || txType === TX_TYPE.EDIT_CANDIDATE || txType === TX_TYPE.DELEGATE || txType === TX_TYPE.UNBOND || txType === TX_TYPE.SET_CANDIDATE_ON || txType === TX_TYPE.SET_CANDIDATE_OFF) {
+        fields.publicKey = txDataDecoded.publicKey;
+    }
+
+    if (isDecodeCheck && txType === TX_TYPE.REDEEM_CHECK) {
+        fields.checkData = decodeCheck(fields.check);
+    }
+
+    return fields;
 }

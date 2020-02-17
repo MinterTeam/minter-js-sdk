@@ -5,7 +5,7 @@ describe('CreateCoinTxData', () => {
         name: 'My Coin',
         symbol: 'MYCOIN',
         initialAmount: '5',
-        constantReserveRatio: 10,
+        constantReserveRatio: '10',
         initialReserve: '20',
     };
     const txData = new CreateCoinTxData(txParamsData).serialize();

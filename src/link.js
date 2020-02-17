@@ -1,7 +1,7 @@
 import {defineProperties} from 'ethereumjs-util/dist/object.js';
 import {encode as rlpEncode, decode as rlpDecode} from 'rlp';
 import {bufferToCoin, coinToBuffer, TxDataRedeemCheck, TX_TYPE, normalizeTxType} from 'minterjs-tx';
-import getTxData, {ensureBufferData} from './tx-data/index.js';
+import {ensureBufferData, decodeTxData} from './tx-data/index.js';
 import {bufferToInteger, integerToHexString} from './utils.js';
 import RedeemCheckTxParams from './tx-params/redeem-check.js';
 
@@ -68,11 +68,11 @@ class Link {
  * @property {string} [payload]
  * @property {string} [message] - deprecated
  * @property {string} [password]
- * @property {string} [linkHost]
  */
 
 /**
  * @param {LinkParams} txParams
+ * @param {string} [linkHost]
  * @return {string}
  */
 export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
@@ -114,9 +114,10 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
 /**
  * @param {string} url
  * @param {string} [privateKey]
+ * @param {boolean} [decodeCheck]
  * @return {TxParams}
  */
-export function decodeLink(url, privateKey) {
+export function decodeLink(url, {privateKey, decodeCheck} = {}) {
     const txString = url.replace(/^.*\?d=/, '').replace(/&p=.*$/, '');
     const passwordHex = url.indexOf('&p=') >= 0 ? url.replace(/^.*&p=/, '') : '';
     const password = passwordHex ? rlpDecode(Buffer.from(passwordHex, 'hex')) : '';
@@ -132,7 +133,7 @@ export function decodeLink(url, privateKey) {
         const {txData} = new RedeemCheckTxParams({privateKey, check, password});
         tx.data = txData;
     }
-    const txData = getTxData(tx.type).fromRlp(tx.data).fields;
+    const txData = decodeTxData(tx.type, tx.data, {decodeCheck});
 
     return {
         nonce: tx.nonce.length ? bufferToInteger(tx.nonce) : undefined,

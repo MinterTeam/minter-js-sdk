@@ -1,5 +1,6 @@
 import {TX_TYPE, bufferToCoin} from 'minterjs-tx';
-import {prepareSignedTx, SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, MultisendTxParams, RedeemCheckTxParams} from '~/src';
+import {prepareSignedTx, decodeTx, SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, MultisendTxParams, RedeemCheckTxParams} from '~/src';
+import {VALID_CHECK} from '~/test/check.test.js';
 
 
 describe('prepareSignedTx', () => {
@@ -593,11 +594,10 @@ describe('prepareSignedTx', () => {
     });
 
     describe('redeem check', () => {
-        const check = 'Mcf8ab3101830f423f8a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b841f69950a210196529f47df938f7af84958cdb336daf304616c37ef8bebca324910910f046e2ff999a7f2ab564bd690c1102ab65a20e0f27b57a93854339b60837011ba00a07cbf311148a6b62c1d1b34a5e0c2b6931a0547ede8b9dfb37aedff4480622a023ac93f7173ca41499624f06dfdd58c4e65d1279ea526777c194ddb623d57027';
         const txParamsData = {
             privateKey,
             nonce: 1,
-            check,
+            check: VALID_CHECK,
             password: 'pass',
         };
         const txParamsRaw = {
@@ -605,7 +605,7 @@ describe('prepareSignedTx', () => {
             nonce: 1,
             type: TX_TYPE.REDEEM_CHECK,
             data: {
-                check,
+                check: VALID_CHECK,
                 password: 'pass',
             },
         };
@@ -639,6 +639,52 @@ describe('prepareSignedTx', () => {
             expect(bufferToCoin(tx.gasCoin)).toEqual('TESTCOIN01');
             expect(tx.serialize().toString('hex'))
                 .toEqual('f9014f0101018a54455354434f494e303109b8f4f8f2b8adf8ab3101830f423f8a4d4e5400000000000000888ac7230489e800008a54455354434f494e3031b84189f86abe44c82ccee1964abcdf8a4aea6f4abffd4c709a3a9157951dfe8ead5805b15cf8359e2c6c5ae842d8e27ee21a46467df01ee1fead399c241682547b0e011ba0d1ca0e59e5d23edf41afa22f5258aeadf80f329d7ce8f32d30034ec614b292dda02f136ee0a48911e2470b170cc2ff3a2362c4c17f69360ada11efecd62f35c595b8410497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d01808001b845f8431ba0b38607701ae1d1081315545fe9f74eee42bd740d446f4ff6ad2342c716e6043fa005372587886f4b7aa4f9d2dc1a7387c63ebb6eea6fdde424016d5e6c8d10c834');
+        });
+    });
+});
+
+describe('decodeTx', () => {
+    test('should work', () => {
+        expect(decodeTx('0xf87e818102018a42414e414e415445535402a3e28a42414e414e41544553548a067d59060c9f4d7282328a4d4e540000000000000080808001b845f8431ca01d568386460de1dd40a7c73084a84be68bbf4696aea0208530d3bae2ccf47e4ba059cb6cbfb12e56d7f5f4f8c367a76a867aff09afca15e8d61a7ef4cf7e0d26be')).toEqual({
+            nonce: '129',
+            chainId: '2',
+            gasPrice: '1',
+            gasCoin: 'BANANATEST',
+            type: '0x02',
+            data:
+                { coinToSell: 'BANANATEST',
+                    valueToSell: '30646.456735029139767858',
+                    coinToBuy: 'MNT',
+                    minimumValueToBuy: '0' },
+            payload: '',
+            signatureType: '1',
+            signatureData: '0xf8431ca01d568386460de1dd40a7c73084a84be68bbf4696aea0208530d3bae2ccf47e4ba059cb6cbfb12e56d7f5f4f8c367a76a867aff09afca15e8d61a7ef4cf7e0d26be',
+        });
+    });
+
+    test('should work decodeCheck', () => {
+        expect(decodeTx('f9014f0101018a4d4e540000000000000009b8f4f8f2b8adf8ab3101830f423f8a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b841f69950a210196529f47df938f7af84958cdb336daf304616c37ef8bebca324910910f046e2ff999a7f2ab564bd690c1102ab65a20e0f27b57a93854339b60837011ba00a07cbf311148a6b62c1d1b34a5e0c2b6931a0547ede8b9dfb37aedff4480622a023ac93f7173ca41499624f06dfdd58c4e65d1279ea526777c194ddb623d57027b8410497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d01808001b845f8431ba0ce81610fe58f581c84d744d98ac0fc75eebc1bba515ca2d82eff012feb3c41b2a02824f54d075e8aa789d611b6c14fd99b2b9a19d6437c8e6388ffd1943029cb03', {decodeCheck: true})).toEqual({
+            nonce: '1',
+            chainId: '1',
+            gasPrice: '1',
+            gasCoin: 'MNT',
+            type: '0x09',
+            data: {
+                proof: '0x0497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d01',
+                check:
+                    'Mcf8ab3101830f423f8a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b841f69950a210196529f47df938f7af84958cdb336daf304616c37ef8bebca324910910f046e2ff999a7f2ab564bd690c1102ab65a20e0f27b57a93854339b60837011ba00a07cbf311148a6b62c1d1b34a5e0c2b6931a0547ede8b9dfb37aedff4480622a023ac93f7173ca41499624f06dfdd58c4e65d1279ea526777c194ddb623d57027',
+                checkData: {
+                    nonce: '1',
+                    chainId: '1',
+                    coin: 'MNT',
+                    value: '10',
+                    dueBlock: '999999',
+                    gasCoin: 'MNT',
+                },
+            },
+            payload: '',
+            signatureType: '1',
+            signatureData: '0xf8431ba0ce81610fe58f581c84d744d98ac0fc75eebc1bba515ca2d82eff012feb3c41b2a02824f54d075e8aa789d611b6c14fd99b2b9a19d6437c8e6388ffd1943029cb03',
         });
     });
 });

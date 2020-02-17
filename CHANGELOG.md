@@ -17,6 +17,27 @@
 - `redeemCheck` params will check if passed `feeCoinSymbol` is equal to `gasCoin` from check, may be omitted, `gasCoin` from check will be used
 - add `maxSupply` field to `CreateCoinTxParams`
 
+## 0.29.0 - 2020-02-14
+- **BREAKING** Change: `decodeLink` 2nd param private key now is object with `privateKey` field
+```js
+// old 
+decodeLink('https://bip.to/tx...', 'f812...');
+
+// new
+decodeLink('https://bip.to/tx...', {privateKey: 'f812...'});
+```
+- Add: `decodeTx` method to decode RLP serialized tx
+- Add: `decodeTx` and `decodeLink` methods now has `decodeCheck` param, it adds `checkData` field next to `check` field for redeemCheck tx data 
+
+## 0.28.0 - 2020-02-03
+- **BREAKING** Fix: `decodeCheck`, `decodeLink` and `bufferToInteger` now returns string values for numbers. It will fix precision loss for big numbers.
+
+## 0.27.4 - 2020-01-31
+- Fix: decodeLink for candidate-set-on/off transactions 
+
+## 0.27.3 - 2020-01-30
+- Fix: candidate-set-on/off tx data constructors
+
 ## 0.27.2 - 2020-01-30
 - Add: expose `.postSignedTx` method on `Minter` instance
 - Add: expose data constructors in index.js
