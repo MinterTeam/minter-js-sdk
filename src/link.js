@@ -1,5 +1,8 @@
 import {defineProperties} from 'ethereumjs-util/dist/object.js';
-import {encode as rlpEncode, decode as rlpDecode} from 'rlp';
+import {toBuffer as toBufferUtil} from 'ethereumjs-util/dist/bytes.js';
+import {decode as rlpDecode} from 'rlp';
+import {isHexPrefixed} from 'ethjs-util';
+import {fromByteArray as base64encode, toByteArray as base64decode} from 'base64-js';
 import {bufferToCoin, coinToBuffer, TxDataRedeemCheck, TX_TYPE, normalizeTxType} from 'minterjs-tx';
 import {ensureBufferData, decodeTxData} from './tx-data/index.js';
 import {bufferToInteger, integerToHexString} from './utils.js';
@@ -102,9 +105,9 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
     }
 
     const tx = new Link(txProps);
-    let result = `${linkHost}/tx?d=${tx.serialize().toString('hex')}`;
+    let result = `${linkHost}/tx/${base64urlEncode(tx.serialize())}`;
     if (password) {
-        result += `&p=${rlpEncode(password).toString('hex')}`;
+        result += `?p=${base64urlEncode(toBuffer(password))}`;
     }
 
     return result;
@@ -118,10 +121,11 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
  * @return {TxParams}
  */
 export function decodeLink(url, {privateKey, decodeCheck} = {}) {
-    const txString = url.replace(/^.*\?d=/, '').replace(/&p=.*$/, '');
-    const passwordHex = url.indexOf('&p=') >= 0 ? url.replace(/^.*&p=/, '') : '';
-    const password = passwordHex ? rlpDecode(Buffer.from(passwordHex, 'hex')) : '';
-    const tx = new Link(txString);
+    const txBase64 = url.replace(/^.*\/tx\//, '').replace(/\?.*$/, '');
+    const txBytes = rlpDecode(base64urlDecode(txBase64));
+    const passwordBase64 = url.search(/[?&]p=/) >= 0 ? url.replace(/^.*[?&]p=/, '') : '';
+    const password = passwordBase64 ? Buffer.from(base64urlDecode(passwordBase64)) : '';
+    const tx = new Link(txBytes);
     const txType = normalizeTxType(tx.type);
     if (txType === TX_TYPE.REDEEM_CHECK && password && !privateKey) {
         throw new Error('privateKey param required if link has password');
@@ -143,4 +147,27 @@ export function decodeLink(url, {privateKey, decodeCheck} = {}) {
         data: txData,
         payload: tx.payload.toString('utf-8'),
     };
+}
+
+function base64urlEncode(byteArray) {
+    return base64encode(byteArray).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+function base64urlDecode(base64urlString) {
+    const padLength = 4 - (base64urlString.length % 4);
+    const pad = new Array(padLength).fill('=').join('');
+    return base64decode(base64urlString + pad);
+}
+
+/**
+ * toBuffer which supports UTF8 strings
+ * @param val
+ * @return {Buffer}
+ */
+function toBuffer(val) {
+    if (typeof val === 'string' && !isHexPrefixed(val)) {
+        return Buffer.from(val, 'utf8');
+    } else {
+        return toBufferUtil(val);
+    }
 }

@@ -16,7 +16,7 @@ import {addTxDataFields} from '../utils.js';
  * @constructor
  */
 export default function RedeemCheckTxData({privateKey, check, password, proof}) {
-    // Buffer or UintArray to string
+    // Buffer to string
     if (typeof password !== 'string') {
         password = toBuffer(password).toString('utf8');
     }

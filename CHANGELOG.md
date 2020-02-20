@@ -1,3 +1,6 @@
+## texas.8 - 2020-02-20
+- **BREAKING** Change: `prepareLink` and `decodeLink` now supports [new link format](https://github.com/MinterTeam/minter-link-protocol/pull/6) with base64url encoding
+
 ## texas.5
 - **BREAKING** Change: rename `issueCheck` argument `passPhrase` to `password` 
 
