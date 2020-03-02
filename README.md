@@ -106,7 +106,7 @@ minter.postTx(txParams)
     .then((txHash) => {
         alert(`Tx created: ${txHash}`);
     }).catch((error) => {
-        const errorMessage = error.response.data.error.tx_result.message
+        const errorMessage = error.response.data.error.message
         alert(errorMessage);
     });
 ```
