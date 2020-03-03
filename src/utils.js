@@ -28,26 +28,41 @@ export function integerToHexString(num) {
 }
 
 /**
- * @param {Buffer|Uint8Array|string} buf
+ * @param {ByteArray} buf
  * @return {string}
  */
 export function bufferToInteger(buf) {
-    let str;
-    if (typeof buf === 'string') {
-        str = buf.replace('0x', '');
-    } else if (buf.length !== undefined) {
-        if (!Buffer.isBuffer(buf)) {
-            // Uint8Array to Buffer
-            buf = Buffer.from(buf);
-        }
-        str = buf.toString('hex');
-    } else {
-        throw new Error('Invalid value passed, it should be Buffer, Uint8Array or hex string');
-    }
+    buf = bufferFromBytes(buf);
 
-    return (new BN(str, 16)).toString(10);
+    return (new BN(buf, 16)).toString(10);
 }
 
+/**
+ * @param {ByteArray} bytes
+ * @return {Buffer}
+ */
+export function bufferFromBytes(bytes) {
+    if (bytes.length === undefined) {
+        throw new Error('Invalid value passed as ByteArray, it should be Buffer, Uint8Array or hex string');
+    }
+    // string to Buffer
+    if (typeof bytes === 'string') {
+        bytes = bytes.replace('0x', '');
+        return Buffer.from(bytes, 'hex');
+    }
+    // Uint8Array to Buffer
+    if (!Buffer.isBuffer(bytes)) {
+        return Buffer.from(bytes);
+    }
+
+    // it is Buffer already
+    return bytes;
+}
+
+/**
+ * @deprecated
+ * @borrows integerToHexString
+ */
 export const toHexString = integerToHexString;
 
 export function addTxDataFields(txData) {

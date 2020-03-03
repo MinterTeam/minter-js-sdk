@@ -3,6 +3,7 @@ import {privateToAddressString} from 'minterjs-util';
 import PostSignedTx from './post-signed-tx.js';
 import GetNonce from './get-nonce.js';
 import prepareSignedTx from '../tx.js';
+import {bufferFromBytes} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
@@ -13,27 +14,35 @@ export default function PostTx(apiInstance) {
     /**
      * @param {TxParams} txParams
      * @param {Object} options
-     * @parab {number} options.gasRetryLimit
+     * @param {ByteArray} [options.privateKey] - privateKey to sign tx or get nonce
+     * @param {string} [options.address] - address to get nonce, useful for multisig txs
+     * @param {number} [options.gasRetryLimit]
      * @return {Promise<string>}
      */
-    return function postTx(txParams, {gasRetryLimit = 2} = {}) {
+    return function postTx(txParams, {privateKey, address, gasRetryLimit = 2} = {}) {
+        if (!privateKey && txParams.privateKey) {
+            privateKey = txParams.privateKey;
+            // eslint-disable-next-line no-console
+            console.warn('privateKey field in tx params is deprecated, pass it to the second parameter');
+        }
         // @TODO asserts
 
-        return ensureNonce(apiInstance, txParams)
-            .then((newNonce) => _postTxEnsureGas(apiInstance, {...txParams, nonce: newNonce}, gasRetryLimit));
+        return ensureNonce(apiInstance, txParams, {privateKey, address})
+            .then((newNonce) => _postTxEnsureGas(apiInstance, {...txParams, nonce: newNonce}, {privateKey, gasRetryLimit}));
     };
 }
 
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
+ * @param {ByteArray} [privateKey]
  * @return {Promise<string>}
  */
-function _postTx(apiInstance, txParams) {
+function _postTx(apiInstance, txParams, {privateKey}) {
     if (!txParams.chainId && apiInstance.defaults.chainId) {
         txParams.chainId = apiInstance.defaults.chainId;
     }
-    const tx = prepareSignedTx(txParams);
+    const tx = prepareSignedTx(txParams, {privateKey});
 
     return (new PostSignedTx(apiInstance))(tx.serialize().toString('hex'));
 }
@@ -43,18 +52,19 @@ function _postTx(apiInstance, txParams) {
  * On retry `txParams.gasPrice` will be updated with required min gas value from error response.
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
+ * @param {ByteArray} [privateKey]
  * @param {number} gasRetryLimit - max number of retries
  * @return {Promise<string>}
  */
-function _postTxEnsureGas(apiInstance, txParams, gasRetryLimit) {
-    return _postTx(apiInstance, txParams)
+function _postTxEnsureGas(apiInstance, txParams, {privateKey, gasRetryLimit}) {
+    return _postTx(apiInstance, txParams, {privateKey})
         .catch((error) => {
             // @TODO limit max gas_price to prevent sending tx with to high fees
             if (gasRetryLimit > 0 && isGasError(error)) {
                 // make retry
                 gasRetryLimit -= 1;
                 const minGas = getMinGasFromError(error);
-                return _postTxEnsureGas(apiInstance, {...txParams, gasPrice: minGas}, gasRetryLimit);
+                return _postTxEnsureGas(apiInstance, {...txParams, gasPrice: minGas}, {privateKey, gasRetryLimit});
             } else {
                 throw error;
             }
@@ -64,16 +74,24 @@ function _postTxEnsureGas(apiInstance, txParams, gasRetryLimit) {
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
+ * @param {ByteArray} [privateKey]
+ * @param {string} [address]
  * @return {Promise<number>}
  */
-function ensureNonce(apiInstance, txParams) {
-    const privateKey = txParams.privateKey;
+function ensureNonce(apiInstance, txParams, {privateKey, address} = {}) {
     const nonce = txParams.nonce;
-    // @TODO asserts
-    // ensure nonce
-    const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
-    const address = privateToAddressString(privateKeyBuffer);
-    return nonce ? Promise.resolve(nonce) : (new GetNonce(apiInstance))(address);
+    if (!nonce && !address && !privateKey) {
+        throw new Error('No nonce is given and no address or privateKey to retrieve it from API');
+    }
+    if (nonce) {
+        return Promise.resolve(nonce);
+    }
+    if (privateKey) {
+        const privateKeyBuffer = bufferFromBytes(privateKey);
+        address = privateToAddressString(privateKeyBuffer);
+    }
+
+    return (new GetNonce(apiInstance))(address);
 }
 
 

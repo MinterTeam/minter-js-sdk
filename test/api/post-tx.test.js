@@ -9,16 +9,6 @@ const NOT_EXISTENT_COIN = 'ASD09431XC';
 
 const API_TYPE_LIST = [
     {
-        minterApi: minterGate,
-        privateKey: ENV_DATA.privateKey,
-        address: ENV_DATA.address,
-        customCoin: ENV_DATA.customCoin,
-        newCandidatePublicKey: newCandidatePublicKeyGate,
-        toString() {
-            return 'gate';
-        },
-    },
-    {
         minterApi: minterNode,
         privateKey: ENV_DATA.privateKey2,
         address: ENV_DATA.address2,
@@ -26,6 +16,16 @@ const API_TYPE_LIST = [
         newCandidatePublicKey: newCandidatePublicKeyNode,
         toString() {
             return 'node';
+        },
+    },
+    {
+        minterApi: minterGate,
+        privateKey: ENV_DATA.privateKey,
+        address: ENV_DATA.address,
+        customCoin: ENV_DATA.customCoin,
+        newCandidatePublicKey: newCandidatePublicKeyGate,
+        toString() {
+            return 'gate';
         },
     },
 ];
@@ -108,7 +108,7 @@ describe('PostTx: send', () => {
     test('should return signed tx', async () => {
         const nonce = await minterGate.getNonce(ENV_DATA.address);
         const txParams = new SendTxParams({...txParamsData(API_TYPE_LIST[0]), nonce, gasPrice: 1});
-        const tx = prepareSignedTx(txParams);
+        const tx = prepareSignedTx(txParams, {privateKey: API_TYPE_LIST[0].privateKey});
         console.log(tx.serialize().toString('hex'));
         expect(tx.serialize().toString('hex').length)
             .toBeGreaterThan(0);

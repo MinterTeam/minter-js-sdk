@@ -1,3 +1,9 @@
+## texas.9 - 2020-03-03
+- **BREAKING** Change: `prepareSignedTx` now accepts `privateKey` as field in the second argument
+- Change: `postTx` now accepts `privateKey` as field in the second argument. Old behaviour is **deprecated**
+- Add: `prepareTx`, it can be used for multiSignature txs
+- Add: `makeSignature`
+
 ## texas.8 - 2020-02-20
 - **BREAKING** Change: `prepareLink` and `decodeLink` now supports [new link format](https://github.com/MinterTeam/minter-link-protocol/pull/6) with base64url encoding
 

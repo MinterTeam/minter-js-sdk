@@ -8,7 +8,6 @@ describe('prepareSignedTx', () => {
 
     describe('send', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             chainId: 1,
             address: 'Mx376615B9A3187747dC7c32e51723515Ee62e37Dc',
@@ -18,7 +17,6 @@ describe('prepareSignedTx', () => {
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             chainId: 1,
             type: TX_TYPE.SEND,
@@ -34,14 +32,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new SendTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -51,30 +49,30 @@ describe('prepareSignedTx', () => {
             expect(prepareSignedTx({
                 ...new SendTxParams(txParamsData),
                 chainId: undefined,
-            }).serialize()).toEqual(prepareSignedTx({
+            }, {privateKey}).serialize()).toEqual(prepareSignedTx({
                 ...new SendTxParams(txParamsData),
                 chainId: 1,
-            }).serialize());
+            }, {privateKey}).serialize());
         });
 
         test('default gasCoin: BIP', () => {
             expect(prepareSignedTx({
                 ...new SendTxParams(txParamsData),
                 gasCoin: undefined,
-            }).serialize()).toEqual(prepareSignedTx({
+            }, {privateKey}).serialize()).toEqual(prepareSignedTx({
                 ...new SendTxParams(txParamsData),
                 gasCoin: 'BIP',
-            }).serialize());
+            }, {privateKey}).serialize());
         });
 
         test('default gasPrice: 1', () => {
             expect(prepareSignedTx({
                 ...new SendTxParams(txParamsData),
                 gasPrice: undefined,
-            }).serialize()).toEqual(prepareSignedTx({
+            }, {privateKey}).serialize()).toEqual(prepareSignedTx({
                 ...new SendTxParams(txParamsData),
                 gasPrice: 1,
-            }).serialize());
+            }, {privateKey}).serialize());
         });
 
         test('should throw on invalid amount', () => {
@@ -92,14 +90,13 @@ describe('prepareSignedTx', () => {
                     ...txParamsData,
                     gasPrice: '123asd',
                 });
-                prepareSignedTx(txParams);
+                prepareSignedTx(txParams, {privateKey});
             }).toThrow();
         });
     });
 
     describe('create coin', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             name: 'My Coin',
             symbol: 'MYCOIN',
@@ -110,7 +107,6 @@ describe('prepareSignedTx', () => {
             payload: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.CREATE_COIN,
             data: {
@@ -127,14 +123,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new CreateCoinTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -143,7 +139,6 @@ describe('prepareSignedTx', () => {
 
     describe('sell', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             coinFrom: 'MNT',
             coinTo: 'BELTCOIN',
@@ -152,7 +147,6 @@ describe('prepareSignedTx', () => {
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.SELL,
             data: {
@@ -167,14 +161,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new SellTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -183,7 +177,6 @@ describe('prepareSignedTx', () => {
 
     describe('sell all', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             coinFrom: 'MNT',
             coinTo: 'BELTCOIN',
@@ -191,7 +184,6 @@ describe('prepareSignedTx', () => {
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.SELL_ALL,
             data: {
@@ -205,14 +197,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new SellAllTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -221,7 +213,6 @@ describe('prepareSignedTx', () => {
 
     describe('buy', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             coinFrom: 'MNT',
             coinTo: 'BELTCOIN',
@@ -230,7 +221,6 @@ describe('prepareSignedTx', () => {
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.BUY,
             data: {
@@ -245,14 +235,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new BuyTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -261,7 +251,6 @@ describe('prepareSignedTx', () => {
 
     describe('declare candidacy', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
             publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
@@ -272,7 +261,6 @@ describe('prepareSignedTx', () => {
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.DECLARE_CANDIDACY,
             data: {
@@ -289,14 +277,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new DeclareCandidacyTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -305,7 +293,6 @@ describe('prepareSignedTx', () => {
 
     describe('edit candidate', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
             rewardAddress: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
@@ -314,7 +301,6 @@ describe('prepareSignedTx', () => {
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.EDIT_CANDIDATE,
             data: {
@@ -329,14 +315,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new EditCandidateTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -345,7 +331,6 @@ describe('prepareSignedTx', () => {
 
     describe('delegate', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
             coinSymbol: 'MNT',
@@ -354,7 +339,6 @@ describe('prepareSignedTx', () => {
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.DELEGATE,
             data: {
@@ -369,14 +353,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new DelegateTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -385,7 +369,6 @@ describe('prepareSignedTx', () => {
 
     describe('unbond', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
             coinSymbol: 'MNT',
@@ -394,7 +377,6 @@ describe('prepareSignedTx', () => {
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.UNBOND,
             data: {
@@ -409,14 +391,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new UnbondTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -425,14 +407,12 @@ describe('prepareSignedTx', () => {
 
     describe('set candidate on', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
             feeCoinSymbol: 'ASD',
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.SET_CANDIDATE_ON,
             data: {
@@ -445,14 +425,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new SetCandidateOnTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -461,14 +441,12 @@ describe('prepareSignedTx', () => {
 
     describe('set candidate off', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
             feeCoinSymbol: 'ASD',
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.SET_CANDIDATE_OFF,
             data: {
@@ -481,14 +459,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new SetCandidateOffTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -497,7 +475,6 @@ describe('prepareSignedTx', () => {
 
     describe('create multisig', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             addresses: ['Mxee81347211c72524338f9680072af90744333146', 'Mxee81347211c72524338f9680072af90744333145', 'Mxee81347211c72524338f9680072af90744333144'],
             weights: [1, 3, 5],
@@ -506,7 +483,6 @@ describe('prepareSignedTx', () => {
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.CREATE_MULTISIG,
             data: {
@@ -521,14 +497,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new CreateMultisigTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -537,7 +513,6 @@ describe('prepareSignedTx', () => {
 
     describe('multisend', () => {
         const txParamsData = {
-            privateKey,
             nonce: 11111,
             list: [
                 {
@@ -555,7 +530,6 @@ describe('prepareSignedTx', () => {
             message: 'custom message',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 11111,
             type: TX_TYPE.MULTISEND,
             data: {
@@ -579,14 +553,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new MultisendTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -601,7 +575,6 @@ describe('prepareSignedTx', () => {
             password: 'pass',
         };
         const txParamsRaw = {
-            privateKey,
             nonce: 1,
             type: TX_TYPE.REDEEM_CHECK,
             data: {
@@ -613,14 +586,14 @@ describe('prepareSignedTx', () => {
 
         test('should work tx params', () => {
             const txParams = new RedeemCheckTxParams(txParamsData);
-            const tx = prepareSignedTx(txParams);
+            const tx = prepareSignedTx(txParams, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
         });
 
         test('should work', () => {
-            const tx = prepareSignedTx(txParamsRaw);
+            const tx = prepareSignedTx(txParamsRaw, {privateKey});
 
             expect(tx.serialize().toString('hex'))
                 .toEqual(validTxHex);
@@ -634,7 +607,7 @@ describe('prepareSignedTx', () => {
                     // check with TESTCOIN01 gasCoin
                     check: 'Mcf8ab3101830f423f8a4d4e5400000000000000888ac7230489e800008a54455354434f494e3031b84189f86abe44c82ccee1964abcdf8a4aea6f4abffd4c709a3a9157951dfe8ead5805b15cf8359e2c6c5ae842d8e27ee21a46467df01ee1fead399c241682547b0e011ba0d1ca0e59e5d23edf41afa22f5258aeadf80f329d7ce8f32d30034ec614b292dda02f136ee0a48911e2470b170cc2ff3a2362c4c17f69360ada11efecd62f35c595',
                 },
-            });
+            }, {privateKey});
 
             expect(bufferToCoin(tx.gasCoin)).toEqual('TESTCOIN01');
             expect(tx.serialize().toString('hex'))

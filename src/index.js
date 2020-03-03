@@ -9,7 +9,7 @@ import GetNonce from './api/get-nonce.js';
 import issueCheck, {decodeCheck, getGasCoinFromCheck} from './check.js';
 import {prepareLink, decodeLink} from './link.js';
 
-import prepareSignedTx, {decodeTx} from './tx.js';
+import prepareSignedTx, {decodeTx, prepareTx, makeSignature} from './tx.js';
 import RedeemCheckTxParams from './tx-params/redeem-check.js';
 import SendTxParams from './tx-params/send.js';
 import MultisendTxParams from './tx-params/multisend.js';
@@ -52,6 +52,8 @@ export {
     GetNonce,
     //
     prepareSignedTx,
+    prepareTx,
+    makeSignature,
     decodeTx,
     // link
     prepareLink,

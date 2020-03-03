@@ -8,9 +8,8 @@ import {decodeTxData, ensureBufferData} from './tx-data/index.js';
 
 /**
  * @typedef {Object} TxParams
- * @property {string|Buffer} privateKey
  * @property {number} [nonce]
- * @property {Number} [chainId=1]
+ * @property {number} [chainId=1]
  * @property {number} [gasPrice=1]
  * @property {string} [gasCoin='BIP']
  * @property {string|Buffer|TX_TYPE} type
@@ -19,14 +18,34 @@ import {decodeTxData, ensureBufferData} from './tx-data/index.js';
  * @property {Buffer|TxData|Object} [txData] - deprecated
  * @property {string} payload
  * @property {string} [message] - deprecated
+ * @property {number} signatureType
+ * @property {ByteArray|Array<ByteArray>} signatureData
+ */
+
+/**
+ * @typedef {Buffer, Uint8Array, string} ByteArray
  */
 
 
 /**
  * @param {TxParams} txParams
+ * @param {ByteArray} privateKey
  * @return {Tx}
  */
-export default function prepareSignedTx(txParams = {}) {
+export default function prepareSignedTx(txParams = {}, {privateKey} = {}) {
+    const tx = prepareTx({...txParams, signatureType: 1}, {privateKey});
+
+    tx.signatureData = makeSignature(tx, privateKey);
+
+    return tx;
+}
+
+/**
+ * @param {TxParams} txParams
+ * @param {ByteArray} privateKey
+ * @return {Tx}
+ */
+export function prepareTx(txParams = {}, {privateKey} = {}) {
     txParams = {
         ...txParams,
         data: txParams.data || txParams.txData,
@@ -34,7 +53,7 @@ export default function prepareSignedTx(txParams = {}) {
         payload: txParams.payload || txParams.message,
     };
     txParams = decorateTxParams(txParams);
-    const {privateKey, nonce, chainId = 1, gasPrice = 1, type: txType} = txParams;
+    const {nonce, chainId = 1, gasPrice = 1, type: txType, signatureType, signatureData} = txParams;
     let {gasCoin, payload, data: txData} = txParams;
     // throw on falsy nonce except 0
     if (!nonce && typeof nonce !== 'number') {
@@ -48,8 +67,6 @@ export default function prepareSignedTx(txParams = {}) {
             gasCoin = 'BIP';
         }
     }
-    // @TODO asserts
-    const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
 
     // pass privateKey from params to data for redeemCheck
     if (txType === TX_TYPE.REDEEM_CHECK && !txData.privateKey) {
@@ -65,7 +82,8 @@ export default function prepareSignedTx(txParams = {}) {
         gasCoin: coinToBuffer(gasCoin),
         type: txType,
         data: txData,
-        signatureType: '0x01',
+        signatureType: `0x${integerToHexString(signatureType)}`,
+        signatureData,
     };
 
     if (payload) {
@@ -76,9 +94,18 @@ export default function prepareSignedTx(txParams = {}) {
     }
 
     const tx = new Tx(txProps);
-    tx.signatureData = (new TxSignature()).sign(tx.hash(false), privateKeyBuffer).serialize();
 
     return tx;
+}
+
+/**
+ * @param {Tx} tx
+ * @param {string|Buffer} privateKey
+ */
+export function makeSignature(tx, privateKey) {
+    // @TODO asserts
+    const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
+    return (new TxSignature()).sign(tx.hash(false), privateKeyBuffer).serialize();
 }
 
 
