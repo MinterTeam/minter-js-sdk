@@ -1,3 +1,6 @@
+## texas.10 - 2020-03-03
+- Add: expose `ensureNonce` on `Minter` instance
+
 ## texas.9 - 2020-03-03
 - **BREAKING** Change: `prepareSignedTx` now accepts `privateKey` as field in the second argument
 - Change: `postTx` now accepts `privateKey` as field in the second argument. Old behaviour is **deprecated**

@@ -1,7 +1,7 @@
 import MinterApi from './api/index.js';
 import GetNonce from './api/get-nonce.js';
 import GetMinGasPrice from './api/get-min-gas-price.js';
-import PostTx from './api/post-tx.js';
+import PostTx, {EnsureNonce} from './api/post-tx.js';
 import PostSignedTx from './api/post-signed-tx.js';
 import EstimateCoinSell from './api/estimate-coin-sell.js';
 import EstimateCoinBuy from './api/estimate-coin-buy.js';
@@ -22,6 +22,8 @@ export default function (options) {
     this.postSignedTx = new PostSignedTx(apiInstance);
 
     this.getNonce = new GetNonce(apiInstance);
+
+    this.ensureNonce = EnsureNonce(apiInstance);
 
     this.getMinGasPrice = new GetMinGasPrice(apiInstance);
 

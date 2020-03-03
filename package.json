@@ -1,6 +1,6 @@
 {
   "name": "minter-js-sdk",
-  "version": "0.30.0-texas.9",
+  "version": "0.30.0-texas.10",
   "description": "JS SDK for Minter Blockchain",
   "main": "dist/cjs/index.js",
   "module": "src/index.js",

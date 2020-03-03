@@ -94,6 +94,22 @@ function ensureNonce(apiInstance, txParams, {privateKey, address} = {}) {
     return (new GetNonce(apiInstance))(address);
 }
 
+/**
+ * @param {MinterApiInstance} apiInstance
+ */
+export function EnsureNonce(apiInstance) {
+    /**
+     * @param {TxParams} txParams
+     * @param {ByteArray} [privateKey]
+     * @param {string} [address]
+     * @return {Promise<number>}
+     */
+    return function apiEnsureNonce() {
+        // eslint-disable-next-line prefer-rest-params
+        return ensureNonce(apiInstance, ...arguments);
+    };
+}
+
 
 /**
  * Get tx_result data from error
