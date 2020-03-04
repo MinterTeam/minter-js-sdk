@@ -1,3 +1,6 @@
+## texas.11 - 2020-03-04
+- Add: support for multisignatures
+
 ## texas.10 - 2020-03-03
 - Add: expose `ensureNonce` on `Minter` instance
 

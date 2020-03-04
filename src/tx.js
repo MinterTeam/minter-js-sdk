@@ -1,8 +1,8 @@
-import {Tx, TxSignature, coinToBuffer, normalizeTxType, TX_TYPE, bufferToCoin} from 'minterjs-tx';
+import {Tx, TxSignature, TxMultisignature, coinToBuffer, normalizeTxType, TX_TYPE, bufferToCoin} from 'minterjs-tx';
 // import Tx from 'minterjs-tx/src/tx';
 // import TxSignature from 'minterjs-tx/src/tx-signature.js';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
-import {bufferToInteger, integerToHexString} from './utils.js';
+import {bufferToInteger, integerToHexString, toInteger} from './utils.js';
 import decorateTxParams from './tx-decorator/index.js';
 import {decodeTxData, ensureBufferData} from './tx-data/index.js';
 
@@ -83,7 +83,7 @@ export function prepareTx(txParams = {}, {privateKey} = {}) {
         type: txType,
         data: txData,
         signatureType: `0x${integerToHexString(signatureType)}`,
-        signatureData,
+        signatureData: ensureBufferSignature(signatureData, signatureType),
     };
 
     if (payload) {
@@ -131,4 +131,29 @@ export function decodeTx(txRlp, {decodeCheck} = {}) {
         signatureType: tx.signatureType.length ? bufferToInteger(tx.signatureType) : undefined,
         signatureData: `0x${tx.signatureData.toString('hex')}`,
     };
+}
+
+/**
+ * @param {Buffer|TxMultisignature|Object} signatureData
+ * @param {number} signatureType
+ * @return {Buffer}
+ */
+export function ensureBufferSignature(signatureData, signatureType) {
+    if (!signatureData) {
+        return signatureData;
+    }
+    if (signatureData && toInteger(signatureType) === '2') {
+        // serialize, if it TxMultisignature
+        if (typeof signatureData.serialize === 'function') {
+            signatureData = signatureData.serialize();
+        }
+    }
+
+    // make buffer from object
+    if (typeof signatureData.length === 'undefined') {
+        signatureData = new TxMultisignature(signatureData);
+        signatureData = signatureData.serialize();
+    }
+
+    return signatureData;
 }

@@ -1,6 +1,6 @@
 import Big from 'big.js';
 import BN from 'bn.js';
-import {padToEven} from 'ethjs-util';
+import {padToEven, isHexPrefixed} from 'ethjs-util';
 
 /**
  * @param {number|string} num
@@ -25,6 +25,27 @@ export function integerToHexString(num) {
     // convert to hex
     const hexNum = (new BN(num, 10)).toString(16);
     return padToEven(hexNum);
+}
+
+/**
+ * @param {number|string|ByteArray} num
+ * @return {string}
+ */
+export function toInteger(num) {
+    if (typeof num !== 'undefined' && num !== null && num.length) {
+        // handle hex prefixed string
+        if (typeof num === 'string' && isHexPrefixed(num)) {
+            return bufferToInteger(num);
+        }
+        // handle arrays
+        if (typeof num !== 'string') {
+            return bufferToInteger(num);
+        }
+    }
+
+    num = parseInt(num, 10);
+
+    return Number.isNaN(num) ? '' : num.toString();
 }
 
 /**

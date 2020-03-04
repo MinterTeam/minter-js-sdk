@@ -2,8 +2,8 @@ import {privateToAddressString} from 'minterjs-util';
 // import {privateToAddressString} from 'minterjs-util/src/prefix.js';
 import PostSignedTx from './post-signed-tx.js';
 import GetNonce from './get-nonce.js';
-import prepareSignedTx from '../tx.js';
-import {bufferFromBytes} from '../utils.js';
+import prepareSignedTx, {prepareTx} from '../tx.js';
+import {bufferFromBytes, toInteger} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
@@ -42,7 +42,13 @@ function _postTx(apiInstance, txParams, {privateKey}) {
     if (!txParams.chainId && apiInstance.defaults.chainId) {
         txParams.chainId = apiInstance.defaults.chainId;
     }
-    const tx = prepareSignedTx(txParams, {privateKey});
+
+    let tx;
+    if (!txParams.signatureData && toInteger(txParams.signatureType) !== '2') {
+        tx = prepareSignedTx(txParams, {privateKey});
+    } else {
+        tx = prepareTx(txParams);
+    }
 
     return (new PostSignedTx(apiInstance))(tx.serialize().toString('hex'));
 }
