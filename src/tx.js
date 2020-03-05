@@ -38,7 +38,6 @@ export default function prepareSignedTx(txParams = {}, {privateKey} = {}) {
         // eslint-disable-next-line no-console
         console.warn('privateKey field in tx params is deprecated, pass it to the second parameter');
     }
-    console.log({privateKey});
     const tx = prepareTx({...txParams, signatureType: 1}, {privateKey});
 
     tx.signatureData = makeSignature(tx, privateKey);

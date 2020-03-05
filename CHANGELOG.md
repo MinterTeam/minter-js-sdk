@@ -1,3 +1,6 @@
+## texas.13 - 2020-03-05
+- Remove console.log
+
 ## texas.12 - 2020-03-05
 - Restore `privateKey` in 1st argument for `prepareSignedTx` and mark it deprecated
 - Deprecate TxParams constructors
