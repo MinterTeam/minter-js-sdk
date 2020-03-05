@@ -3,6 +3,7 @@ import {TX_TYPE} from 'minterjs-tx';
 import CreateCoinTxData from '../tx-data/create-coin.js';
 
 /**
+ * @deprecated
  * @constructor
  * @param {string} name
  * @param {string} symbol
@@ -15,6 +16,9 @@ import CreateCoinTxData from '../tx-data/create-coin.js';
  * @return {TxParams}
  */
 export default function CreateCoinTxParams({name, symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply, feeCoinSymbol, ...otherParams}) {
+    // eslint-disable-next-line no-console
+    console.warn('CreateCoinTxParams is deprecated');
+
     const txData = new CreateCoinTxData({
         name,
         symbol,

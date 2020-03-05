@@ -2,6 +2,7 @@ import {TX_TYPE} from 'minterjs-tx';
 import DelegateTxData from '../tx-data/stake-delegate.js';
 
 /**
+ * @deprecated
  * @constructor
  * @param {string} publicKey
  * @param {string} coinSymbol
@@ -11,6 +12,9 @@ import DelegateTxData from '../tx-data/stake-delegate.js';
  * @return {TxParams}
  */
 export default function DelegateTxParams({publicKey, coinSymbol, stake, feeCoinSymbol, ...otherParams}) {
+    // eslint-disable-next-line no-console
+    console.warn('DelegateTxParams is deprecated');
+
     const txData = new DelegateTxData({
         publicKey,
         coin: coinSymbol,

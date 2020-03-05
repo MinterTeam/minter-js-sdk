@@ -11,12 +11,12 @@ describe('SendTxParams', () => {
         amount: 10,
         coinSymbol: 'MNT',
         feeCoinSymbol: 'ASD',
-        message: 'custom message',
+        payload: 'custom message',
     };
     const validTxParams = {
         privateKey,
         gasCoin: 'ASD',
-        message: 'custom message',
+        payload: 'custom message',
         txType: TX_TYPE.SEND,
         txData: Buffer.from([233, 138, 77, 78, 84, 0, 0, 0, 0, 0, 0, 0, 148, 118, 51, 152, 12, 0, 1, 57, 221, 59, 210, 74, 63, 84, 224, 100, 116, 250, 148, 30, 22, 136, 138, 199, 35, 4, 137, 232, 0, 0]),
     };

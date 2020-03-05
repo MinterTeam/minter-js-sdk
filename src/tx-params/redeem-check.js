@@ -6,6 +6,7 @@ import RedeemCheckTxData from '../tx-data/redeem-check.js';
 
 
 /**
+ * @deprecated
  * //@TODO https://github.com/MinterTeam/minter-js-sdk/issues/13 to allow easy `prepareLink` without proof
  * @constructor
  * @param {string|Buffer} [privateKey]
@@ -16,6 +17,9 @@ import RedeemCheckTxData from '../tx-data/redeem-check.js';
  * @return {TxParams}
  */
 export default function RedeemCheckTxParams({privateKey, check, password, proof, ...otherParams}) {
+    // eslint-disable-next-line no-console
+    console.warn('RedeemCheckTxParams is deprecated');
+
     const gasCoin = getGasCoinFromCheck(check);
     if (typeof privateKey === 'string') {
         privateKey = Buffer.from(privateKey, 'hex');

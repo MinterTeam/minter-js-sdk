@@ -1,19 +1,23 @@
-import {CreateCoinTxParams} from '~/src';
+import {TX_TYPE} from 'minterjs-tx';
+import {CreateCoinTxData} from '~/src';
 import {ENV_DATA, minterGate, minterNode} from './variables';
 
 beforeAll(async () => {
     // ensure custom coin exists
-    const txParams = new CreateCoinTxParams({
+    const txParams = {
         privateKey: ENV_DATA.privateKey,
         chainId: 2,
-        name: ENV_DATA.customCoin,
-        symbol: ENV_DATA.customCoin,
-        initialAmount: 5000,
-        initialReserve: 10000,
-        constantReserveRatio: 50,
-        feeCoinSymbol: 'MNT',
-        message: 'custom message',
-    });
+        type: TX_TYPE.CREATE_COIN,
+        data: new CreateCoinTxData({
+            name: ENV_DATA.customCoin,
+            symbol: ENV_DATA.customCoin,
+            initialAmount: 5000,
+            initialReserve: 10000,
+            constantReserveRatio: 50,
+        }),
+        gasCoin: 'MNT',
+        payload: 'custom message',
+    };
     try {
         await minterGate.postTx(txParams);
     } catch (e) {

@@ -1,3 +1,7 @@
+## texas.12 - 2020-03-05
+- Restore `privateKey` in 1st argument for `prepareSignedTx` and mark it deprecated
+- Deprecate TxParams constructors
+
 ## texas.11 - 2020-03-04
 - Add: support for multisignatures
 

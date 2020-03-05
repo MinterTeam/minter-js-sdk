@@ -4,6 +4,7 @@ import {convertToPip} from 'minterjs-util';
 import BuyTxData from '../tx-data/convert-buy.js';
 
 /**
+ * @deprecated
  * @constructor
  * @param {string} coinFrom
  * @param {string} coinTo
@@ -14,6 +15,9 @@ import BuyTxData from '../tx-data/convert-buy.js';
  * @return {TxParams}
  */
 export default function BuyTxParams({coinFrom, coinTo, buyAmount, maxSellAmount = Number.MAX_SAFE_INTEGER, feeCoinSymbol, ...otherParams}) {
+    // eslint-disable-next-line no-console
+    console.warn('BuyTxParams is deprecated');
+
     const txData = new BuyTxData({
         coinToSell: coinFrom,
         coinToBuy: coinTo,

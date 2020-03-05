@@ -3,6 +3,7 @@ import {TX_TYPE} from 'minterjs-tx';
 import EditCandidateTxData from '../tx-data/candidate-edit.js';
 
 /**
+ * @deprecated
  * @constructor
  * @param {string} publicKey
  * @param {string} rewardAddress
@@ -12,6 +13,9 @@ import EditCandidateTxData from '../tx-data/candidate-edit.js';
  * @return {TxParams}
  */
 export default function EditCandidateTxParams({publicKey, rewardAddress, ownerAddress, feeCoinSymbol, ...otherParams}) {
+    // eslint-disable-next-line no-console
+    console.warn('EditCandidateTxParams is deprecated');
+
     const txData = new EditCandidateTxData({
         publicKey,
         rewardAddress,

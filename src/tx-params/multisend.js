@@ -3,6 +3,7 @@ import {TX_TYPE} from 'minterjs-tx';
 import MultisendTxData from '../tx-data/multisend.js';
 
 /**
+ * @deprecated
  * @constructor
  * @param {Array} list
  * @param {string} [feeCoinSymbol]
@@ -10,6 +11,9 @@ import MultisendTxData from '../tx-data/multisend.js';
  * @return {TxParams}
  */
 export default function MultisendTxParams({list, feeCoinSymbol, ...otherParams}) {
+    // eslint-disable-next-line no-console
+    console.warn('MultisendTxParams is deprecated');
+
     const txData = new MultisendTxData({
         list,
     });

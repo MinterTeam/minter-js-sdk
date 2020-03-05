@@ -2,6 +2,7 @@ import {TX_TYPE} from 'minterjs-tx';
 import UnbondTxData from '../tx-data/stake-unbond.js';
 
 /**
+ * @deprecated
  * @constructor
  * @param {string} publicKey
  * @param {string} coinSymbol
@@ -11,6 +12,9 @@ import UnbondTxData from '../tx-data/stake-unbond.js';
  * @return {TxParams}
  */
 export default function UnbondTxParams({publicKey, coinSymbol, stake, feeCoinSymbol, ...otherParams}) {
+    // eslint-disable-next-line no-console
+    console.warn('UnbondTxParams is deprecated');
+
     const txData = new UnbondTxData({
         publicKey,
         coin: coinSymbol,

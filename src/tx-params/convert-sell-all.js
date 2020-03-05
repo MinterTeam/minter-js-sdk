@@ -3,6 +3,7 @@ import {TX_TYPE} from 'minterjs-tx';
 import SellAllTxData from '../tx-data/convert-sell-all.js';
 
 /**
+ * @deprecated
  * @constructor
  * @param {string} coinFrom
  * @param {string} coinTo
@@ -12,6 +13,9 @@ import SellAllTxData from '../tx-data/convert-sell-all.js';
  * @return {TxParams}
  */
 export default function SellAllTxParams({coinFrom, coinTo, minBuyAmount = 0, feeCoinSymbol, ...otherParams}) {
+    // eslint-disable-next-line no-console
+    console.warn('SellAllTxParams is deprecated');
+
     const txData = new SellAllTxData({
         coinToSell: coinFrom,
         coinToBuy: coinTo,

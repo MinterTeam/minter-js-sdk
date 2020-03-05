@@ -3,6 +3,7 @@ import {TX_TYPE} from 'minterjs-tx';
 import DeclareCandidacyTxData from '../tx-data/candidacy-declare.js';
 
 /**
+ * @deprecated
  * @constructor
  * @param {string} address
  * @param {string} publicKey
@@ -14,6 +15,9 @@ import DeclareCandidacyTxData from '../tx-data/candidacy-declare.js';
  * @return {TxParams}
  */
 export default function DeclareCandidacyTxParams({address, publicKey, commission, coinSymbol, stake, feeCoinSymbol, ...otherParams}) {
+    // eslint-disable-next-line no-console
+    console.warn('DeclareCandidacyTxParams is deprecated');
+
     const txData = new DeclareCandidacyTxData({
         address,
         publicKey,

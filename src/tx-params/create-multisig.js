@@ -3,6 +3,7 @@ import {TX_TYPE} from 'minterjs-tx';
 import CreateMultisigTxData from '../tx-data/create-multisig.js';
 
 /**
+ * @deprecated
  * @constructor
  * @param {Array} addresses
  * @param {Array} weights
@@ -12,6 +13,9 @@ import CreateMultisigTxData from '../tx-data/create-multisig.js';
  * @return {TxParams}
  */
 export default function CreateMultisigTxParams({addresses, weights, threshold, feeCoinSymbol, ...otherParams}) {
+    // eslint-disable-next-line no-console
+    console.warn('CreateMultisigTxParams is deprecated');
+
     const txData = new CreateMultisigTxData({
         addresses,
         weights,

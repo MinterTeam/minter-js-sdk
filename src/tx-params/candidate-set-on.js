@@ -3,6 +3,7 @@ import {TX_TYPE} from 'minterjs-tx';
 import SetCandidateOnTxData from '../tx-data/candidate-set-on.js';
 
 /**
+ * @deprecated
  * @constructor
  * @param {string} publicKey
  * @param {string} feeCoinSymbol
@@ -10,6 +11,9 @@ import SetCandidateOnTxData from '../tx-data/candidate-set-on.js';
  * @return {TxParams}
  */
 export default function SetCandidateOnTxParams({publicKey, feeCoinSymbol, ...otherParams}) {
+    // eslint-disable-next-line no-console
+    console.warn('SetCandidateOnTxParams is deprecated');
+
     const txData = new SetCandidateOnTxData({
         publicKey,
     });

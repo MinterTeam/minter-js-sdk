@@ -1,5 +1,23 @@
 import {generateWallet} from 'minterjs-wallet';
-import {SendTxParams, MultisendTxParams, SellTxParams, BuyTxParams, DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, UnbondTxParams, RedeemCheckTxParams, SetCandidateOnTxParams, SetCandidateOffTxParams, CreateMultisigTxParams, CreateCoinTxParams, SellAllTxParams, issueCheck, prepareSignedTx} from '~/src';
+import {TX_TYPE} from 'minterjs-tx';
+import {
+    SendTxData,
+    MultisendTxData,
+    SellTxData,
+    BuyTxData,
+    DeclareCandidacyTxData,
+    EditCandidateTxData,
+    DelegateTxData,
+    UnbondTxData,
+    RedeemCheckTxData,
+    SetCandidateOnTxData,
+    SetCandidateOffTxData,
+    CreateMultisigTxData,
+    CreateCoinTxData,
+    SellAllTxData,
+    issueCheck,
+    prepareSignedTx,
+} from '~/src';
 import {ENV_DATA, minterGate, minterNode} from './variables';
 
 const newCandidatePublicKeyGate = generateWallet().getPublicKeyString();
@@ -54,18 +72,20 @@ beforeAll(async () => {
 
     // ensure custom coin exists
     const coinPromises = API_TYPE_LIST.map((apiType) => {
-        const txParams = new CreateCoinTxParams({
-            privateKey: apiType.privateKey,
+        const txParams = {
             chainId: 2,
-            name: 'testcoin',
-            symbol: apiType.customCoin,
-            initialAmount: 5000,
-            initialReserve: 10000,
-            constantReserveRatio: 50,
-            feeCoinSymbol: 'MNT',
-            message: 'custom message',
-        });
-        return apiType.minterApi.postTx(txParams);
+            type: TX_TYPE.CREATE_COIN,
+            data: new CreateCoinTxData({
+                name: 'testcoin',
+                symbol: apiType.customCoin,
+                initialAmount: 5000,
+                initialReserve: 10000,
+                constantReserveRatio: 50,
+            }),
+            gasCoin: 'MNT',
+            payload: 'custom message',
+        };
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey});
     });
 
     // @TODO allSettled is not a function
@@ -95,19 +115,21 @@ beforeAll(async () => {
 
 
 describe('PostTx: send', () => {
-    const txParamsData = (apiType) => ({
-        privateKey: apiType.privateKey,
+    const txParamsData = (apiType, data) => ({
         chainId: 2,
-        address: apiType.address,
-        amount: 10,
-        coinSymbol: 'MNT',
-        feeCoinSymbol: 'MNT',
-        message: 'custom message',
+        type: TX_TYPE.SEND,
+        data: new SendTxData(Object.assign({
+            to: apiType.address,
+            value: 10,
+            coin: 'MNT',
+        }, data)),
+        gasCoin: 'MNT',
+        payload: 'custom message',
     });
 
     test('should return signed tx', async () => {
         const nonce = await minterGate.getNonce(ENV_DATA.address);
-        const txParams = new SendTxParams({...txParamsData(API_TYPE_LIST[0]), nonce, gasPrice: 1});
+        const txParams = {...txParamsData(API_TYPE_LIST[0]), nonce, gasPrice: 1};
         const tx = prepareSignedTx(txParams, {privateKey: API_TYPE_LIST[0].privateKey});
         console.log(tx.serialize().toString('hex'));
         expect(tx.serialize().toString('hex').length)
@@ -116,8 +138,8 @@ describe('PostTx: send', () => {
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new SendTxParams(txParamsData(apiType));
-        return apiType.minterApi.postTx(txParams)
+        const txParams = txParamsData(apiType);
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .then((txHash) => {
                 console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -136,8 +158,8 @@ describe('PostTx: send', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', async (apiType) => {
             expect.assertions(1);
-            const txParams = new SendTxParams({...txParamsData(apiType), amount: Number.MAX_SAFE_INTEGER, coinSymbol: NOT_EXISTENT_COIN});
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType, {value: Number.MAX_SAFE_INTEGER, coin: NOT_EXISTENT_COIN});
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                     // Coin not exists
@@ -150,21 +172,23 @@ describe('PostTx: send', () => {
 
 describe('PostTx handle low gasPrice', () => {
     const txParamsData = (apiType) => ({
-        privateKey: apiType.privateKey,
         chainId: 2,
-        address: apiType.address,
-        amount: 10,
-        coinSymbol: 'MNT',
-        feeCoinSymbol: 'MNT',
+        type: TX_TYPE.SEND,
+        data: new SendTxData({
+            to: apiType.address,
+            value: 10,
+            coin: 'MNT',
+        }),
+        gasCoin: 'MNT',
         gasPrice: 0, // <= low gas
-        message: 'custom message',
+        payload: 'custom message',
     });
 
     describe.each(API_TYPE_LIST)('should fail when 0 retries | %s', (apiType) => {
         test('should fail with parsable error', () => {
             expect.assertions(1);
-            const txParams = new SendTxParams(txParamsData(apiType));
-            return apiType.minterApi.postTx(txParams, {gasRetryLimit: 0})
+            const txParams = txParamsData(apiType);
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey, gasRetryLimit: 0})
                 .catch((error) => {
                     // console.log(error);
                     // console.log(error.response.data);
@@ -177,8 +201,8 @@ describe('PostTx handle low gasPrice', () => {
     // @TODO enable after EX-179 will be resolved
     test.skip.each(API_TYPE_LIST)('should work with retries | %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new SendTxParams(txParamsData(apiType));
-        return apiType.minterApi.postTx(txParams)
+        const txParams = txParamsData(apiType);
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -194,28 +218,30 @@ describe('PostTx handle low gasPrice', () => {
 
 describe('PostTx: multisend', () => {
     const txParamsData = (apiType) => ({
-        privateKey: apiType.privateKey,
         chainId: 2,
-        list: [
-            {
-                value: 10,
-                coin: 'MNT',
-                to: apiType.address,
-            },
-            {
-                value: 0.1,
-                coin: 'MNT',
-                to: 'Mxddab6281766ad86497741ff91b6b48fe85012e3c',
-            },
-        ],
-        feeCoinSymbol: 'MNT',
-        message: 'custom message',
+        type: TX_TYPE.MULTISEND,
+        data: {
+            list: [
+                {
+                    value: 10,
+                    coin: 'MNT',
+                    to: apiType.address,
+                },
+                {
+                    value: 0.1,
+                    coin: 'MNT',
+                    to: 'Mxddab6281766ad86497741ff91b6b48fe85012e3c',
+                },
+            ],
+        },
+        gasCoin: 'MNT',
+        payload: 'custom message',
     });
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new MultisendTxParams(txParamsData(apiType));
-        return apiType.minterApi.postTx(txParams)
+        const txParams = txParamsData(apiType);
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .then((txHash) => {
                 console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -230,10 +256,10 @@ describe('PostTx: multisend', () => {
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
         const txParamsDataInstance = txParamsData(apiType);
-        txParamsDataInstance.list[0].value = Number.MAX_SAFE_INTEGER;
-        txParamsDataInstance.list[0].coin = NOT_EXISTENT_COIN;
-        const txParams = new MultisendTxParams(txParamsDataInstance);
-        return apiType.minterApi.postTx(txParams)
+        txParamsDataInstance.data.list[0].value = Number.MAX_SAFE_INTEGER;
+        txParamsDataInstance.data.list[0].coin = NOT_EXISTENT_COIN;
+        const txParams = txParamsDataInstance;
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 // Coin not exists
@@ -244,20 +270,22 @@ describe('PostTx: multisend', () => {
 
 
 describe('PostTx: sell', () => {
-    const txParamsData = (apiType) => ({
-        privateKey: apiType.privateKey,
+    const txParamsData = (apiType, data) => ({
         chainId: 2,
-        coinFrom: 'MNT',
-        coinTo: apiType.customCoin,
-        sellAmount: 1,
-        feeCoinSymbol: 'MNT',
-        message: 'custom message',
+        type: TX_TYPE.SELL,
+        data: new SellTxData(Object.assign({
+            coinToSell: 'MNT',
+            coinToBuy: apiType.customCoin,
+            valueToSell: 1,
+        }, data)),
+        gasCoin: 'MNT',
+        payload: 'custom message',
     });
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new SellTxParams(txParamsData(apiType));
-        return apiType.minterApi.postTx(txParams)
+        const txParams = txParamsData(apiType);
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -271,8 +299,8 @@ describe('PostTx: sell', () => {
 
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = new SellTxParams({...txParamsData(apiType), sellAmount: Number.MAX_SAFE_INTEGER, coinFrom: NOT_EXISTENT_COIN});
-        return apiType.minterApi.postTx(txParams)
+        const txParams = txParamsData(apiType, {valueToSell: Number.MAX_SAFE_INTEGER, coinToSell: NOT_EXISTENT_COIN});
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 // Coin not exists
@@ -286,20 +314,22 @@ describe('PostTx: sell', () => {
 
 
 describe('PostTx: buy', () => {
-    const txParamsData = (apiType) => ({
-        privateKey: apiType.privateKey,
+    const txParamsData = (apiType, data) => ({
         chainId: 2,
-        coinFrom: 'MNT',
-        coinTo: apiType.customCoin,
-        buyAmount: 1,
-        feeCoinSymbol: 'MNT',
-        message: 'custom message',
+        type: TX_TYPE.BUY,
+        data: new BuyTxData(Object.assign({
+            coinToSell: 'MNT',
+            coinToBuy: apiType.customCoin,
+            valueToBuy: 1,
+        }, data)),
+        gasCoin: 'MNT',
+        payload: 'custom message',
     });
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new BuyTxParams(txParamsData(apiType));
-        return apiType.minterApi.postTx(txParams)
+        const txParams = txParamsData(apiType);
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -313,8 +343,8 @@ describe('PostTx: buy', () => {
 
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = new BuyTxParams({...txParamsData(apiType), buyAmount: Number.MAX_SAFE_INTEGER, coinFrom: NOT_EXISTENT_COIN});
-        return apiType.minterApi.postTx(txParams)
+        const txParams = txParamsData(apiType, {valueToBuy: Number.MAX_SAFE_INTEGER, coinToSell: NOT_EXISTENT_COIN});
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 // Coin not exists
@@ -326,22 +356,24 @@ describe('PostTx: buy', () => {
 
 describe('validator', () => {
     describe('PostTx: declare candidacy', () => {
-        const txParamsData = (apiType) => ({
-            privateKey: apiType.privateKey,
+        const txParamsData = (apiType, data) => ({
             chainId: 2,
-            address: apiType.address,
-            publicKey: 'Mp00',
-            coinSymbol: 'MNT',
-            stake: 1.211,
-            commission: 50,
-            feeCoinSymbol: 'MNT',
-            message: 'custom message',
+            type: TX_TYPE.DECLARE_CANDIDACY,
+            data: new DeclareCandidacyTxData(Object.assign({
+                address: apiType.address,
+                publicKey: 'Mp00',
+                coin: 'MNT',
+                stake: 1.211,
+                commission: 50,
+            }, data)),
+            gasCoin: 'MNT',
+            payload: 'custom message',
         });
 
         test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
             expect.assertions(2);
-            const txParams = new DeclareCandidacyTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .then((txHash) => {
                     console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -355,8 +387,8 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = new DeclareCandidacyTxParams(txParamsData(apiType)); // empty publicKey specified
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                     // input string too short for types.Pubkey
@@ -367,20 +399,22 @@ describe('validator', () => {
 
 
     describe('PostTx: edit candidate', () => {
-        const txParamsData = (apiType) => ({
-            privateKey: apiType.privateKey,
+        const txParamsData = (apiType, data) => ({
             chainId: 2,
-            publicKey: 'Mp00',
-            rewardAddress: apiType.address,
-            ownerAddress: apiType.address,
-            feeCoinSymbol: 'MNT',
-            message: 'custom message',
+            type: TX_TYPE.EDIT_CANDIDATE,
+            data: new EditCandidateTxData(Object.assign({
+                publicKey: 'Mp00',
+                rewardAddress: apiType.address,
+                ownerAddress: apiType.address,
+            }, data)),
+            gasCoin: 'MNT',
+            payload: 'custom message',
         });
 
         test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
             expect.assertions(2);
-            const txParams = new EditCandidateTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .then((txHash) => {
                     console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -394,8 +428,8 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = new EditCandidateTxParams(txParamsData(apiType)); // empty publicKey specified
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                     // input string too short for types.Pubkey
@@ -406,20 +440,22 @@ describe('validator', () => {
 
 
     describe('PostTx: delegate', () => {
-        const txParamsData = (apiType) => ({
-            privateKey: apiType.privateKey,
+        const txParamsData = (apiType, data) => ({
             chainId: 2,
-            publicKey: 'Mp00',
-            coinSymbol: 'MNT',
-            stake: 10,
-            feeCoinSymbol: 'MNT',
-            message: 'custom message',
+            type: TX_TYPE.DELEGATE,
+            data: new DelegateTxData(Object.assign({
+                publicKey: 'Mp00',
+                coin: 'MNT',
+                stake: 10,
+            }, data)),
+            gasCoin: 'MNT',
+            payload: 'custom message',
         });
 
         test.each(API_TYPE_LIST)('should work %s', (apiType) => {
             expect.assertions(2);
-            const txParams = new DelegateTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -433,8 +469,8 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = new DelegateTxParams(txParamsData(apiType)); // empty publicKey specified
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                     // input string too short for types.Pubkey
@@ -445,22 +481,24 @@ describe('validator', () => {
 
 
     describe.skip('PostTx: unbond', () => {
-        const txParamsData = (apiType) => ({
-            privateKey: apiType.privateKey,
+        const txParamsData = (apiType, data) => ({
             chainId: 2,
-            publicKey: 'Mp00',
-            coinSymbol: 'MNT',
-            stake: 10,
-            feeCoinSymbol: 'MNT',
-            message: 'custom message',
+            type: TX_TYPE.UNBOND,
+            data: new UnbondTxData(Object.assign({
+                publicKey: 'Mp00',
+                coin: 'MNT',
+                stake: 10,
+            }, data)),
+            gasCoin: 'MNT',
+            payload: 'custom message',
         });
 
 
         test.each(API_TYPE_LIST)('should work %s', (apiType) => {
             console.log('unbond from:', apiType.newCandidatePublicKey);
             expect.assertions(2);
-            const txParams = new UnbondTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -474,8 +512,8 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             // expect.assertions(1);
-            const txParams = new UnbondTxParams(txParamsData(apiType)); // empty publicKey specified
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                     // input string too short for types.Pubkey
@@ -486,18 +524,20 @@ describe('validator', () => {
 
 
     describe('PostTx: set candidate on', () => {
-        const txParamsData = (apiType) => ({
-            privateKey: apiType.privateKey,
+        const txParamsData = (apiType, data) => ({
             chainId: 2,
-            publicKey: 'Mp00',
-            feeCoinSymbol: 'MNT',
-            message: 'custom message',
+            type: TX_TYPE.SET_CANDIDATE_ON,
+            data: new SetCandidateOnTxData(Object.assign({
+                publicKey: 'Mp00',
+            }, data)),
+            gasCoin: 'MNT',
+            payload: 'custom message',
         });
 
         test.each(API_TYPE_LIST)('should work %s', (apiType) => {
             expect.assertions(2);
-            const txParams = new SetCandidateOnTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -511,8 +551,8 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = new SetCandidateOnTxParams(txParamsData(apiType)); // empty publicKey specified
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                     // input string too short for types.Pubkey
@@ -523,18 +563,20 @@ describe('validator', () => {
 
 
     describe('PostTx: set candidate off', () => {
-        const txParamsData = (apiType) => ({
-            privateKey: apiType.privateKey,
+        const txParamsData = (apiType, data) => ({
             chainId: 2,
-            publicKey: 'Mp00',
-            feeCoinSymbol: 'MNT',
-            message: 'custom message',
+            type: TX_TYPE.SET_CANDIDATE_OFF,
+            data: new SetCandidateOffTxData(Object.assign({
+                publicKey: 'Mp00',
+            }, data)),
+            gasCoin: 'MNT',
+            payload: 'custom message',
         });
 
         test.each(API_TYPE_LIST)('should work %s', (apiType) => {
             expect.assertions(2);
-            const txParams = new SetCandidateOffTxParams({...txParamsData(apiType), publicKey: apiType.newCandidatePublicKey});
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .then((txHash) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
@@ -548,8 +590,8 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = new SetCandidateOffTxParams(txParamsData(apiType)); // empty publicKey specified
-            return apiType.minterApi.postTx(txParams)
+            const txParams = txParamsData(apiType); // empty publicKey specified
+            return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .then((res) => {
                     console.log({res});
                 })
@@ -576,17 +618,20 @@ describe('PostTx: redeem check', () => {
         });
     }
 
-    const txParamsData = (apiType) => ({
-        privateKey: apiType.privateKey,
+    const txParamsData = (apiType, data, gasCoin) => ({
         chainId: 2,
-        check: 'Mcf8ab3102830f423f8a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b8416976dd95728356c46b7e7c25ca36df7c344f3b55a45cb22e32bc66e4e0cccf6347c72aeaea27a9b6e30acffb9e1d082e3047c024db8767b684dc8e39a52f0cd6001ba018a5e1cb47211779847d7ff3de3edb384740621a8456c343e192ad62ecca08a8a00b0ef250a490bdf18a636496512818eec56c072e59adf4ed6c32ba46f3ab74d0',
-        password: '123',
+        type: TX_TYPE.REDEEM_CHECK,
+        data: new RedeemCheckTxData(Object.assign({
+            check: getRandomCheck(apiType, gasCoin),
+            password: '123',
+            privateKey: apiType.privateKey,
+        }, data)),
     });
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new RedeemCheckTxParams({...txParamsData(apiType), check: getRandomCheck(apiType)});
-        return apiType.minterApi.postTx(txParams)
+        const txParams = txParamsData(apiType);
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -600,8 +645,8 @@ describe('PostTx: redeem check', () => {
 
     test.each(API_TYPE_LIST)('should work with custom coin %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new RedeemCheckTxParams({...txParamsData(apiType), check: getRandomCheck(apiType, apiType.customCoin)});
-        return apiType.minterApi.postTx(txParams)
+        const txParams = txParamsData(apiType, {}, apiType.customCoin);
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -616,8 +661,8 @@ describe('PostTx: redeem check', () => {
 
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = new RedeemCheckTxParams(txParamsData(apiType));
-        return apiType.minterApi.postTx(txParams)
+        const txParams = txParamsData(apiType, {check: 'Mcf8ab3102830f423f8a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b8416976dd95728356c46b7e7c25ca36df7c344f3b55a45cb22e32bc66e4e0cccf6347c72aeaea27a9b6e30acffb9e1d082e3047c024db8767b684dc8e39a52f0cd6001ba018a5e1cb47211779847d7ff3de3edb384740621a8456c343e192ad62ecca08a8a00b0ef250a490bdf18a636496512818eec56c072e59adf4ed6c32ba46f3ab74d0'});
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 // Invalid proof
@@ -628,22 +673,23 @@ describe('PostTx: redeem check', () => {
 
 
 describe('PostTx: create multisig', () => {
-    const txParamsData = (apiType) => ({
-        privateKey: apiType.privateKey,
+    const txParamsData = (apiType, data) => ({
         chainId: 2,
-        addresses: [apiType.address, 'Mx7633980c000139dd3bd24a3f54e06474fa941e01'],
-        weights: [1, 2],
-        threshold: 100,
-        feeCoinSymbol: 'MNT',
+        type: TX_TYPE.CREATE_MULTISIG,
+        data: new CreateMultisigTxData(Object.assign({
+            addresses: [apiType.address, 'Mx7633980c000139dd3bd24a3f54e06474fa941e01'],
+            weights: [1, 2],
+            threshold: 100,
+        }, data)),
+        gasCoin: 'MNT',
     });
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = new CreateMultisigTxParams({
-            ...txParamsData(apiType),
+        const txParams = txParamsData(apiType, {
             weights: [Math.random(), Math.random()].map((item) => item.toString().replace(/\D/, '').substr(0, 3)),
         });
-        return apiType.minterApi.postTx(txParams)
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .then((txHash) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
@@ -658,8 +704,8 @@ describe('PostTx: create multisig', () => {
 
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = new CreateMultisigTxParams({...txParamsData(apiType), threshold: 100000000000000000000});
-        return apiType.minterApi.postTx(txParams)
+        const txParams = txParamsData(apiType, {threshold: 100000000000000000000});
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 // rlp: input string too long for uint, decoding into (transaction.CreateMultisigData).Threshold
