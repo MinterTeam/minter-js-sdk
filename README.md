@@ -88,7 +88,6 @@ import {Minter, TX_TYPE} from "minter-js-sdk";
 
 const minter = new Minter({apiType: 'node', baseURL: 'https://minter-node-1.testnet.minter.network/'});
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     nonce: 1,
     chainId: 1,
     type: TX_TYPE.SEND,
@@ -99,10 +98,10 @@ const txParams = {
     },
     gasCoin: 'ASD',
     gasPrice: 1,
-    message: 'custom message',
+    payload: 'custom message',
 };
 
-minter.postTx(txParams)
+minter.postTx(txParams, {privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da'})
     .then((txHash) => {
         alert(`Tx created: ${txHash}`);
     }).catch((error) => {
@@ -155,22 +154,22 @@ Returns promise that resolves with sent transaction hash.
 ```js
 /**
  * @typedef {Object} TxParams
- * @property {string|Buffer} privateKey
  * @property {number} [nonce] - can be omitted, will be received by `getNonce`
  * @property {number} [chainId=1] - 1 = mainnet, 2 = testnet
  * @property {number} [gasPrice=1] - can be updated automatically on retry, if gasRetryLimit > 1
  * @property {string} [gasCoin='BIP']
  * @property {string|TX_TYPE|Buffer} type
  * @property {Object|Buffer|TxData} data
- * @property {string} [message]
+ * @property {string} [payload]
  */
 
 /**
 * @param {TxParams} txParams
 * @param {number} [gasRetryLimit=2] - number of retries, if request was failed because of low gas
+* param {string|Buffer} privateKey
 * @return {Promise<string>}
 */
-minter.postTx(txParams, {gasRetryLimit: 2})
+minter.postTx(txParams, {privateKey: '...', gasRetryLimit: 2})
     .then((txHash) => {
         console.log(txHash);
         // 'Mt...'
