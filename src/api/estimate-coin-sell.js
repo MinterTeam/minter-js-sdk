@@ -12,7 +12,6 @@ import {getData} from './utils.js';
 /**
  * @param {MinterApiInstance} apiInstance
  * @return {function(*): (Promise<EstimateSellResult>)}
- * @constructor
  */
 export default function EstimateCoinSell(apiInstance) {
     /**

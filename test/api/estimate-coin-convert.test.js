@@ -53,6 +53,7 @@ describe('EstimateCoinSell', () => {
             coinToBuy: 'MNT',
         })
             .catch((error) => {
+                console.log(error);
                 expect(error.response.data.error.message.length).toBeGreaterThan(0);
             });
     }, 30000);

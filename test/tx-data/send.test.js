@@ -1,4 +1,4 @@
-import {SendTxData} from '~/src';
+import {prepareSignedTx, SendTxData} from '~/src';
 
 describe('SendTxData', () => {
     const txParamsData = {
@@ -12,5 +12,14 @@ describe('SendTxData', () => {
         const params = SendTxData.fromRlp(txData).fields;
         expect(params)
             .toEqual(txParamsData);
+    });
+
+    test('should throw on invalid amount', () => {
+        expect(() => {
+            const data = new SendTxData({
+                ...txParamsData,
+                value: '123asd',
+            });
+        }).toThrow();
     });
 });

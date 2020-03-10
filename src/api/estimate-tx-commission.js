@@ -6,7 +6,6 @@ import {getData} from './utils.js';
  * @TODO accept txParams
  * @param {MinterApiInstance} apiInstance
  * @return {function(*): (Promise<string>)}
- * @constructor
  */
 export default function EstimateTxCommission(apiInstance) {
     /**

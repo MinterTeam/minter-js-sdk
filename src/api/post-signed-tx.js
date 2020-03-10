@@ -4,7 +4,6 @@ import {getData} from './utils.js';
 /**
  * @param {MinterApiInstance} apiInstance
  * @return {Function<Promise>}
- * @constructor
  */
 export default function PostSignedTx(apiInstance) {
     /**

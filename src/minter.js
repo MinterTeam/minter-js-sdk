@@ -17,19 +17,19 @@ import EstimateTxCommission from './api/estimate-tx-commission.js';
 export default function (options) {
     const apiInstance = new MinterApi(options);
 
-    this.postTx = new PostTx(apiInstance);
+    this.postTx = PostTx(apiInstance);
 
-    this.postSignedTx = new PostSignedTx(apiInstance);
+    this.postSignedTx = PostSignedTx(apiInstance);
 
-    this.getNonce = new GetNonce(apiInstance);
+    this.getNonce = GetNonce(apiInstance);
 
     this.ensureNonce = EnsureNonce(apiInstance);
 
-    this.getMinGasPrice = new GetMinGasPrice(apiInstance);
+    this.getMinGasPrice = GetMinGasPrice(apiInstance);
 
-    this.estimateCoinSell = new EstimateCoinSell(apiInstance);
+    this.estimateCoinSell = EstimateCoinSell(apiInstance);
 
-    this.estimateCoinBuy = new EstimateCoinBuy(apiInstance);
+    this.estimateCoinBuy = EstimateCoinBuy(apiInstance);
 
-    this.estimateTxCommission = new EstimateTxCommission(apiInstance);
+    this.estimateTxCommission = EstimateTxCommission(apiInstance);
 }

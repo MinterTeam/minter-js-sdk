@@ -43,8 +43,11 @@ Contents:
     - [Redeem Check](#redeem-check)
     - [Create Multisig](#create-multisig)
   - [Transaction](#transaction)
-    - [Prepare Signed Transaction](#prepare-signed-transaction)
-    - [DecodeTransaction](#decode-transaction)
+    - [Prepare Transaction](#prepare-transaction)
+    - [Prepare Single Signed Transaction](#prepare-single-signed-transaction)
+    - [Make Signature](#make-signature)
+    - [Multi Signatures](#multi-signatures)
+    - [Decode Transaction](#decode-transaction)
   - [Minter Check](#minter-check)
     - [issueCheck](#issuecheck)
     - [decodeCheck](#decodecheck)
@@ -113,7 +116,7 @@ minter.postTx(txParams, {privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f
 
 ## SDK instance
 
-Create `minter` SDK instance from `Minter` constructor
+Create `minter` SDK instance from `Minter` constructor. It contains methods to communicate with API.
 `Minter` accept [axios config](https://github.com/axios/axios#config-defaults) as params and return [axios instance](https://github.com/axios/axios#creating-an-instance)
 
 One extra field of options object is `apiType`, which is one of [`'gate'`](https://minterteam.github.io/minter-gate-docs/) or [`'node'`](https://docs.minter.network/#tag/Node-API). It is used to determine what type of API to use.
@@ -134,12 +137,11 @@ const minterNode = new Minter({chainId: 2, apiType: 'node', baseURL: 'https://mi
 - [postTx](#posttx)
 - [postSignedTx](#postsignedtx)
 - [getNonce](#getnonce)
+- [ensureNonce](#ensurenonce)
 - [getMinGasPrice](#getmingasprice)
 - [estimateCoinSell](#estimatecoinsell)
 - [estimateCoinBuy](#estimatecoinbuy)
 - [estimateTxCommission](#estimatetxcommission)
-- [issueCheck](#issuecheck)
-- [decodeCheck](#decodecheck)
 
 
 ### .postTx()
@@ -161,12 +163,14 @@ Returns promise that resolves with sent transaction hash.
  * @property {string|TX_TYPE|Buffer} type
  * @property {Object|Buffer|TxData} data
  * @property {string} [payload]
+ * @property {number} [signatureType=1]
+ * @property {number} [signatureData] - can be signed automatically if `privateKey` passed
  */
 
 /**
 * @param {TxParams} txParams
 * @param {number} [gasRetryLimit=2] - number of retries, if request was failed because of low gas
-* param {string|Buffer} privateKey
+* @param {string|Buffer} [privateKey]
 * @return {Promise<string>}
 */
 minter.postTx(txParams, {privateKey: '...', gasRetryLimit: 2})
@@ -208,6 +212,28 @@ Returns promise that resolves with nonce for new tx (current address tx count + 
 
 ```js
 minter.getNonce('Mx...')
+    .then((nonce) => {
+        console.log(nonce);
+        // 123
+    })
+    .catch((error) => {
+        // ...
+    })
+```
+
+### .ensureNonce()
+
+Ensure nonce for the tx params.
+
+```js
+/**
+ * @param {MinterApiInstance} apiInstance
+ * @param {TxParams} txParams
+ * @param {ByteArray} [privateKey]
+ * @param {string} [address]
+ * @return {Promise<number>}
+ */
+minter.ensureNonce(txParams, {privateKey: '...'})
     .then((nonce) => {
         console.log(nonce);
         // 123
@@ -298,7 +324,6 @@ Tx params object to pass it to `postTx` or `prepareSignedTx` methods to post tra
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.SEND,
     data: {
@@ -310,14 +335,13 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 ### Multisend
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.MULTISEND,
     data: {
@@ -338,14 +362,13 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
 ### Sell
 ```js
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.SELL,
     data: {
@@ -357,7 +380,7 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
@@ -365,7 +388,6 @@ minter.postTx(txParams);
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.SELL_ALL,
     data: {
@@ -376,7 +398,7 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
@@ -384,7 +406,6 @@ minter.postTx(txParams);
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = new {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.BUY,
     data: {
@@ -396,7 +417,7 @@ const txParams = new {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
@@ -404,7 +425,6 @@ minter.postTx(txParams);
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.CREATE_COIN,
     data: {
@@ -418,7 +438,7 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
@@ -426,7 +446,6 @@ minter.postTx(txParams);
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.DECLARE_CANDIDACY,
     data: {
@@ -440,14 +459,13 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 ### Edit Candidate
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.EDIT_CANDIDATE,
     data: {
@@ -459,7 +477,7 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
@@ -467,7 +485,6 @@ minter.postTx(txParams);
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.DELEGATE,
     data: {
@@ -479,7 +496,7 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
@@ -487,7 +504,6 @@ minter.postTx(txParams);
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.UNBOND,
     data: {
@@ -499,7 +515,7 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
@@ -507,7 +523,6 @@ minter.postTx(txParams);
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.SET_CANDIDATE_ON,
     data: {
@@ -517,7 +532,7 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
@@ -525,7 +540,6 @@ minter.postTx(txParams);
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.SET_CANDIDATE_OFF,
     data: {
@@ -535,7 +549,7 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
@@ -543,7 +557,6 @@ minter.postTx(txParams);
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.REDEEM_CHECK,
     data: {
@@ -553,7 +566,7 @@ const txParams = {
     gasCoin: 'MNT',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 ### Create Multisig
@@ -565,7 +578,6 @@ Weights must be between 0-1023.
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     chainId: 1,
     type: TX_TYPE.CREATE_MULTISIG,
     data: {
@@ -576,24 +588,79 @@ const txParams = {
     gasCoin: 'MNT',
 };
 
-minter.postTx(txParams);
+minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
 ## Transaction
-### Prepare Signed Transaction
-Used under the hood of PostTx, accepts `txParams` object as argument
+### Prepare Transaction
+Prepare `Tx` object from txParams, used under the hood of PostTx, accepts arguments:
+ - `txParams` object, 
+ - `options.privateKey` - optional, can be passed to txData constructor for redeem check transaction and can be used to sign transaction with single signature.
 ```js
-import {prepareSignedTx} from 'minter-js-sdk';
-const tx = prepareSignedTx(txParams);
+import {prepareTx} from 'minter-js-sdk';
+const tx = prepareTx(txParams, {privateKey});
 console.log('signed tx', tx.serialize().toString('hex'));
 
 // get actual nonce first
 minter.getNonce('Mx...')
     .then((nonce) => {
-        const tx = prepareSignedTx({...txParams, nonce});
+        const tx = prepareTx({...txParams, nonce}, {privateKey});
         console.log('signed tx', tx.serialize().toString('hex'));
     });
+```
+
+### Prepare Single Signed Transaction
+`prepareSignedTx` is an alias for `prepareTx` but with `signatureType: 1`. So it doesn't support multisignatures.
+```js
+import {prepareSignedTx, prepareTx} from 'minter-js-sdk';
+
+let tx = prepareSignedTx(txParams, {privateKey});
+// is the same as
+tx = prepareTx({...txParams, signatureType: 1}, {privateKey})
+```
+
+### Make Signature
+Make signature buffer for `Tx` with `privateKey`. Useful to create signatures for transactions with multiple signatures.
+```js
+import {makeSignature} from 'minter-js-sdk';
+
+makeSignature(tx, privateKey);
+```
+
+### Multi Signatures
+Usually you should collect signatures from other multisig participants, which can make it with `makeSignature`.
+Then you should construct `signatureData` for `TxParams` object and pass such `TxParams` to `postTx` or `prepareTx`
+```js
+import {Minter, TX_TYPE, prepareTx, makeSignature} from "minter-js-sdk";
+
+const minter = new Minter({/* ... */});
+const txParams = {
+    nonce: 1,
+    chainId: 1,
+    type: TX_TYPE.SEND,
+    data: {
+        to: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+        value: 10,
+        coin: 'MNT',    
+    },
+    gasCoin: 'ASD',
+    gasPrice: 1,
+    payload: 'custom message',
+    signatureType: 2, // multiple signature type
+};
+const tx = prepareTx(txParams);
+
+const signature1 = makeSignature(tx, privateKey1);
+const signature2 = makeSignature(tx, privateKey2);
+
+minter.postTx({
+    ...txParams,
+    signatureData: {
+        multisig: multisigAddress,
+        signatures: [signature1, signature2],
+    },
+})
 ```
 
 ### Decode Transaction
@@ -718,7 +785,7 @@ const txParams = {
     payload: 'custom message',
 };
 prepareLink(txParams);
-// => 'https://bip.to/tx?d=f84801aae98a4d4e5400000000000000947633980c000139dd3bd24a3f54e06474fa941e16888ac7230489e800008e637573746f6d206d65737361676580808a41534400000000000000'
+// => 'https://bip.to/tx/-EgBqumKTU5UAAAAAAAAAJR2M5gMAAE53TvSSj9U4GR0-pQeFoiKxyMEiegAAI5jdXN0b20gbWVzc2FnZYCAikFTRAAAAAAAAAA'
 ```
 
 ### `decodeLink()`
@@ -734,7 +801,7 @@ Params:
 ```js
 import {decodeLink} from 'minter-js-sdk';
 
-decodeLink('https://bip.to/tx?d=f84801aae98a4d4e5400000000000000947633980c000139dd3bd24a3f54e06474fa941e16888ac7230489e800008e637573746f6d206d65737361676580808a41534400000000000000');
+decodeLink('https://bip.to/tx/-EgBqumKTU5UAAAAAAAAAJR2M5gMAAE53TvSSj9U4GR0-pQeFoiKxyMEiegAAI5jdXN0b20gbWVzc2FnZYCAikFTRAAAAAAAAAA');
 // =>
 // {
 // gasCoin: 'ASD',

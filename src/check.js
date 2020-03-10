@@ -7,7 +7,7 @@ import {coinToBuffer, bufferToCoin} from 'minterjs-tx';
 import {convertToPip, convertFromPip, mPrefixStrip, toBuffer} from 'minterjs-util';
 // import {convertToPip, convertFromPip} from 'minterjs-util/src/converter.js';
 // import {mPrefixStrip} from 'minterjs-util/src/prefix.js';
-import {isNumericInteger, integerToHexString, bufferToInteger} from './utils.js';
+import {isNumericInteger, integerToHexString, bufferToInteger, toInteger} from './utils.js';
 
 class Check {
     constructor(data) {
@@ -136,7 +136,7 @@ export default function issueCheck({privateKey, password, nonce, chainId = 1, co
     }
 
     if (!gasCoin) {
-        gasCoin = chainId === 2 ? 'MNT' : 'BIP';
+        gasCoin = toInteger(chainId) === '2' ? 'MNT' : 'BIP';
     }
 
     if (typeof gasCoin !== 'string' || gasCoin.length < 3) {

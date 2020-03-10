@@ -8,7 +8,6 @@ import {bufferFromBytes, toInteger} from '../utils.js';
 /**
  * @param {MinterApiInstance} apiInstance
  * @return {Function<Promise>}
- * @constructor
  */
 export default function PostTx(apiInstance) {
     /**

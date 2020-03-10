@@ -1,3 +1,6 @@
+## 0.30.1 - 2020-03-10
+- Add: asserts to `prepareTx`
+
 ## 0.30.0 - 2020-03-06
 - Deprecate TxParams constructors
 - Add: support for multisignatures

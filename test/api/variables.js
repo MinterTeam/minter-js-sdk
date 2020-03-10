@@ -44,21 +44,10 @@ const ENV_SETTINGS = {
         address2: 'Mx634550aa7dc347d5e60888da2529c56f1818e403',
         customCoin: 'TESTCOIN01',
     },
-    [ENV_TEXAS_TESTNET]: {
-        nodeBaseUrl: 'https://texasnet.node-api.minter.network/',
-        gateBaseUrl: 'https://texasnet.gate-api.minter.network/api/v1/',
-        mnemonic: TEXAS_MNEMONIC,
-        privateKey: walletFromMnemonic(TEXAS_MNEMONIC).getPrivateKeyString(),
-        address: 'Mxc5d6b463c18ef37c026b90def5cbd272fb6b2674',
-        mnemonic2: TEXAS_MNEMONIC_2,
-        privateKey2: walletFromMnemonic(TEXAS_MNEMONIC_2).getPrivateKeyString(),
-        address2: 'Mxc2f6e65debb715577ab332c2ed8e671156ee2803',
-        customCoin: 'TESTCOIN01',
-    },
 };
 
 // select environment
-const CURRENT_ENV = ENV_TEXAS_TESTNET;
+const CURRENT_ENV = ENV_QA_TESTNET;
 export const ENV_DATA = ENV_SETTINGS[CURRENT_ENV];
 
 

@@ -5,7 +5,6 @@ import {getData} from './utils.js';
 /**
  * @param {MinterApiInstance} apiInstance
  * @return {function(*): (Promise<number>)}
- * @constructor
  */
 export default function GetNonce(apiInstance) {
     /**

@@ -38,9 +38,10 @@ export default function prepareSignedTx(txParams = {}, {privateKey} = {}) {
         // eslint-disable-next-line no-console
         console.warn('privateKey field in tx params is deprecated, pass it to the second parameter');
     }
+    if (toInteger(txParams.signatureType) === '2') {
+        throw new Error('prepareSignedTx doesn\'t support multi signatures');
+    }
     const tx = prepareTx({...txParams, signatureType: 1}, {privateKey});
-
-    tx.signatureData = makeSignature(tx, privateKey);
 
     return tx;
 }
@@ -64,9 +65,15 @@ export function prepareTx(txParams = {}, {privateKey} = {}) {
     if (!nonce && typeof nonce !== 'number') {
         throw new Error('Invalid nonce specified, tx can\'t be prepared');
     }
+    if (!txType && typeof txType !== 'number') {
+        throw new Error('Invalid type specified, tx can\'t be prepared');
+    }
+    if (!signatureType && typeof signatureType !== 'number') {
+        throw new Error('Invalid signatureType specified, tx can\'t be prepared');
+    }
 
     if (!gasCoin) {
-        if (chainId === 2) {
+        if (toInteger(chainId) === '2') {
             gasCoin = 'MNT';
         } else {
             gasCoin = 'BIP';
@@ -99,6 +106,10 @@ export function prepareTx(txParams = {}, {privateKey} = {}) {
     }
 
     const tx = new Tx(txProps);
+
+    if (toInteger(signatureType) === '1' && privateKey) {
+        tx.signatureData = makeSignature(tx, privateKey);
+    }
 
     return tx;
 }

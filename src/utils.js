@@ -16,10 +16,11 @@ export function isNumericInteger(num) {
 }
 
 /**
- * @param {number|string} num
+ * @param {number|string|ByteArray} num
  * @return {string}
  */
 export function integerToHexString(num) {
+    num = toInteger(num);
     // handle exponential values
     num = (new Big(num)).toFixed();
     // convert to hex
