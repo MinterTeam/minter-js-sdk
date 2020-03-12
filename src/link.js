@@ -61,8 +61,8 @@ class Link {
 
 /**
  * @typedef {Object} LinkParams
- * @property {number} [nonce]
- * @property {number} [gasPrice]
+ * @property {number|string} [nonce]
+ * @property {number|string} [gasPrice]
  * @property {string} [gasCoin]
  * @property {string|Buffer|TX_TYPE} type
  * @property {string|Buffer|TX_TYPE} [txType] - deprecated
@@ -154,7 +154,8 @@ function base64urlEncode(byteArray) {
 }
 
 function base64urlDecode(base64urlString) {
-    const padLength = 4 - (base64urlString.length % 4);
+    const padModulus = base64urlString.length % 4;
+    const padLength = padModulus ? 4 - padModulus : 0;
     const pad = new Array(padLength).fill('=').join('');
     return base64decode(base64urlString + pad);
 }

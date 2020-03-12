@@ -7,6 +7,8 @@ describe('CreateCoinTxData', () => {
         initialAmount: '5',
         constantReserveRatio: '10',
         initialReserve: '20',
+        maxSupply: '1000000000000000',
+
     };
     const txData = new CreateCoinTxData(txParamsData).serialize();
 

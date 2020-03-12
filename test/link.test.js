@@ -53,8 +53,23 @@ const TX_PARAMS_SET_CANDIDATE_OFF = {
     gasCoin: 'MNT',
     gasPrice: '1',
 };
-const LINK_SET_CANDIDATE_OFF = 'https://bip.to/tx/6wui4aAOuY6gSuRm2NOPSQ2zyZs5lqkOJCQ5Us6YIsbcHiwaQ4CAAYNNTlQ';
+const LINK_SET_CANDIDATE_OFF = 'https://bip.to/tx/8gui4aAOuY6gSuRm2NOPSQ2zyZs5lqkOJCQ5Us6YIsbcHiwaQ4CAAYpNTlQAAAAAAAAA';
 
+const TX_PARAMS_CREATE_COIN = {
+    type: TX_TYPE.CREATE_COIN,
+    nonce: '1',
+    data: {
+        name: 'SUPER TEST',
+        symbol: 'SPRTEST000',
+        initialAmount: '1000',
+        initialReserve: '1000',
+        constantReserveRatio: '10',
+        maxSupply: '1000',
+    },
+    gasCoin: 'MNT',
+    gasPrice: '1',
+};
+const LINK_CREATE_COIN = 'https://bip.to/tx/-EYFtvWKU1VQRVIgVEVTVIpTUFJURVNUMDAwiTY1ya3F3qAAAIk2Ncmtxd6gAAAKiTY1ya3F3qAAAIABAYpNTlQAAAAAAAAA';
 
 describe('prepareLink()', () => {
     test('should work', () => {
@@ -86,6 +101,16 @@ describe('prepareLink()', () => {
         });
     });
 
+    test('set candidate off', () => {
+        const link = prepareLink(TX_PARAMS_SET_CANDIDATE_OFF);
+        expect(link).toEqual(LINK_SET_CANDIDATE_OFF);
+    });
+
+    test('create coin', () => {
+        const link = prepareLink(TX_PARAMS_CREATE_COIN);
+        expect(link).toEqual(LINK_CREATE_COIN);
+    });
+
     describe('host', () => {
         const testnetLink = LINK_SEND.replace('https://bip.to', 'https://testnet.bip.to');
         test('should work with custom host', () => {
@@ -115,9 +140,7 @@ describe('decodeLink()', () => {
             const txParams = decodeLink(LINK_CHECK);
             // add proof
             const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
-            // ensure string payload
-            validTxParams.payload = validTxParams.payload || '';
-            expect(txParams).toEqual(validTxParams);
+            expect(txParams).toEqual(ensurePayload(validTxParams));
         });
 
         test('should work decodeCheck', () => {
@@ -132,18 +155,14 @@ describe('decodeLink()', () => {
                 nonce: '1',
                 value: '10',
             };
-            // ensure string payload
-            validTxParams.payload = validTxParams.payload || '';
-            expect(txParams).toEqual(validTxParams);
+            expect(txParams).toEqual(ensurePayload(validTxParams));
         });
 
         test('should work with password', () => {
             const txParams = decodeLink(LINK_CHECK_PASSWORD, {privateKey: TX_PARAMS_CHECK.data.privateKey});
             // add proof
             const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
-            // ensure string payload
-            validTxParams.payload = validTxParams.payload || '';
-            expect(txParams).toEqual(validTxParams);
+            expect(txParams).toEqual(ensurePayload(validTxParams));
         });
 
         test('should throw on password without private key', () => {
@@ -153,10 +172,12 @@ describe('decodeLink()', () => {
 
     test('set candidate off', () => {
         const txParams = decodeLink(LINK_SET_CANDIDATE_OFF);
-        expect(txParams).toEqual({
-            ...TX_PARAMS_SET_CANDIDATE_OFF,
-            payload: TX_PARAMS_SET_CANDIDATE_OFF.payload || '',
-        });
+        expect(txParams).toEqual(ensurePayload(TX_PARAMS_SET_CANDIDATE_OFF));
+    });
+
+    test('create coin', () => {
+        const txParams = decodeLink(LINK_CREATE_COIN);
+        expect(txParams).toEqual(ensurePayload(TX_PARAMS_CREATE_COIN));
     });
 
     test('should not lose precision', () => {
@@ -168,3 +189,10 @@ describe('decodeLink()', () => {
         expect(decodeLink(link).data.value).toEqual(bigValue);
     });
 });
+
+function ensurePayload(txParams) {
+    return {
+        ...txParams,
+        payload: txParams.payload || '',
+    };
+}

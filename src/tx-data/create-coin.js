@@ -31,6 +31,7 @@ export default function CreateCoinTxData({name, symbol, initialAmount, initialRe
     this.initialAmount = initialAmount;
     this.initialReserve = initialReserve;
     this.constantReserveRatio = constantReserveRatio;
+    this.maxSupply = maxSupply;
 
     this.txData = new TxDataCreateCoin({
         name: Buffer.from(name.toString(), 'utf-8'),

@@ -1,3 +1,6 @@
+## 0.30.2 - 2020-03-12
+- Fix: link decoding 
+
 ## 0.30.1 - 2020-03-10
 - Add: asserts to `prepareTx`
 
