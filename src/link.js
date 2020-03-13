@@ -5,8 +5,8 @@ import {isHexPrefixed} from 'ethjs-util';
 import {fromByteArray as base64encode, toByteArray as base64decode} from 'base64-js';
 import {bufferToCoin, coinToBuffer, TxDataRedeemCheck, TX_TYPE, normalizeTxType} from 'minterjs-tx';
 import {ensureBufferData, decodeTxData} from './tx-data/index.js';
+import RedeemCheckTxData from './tx-data/redeem-check.js';
 import {bufferToInteger, integerToHexString} from './utils.js';
-import RedeemCheckTxParams from './tx-params/redeem-check.js';
 
 const DEFAULT_LINK_HOST = 'https://bip.to';
 
@@ -121,11 +121,23 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
  * @return {TxParams}
  */
 export function decodeLink(url, {privateKey, decodeCheck} = {}) {
-    const txBase64 = url.replace(/^.*\/tx\//, '').replace(/\?.*$/, '');
-    const txBytes = rlpDecode(base64urlDecode(txBase64));
-    const passwordBase64 = url.search(/[?&]p=/) >= 0 ? url.replace(/^.*[?&]p=/, '') : '';
-    const password = passwordBase64 ? Buffer.from(base64urlDecode(passwordBase64)) : '';
-    const tx = new Link(txBytes);
+    let tx;
+    /** @type string|Buffer */
+    let password;
+    if (url.indexOf('?d=') >= 0) {
+        // old style links
+        const txString = url.replace(/^.*\?d=/, '').replace(/&p=.*$/, '');
+        const passwordHex = url.indexOf('&p=') >= 0 ? url.replace(/^.*&p=/, '') : '';
+        password = passwordHex ? rlpDecode(Buffer.from(passwordHex, 'hex')) : '';
+        tx = new Link(txString);
+    } else {
+        // default style links
+        const txBase64 = url.replace(/^.*\/tx\//, '').replace(/\?.*$/, '');
+        const txBytes = rlpDecode(base64urlDecode(txBase64));
+        const passwordBase64 = url.search(/[?&]p=/) >= 0 ? url.replace(/^.*[?&]p=/, '') : '';
+        password = passwordBase64 ? Buffer.from(base64urlDecode(passwordBase64)) : '';
+        tx = new Link(txBytes);
+    }
     const txType = normalizeTxType(tx.type);
     if (txType === TX_TYPE.REDEEM_CHECK && password && !privateKey) {
         throw new Error('privateKey param required if link has password');
@@ -134,7 +146,7 @@ export function decodeLink(url, {privateKey, decodeCheck} = {}) {
         // get check from data
         const {check} = new TxDataRedeemCheck(tx.data);
         // proof from password
-        const {txData} = new RedeemCheckTxParams({privateKey, check, password});
+        const txData = new RedeemCheckTxData({privateKey, check, password}).serialize();
         tx.data = txData;
     }
     const txData = decodeTxData(tx.type, tx.data, {decodeCheck});

@@ -1,3 +1,6 @@
+## 0.30.3 - 2020-03-13
+- Fix: restore support of decoding old style links for `decodeLink`
+
 ## 0.30.2 - 2020-03-12
 - Fix: link decoding 
 
