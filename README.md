@@ -433,6 +433,7 @@ const txParams = {
         initialAmount: 5,
         constantReserveRatio: 10,
         initialReserve: 20,
+        maxSupply: 10000, // optional, by default 10**15
     },
     gasCoin: 'ASD',
     payload: 'custom message',
