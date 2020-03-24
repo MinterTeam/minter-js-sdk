@@ -1,6 +1,7 @@
 import secp256k1 from 'secp256k1';
 import {sha256, rlphash} from 'ethereumjs-util/dist/hash.js';
 import {privateToAddress} from 'ethereumjs-util/dist/account.js';
+import {isHexPrefixed, isHexString} from 'ethjs-util';
 import {TxDataRedeemCheck} from 'minterjs-tx';
 // import TxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check.js';
 import {toBuffer, checkToString} from 'minterjs-util';
@@ -8,28 +9,32 @@ import {addTxDataFields} from '../utils.js';
 
 
 /**
- * //@TODO https://github.com/MinterTeam/minter-js-sdk/issues/13 to allow easy `prepareLink` without proof
- * @param {string|Buffer} [privateKey]
- * @param {string|Buffer} check
- * @param {string|Buffer} [password]
- * @param {string|Buffer} [proof]
+ * @param {ByteArray} check
+ * @param {ByteArray} [proof]
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function RedeemCheckTxData({privateKey, check, password, proof}) {
-    // Buffer to string
-    if (typeof password !== 'string') {
-        password = toBuffer(password).toString('utf8');
+export default function RedeemCheckTxData({check, proof}, options = {}) {
+    // eslint-disable-next-line prefer-rest-params
+    if (!options.password && arguments[0].password) {
+        // eslint-disable-next-line prefer-rest-params
+        options.password = arguments[0].password;
+        // eslint-disable-next-line no-console
+        console.warn('Check password in tx data is deprecated. Pass it as field in the second argument.');
+    }
+    // eslint-disable-next-line prefer-rest-params
+    if (!options.privateKey && arguments[0].privateKey) {
+        // eslint-disable-next-line prefer-rest-params
+        options.privateKey = arguments[0].privateKey;
+        // eslint-disable-next-line no-console
+        console.warn('Private key in tx data is deprecated. Pass it as field in the second argument.');
     }
     this.check = checkToString(check);
 
-    if (typeof privateKey === 'string' && privateKey.length) {
-        privateKey = Buffer.from(privateKey, 'hex');
-    }
-
     if (proof) {
         proof = toBuffer(proof);
-    } else if (privateKey) {
-        proof = getProofWithRecovery(privateKey, password);
+    } else if (options.address || options.privateKey) {
+        proof = getProofWithRecovery(options);
     }
 
     this.txData = new TxDataRedeemCheck({
@@ -67,18 +72,35 @@ RedeemCheckTxData.fromRlp = function fromRlp(data) {
 };
 
 /**
- * @param {Buffer} privateKey
- * @param {string} password
+ * @param {ByteArray} password
+ * @param {ByteArray} [address]
+ * @param {ByteArray} [privateKey]
  * @return {ArrayBuffer|Buffer}
  */
-function getProofWithRecovery(privateKey, password) {
-    const addressBuffer = privateToAddress(privateKey);
+function getProofWithRecovery({password, address, privateKey}) {
+    let addressBuffer;
+    if (address) {
+        addressBuffer = toBuffer(address);
+    } else if (privateKey) {
+        if (typeof privateKey === 'string' && privateKey.length && !isHexPrefixed(privateKey) && isHexString(`0x${privateKey}`)) {
+            privateKey = `0x${privateKey}`;
+            // eslint-disable-next-line no-console
+            console.warn('Usage of privateKey string without 0x prefix is deprecated');
+        }
+        privateKey = toBuffer(privateKey);
+        addressBuffer = privateToAddress(privateKey);
+    } else {
+        throw new Error('No address or private key given to generate proof');
+    }
     const addressHash = rlphash([
         addressBuffer,
     ]);
 
+    // ensure Buffer
     if (typeof password === 'string') {
         password = Buffer.from(password, 'utf-8');
+    } else {
+        password = toBuffer(password);
     }
 
     const passwordBuffer = sha256(password);

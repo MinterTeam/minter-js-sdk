@@ -6,47 +6,51 @@ import prepareSignedTx, {prepareTx} from '../tx.js';
 import {bufferFromBytes, toInteger} from '../utils.js';
 
 /**
+ * @typedef {TxOptions & PostTxOptionsExtra} PostTxOptions
+ *
+ * @typedef {Object} PostTxOptionsExtra
+ * @property {number} [gasRetryLimit] - max number of retries after gas error
+ */
+
+/**
  * @param {MinterApiInstance} apiInstance
  * @return {Function<Promise>}
  */
 export default function PostTx(apiInstance) {
     /**
      * @param {TxParams} txParams
-     * @param {Object} options
-     * @param {ByteArray} [options.privateKey] - privateKey to sign tx or get nonce
-     * @param {string} [options.address] - address to get nonce, useful for multisig txs
-     * @param {number} [options.gasRetryLimit]
+     * @param {PostTxOptions} options
      * @return {Promise<string>}
      */
-    return function postTx(txParams, {privateKey, address, gasRetryLimit = 2} = {}) {
-        if (!privateKey && txParams.privateKey) {
-            privateKey = txParams.privateKey;
+    return function postTx(txParams, {gasRetryLimit = 2, ...txOptions} = {}) {
+        if (!txOptions.privateKey && txParams.privateKey) {
+            txOptions.privateKey = txParams.privateKey;
             // eslint-disable-next-line no-console
             console.warn('privateKey field in tx params is deprecated, pass it to the second parameter');
         }
         // @TODO asserts
 
-        return ensureNonce(apiInstance, txParams, {privateKey, address})
-            .then((newNonce) => _postTxEnsureGas(apiInstance, {...txParams, nonce: newNonce}, {privateKey, gasRetryLimit}));
+        return ensureNonce(apiInstance, txParams, txOptions)
+            .then((newNonce) => _postTxEnsureGas(apiInstance, {...txParams, nonce: newNonce}, {gasRetryLimit, ...txOptions}));
     };
 }
 
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
- * @param {ByteArray} [privateKey]
+ * @param {TxOptions} [options]
  * @return {Promise<string>}
  */
-function _postTx(apiInstance, txParams, {privateKey}) {
+function _postTx(apiInstance, txParams, options) {
     if (!txParams.chainId && apiInstance.defaults.chainId) {
         txParams.chainId = apiInstance.defaults.chainId;
     }
 
     let tx;
     if (!txParams.signatureData && toInteger(txParams.signatureType) !== '2') {
-        tx = prepareSignedTx(txParams, {privateKey});
+        tx = prepareSignedTx(txParams, options);
     } else {
-        tx = prepareTx(txParams);
+        tx = prepareTx(txParams, options);
     }
 
     return (new PostSignedTx(apiInstance))(tx.serialize().toString('hex'));
@@ -57,19 +61,18 @@ function _postTx(apiInstance, txParams, {privateKey}) {
  * On retry `txParams.gasPrice` will be updated with required min gas value from error response.
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
- * @param {ByteArray} [privateKey]
- * @param {number} gasRetryLimit - max number of retries
+ * @param {PostTxOptions} options
  * @return {Promise<string>}
  */
-function _postTxEnsureGas(apiInstance, txParams, {privateKey, gasRetryLimit}) {
-    return _postTx(apiInstance, txParams, {privateKey})
+function _postTxEnsureGas(apiInstance, txParams, {gasRetryLimit, ...txOptions}) {
+    return _postTx(apiInstance, txParams, txOptions)
         .catch((error) => {
             // @TODO limit max gas_price to prevent sending tx with to high fees
             if (gasRetryLimit > 0 && isGasError(error)) {
                 // make retry
                 gasRetryLimit -= 1;
                 const minGas = getMinGasFromError(error);
-                return _postTxEnsureGas(apiInstance, {...txParams, gasPrice: minGas}, {privateKey, gasRetryLimit});
+                return _postTxEnsureGas(apiInstance, {...txParams, gasPrice: minGas}, {gasRetryLimit, ...txOptions});
             } else {
                 throw error;
             }

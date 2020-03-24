@@ -1,3 +1,10 @@
+## 0.31.0 - 2020-03-24
+- Change: move `{password, privateKey}` from RedeemCheckTxData's first argument `data` to the second argument `options`. **Deprecate** old approach.
+- Add: `address` option for RedeemCheckTxData to make proof for address. Use it as field in the second argument `options`.
+- Add: `address` option to `decodeLink`
+- Add: `{address, password}` to the options for `prepareTx`, `prepareSignedTx`, and `postTx` to pass it to the RedeemCheckTxData
+- **Deprecate**: `privateKey` string without prefix for RedeemCheckTxData. Now it should be `0x` prefixed. 
+
 ## 0.30.3 - 2020-03-13
 - Fix: restore support of decoding old style links for `decodeLink`
 

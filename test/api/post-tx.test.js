@@ -217,10 +217,10 @@ describe('PostTx handle low gasPrice', () => {
 
 
 describe('PostTx: multisend', () => {
-    const txParamsData = (apiType) => ({
+    const getTxParams = (apiType) => ({
         chainId: 2,
         type: TX_TYPE.MULTISEND,
-        data: {
+        data: new MultisendTxData({
             list: [
                 {
                     value: 10,
@@ -233,14 +233,14 @@ describe('PostTx: multisend', () => {
                     to: 'Mxddab6281766ad86497741ff91b6b48fe85012e3c',
                 },
             ],
-        },
+        }),
         gasCoin: 'MNT',
         payload: 'custom message',
     });
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
-        const txParams = txParamsData(apiType);
+        const txParams = getTxParams(apiType);
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .then((txHash) => {
                 console.log(txHash);
@@ -253,12 +253,43 @@ describe('PostTx: multisend', () => {
             });
     }, 30000);
 
+    test.each(API_TYPE_LIST)('should work with 100 items %s', (apiType) => {
+        expect.assertions(2);
+        const txParamsInstance = getTxParams(apiType);
+        let txData = {
+            list: new Array(100).fill(0).map(() => ({
+                value: Math.random(),
+                coin: 'MNT',
+                to: apiType.address,
+            })),
+        };
+        const txParams = {
+            ...txParamsInstance,
+            data: txData,
+        };
+        return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
+            .then((txHash) => {
+                console.log(txHash);
+                // txHash = txHash.replace(/^Mt/);
+                expect(txHash).toHaveLength(66);
+                expect(txHash.substr(0, 2)).toEqual('Mt');
+            })
+            .catch((error) => {
+                console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
+            });
+    }, 70000);
+
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParamsDataInstance = txParamsData(apiType);
-        txParamsDataInstance.data.list[0].value = Number.MAX_SAFE_INTEGER;
-        txParamsDataInstance.data.list[0].coin = NOT_EXISTENT_COIN;
-        const txParams = txParamsDataInstance;
+        const txParamsInstance = getTxParams(apiType);
+        // @TODO txParamsInstance.data is not writable (raw not updated)
+        let txData = txParamsInstance.data.fields;
+        txData.list[0].value = Number.MAX_SAFE_INTEGER;
+        txData.list[0].coin = NOT_EXISTENT_COIN;
+        const txParams = {
+            ...txParamsInstance,
+            data: txData,
+        };
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);

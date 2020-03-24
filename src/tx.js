@@ -1,4 +1,4 @@
-import {Tx, TxSignature, TxMultisignature, coinToBuffer, normalizeTxType, TX_TYPE, bufferToCoin} from 'minterjs-tx';
+import {Tx, TxSignature, TxMultisignature, coinToBuffer, normalizeTxType, bufferToCoin} from 'minterjs-tx';
 // import Tx from 'minterjs-tx/src/tx';
 // import TxSignature from 'minterjs-tx/src/tx-signature.js';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
@@ -23,35 +23,42 @@ import {decodeTxData, ensureBufferData} from './tx-data/index.js';
  */
 
 /**
+ * @typedef {Object} TxOptions
+ * @property {ByteArray} [privateKey] - to sign tx or get nonce or to make proof for redeemCheck tx
+ * @property {ByteArray} [address] - to get nonce (useful for multisignatures) or to make proof for redeemCheck tx
+ * @property {ByteArray} [password] - to make proof for redeemCheck tx
+ */
+
+/**
  * @typedef {Buffer, Uint8Array, string} ByteArray
  */
 
 
 /**
  * @param {TxParams} txParams
- * @param {ByteArray} privateKey
+ * @param {TxOptions} [options]
  * @return {Tx}
  */
-export default function prepareSignedTx(txParams = {}, {privateKey} = {}) {
-    if (!privateKey && txParams.privateKey) {
-        privateKey = txParams.privateKey;
+export default function prepareSignedTx(txParams = {}, options = {}) {
+    if (!options.privateKey && txParams.privateKey) {
+        options.privateKey = txParams.privateKey;
         // eslint-disable-next-line no-console
-        console.warn('privateKey field in tx params is deprecated, pass it to the second parameter');
+        console.warn('privateKey field in tx params is deprecated, pass it to the second argument');
     }
     if (toInteger(txParams.signatureType) === '2') {
         throw new Error('prepareSignedTx doesn\'t support multi signatures');
     }
-    const tx = prepareTx({...txParams, signatureType: 1}, {privateKey});
+    const tx = prepareTx({...txParams, signatureType: 1}, options);
 
     return tx;
 }
 
 /**
  * @param {TxParams} txParams
- * @param {ByteArray} privateKey
+ * @param {TxOptions} [options]
  * @return {Tx}
  */
-export function prepareTx(txParams = {}, {privateKey} = {}) {
+export function prepareTx(txParams = {}, options = {}) {
     txParams = {
         ...txParams,
         data: txParams.data || txParams.txData,
@@ -80,12 +87,7 @@ export function prepareTx(txParams = {}, {privateKey} = {}) {
         }
     }
 
-    // pass privateKey from params to data for redeemCheck
-    if (txType === TX_TYPE.REDEEM_CHECK && !txData.privateKey) {
-        txData.privateKey = privateKey;
-    }
-
-    txData = ensureBufferData(txData, txType);
+    txData = ensureBufferData(txData, txType, options);
 
     const txProps = {
         nonce: `0x${integerToHexString(nonce)}`,
@@ -107,8 +109,8 @@ export function prepareTx(txParams = {}, {privateKey} = {}) {
 
     const tx = new Tx(txProps);
 
-    if (toInteger(signatureType) === '1' && privateKey) {
-        tx.signatureData = makeSignature(tx, privateKey);
+    if (toInteger(signatureType) === '1' && options.privateKey) {
+        tx.signatureData = makeSignature(tx, options.privateKey);
     }
 
     return tx;

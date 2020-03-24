@@ -116,11 +116,12 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
 
 /**
  * @param {string} url
+ * @param {string} [address]
  * @param {string} [privateKey]
  * @param {boolean} [decodeCheck]
  * @return {TxParams}
  */
-export function decodeLink(url, {privateKey, decodeCheck} = {}) {
+export function decodeLink(url, {address, privateKey, decodeCheck} = {}) {
     let tx;
     /** @type string|Buffer */
     let password;
@@ -139,14 +140,15 @@ export function decodeLink(url, {privateKey, decodeCheck} = {}) {
         tx = new Link(txBytes);
     }
     const txType = normalizeTxType(tx.type);
-    if (txType === TX_TYPE.REDEEM_CHECK && password && !privateKey) {
-        throw new Error('privateKey param required if link has password');
-    }
-    if (txType === TX_TYPE.REDEEM_CHECK && password && privateKey) {
+    if (txType === TX_TYPE.REDEEM_CHECK && password) {
+        if (!privateKey && !address) {
+            throw new Error('privateKey or address are required if link has password');
+        }
+
         // get check from data
         const {check} = new TxDataRedeemCheck(tx.data);
         // proof from password
-        const txData = new RedeemCheckTxData({privateKey, check, password}).serialize();
+        const txData = new RedeemCheckTxData({check}, {password, address, privateKey}).serialize();
         tx.data = txData;
     }
     const txData = decodeTxData(tx.type, tx.data, {decodeCheck});

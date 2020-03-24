@@ -1,3 +1,4 @@
+import {privateToAddress} from 'ethereumjs-util/dist/account.js';
 import {RedeemCheckTxData} from '~/src';
 
 describe('RedeemCheckTxData', () => {
@@ -15,8 +16,17 @@ describe('RedeemCheckTxData', () => {
             .toEqual(txParamsData);
     });
 
-    test('.fromRlp (password)', () => {
-        const txData = new RedeemCheckTxData({check, password, privateKey}).serialize();
+    test('.fromRlp (password with privateKey)', () => {
+        const txData = new RedeemCheckTxData({check}, {password, privateKey}).serialize();
+        const params = RedeemCheckTxData.fromRlp(txData).fields;
+
+        expect(params)
+            .toEqual(txParamsData);
+    });
+
+    test('.fromRlp (password with address)', () => {
+        const address = privateToAddress(Buffer.from(privateKey, 'hex'));
+        const txData = new RedeemCheckTxData({check}, {password, address}).serialize();
         const params = RedeemCheckTxData.fromRlp(txData).fields;
 
         expect(params)

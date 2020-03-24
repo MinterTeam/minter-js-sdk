@@ -45,9 +45,10 @@ export default function getTxData(txType) {
 /**
  * @param {Buffer|TxData|Object} txData
  * @param {TX_TYPE} txType
+ * @param {TxOptions} [options] - options for RedeemCheckTxData
  * @return {Buffer}
  */
-export function ensureBufferData(txData, txType) {
+export function ensureBufferData(txData, txType, options) {
     // serialize, if it TxData
     if (typeof txData.serialize === 'function') {
         txData = txData.serialize();
@@ -55,7 +56,7 @@ export function ensureBufferData(txData, txType) {
     // make buffer from object
     if (typeof txData.length === 'undefined') {
         const TxData = getTxData(txType);
-        txData = new TxData(txData);
+        txData = new TxData(txData, options);
         txData = txData.serialize();
     }
 
