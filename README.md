@@ -153,6 +153,9 @@ Accept [tx params](#Tx params constructors) object and make asynchronous request
 `gasRetryLimit` - count of repeating request, 2 by default. If first request fails because of low gas, it will be repeated with updated `gasPrice`
 Returns promise that resolves with sent transaction hash.
 
+*Please note: always check that sent transaction has no errors (tx in block should have `code: 0`). Otherwise errored tx will not be applied*
+
+
 ```js
 /**
  * @typedef {Object} TxParams
@@ -177,6 +180,7 @@ minter.postTx(txParams, {privateKey: '...', gasRetryLimit: 2})
     .then((txHash) => {
         console.log(txHash);
         // 'Mt...'
+        // Check here that tx in block has no errors (code === 0)
     })
     .catch((error) => {
         // ...
