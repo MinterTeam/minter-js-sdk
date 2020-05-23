@@ -73,14 +73,6 @@ export function decodeTxData(txType, txData, {decodeCheck: isDecodeCheck} = {}) 
     txType = normalizeTxType(txType);
     let txDataDecoded = getTxData(txType).fromRlp(txData);
     let fields = txDataDecoded.fields;
-    // fix rawCheck
-    if (txType === TX_TYPE.REDEEM_CHECK) {
-        fields.check = txDataDecoded.check;
-    }
-    // fix pubKey
-    if (txType === TX_TYPE.DECLARE_CANDIDACY || txType === TX_TYPE.EDIT_CANDIDATE || txType === TX_TYPE.DELEGATE || txType === TX_TYPE.UNBOND || txType === TX_TYPE.SET_CANDIDATE_ON || txType === TX_TYPE.SET_CANDIDATE_OFF) {
-        fields.publicKey = txDataDecoded.publicKey;
-    }
 
     if (isDecodeCheck && txType === TX_TYPE.REDEEM_CHECK) {
         fields.checkData = decodeCheck(fields.check);

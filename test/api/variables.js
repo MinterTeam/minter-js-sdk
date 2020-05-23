@@ -47,8 +47,8 @@ const ENV_SETTINGS = {
 };
 
 // select environment
-const CURRENT_ENV = ENV_QA_TESTNET;
-export const ENV_DATA = ENV_SETTINGS[CURRENT_ENV];
+const currentEnv = ENV_QA_TESTNET;
+export const ENV_DATA = ENV_SETTINGS[currentEnv];
 
 
 export const minterNode = new Minter({apiType: API_TYPE_NODE, baseURL: ENV_DATA.nodeBaseUrl, timeout: 25000});

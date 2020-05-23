@@ -140,7 +140,7 @@ describe('PostTx: send', () => {
         expect.assertions(2);
         const txParams = txParamsData(apiType);
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-            .then((txHash) => {
+            .then(({hash: txHash}) => {
                 console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
@@ -203,7 +203,7 @@ describe('PostTx handle low gasPrice', () => {
         expect.assertions(2);
         const txParams = txParamsData(apiType);
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-            .then((txHash) => {
+            .then(({hash: txHash}) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
@@ -242,7 +242,7 @@ describe('PostTx: multisend', () => {
         expect.assertions(2);
         const txParams = getTxParams(apiType);
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-            .then((txHash) => {
+            .then(({hash: txHash}) => {
                 console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
@@ -268,7 +268,7 @@ describe('PostTx: multisend', () => {
             data: txData,
         };
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-            .then((txHash) => {
+            .then(({hash: txHash}) => {
                 console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
@@ -317,7 +317,7 @@ describe('PostTx: sell', () => {
         expect.assertions(2);
         const txParams = txParamsData(apiType);
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-            .then((txHash) => {
+            .then(({hash: txHash}) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
@@ -361,7 +361,7 @@ describe('PostTx: buy', () => {
         expect.assertions(2);
         const txParams = txParamsData(apiType);
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-            .then((txHash) => {
+            .then(({hash: txHash}) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
@@ -405,7 +405,7 @@ describe('validator', () => {
             expect.assertions(2);
             const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-                .then((txHash) => {
+                .then(({hash: txHash}) => {
                     console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
@@ -446,7 +446,7 @@ describe('validator', () => {
             expect.assertions(2);
             const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-                .then((txHash) => {
+                .then(({hash: txHash}) => {
                     console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
@@ -487,7 +487,7 @@ describe('validator', () => {
             expect.assertions(2);
             const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-                .then((txHash) => {
+                .then(({hash: txHash}) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
@@ -530,7 +530,7 @@ describe('validator', () => {
             expect.assertions(2);
             const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-                .then((txHash) => {
+                .then(({hash: txHash}) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
@@ -569,7 +569,7 @@ describe('validator', () => {
             expect.assertions(2);
             const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-                .then((txHash) => {
+                .then(({hash: txHash}) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
@@ -608,7 +608,7 @@ describe('validator', () => {
             expect.assertions(2);
             const txParams = txParamsData(apiType, {publicKey: apiType.newCandidatePublicKey});
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-                .then((txHash) => {
+                .then(({hash: txHash}) => {
                     // console.log(txHash);
                     // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
@@ -663,7 +663,7 @@ describe('PostTx: redeem check', () => {
         expect.assertions(2);
         const txParams = txParamsData(apiType);
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-            .then((txHash) => {
+            .then(({hash: txHash}) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
@@ -678,7 +678,7 @@ describe('PostTx: redeem check', () => {
         expect.assertions(2);
         const txParams = txParamsData(apiType, {}, apiType.customCoin);
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-            .then((txHash) => {
+            .then(({hash: txHash}) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
@@ -721,7 +721,7 @@ describe('PostTx: create multisig', () => {
             weights: [Math.random(), Math.random()].map((item) => item.toString().replace(/\D/, '').substr(0, 3)),
         });
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
-            .then((txHash) => {
+            .then(({hash: txHash}) => {
                 // console.log(txHash);
                 // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
@@ -740,7 +740,7 @@ describe('PostTx: create multisig', () => {
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
                 // rlp: input string too long for uint, decoding into (transaction.CreateMultisigData).Threshold
-                expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
+                expect(error.response.data.error.code === 106 || error.response.data.error.tx_result?.code === 106).toBe(true);
             });
     }, 70000);
 });

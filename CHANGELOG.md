@@ -1,3 +1,6 @@
+## 0.32.0 - 2020-05-23
+- **BREAKING** change: `postTx` and `postSignedTx` now returns object `{hash: string}` for node or NodeTransaction object for gate
+
 ## 0.31.0 - 2020-03-24
 - Change: move `{password, privateKey}` from RedeemCheckTxData's first argument `data` to the second argument `options`. **Deprecate** old approach.
 - Add: `address` option for RedeemCheckTxData to make proof for address. Use it as field in the second argument `options`.

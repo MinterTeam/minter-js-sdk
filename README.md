@@ -27,7 +27,7 @@ Contents:
     - [estimateCoinSell](#estimatecoinsell)
     - [estimateCoinBuy](#estimatecoinbuy)
     - [estimateTxCommission](#estimatetxcommission)
-  - [Tx params constructors](#tx-params-constructors)
+  - [Tx params constructors](#tx-params)
     - [Send](#send)
     - [Multisend](#multisend)
     - [Sell](#sell)
@@ -171,11 +171,11 @@ Returns promise that resolves with sent transaction hash.
 * @param {TxParams} txParams
 * @param {number} [gasRetryLimit=2] - number of retries, if request was failed because of low gas
 * @param {string|Buffer} [privateKey]
-* @return {Promise<string>}
+* @return {Promise<NodeTransaction|{hash: string}>}
 */
 minter.postTx(txParams, {privateKey: '...', gasRetryLimit: 2})
-    .then((txHash) => {
-        console.log(txHash);
+    .then((tx) => {
+        console.log(tx.hash);
         // 'Mt...'
     })
     .catch((error) => {
@@ -187,16 +187,16 @@ minter.postTx(txParams, {privateKey: '...', gasRetryLimit: 2})
 
 Post new transaction to the blockchain
 Accept signed tx string or Buffer and make asynchronous request to the blockchain API.
-Returns promise that resolves with sent transaction hash.
+Returns promise that resolves with sent transaction data (from gate) or transaction hash (from node). 
 
 ```js
 /**
 * @param {string|Buffer} signedTx
-* @return {Promise<string>}
+* @return {Promise<NodeTransaction|{hash: string}>}
 */
 minter.postSignedTx('f8920102018a4d4e540000000000000001aae98a4d4e5400000000...')
-    .then((txHash) => {
-        console.log(txHash);
+    .then((tx) => {
+        console.log(tx.hash);
         // 'Mt...'
     })
     .catch((error) => {

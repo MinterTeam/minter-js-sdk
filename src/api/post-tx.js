@@ -39,7 +39,7 @@ export default function PostTx(apiInstance) {
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
  * @param {TxOptions} [options]
- * @return {Promise<string>}
+ * @return {Promise<NodeTransaction|{hash: string}>}
  */
 function _postTx(apiInstance, txParams, options) {
     if (!txParams.chainId && apiInstance.defaults.chainId) {
