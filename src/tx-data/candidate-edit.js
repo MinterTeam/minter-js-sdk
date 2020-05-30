@@ -2,7 +2,7 @@ import {TxDataEditCandidate} from 'minterjs-tx';
 // import TxDataEditCandidate from 'minterjs-tx/src/tx-data/edit-candidate.js';
 import {addressToString, publicToString, toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
-import {addTxDataFields} from '../utils.js';
+import {addTxDataFields, validateAddress, validatePublicKey} from '../utils.js';
 
 /**
  * @param {string} publicKey
@@ -11,6 +11,10 @@ import {addTxDataFields} from '../utils.js';
  * @constructor
  */
 export default function EditCandidateTxData({publicKey, rewardAddress, ownerAddress}) {
+    validatePublicKey(publicKey, 'publicKey');
+    validateAddress(rewardAddress, 'rewardAddress');
+    validateAddress(ownerAddress, 'ownerAddress');
+
     this.publicKey = publicKey;
     this.rewardAddress = rewardAddress;
     this.ownerAddress = ownerAddress;

@@ -122,7 +122,7 @@ describe('prepareTx', () => {
             gasCoin: 'ASD',
             payload: 'custom message',
         };
-        const validTxHex = 'f89a822b6701018a4153440000000000000004b0ef8a42454c54434f494e0000888ac7230489e800008a4d4e54000000000000008f01bc16d674ec7ff21f494c589c00008e637573746f6d206d6573736167658001b845f8431ba070f02556e599efa4250926596d2c362146798ecce7be9bfbf9843e32a7dee3baa04064883631f62a241b0f865bc4b1801ef49edc3e07728ecc8b000252c47386f4';
+        const validTxHex = 'f899822b6701018a4153440000000000000004afee8a42454c54434f494e0000888ac7230489e800008a4d4e54000000000000008e314dc6448d9338c15b0a000000008e637573746f6d206d6573736167658001b845f8431ba0eecd944a7b6251f82698a0bb61808c202393a3db2aa35447df55022fbfb6f8cfa04df93bdfc87d7e6dfb7f7380ae3ea514daefaea75ef13e27e8ddaf3cc96f126f';
 
         test('should work prepareSignedTx', shouldWorkPrepareSignedTx(txParams, privateKey, validTxHex));
         test('should work prepareTx', shouldWorkPrepareTx(txParams, privateKey, validTxHex));

@@ -2,13 +2,15 @@ import {TxDataSetCandidateOn} from 'minterjs-tx';
 // import TxDataSetCandidateOn from 'minterjs-tx/src/tx-data/set-candidate-on.js';
 import {publicToString, toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
-import {addTxDataFields} from '../utils.js';
+import {addTxDataFields, validatePublicKey} from '../utils.js';
 
 /**
  * @param {string} publicKey
  * @constructor
  */
 export default function SetCandidateOnTxData({publicKey}) {
+    validatePublicKey(publicKey, 'publicKey');
+
     this.publicKey = publicKey;
 
     this.txData = new TxDataSetCandidateOn({

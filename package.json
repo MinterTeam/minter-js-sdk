@@ -1,6 +1,6 @@
 {
   "name": "minter-js-sdk",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "description": "JS SDK for Minter Blockchain",
   "main": "dist/cjs/index.js",
   "module": "src/index.js",
@@ -60,17 +60,17 @@
     "ethereumjs-util": "^6.2.0",
     "ethjs-util": "^0.1.6",
     "minterjs-tx": "^8.0.0",
-    "minterjs-util": "^0.15.1",
+    "minterjs-util": "^0.15.2",
     "parse-asn1": "github:shrpne/parse-asn1#update-asn1",
-    "rlp": "^2.2.4",
+    "rlp": "^2.2.5",
     "secp256k1": "^3.8.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.6",
-    "@babel/plugin-transform-runtime": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "@babel/runtime": "^7.9.6",
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/plugin-transform-runtime": "^7.10.1",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/runtime": "^7.10.2",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.0.1",
     "coveralls": "^3.1.0",
@@ -81,13 +81,13 @@
     "jest": "^26.0.1",
     "minterjs-wallet": "^4.0.4",
     "pre-commit": "^1.2.2",
-    "rollup": "^2.10.8",
+    "rollup": "^2.11.2",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^5.3.0"
+    "rollup-plugin-terser": "^6.1.0"
   }
 }

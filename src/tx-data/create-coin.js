@@ -3,10 +3,10 @@ import {TxDataCreateCoin, coinToBuffer, bufferToCoin} from 'minterjs-tx';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
 import {convertFromPip, convertToPip, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
-import {addTxDataFields, bufferToInteger, integerToHexString} from '../utils.js';
+import {addTxDataFields, bufferToInteger, integerToHexString, NETWORK_MAX_AMOUNT, validateAmount, validateCoin} from '../utils.js';
 
 // limit in bips
-export const MAX_MAX_SUPPLY = 10 ** 15;
+export const MAX_MAX_SUPPLY = NETWORK_MAX_AMOUNT;
 export const MIN_MAX_SUPPLY = 1;
 
 /**
@@ -19,11 +19,15 @@ export const MIN_MAX_SUPPLY = 1;
  * @constructor
  */
 export default function CreateCoinTxData({name, symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply = MAX_MAX_SUPPLY}) {
+    validateCoin(symbol, 'symbol');
+    validateAmount(initialAmount, 'initialAmount');
+    validateAmount(initialReserve, 'initialReserve');
+    validateAmount(maxSupply, 'maxSupply');
     if (maxSupply > MAX_MAX_SUPPLY || maxSupply < MIN_MAX_SUPPLY) {
-        throw new Error(`maxSupply should be between ${MIN_MAX_SUPPLY} and ${MAX_MAX_SUPPLY}`);
+        throw new Error(`Field \`maxSupply\` should be between ${MIN_MAX_SUPPLY} and ${MAX_MAX_SUPPLY}`);
     }
     if (Number(initialAmount) > Number(maxSupply)) {
-        throw new Error('initialAmount should be less or equal of maxSupply');
+        throw new Error('Field `initialAmount` should be less or equal of maxSupply');
     }
 
     this.name = name;

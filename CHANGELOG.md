@@ -1,4 +1,5 @@
-## 0.32.0 - 2020-05-23
+## 0.32.0 - 2020-05-31
+- **BREAKING** add: validation of TxData params
 - **BREAKING** change: `postTx` and `postSignedTx` now returns object `{hash: string}` for node or NodeTransaction object for gate
 
 ## 0.31.0 - 2020-03-24

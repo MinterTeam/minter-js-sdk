@@ -1,6 +1,9 @@
 import Big from 'big.js';
 import BN from 'bn.js';
 import {padToEven, isHexPrefixed} from 'ethjs-util';
+import {isValidAddress, isValidPublicKeyString, isValidCheck, numToBig} from 'minterjs-util';
+
+export const NETWORK_MAX_AMOUNT = 10 ** 15;
 
 /**
  * @param {number|string} num
@@ -103,4 +106,71 @@ export function addTxDataFields(txData) {
         },
         enumerable: true,
     });
+}
+
+export function validateAddress(value, fieldName) {
+    validateNotEmpty(value, fieldName);
+
+    if (typeof value === 'string' && !isValidAddress(value)) {
+        throw new Error(`Field \`${fieldName}\` is invalid address`);
+    }
+}
+
+export function validatePublicKey(value, fieldName) {
+    validateNotEmpty(value, fieldName);
+
+    if (typeof value === 'string' && !isValidPublicKeyString(value)) {
+        throw new Error(`Field \`${fieldName}\` is invalid public key`);
+    }
+}
+
+export function validateCheck(value, fieldName) {
+    validateNotEmpty(value, fieldName);
+
+    if (typeof value === 'string' && !isValidCheck(value)) {
+        throw new Error(`Field \`${fieldName}\` is invalid check string`);
+    }
+}
+
+export function validateAmount(value, fieldName) {
+    validateNotEmpty(value, fieldName);
+
+    if (typeof value === 'string' || typeof value === 'number') {
+        let valueBig;
+        try {
+            valueBig = numToBig(value);
+        } catch (e) {
+            throw new Error(`Field \`${fieldName}\` is invalid number`);
+        }
+
+        if (valueBig && valueBig.gt(NETWORK_MAX_AMOUNT)) {
+            throw new Error(`Field \`${fieldName}\` has value which is greater than network's max amount: 10^15`);
+        }
+        if (valueBig && valueBig.lt(0)) {
+            throw new Error(`Field \`${fieldName}\` has negative amount`);
+        }
+    }
+}
+
+export function validateCoin(value, fieldName) {
+    validateNotEmpty(value, fieldName);
+
+    if (typeof value === 'string' && !(/^[A-Z0-9]{3,10}$/.test(value))) {
+        throw new Error(`Field \`${fieldName}\` is invalid coin symbol string`);
+    }
+}
+
+function validateNotEmpty(value, fieldName) {
+    if (typeof value === 'undefined') {
+        throw new Error(`Field \`${fieldName}\` is undefined`);
+    }
+    if (value === null) {
+        throw new Error(`Field \`${fieldName}\` is null`);
+    }
+    if (value === false) {
+        throw new Error(`Field \`${fieldName}\` is false`);
+    }
+    if (value === '') {
+        throw new Error(`Field \`${fieldName}\` is empty string`);
+    }
 }

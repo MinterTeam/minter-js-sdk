@@ -5,13 +5,26 @@ import {convertToPip, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
 import SendTxData from './send.js';
-import {addTxDataFields} from '../utils.js';
+import {addTxDataFields, validateAddress, validateAmount, validateCoin} from '../utils.js';
 
 /**
  * @param {Array} list
  * @constructor
  */
 export default function MultisendTxData({list}) {
+    if (!Array.isArray(list)) {
+        throw new Error('Field `list` is not an array');
+    }
+    list.forEach((item, index) => {
+        try {
+            validateAddress(item.to, `list[${index}].to`);
+            validateCoin(item.coin, `list[${index}].coin`);
+            validateAmount(item.value, `list[${index}].value`);
+        } catch (e) {
+            throw new Error(`Field \`list\` contains invalid item at index ${index}. ${e.message}`);
+        }
+    });
+
     this.list = list;
 
     this.txData = new TxDataMultisend({

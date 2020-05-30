@@ -1,7 +1,7 @@
-import {TxDataBuy, TX_TYPE, coinToBuffer} from 'minterjs-tx';
-import {convertToPip} from 'minterjs-util';
+import {TX_TYPE} from 'minterjs-tx';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 import BuyTxData from '../tx-data/convert-buy.js';
+import {NETWORK_MAX_AMOUNT} from '../utils.js';
 
 /**
  * @deprecated
@@ -14,7 +14,7 @@ import BuyTxData from '../tx-data/convert-buy.js';
  * @param {...TxParams} otherParams
  * @return {TxParams}
  */
-export default function BuyTxParams({coinFrom, coinTo, buyAmount, maxSellAmount = Number.MAX_SAFE_INTEGER, feeCoinSymbol, ...otherParams}) {
+export default function BuyTxParams({coinFrom, coinTo, buyAmount, maxSellAmount = NETWORK_MAX_AMOUNT, feeCoinSymbol, ...otherParams}) {
     // eslint-disable-next-line no-console
     console.warn('BuyTxParams is deprecated');
 

@@ -2,7 +2,7 @@ import {TxDataCreateMultisig} from 'minterjs-tx';
 // import TxDataCreateMultisig from 'minterjs-tx/src/tx-data/create-multisig.js';
 import {addressToString, toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
-import {addTxDataFields, bufferToInteger, integerToHexString} from '../utils.js';
+import {addTxDataFields, bufferToInteger, integerToHexString, validateAddress} from '../utils.js';
 
 /**
  * @param {Array} addresses
@@ -15,15 +15,29 @@ export default function CreateMultisigTxData({addresses, weights, threshold}) {
     this.weights = weights;
     this.threshold = threshold;
 
+    if (!Array.isArray(addresses)) {
+        throw new Error('Field `addresses` is not an array');
+    }
+    if (!Array.isArray(weights)) {
+        throw new Error('Field `weights` is not an array');
+    }
     if (addresses.length > 32) {
-        throw new Error('Invalid addresses count, it must not be greater than 32');
+        throw new Error('Invalid `addresses` count, it must not be greater than 32');
     }
     if (weights.length !== addresses.length) {
-        throw new Error('Invalid weights count, it must be equal to addresses count');
+        throw new Error('Invalid `weights` count, it must be equal to addresses count');
     }
-    weights.forEach((weight) => {
+    addresses.forEach((address, index) => {
+        try {
+            validateAddress(address, `addresses[${index}]`);
+        } catch (e) {
+            throw new Error(`Field \`addresses\` contains invalid address at index: ${index}. ${e.message}`);
+        }
+    });
+
+    weights.forEach((weight, index) => {
         if (weight > 1023 || weight < 0) {
-            throw new Error('Invalid weight given, it should be between 0 and 1023');
+            throw new Error(`\`weights\` field contains invalid weight at index: ${index}, it should be between 0 and 1023`);
         }
     });
 

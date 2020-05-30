@@ -19,6 +19,7 @@ import {
     prepareSignedTx,
 } from '~/src';
 import {ENV_DATA, minterGate, minterNode} from './variables';
+import {NETWORK_MAX_AMOUNT} from '~/src/utils.js';
 
 const newCandidatePublicKeyGate = generateWallet().getPublicKeyString();
 const newCandidatePublicKeyNode = generateWallet().getPublicKeyString();
@@ -158,7 +159,7 @@ describe('PostTx: send', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', async (apiType) => {
             expect.assertions(1);
-            const txParams = txParamsData(apiType, {value: Number.MAX_SAFE_INTEGER, coin: NOT_EXISTENT_COIN});
+            const txParams = txParamsData(apiType, {value: NETWORK_MAX_AMOUNT, coin: NOT_EXISTENT_COIN});
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
@@ -284,7 +285,7 @@ describe('PostTx: multisend', () => {
         const txParamsInstance = getTxParams(apiType);
         // @TODO txParamsInstance.data is not writable (raw not updated)
         let txData = txParamsInstance.data.fields;
-        txData.list[0].value = Number.MAX_SAFE_INTEGER;
+        txData.list[0].value = NETWORK_MAX_AMOUNT;
         txData.list[0].coin = NOT_EXISTENT_COIN;
         const txParams = {
             ...txParamsInstance,
@@ -330,7 +331,7 @@ describe('PostTx: sell', () => {
 
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = txParamsData(apiType, {valueToSell: Number.MAX_SAFE_INTEGER, coinToSell: NOT_EXISTENT_COIN});
+        const txParams = txParamsData(apiType, {valueToSell: NETWORK_MAX_AMOUNT, coinToSell: NOT_EXISTENT_COIN});
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
@@ -374,7 +375,7 @@ describe('PostTx: buy', () => {
 
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = txParamsData(apiType, {valueToBuy: Number.MAX_SAFE_INTEGER, coinToSell: NOT_EXISTENT_COIN});
+        const txParams = txParamsData(apiType, {valueToBuy: NETWORK_MAX_AMOUNT, coinToSell: NOT_EXISTENT_COIN});
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
@@ -392,7 +393,7 @@ describe('validator', () => {
             type: TX_TYPE.DECLARE_CANDIDACY,
             data: new DeclareCandidacyTxData(Object.assign({
                 address: apiType.address,
-                publicKey: 'Mp00',
+                publicKey: 'Mp0000000000000000000000000000000000000000000000000000000000000000',
                 coin: 'MNT',
                 stake: 1.211,
                 commission: 50,
@@ -418,12 +419,12 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = txParamsData(apiType); // empty publicKey specified
+            const txParams = txParamsData(apiType, {stake: NETWORK_MAX_AMOUNT});
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
-                    // input string too short for types.Pubkey
-                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
+                    // Insufficient funds for sender account
+                    expect(error.response.data.error.code === 107 || error.response.data.error.tx_result.code === 107).toBe(true);
                 });
         }, 70000);
     });
@@ -434,7 +435,7 @@ describe('validator', () => {
             chainId: 2,
             type: TX_TYPE.EDIT_CANDIDATE,
             data: new EditCandidateTxData(Object.assign({
-                publicKey: 'Mp00',
+                publicKey: 'Mp0000000000000000000000000000000000000000000000000000000000000000',
                 rewardAddress: apiType.address,
                 ownerAddress: apiType.address,
             }, data)),
@@ -463,8 +464,8 @@ describe('validator', () => {
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
-                    // input string too short for types.Pubkey
-                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
+                    // Candidate with such public key not found
+                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
                 });
         }, 70000);
     });
@@ -475,7 +476,7 @@ describe('validator', () => {
             chainId: 2,
             type: TX_TYPE.DELEGATE,
             data: new DelegateTxData(Object.assign({
-                publicKey: 'Mp00',
+                publicKey: 'Mp0000000000000000000000000000000000000000000000000000000000000000',
                 coin: 'MNT',
                 stake: 10,
             }, data)),
@@ -500,12 +501,12 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = txParamsData(apiType); // empty publicKey specified
+            const txParams = txParamsData(apiType, {stake: NETWORK_MAX_AMOUNT});
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
-                    // input string too short for types.Pubkey
-                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
+                    // Candidate with such public key not found
+                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
                 });
         }, 70000);
     });
@@ -516,7 +517,7 @@ describe('validator', () => {
             chainId: 2,
             type: TX_TYPE.UNBOND,
             data: new UnbondTxData(Object.assign({
-                publicKey: 'Mp00',
+                publicKey: 'Mp0000000000000000000000000000000000000000000000000000000000000000',
                 coin: 'MNT',
                 stake: 10,
             }, data)),
@@ -543,12 +544,12 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             // expect.assertions(1);
-            const txParams = txParamsData(apiType); // empty publicKey specified
+            const txParams = txParamsData(apiType, {stake: NETWORK_MAX_AMOUNT});
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
-                    // input string too short for types.Pubkey
-                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
+                    // Candidate with such public key not found
+                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
                 });
         }, 70000);
     });
@@ -559,7 +560,7 @@ describe('validator', () => {
             chainId: 2,
             type: TX_TYPE.SET_CANDIDATE_ON,
             data: new SetCandidateOnTxData(Object.assign({
-                publicKey: 'Mp00',
+                publicKey: 'Mp0000000000000000000000000000000000000000000000000000000000000000',
             }, data)),
             gasCoin: 'MNT',
             payload: 'custom message',
@@ -586,8 +587,8 @@ describe('validator', () => {
             return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
-                    // input string too short for types.Pubkey
-                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
+                    // Candidate with such public key not found
+                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
                 });
         }, 70000);
     });
@@ -598,7 +599,7 @@ describe('validator', () => {
             chainId: 2,
             type: TX_TYPE.SET_CANDIDATE_OFF,
             data: new SetCandidateOffTxData(Object.assign({
-                publicKey: 'Mp00',
+                publicKey: 'Mp0000000000000000000000000000000000000000000000000000000000000000',
             }, data)),
             gasCoin: 'MNT',
             payload: 'custom message',
@@ -628,8 +629,8 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
-                    // input string too short for types.Pubkey
-                    expect(error.response.data.error.code === 106 || error.response.data.error.tx_result.code === 106).toBe(true);
+                    // Candidate with such public key not found
+                    expect(error.response.data.error.code === 403 || error.response.data.error.tx_result.code === 403).toBe(true);
                 });
         }, 70000);
     });
@@ -692,12 +693,12 @@ describe('PostTx: redeem check', () => {
 
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = txParamsData(apiType, {check: 'Mcf8ab3102830f423f8a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b8416976dd95728356c46b7e7c25ca36df7c344f3b55a45cb22e32bc66e4e0cccf6347c72aeaea27a9b6e30acffb9e1d082e3047c024db8767b684dc8e39a52f0cd6001ba018a5e1cb47211779847d7ff3de3edb384740621a8456c343e192ad62ecca08a8a00b0ef250a490bdf18a636496512818eec56c072e59adf4ed6c32ba46f3ab74d0'});
+        const txParams = txParamsData(apiType, {check: 'Mcf8a83102808a4d4e5400000000000000888ac7230489e800008a4d4e5400000000000000b841d8236e9908730e8f9c9b6624e77dcbd621ae9a88fd4e442bae8917ac7f8e43361a99df21df47226e971f20f56f78d60364e82986ff694542628f904fbcd215f6011ba0fc9a9d4214b5654cece48c6fbc415f875ca7a95c23bfebe9b4eea8767d5f2adaa071b45d413c74041154aca91b0cf7cb004db20748eccb8feff581b48e331c5b79'});
         return apiType.minterApi.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
-                // Invalid proof
-                expect(error.response.data.error.code === 501 || error.response.data.error.tx_result.code === 501).toBe(true);
+                // Check expired
+                expect(error.response.data.error.code === 502 || error.response.data.error.tx_result.code === 502).toBe(true);
             });
     }, 70000);
 });

@@ -4,7 +4,7 @@ import {TxDataSell, coinToBuffer, bufferToCoin} from 'minterjs-tx';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
 import {convertToPip, convertFromPip, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
-import {addTxDataFields, bufferToInteger} from '../utils.js';
+import {addTxDataFields, bufferToInteger, validateAmount, validateCoin} from '../utils.js';
 
 /**
  * @param {string} coinToSell
@@ -14,9 +14,10 @@ import {addTxDataFields, bufferToInteger} from '../utils.js';
  * @constructor
  */
 export default function SellTxData({coinToSell, coinToBuy, valueToSell, minimumValueToBuy = 0}) {
-    if (!valueToSell && valueToSell !== 0) {
-        throw new Error('Invalid valueToSell');
-    }
+    validateCoin(coinToSell, 'coinToSell');
+    validateCoin(coinToBuy, 'coinToBuy');
+    validateAmount(valueToSell, 'valueToSell');
+    validateAmount(minimumValueToBuy, 'minimumValueToBuy');
 
     this.coinToSell = coinToSell;
     this.coinToBuy = coinToBuy;

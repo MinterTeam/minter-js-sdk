@@ -5,7 +5,7 @@ import {isHexPrefixed, isHexString} from 'ethjs-util';
 import {TxDataRedeemCheck} from 'minterjs-tx';
 // import TxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check.js';
 import {toBuffer, checkToString} from 'minterjs-util';
-import {addTxDataFields} from '../utils.js';
+import {addTxDataFields, validateCheck} from '../utils.js';
 
 
 /**
@@ -15,6 +15,8 @@ import {addTxDataFields} from '../utils.js';
  * @constructor
  */
 export default function RedeemCheckTxData({check, proof}, options = {}) {
+    validateCheck(check, 'check');
+
     // eslint-disable-next-line prefer-rest-params
     if (!options.password && arguments[0].password) {
         // eslint-disable-next-line prefer-rest-params
