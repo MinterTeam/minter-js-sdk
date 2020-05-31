@@ -1,5 +1,5 @@
-import {TxDataUnbond, coinToBuffer, bufferToCoin} from 'minterjs-tx';
-import {convertToPip, convertFromPip, toBuffer, publicToString} from 'minterjs-util';
+import {TxDataUnbond} from 'minterjs-tx';
+import {convertToPip, convertFromPip, toBuffer, publicToString, coinToBuffer, bufferToCoin} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
 import {addTxDataFields, bufferToInteger, validateAmount, validateCoin, validatePublicKey} from '../utils.js';

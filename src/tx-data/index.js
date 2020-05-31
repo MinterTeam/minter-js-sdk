@@ -1,4 +1,4 @@
-import {TX_TYPE, normalizeTxType} from 'minterjs-tx';
+import {TX_TYPE, normalizeTxType} from 'minterjs-util';
 import SendTxData from './send.js';
 import MultisendTxData from './multisend.js';
 import SellTxData from './convert-sell.js';

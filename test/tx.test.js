@@ -1,5 +1,5 @@
-import {TX_TYPE, bufferToCoin} from 'minterjs-tx';
-import {prepareSignedTx, prepareTx, decodeTx, SendTxParams} from '~/src';
+import {TX_TYPE, bufferToCoin} from 'minterjs-util';
+import {prepareSignedTx, prepareTx, decodeTx} from '~/src';
 import {VALID_CHECK} from '~/test/check.test.js';
 
 

@@ -1,13 +1,21 @@
-import {TxDataCreateCoin, coinToBuffer, bufferToCoin} from 'minterjs-tx';
+import {TxDataCreateCoin} from 'minterjs-tx';
 // import TxDataCreateCoin from 'minterjs-tx/src/tx-data/create-coin.js';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
-import {convertFromPip, convertToPip, toBuffer} from 'minterjs-util';
+import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 import {addTxDataFields, bufferToInteger, integerToHexString, NETWORK_MAX_AMOUNT, validateAmount, validateCoin} from '../utils.js';
 
 // limit in bips
-export const MAX_MAX_SUPPLY = NETWORK_MAX_AMOUNT;
-export const MIN_MAX_SUPPLY = 1;
+/**
+ * @deprecated
+ * @type {number}
+ */
+export const MAX_MAX_SUPPLY = COIN_MAX_MAX_SUPPLY;
+/**
+ * @deprecated
+ * @type {number}
+ */
+export const MIN_MAX_SUPPLY = COIN_MIN_MAX_SUPPLY;
 
 /**
  * @param {string} name
@@ -18,13 +26,13 @@ export const MIN_MAX_SUPPLY = 1;
  * @param {number|string} [maxSupply]
  * @constructor
  */
-export default function CreateCoinTxData({name, symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply = MAX_MAX_SUPPLY}) {
+export default function CreateCoinTxData({name, symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply = COIN_MAX_MAX_SUPPLY}) {
     validateCoin(symbol, 'symbol');
     validateAmount(initialAmount, 'initialAmount');
     validateAmount(initialReserve, 'initialReserve');
     validateAmount(maxSupply, 'maxSupply');
-    if (maxSupply > MAX_MAX_SUPPLY || maxSupply < MIN_MAX_SUPPLY) {
-        throw new Error(`Field \`maxSupply\` should be between ${MIN_MAX_SUPPLY} and ${MAX_MAX_SUPPLY}`);
+    if (maxSupply > COIN_MAX_MAX_SUPPLY || maxSupply < COIN_MIN_MAX_SUPPLY) {
+        throw new Error(`Field \`maxSupply\` should be between ${COIN_MIN_MAX_SUPPLY} and ${COIN_MAX_MAX_SUPPLY}`);
     }
     if (Number(initialAmount) > Number(maxSupply)) {
         throw new Error('Field `initialAmount` should be less or equal of maxSupply');

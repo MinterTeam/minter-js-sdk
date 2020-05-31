@@ -1,9 +1,13 @@
 import Big from 'big.js';
 import BN from 'bn.js';
 import {padToEven, isHexPrefixed} from 'ethjs-util';
-import {isValidAddress, isValidPublicKeyString, isValidCheck, numToBig} from 'minterjs-util';
+import {isValidAddress, isValidPublicKeyString, isValidCheck, numToBig, COIN_MAX_AMOUNT} from 'minterjs-util';
 
-export const NETWORK_MAX_AMOUNT = 10 ** 15;
+/**
+ * @deprecated
+ * @type {number}
+ */
+export const NETWORK_MAX_AMOUNT = COIN_MAX_AMOUNT;
 
 /**
  * @param {number|string} num

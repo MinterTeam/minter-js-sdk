@@ -1,4 +1,4 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-util';
 import {CreateCoinTxData} from '~/src';
 import {ENV_DATA, minterGate, minterNode} from './variables';
 

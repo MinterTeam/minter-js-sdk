@@ -1,6 +1,6 @@
 {
   "name": "minter-js-sdk",
-  "version": "0.32.0",
+  "version": "0.32.1",
   "description": "JS SDK for Minter Blockchain",
   "main": "dist/cjs/index.js",
   "module": "src/index.js",
@@ -59,8 +59,8 @@
     "elliptic": "^6.5.2",
     "ethereumjs-util": "^6.2.0",
     "ethjs-util": "^0.1.6",
-    "minterjs-tx": "^8.0.0",
-    "minterjs-util": "^0.15.2",
+    "minterjs-tx": "^8.1.0",
+    "minterjs-util": "^0.16.2",
     "parse-asn1": "github:shrpne/parse-asn1#update-asn1",
     "rlp": "^2.2.5",
     "secp256k1": "^3.8.0"
@@ -81,7 +81,7 @@
     "jest": "^26.0.1",
     "minterjs-wallet": "^4.0.4",
     "pre-commit": "^1.2.2",
-    "rollup": "^2.11.2",
+    "rollup": "^2.12.0",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-json": "^4.0.0",

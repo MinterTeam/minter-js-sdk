@@ -1,4 +1,4 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-util';
 // import {TX_TYPE} from 'minterjs-tx/src/tx-types.js';
 import SellTxData from '../tx-data/convert-sell.js';
 

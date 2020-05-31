@@ -1,4 +1,4 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-util';
 import UnbondTxData from '../tx-data/stake-unbond.js';
 
 /**

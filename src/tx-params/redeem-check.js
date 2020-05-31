@@ -1,4 +1,4 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-util';
 // import TxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check.js';
 // import {TX_TYPE} from 'minterjs-tx/src/tx-types.js';
 import {getGasCoinFromCheck} from '../check.js';

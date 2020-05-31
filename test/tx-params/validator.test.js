@@ -1,4 +1,4 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-util';
 import {DeclareCandidacyTxParams, EditCandidateTxParams, DelegateTxParams, SetCandidateOffTxParams, SetCandidateOnTxParams, UnbondTxParams} from '~/src';
 
 

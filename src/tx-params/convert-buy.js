@@ -1,4 +1,4 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 import BuyTxData from '../tx-data/convert-buy.js';
 import {NETWORK_MAX_AMOUNT} from '../utils.js';

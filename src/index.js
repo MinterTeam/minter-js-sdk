@@ -1,4 +1,4 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-util';
 
 import {API_TYPE_NODE, API_TYPE_GATE} from './variables.js';
 import Minter from './minter.js';

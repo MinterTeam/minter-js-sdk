@@ -1,7 +1,7 @@
-import {TxDataMultisend, coinToBuffer} from 'minterjs-tx';
+import {TxDataMultisend} from 'minterjs-tx';
 // import TxDataMultisend from 'minterjs-tx/src/tx-data/create-coin.js';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
-import {convertToPip, toBuffer} from 'minterjs-util';
+import {convertToPip, toBuffer, coinToBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
 import SendTxData from './send.js';

@@ -1,4 +1,4 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-util';
 import {prepareLink, decodeLink, RedeemCheckTxData} from '~/src';
 import {VALID_CHECK} from '~/test/check.test';
 

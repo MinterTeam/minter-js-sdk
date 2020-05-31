@@ -1,6 +1,6 @@
-import {TxDataBuy, coinToBuffer, bufferToCoin} from 'minterjs-tx';
-import {convertFromPip, convertToPip, toBuffer} from 'minterjs-util';
-import {addTxDataFields, bufferToInteger, NETWORK_MAX_AMOUNT, validateAddress, validateAmount, validateCoin} from '../utils.js';
+import {TxDataBuy} from 'minterjs-tx';
+import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_AMOUNT} from 'minterjs-util';
+import {addTxDataFields, bufferToInteger, validateAmount, validateCoin} from '../utils.js';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 
 /**
@@ -10,7 +10,7 @@ import {addTxDataFields, bufferToInteger, NETWORK_MAX_AMOUNT, validateAddress, v
  * @param {number|string} [maximumValueToSell]
  * @constructor
  */
-export default function BuyTxData({coinToSell, coinToBuy, valueToBuy, maximumValueToSell = NETWORK_MAX_AMOUNT}) {
+export default function BuyTxData({coinToSell, coinToBuy, valueToBuy, maximumValueToSell = COIN_MAX_AMOUNT}) {
     validateCoin(coinToSell, 'coinToSell');
     validateCoin(coinToBuy, 'coinToBuy');
     validateAmount(valueToBuy, 'valueToBuy');

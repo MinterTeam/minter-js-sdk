@@ -1,4 +1,5 @@
-import {Tx, TxSignature, TxMultisignature, coinToBuffer, normalizeTxType, bufferToCoin} from 'minterjs-tx';
+import {Tx, TxSignature, TxMultisignature} from 'minterjs-tx';
+import {coinToBuffer, normalizeTxType, bufferToCoin} from 'minterjs-util';
 // import Tx from 'minterjs-tx/src/tx';
 // import TxSignature from 'minterjs-tx/src/tx-signature.js';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';

@@ -1,6 +1,6 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE, COIN_MAX_MAX_SUPPLY} from 'minterjs-util';
+
 import {SendTxParams, CreateCoinTxParams, SellTxParams, SellAllTxParams, BuyTxParams} from '~/src';
-import {MAX_MAX_SUPPLY} from '~/src/tx-data/create-coin';
 
 
 describe('SendTxParams', () => {
@@ -76,7 +76,7 @@ describe('CreateCoinTxParams', () => {
         }))
             .toEqual(new CreateCoinTxParams({
                 ...txParamsData,
-                maxSupply: MAX_MAX_SUPPLY,
+                maxSupply: COIN_MAX_MAX_SUPPLY,
             }));
     });
 

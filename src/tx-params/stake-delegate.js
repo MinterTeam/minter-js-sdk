@@ -1,4 +1,4 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-util';
 import DelegateTxData from '../tx-data/stake-delegate.js';
 
 /**

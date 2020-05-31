@@ -1,4 +1,4 @@
-import {TX_TYPE, normalizeTxType} from 'minterjs-tx';
+import {TX_TYPE, normalizeTxType} from 'minterjs-util';
 import decorateSendTxParams from './send.js';
 import decorateSellTxParams from './convert-sell.js';
 import decorateBuyTxParams from './convert-buy.js';

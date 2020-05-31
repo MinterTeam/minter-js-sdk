@@ -1,7 +1,7 @@
-import {TxDataDeclareCandidacy, coinToBuffer, bufferToCoin} from 'minterjs-tx';
+import {TxDataDeclareCandidacy} from 'minterjs-tx';
 // import TxDataDeclareCandidacy from 'minterjs-tx/src/tx-data/declare-candidacy.js';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
-import {addressToString, convertFromPip, convertToPip, publicToString, toBuffer} from 'minterjs-util';
+import {addressToString, convertFromPip, convertToPip, publicToString, toBuffer, coinToBuffer, bufferToCoin} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
 import {addTxDataFields, bufferToInteger, integerToHexString, validateAddress, validateAmount, validateCoin, validatePublicKey} from '../utils.js';

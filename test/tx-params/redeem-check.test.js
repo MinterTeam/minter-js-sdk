@@ -1,5 +1,5 @@
-import {TxDataRedeemCheck, TX_TYPE} from 'minterjs-tx';
-import {toBuffer} from 'minterjs-util';
+import {TxDataRedeemCheck} from 'minterjs-tx';
+import {toBuffer, TX_TYPE} from 'minterjs-util';
 import {RedeemCheckTxParams} from '~/src';
 // import {getProofWithRecovery} from '~/src/tx-params/redeem-check';
 

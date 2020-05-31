@@ -1,4 +1,4 @@
-import {TX_TYPE} from 'minterjs-tx';
+import {TX_TYPE} from 'minterjs-util';
 // import {TX_TYPE} from 'minterjs-tx/src/tx-types.js';
 import CreateCoinTxData from '../tx-data/create-coin.js';
 
