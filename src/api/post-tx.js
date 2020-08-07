@@ -3,13 +3,14 @@ import {privateToAddressString} from 'minterjs-util';
 import PostSignedTx from './post-signed-tx.js';
 import GetNonce from './get-nonce.js';
 import prepareSignedTx, {prepareTx} from '../tx.js';
-import {bufferFromBytes, toInteger} from '../utils.js';
+import {bufferFromBytes, toInteger, wait} from '../utils.js';
 
 /**
  * @typedef {TxOptions & PostTxOptionsExtra} PostTxOptions
  *
  * @typedef {Object} PostTxOptionsExtra
  * @property {number} [gasRetryLimit] - max number of retries after gas error
+ * @preserve {number} [mempoolRetryLimit] - max number of retries after "already exists in mempool" error
  */
 
 /**
@@ -22,7 +23,7 @@ export default function PostTx(apiInstance) {
      * @param {PostTxOptions} options
      * @return {Promise<string>}
      */
-    return function postTx(txParams, {gasRetryLimit = 2, ...txOptions} = {}) {
+    return function postTx(txParams, {gasRetryLimit = 2, mempoolRetryLimit = 0, ...txOptions} = {}) {
         if (!txOptions.privateKey && txParams.privateKey) {
             txOptions.privateKey = txParams.privateKey;
             // eslint-disable-next-line no-console
@@ -31,7 +32,7 @@ export default function PostTx(apiInstance) {
         // @TODO asserts
 
         return ensureNonce(apiInstance, txParams, txOptions)
-            .then((newNonce) => _postTxEnsureGas(apiInstance, {...txParams, nonce: newNonce}, {gasRetryLimit, ...txOptions}));
+            .then((newNonce) => _postTxHandleErrors(apiInstance, {...txParams, nonce: newNonce}, {gasRetryLimit, mempoolRetryLimit, ...txOptions}));
     };
 }
 
@@ -57,14 +58,15 @@ function _postTx(apiInstance, txParams, options) {
 }
 
 /**
- * Send `_postTx()` request and if it fails because of too low gas - make retries
- * On retry `txParams.gasPrice` will be updated with required min gas value from error response.
+ * Send `_postTx()` request and if it fails because of too low gas or already exists in mempool - make retries
+ * On gas retry `txParams.gasPrice` will be updated with required min gas value from error response.
+ * On mempool retry request will be sent after 5 seconds (average time of a block) to try put transaction into next block
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
  * @param {PostTxOptions} options
  * @return {Promise<string>}
  */
-function _postTxEnsureGas(apiInstance, txParams, {gasRetryLimit, ...txOptions}) {
+function _postTxHandleErrors(apiInstance, txParams, {gasRetryLimit, mempoolRetryLimit, ...txOptions}) {
     return _postTx(apiInstance, txParams, txOptions)
         .catch((error) => {
             // @TODO limit max gas_price to prevent sending tx with to high fees
@@ -72,7 +74,14 @@ function _postTxEnsureGas(apiInstance, txParams, {gasRetryLimit, ...txOptions}) 
                 // make retry
                 gasRetryLimit -= 1;
                 const minGas = getMinGasFromError(error);
-                return _postTxEnsureGas(apiInstance, {...txParams, gasPrice: minGas}, {gasRetryLimit, ...txOptions});
+                return _postTxHandleErrors(apiInstance, {...txParams, gasPrice: minGas}, {gasRetryLimit, ...txOptions});
+            } else if (mempoolRetryLimit > 0 && isMempoolError(error)) {
+                // make retry
+                mempoolRetryLimit -= 1;
+                return wait(5000)
+                    .then(() => {
+                        return _postTxHandleErrors(apiInstance, txParams, {gasRetryLimit, mempoolRetryLimit, ...txOptions});
+                    });
             } else {
                 throw error;
             }
@@ -138,6 +147,16 @@ function getTxResult(error) {
 function isGasError(error) {
     const txResult = getTxResult(error);
     return txResult?.code === 114;
+}
+
+/**
+ * Check if error: "Tx from address already exists in mempool"
+ * @param error
+ * @return {boolean}
+ */
+function isMempoolError(error) {
+    const txResult = getTxResult(error);
+    return txResult?.code === 113;
 }
 
 /**

@@ -148,7 +148,7 @@ export function decodeTx(txRlp, {decodeCheck} = {}) {
         data: txData,
         payload: tx.payload.toString('utf-8'),
         signatureType: tx.signatureType.length ? bufferToInteger(tx.signatureType) : undefined,
-        signatureData: `0x${tx.signatureData.toString('hex')}`,
+        signatureData: tx.signatureData.length ? `0x${tx.signatureData.toString('hex')}` : '',
     };
 }
 

@@ -151,6 +151,7 @@ Accept [tx params](#Tx params constructors) object and make asynchronous request
 `txParams.nonce` - optional, if no nonce given, it will be requested by `getNonce` automatically.
 `txParams.gasPrice` - 1 by default, fee multiplier, should be equal or greater than current mempool's min gas price.
 `gasRetryLimit` - count of repeating request, 2 by default. If first request fails because of low gas, it will be repeated with updated `gasPrice`
+`mempoolRetryLimit` - count of repeating request, 0 by default. If first request fails because of error "Tx from address already exists in mempool", it will be repeated after 5 seconds (average time of the block) to try put it in the new block
 Returns promise that resolves with sent transaction hash.
 
 *Please note: always check that sent transaction has no errors (tx in block should have `code: 0`). Otherwise errored tx will not be applied*
@@ -173,10 +174,11 @@ Returns promise that resolves with sent transaction hash.
 /**
 * @param {TxParams} txParams
 * @param {number} [gasRetryLimit=2] - number of retries, if request was failed because of low gas
+* @param {number} [mempoolRetryLimit=0] - number of retries, if request was failed with error "Tx from address already exists in mempool"
 * @param {string|Buffer} [privateKey]
 * @return {Promise<NodeTransaction|{hash: string}>}
 */
-minter.postTx(txParams, {privateKey: '...', gasRetryLimit: 2})
+minter.postTx(txParams, {privateKey: '...', gasRetryLimit: 2, mempoolRetryLimit: 0})
     .then((tx) => {
         console.log(tx.hash);
         // 'Mt...'

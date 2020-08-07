@@ -178,3 +178,14 @@ function validateNotEmpty(value, fieldName) {
         throw new Error(`Field \`${fieldName}\` is empty string`);
     }
 }
+
+/**
+ * Promisify setTimeout
+ * @param {number} time - milliseconds
+ * @return {Promise}
+ */
+export function wait(time) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, time);
+    });
+}
