@@ -81,7 +81,7 @@
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.22.0",
     "jest": "^26.3.0",
-    "minterjs-wallet": "^5.0.0",
+    "minterjs-wallet": "^6.0.0",
     "pre-commit": "^1.2.2",
     "rollup": "^2.23.1",
     "rollup-plugin-babel": "^4.4.0",

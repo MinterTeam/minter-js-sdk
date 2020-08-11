@@ -39,9 +39,11 @@ const TX_PARAMS_CHECK = {
     type: TX_TYPE.REDEEM_CHECK,
     data: {
         check: VALID_CHECK,
-        password: 'pass',
-        privateKey: '5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
     },
+};
+const TX_CHECK_OPTIONS = {
+    password: 'pass',
+    privateKey: '0x5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da',
 };
 
 const LINK_CHECK = 'https://bip.to/tx/-PsJuPT48rit-KsxAYMPQj-KTU5UAAAAAAAAAIiKxyMEiegAAIpNTlQAAAAAAAAAuEH2mVCiEBllKfR9-Tj3r4SVjNszba8wRhbDfvi-vKMkkQkQ8Ebi_5mafyq1ZL1pDBECq2WiDg8ntXqThUM5tgg3ARugCgfL8xEUimtiwdGzSl4MK2kxoFR-3oud-zeu3_RIBiKgI6yT9xc8pBSZYk8G391YxOZdEnnqUmd3wZTdtiPVcCe4QQSX6liPD8K9RI3nbQOnTPNxJp4QrBoCdl-1-jfCn2fgNI-z-qzTNwuICUAefVYtiUPzZCzpZmcYjTw0To5b_20BgICAgA';
@@ -91,7 +93,7 @@ describe('prepareLink()', () => {
 
     describe('check', () => {
         test('should work with proof', () => {
-            const data = new RedeemCheckTxData(TX_PARAMS_CHECK.data);
+            const data = new RedeemCheckTxData(TX_PARAMS_CHECK.data, TX_CHECK_OPTIONS);
             const link = prepareLink({...TX_PARAMS_CHECK, data});
             expect(link).toEqual(LINK_CHECK);
         });
@@ -99,8 +101,8 @@ describe('prepareLink()', () => {
         test('should work with password', () => {
             const link = prepareLink({
                 type: TX_PARAMS_CHECK.type,
-                data: {check: TX_PARAMS_CHECK.data.check, password: TX_PARAMS_CHECK.data.password},
-                password: TX_PARAMS_CHECK.data.password,
+                data: {check: TX_PARAMS_CHECK.data.check},
+                password: TX_CHECK_OPTIONS.password,
             });
             expect(link).toEqual(LINK_CHECK_PASSWORD);
         });
@@ -144,14 +146,14 @@ describe('decodeLink()', () => {
         test.each(makeLinkArray(LINK_CHECK, LINK_CHECK_OLD))('should work with proof %s', ({value: linkValue}) => {
             const txParams = decodeLink(linkValue);
             // add proof
-            const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
+            const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data, TX_CHECK_OPTIONS).fields};
             expect(txParams).toEqual(ensurePayload(validTxParams));
         });
 
         test('should work decodeCheck', () => {
             const txParams = decodeLink(LINK_CHECK, {decodeCheck: true});
             // add proof
-            const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
+            const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data, TX_CHECK_OPTIONS).fields};
             validTxParams.data.checkData = {
                 chainId: '1',
                 coin: 'MNT',
@@ -164,9 +166,9 @@ describe('decodeLink()', () => {
         });
 
         test.each(makeLinkArray(LINK_CHECK_PASSWORD, LINK_CHECK_PASSWORD_OLD))('should work with password %s', ({value: linkValue}) => {
-            const txParams = decodeLink(linkValue, {privateKey: TX_PARAMS_CHECK.data.privateKey});
+            const txParams = decodeLink(linkValue, {privateKey: TX_CHECK_OPTIONS.privateKey});
             // add proof
-            const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data).fields};
+            const validTxParams = {type: TX_PARAMS_CHECK.type, data: new RedeemCheckTxData(TX_PARAMS_CHECK.data, TX_CHECK_OPTIONS).fields};
             expect(txParams).toEqual(ensurePayload(validTxParams));
         });
 

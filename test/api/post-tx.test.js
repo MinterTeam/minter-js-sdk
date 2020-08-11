@@ -1,5 +1,5 @@
 import {generateWallet} from 'minterjs-wallet';
-import {TX_TYPE} from 'minterjs-util';
+import {TX_TYPE, COIN_MAX_AMOUNT} from 'minterjs-util';
 import {
     SendTxData,
     MultisendTxData,
@@ -19,7 +19,6 @@ import {
     prepareSignedTx,
 } from '~/src';
 import {ENV_DATA, minterGate, minterNode} from './variables';
-import {NETWORK_MAX_AMOUNT} from '~/src/utils.js';
 
 const newCandidatePublicKeyGate = generateWallet().getPublicKeyString();
 const newCandidatePublicKeyNode = generateWallet().getPublicKeyString();
@@ -132,7 +131,7 @@ describe('PostTx: send', () => {
         const nonce = await minterGate.getNonce(ENV_DATA.address);
         const txParams = {...txParamsData(API_TYPE_LIST[0]), nonce, gasPrice: 1};
         const tx = prepareSignedTx(txParams, {privateKey: API_TYPE_LIST[0].privateKey});
-        console.log(tx.serialize().toString('hex'));
+        // console.log(tx.serialize().toString('hex'));
         expect(tx.serialize().toString('hex').length)
             .toBeGreaterThan(0);
     }, 30000);
@@ -159,7 +158,7 @@ describe('PostTx: send', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', async (apiType) => {
             expect.assertions(1);
-            const txParams = txParamsData(apiType, {value: NETWORK_MAX_AMOUNT, coin: NOT_EXISTENT_COIN});
+            const txParams = txParamsData(apiType, {value: COIN_MAX_AMOUNT, coin: NOT_EXISTENT_COIN});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
@@ -285,7 +284,7 @@ describe('PostTx: multisend', () => {
         const txParamsInstance = getTxParams(apiType);
         // @TODO txParamsInstance.data is not writable (raw not updated)
         let txData = txParamsInstance.data.fields;
-        txData.list[0].value = NETWORK_MAX_AMOUNT;
+        txData.list[0].value = COIN_MAX_AMOUNT;
         txData.list[0].coin = NOT_EXISTENT_COIN;
         const txParams = {
             ...txParamsInstance,
@@ -331,7 +330,7 @@ describe('PostTx: sell', () => {
 
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = txParamsData(apiType, {valueToSell: NETWORK_MAX_AMOUNT, coinToSell: NOT_EXISTENT_COIN});
+        const txParams = txParamsData(apiType, {valueToSell: COIN_MAX_AMOUNT, coinToSell: NOT_EXISTENT_COIN});
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
@@ -375,7 +374,7 @@ describe('PostTx: buy', () => {
 
     test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
         expect.assertions(1);
-        const txParams = txParamsData(apiType, {valueToBuy: NETWORK_MAX_AMOUNT, coinToSell: NOT_EXISTENT_COIN});
+        const txParams = txParamsData(apiType, {valueToBuy: COIN_MAX_AMOUNT, coinToSell: NOT_EXISTENT_COIN});
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
                 console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
@@ -419,7 +418,7 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = txParamsData(apiType, {stake: NETWORK_MAX_AMOUNT});
+            const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
@@ -501,7 +500,7 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = txParamsData(apiType, {stake: NETWORK_MAX_AMOUNT});
+            const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
@@ -544,7 +543,7 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             // expect.assertions(1);
-            const txParams = txParamsData(apiType, {stake: NETWORK_MAX_AMOUNT});
+            const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error?.response?.data ? {data: error.response.data, tx_result: error.response.data.error?.tx_result, error} : error);
@@ -638,11 +637,13 @@ describe('validator', () => {
 
 
 describe('PostTx: redeem check', () => {
+    const password = '123';
+
     function getRandomCheck(apiType, gasCoin = 'MNT') {
         return issueCheck({
             privateKey: apiType.privateKey,
             chainId: 2,
-            password: '123',
+            password,
             nonce: 1,
             coinSymbol: 'MNT',
             value: Math.random(),
@@ -655,9 +656,7 @@ describe('PostTx: redeem check', () => {
         type: TX_TYPE.REDEEM_CHECK,
         data: new RedeemCheckTxData(Object.assign({
             check: getRandomCheck(apiType, gasCoin),
-            password: '123',
-            privateKey: apiType.privateKey,
-        }, data)),
+        }, data), {password, privateKey: apiType.privateKey}),
     });
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {

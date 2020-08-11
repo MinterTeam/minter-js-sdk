@@ -1,6 +1,7 @@
 import {defineProperties} from 'ethereumjs-util/dist/object.js';
 import {ecsign} from 'ethereumjs-util/dist/signature.js';
 import {rlphash, sha256} from 'ethereumjs-util/dist/hash.js';
+import {toBuffer as ethToBuffer} from 'ethereumjs-util/dist/bytes.js';
 import secp256k1 from 'secp256k1';
 import {convertToPip, convertFromPip, mPrefixStrip, toBuffer, coinToBuffer, bufferToCoin} from 'minterjs-util';
 // import {convertToPip, convertFromPip} from 'minterjs-util/src/converter.js';
@@ -129,9 +130,7 @@ export default function issueCheck({privateKey, password, nonce, chainId = 1, co
         throw new Error('Invalid due block. Should be a numeric integer');
     }
 
-    if (typeof privateKey === 'string') {
-        privateKey = Buffer.from(privateKey, 'hex');
-    }
+    privateKey = ethToBuffer(privateKey);
 
     if (!gasCoin) {
         gasCoin = toInteger(chainId) === '2' ? 'MNT' : 'BIP';

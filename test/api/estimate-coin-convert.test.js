@@ -5,7 +5,6 @@ import {ENV_DATA, minterGate, minterNode} from './variables';
 beforeAll(async () => {
     // ensure custom coin exists
     const txParams = {
-        privateKey: ENV_DATA.privateKey,
         chainId: 2,
         type: TX_TYPE.CREATE_COIN,
         data: new CreateCoinTxData({
@@ -19,7 +18,7 @@ beforeAll(async () => {
         payload: 'custom message',
     };
     try {
-        await minterGate.postTx(txParams);
+        await minterGate.postTx(txParams, {privateKey: ENV_DATA.privateKey});
     } catch (e) {
         console.log(e?.response?.data ? {data: e.response.data, e} : e);
     }

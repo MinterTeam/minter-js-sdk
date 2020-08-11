@@ -1,3 +1,4 @@
+import {toBuffer} from 'ethereumjs-util/dist/bytes.js';
 import {Tx, TxSignature, TxMultisignature} from 'minterjs-tx';
 import {coinToBuffer, normalizeTxType, bufferToCoin} from 'minterjs-util';
 // import Tx from 'minterjs-tx/src/tx';
@@ -123,7 +124,7 @@ export function prepareTx(txParams = {}, options = {}) {
  */
 export function makeSignature(tx, privateKey) {
     // @TODO asserts
-    const privateKeyBuffer = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
+    const privateKeyBuffer = toBuffer(privateKey);
     return (new TxSignature()).sign(tx.hash(false), privateKeyBuffer).serialize();
 }
 
