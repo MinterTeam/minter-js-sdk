@@ -106,10 +106,10 @@ function getProofWithRecovery({password, address, privateKey}) {
     }
 
     const passwordBuffer = sha256(password);
-    const proof = secp256k1.sign(addressHash, passwordBuffer);
-    const proofWithRecovery = new (proof.signature.constructor)(65);
+    const proof = secp256k1.ecdsaSign(addressHash, passwordBuffer);
+    const proofWithRecovery = Buffer.alloc(65);
     proofWithRecovery.set(proof.signature, 0);
-    proofWithRecovery[64] = proof.recovery;
+    proofWithRecovery[64] = proof.recid;
 
     return proofWithRecovery;
 }

@@ -95,11 +95,11 @@ class Check {
         }
 
         const passwordBuffer = sha256(password);
-        const lock = secp256k1.sign(msgHash, passwordBuffer);
+        const lock = secp256k1.ecdsaSign(msgHash, passwordBuffer);
         /** @type Buffer */
-        const lockWithRecovery = new (lock.signature.constructor)(65);
+        const lockWithRecovery = Buffer.alloc(65);
         lockWithRecovery.set(lock.signature, 0);
-        lockWithRecovery[64] = lock.recovery;
+        lockWithRecovery[64] = lock.recid;
         this.lock = `0x${lockWithRecovery.toString('hex')}`;
 
         // don't hash last 3 signature fields

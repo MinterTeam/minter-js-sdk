@@ -44,6 +44,7 @@ module.exports = {
     'no-else-return': 0,
     'no-unused-vars': ['warn', { 'vars': 'all', 'args': 'after-used', 'ignoreRestSiblings': false }],
     'no-use-before-define' : 0,
+    'no-multiple-empty-lines': 0,
     // allow single line imports
     'object-curly-newline': 0,
     // allow Object.assign()
