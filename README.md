@@ -723,7 +723,7 @@ Params:
 // Since issuing checks is offline, you can use it standalone without instantiating SDK
 import {issueCheck} from "minter-js-sdk";
 const check = issueCheck({
-    privateKey: '2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
+    privateKey: '0x2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
     password: 'pass',
     nonce: '1',
     chainId: 1,

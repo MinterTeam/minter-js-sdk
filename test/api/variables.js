@@ -12,13 +12,13 @@ import {Minter, API_TYPE_GATE, API_TYPE_NODE} from '~/src';
 
 const ENV_TESTNET = 'testnet';
 const ENV_QA_TESTNET = 'qa';
-const ENV_TEXAS_TESTNET = 'texas';
+const ENV_CHILI_TESTNET = 'chili';
 const TESTNET_MENMONIC = 'exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone';
 const TESTNET_MENMONIC_2 = 'balance exist engage bargain slab genuine urge tooth critic slab admit coyote';
 const QA_MNEMONIC = 'puzzle feed enlist rack cliff divert exist bind swamp kiwi casino pull';
 const QA_MNEMONIC_2 = 'air model item valley auction bullet crisp always erosion paper orient fog';
-const TEXAS_MNEMONIC = 'echo figure script juice spell trigger climb south special school biology motor';
-const TEXAS_MNEMONIC_2 = 'measure enhance jealous amateur object cash reflect blood lab dawn oxygen garage';
+const CHILI_MNEMONIC = 'echo figure script juice spell trigger climb south special school biology motor';
+const CHILI_MNEMONIC_2 = 'measure enhance jealous amateur object cash reflect blood lab dawn oxygen garage';
 
 const ENV_SETTINGS = {
     [ENV_TESTNET]: {
@@ -44,6 +44,17 @@ const ENV_SETTINGS = {
         address2: 'Mx634550aa7dc347d5e60888da2529c56f1818e403',
         customCoin: 'TESTCOIN01',
     },
+    // [ENV_CHILI_TESTNET]: {
+    //     nodeBaseUrl: 'http://68.183.211.176:8841/',
+    //     gateBaseUrl: 'https://qa.gate-api.minter.network/api/v1/',
+    //     mnemonic: CHILI_MNEMONIC,
+    //     privateKey: walletFromMnemonic(CHILI_MNEMONIC).getPrivateKeyString(),
+    //     address: 'Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4',
+    //     mnemonic2: CHILI_MNEMONIC_2,
+    //     privateKey2: walletFromMnemonic(CHILI_MNEMONIC_2).getPrivateKeyString(),
+    //     address2: 'Mx634550aa7dc347d5e60888da2529c56f1818e403',
+    //     customCoin: 'TESTCOIN01',
+    // },
 };
 
 // select environment

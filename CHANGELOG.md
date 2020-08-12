@@ -1,6 +1,7 @@
-## WIP
+## 0.33.0 - 2020-08-12
 - **BREAKING** string private keys now should be `0x`-prefixed
 - add `mempoolRetryLimit` option to `postTx`
+- update deps
 
 ## 0.32.1 - 2020-05-31
 - update deps
