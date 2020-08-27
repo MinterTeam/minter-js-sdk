@@ -10,20 +10,6 @@ import issueCheck, {decodeCheck, getGasCoinFromCheck} from './check.js';
 import {prepareLink, decodeLink} from './link.js';
 
 import prepareSignedTx, {decodeTx, prepareTx, makeSignature} from './tx.js';
-import RedeemCheckTxParams from './tx-params/redeem-check.js';
-import SendTxParams from './tx-params/send.js';
-import MultisendTxParams from './tx-params/multisend.js';
-import SellTxParams from './tx-params/convert-sell.js';
-import SellAllTxParams from './tx-params/convert-sell-all.js';
-import BuyTxParams from './tx-params/convert-buy.js';
-import DeclareCandidacyTxParams from './tx-params/candidacy-declare.js';
-import SetCandidateOnTxParams from './tx-params/candidate-set-on.js';
-import SetCandidateOffTxParams from './tx-params/candidate-set-off.js';
-import EditCandidateTxParams from './tx-params/candidate-edit.js';
-import DelegateTxParams from './tx-params/stake-delegate.js';
-import UnbondTxParams from './tx-params/stake-unbond.js';
-import CreateCoinTxParams from './tx-params/create-coin.js';
-import CreateMultisigTxParams from './tx-params/create-multisig.js';
 
 import RedeemCheckTxData from './tx-data/redeem-check.js';
 import SendTxData from './tx-data/send.js';
@@ -62,25 +48,6 @@ export {
     issueCheck,
     decodeCheck,
     getGasCoinFromCheck,
-    // tx params
-    // - coin
-    SendTxParams,
-    MultisendTxParams,
-    SellTxParams,
-    SellAllTxParams,
-    BuyTxParams,
-    CreateCoinTxParams,
-    // - validator
-    DeclareCandidacyTxParams,
-    SetCandidateOnTxParams,
-    SetCandidateOffTxParams,
-    EditCandidateTxParams,
-    DelegateTxParams,
-    UnbondTxParams,
-    // - check
-    RedeemCheckTxParams,
-    // - multisig
-    CreateMultisigTxParams,
     // not sure if it should be exported
     // tx data
     // - coin
