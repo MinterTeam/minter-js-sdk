@@ -1,4 +1,4 @@
-import EditCandidateTxData from '~/src/tx-data/candidate-edit';
+import {EditCandidateTxData} from '~/src';
 
 describe('EditCandidateTxData', () => {
     const txParamsData = {
