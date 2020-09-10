@@ -4,6 +4,7 @@ import decorateSellTxParams from './convert-sell.js';
 import decorateBuyTxParams from './convert-buy.js';
 import decorateSellAllTxParams from './convert-sell-all.js';
 import decorateDeclareCandidacyTxParams from './candidacy-declare.js';
+import decorateEditCandidateTxParams from './candidate-edit.js';
 import decorateDelegateTxParams from './stake-delegate.js';
 import decorateUnbondTxParams from './stake-unbond.js';
 import decorateRedeemCheckTxParams from './redeem-check.js';
@@ -18,7 +19,7 @@ const TX_PARAMS_DECORATOR = {
     [TX_TYPE.SELL_ALL]: decorateSellAllTxParams,
     [TX_TYPE.CREATE_COIN]: noop,
     [TX_TYPE.DECLARE_CANDIDACY]: decorateDeclareCandidacyTxParams,
-    [TX_TYPE.EDIT_CANDIDATE]: noop,
+    [TX_TYPE.EDIT_CANDIDATE]: decorateEditCandidateTxParams,
     [TX_TYPE.SET_CANDIDATE_ON]: noop,
     [TX_TYPE.SET_CANDIDATE_OFF]: noop,
     [TX_TYPE.DELEGATE]: decorateDelegateTxParams,

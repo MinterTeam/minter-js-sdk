@@ -1,13 +1,13 @@
-import {minterGate, minterNode} from './variables';
+import {ENV_DATA, minterGate, minterNode} from './variables';
 
 
-describe('GetMinGasPrice', () => {
+describe('GetNonce', () => {
     test('should work gate', () => {
         expect.assertions(1);
 
-        return minterGate.getMinGasPrice()
-            .then((gasPrice) => {
-                expect(gasPrice).toBeGreaterThan(0);
+        return minterGate.getNonce(ENV_DATA.address)
+            .then((nonce) => {
+                expect(nonce).toBeGreaterThan(0);
             })
             .catch((error) => {
                 console.log(error);
@@ -18,9 +18,9 @@ describe('GetMinGasPrice', () => {
     test('should work node', () => {
         expect.assertions(1);
 
-        return minterNode.getMinGasPrice()
-            .then((gasPrice) => {
-                expect(Number(gasPrice)).toBeGreaterThan(0);
+        return minterNode.getNonce(ENV_DATA.address)
+            .then((nonce) => {
+                expect(nonce).toBeGreaterThan(0);
             })
             .catch((error) => {
                 console.log(error);

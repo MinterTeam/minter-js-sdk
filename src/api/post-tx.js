@@ -9,7 +9,8 @@ import {bufferFromBytes, toInteger, wait} from '../utils.js';
  * @typedef {TxOptions & PostTxOptionsExtra} PostTxOptions
  *
  * @typedef {Object} PostTxOptionsExtra
- * @property {number} [gasRetryLimit] - max number of retries after gas error
+ * @property {number} [gasRetryLimit] - max number of autofix retries after gas error
+ * @property {number} [nonceRetryLimit] - max number of autofix retries after nonce error
  * @preserve {number} [mempoolRetryLimit] - max number of retries after "already exists in mempool" error
  */
 
@@ -54,7 +55,7 @@ function _postTx(apiInstance, txParams, options) {
         tx = prepareTx(txParams, options);
     }
 
-    return (new PostSignedTx(apiInstance))(tx.serialize().toString('hex'));
+    return (new PostSignedTx(apiInstance))(`0x${tx.serialize().toString('hex')}`);
 }
 
 /**
@@ -66,21 +67,24 @@ function _postTx(apiInstance, txParams, options) {
  * @param {PostTxOptions} options
  * @return {Promise<string>}
  */
-function _postTxHandleErrors(apiInstance, txParams, {gasRetryLimit, mempoolRetryLimit, ...txOptions}) {
+function _postTxHandleErrors(apiInstance, txParams, options) {
+    const {gasRetryLimit, nonceRetryLimit, mempoolRetryLimit, ...txOptions} = options;
     return _postTx(apiInstance, txParams, txOptions)
         .catch((error) => {
             // @TODO limit max gas_price to prevent sending tx with to high fees
             if (gasRetryLimit > 0 && isGasError(error)) {
                 // make retry
-                gasRetryLimit -= 1;
                 const minGas = getMinGasFromError(error);
-                return _postTxHandleErrors(apiInstance, {...txParams, gasPrice: minGas}, {gasRetryLimit, ...txOptions});
+                return _postTxHandleErrors(apiInstance, {...txParams, gasPrice: minGas}, {...options, gasRetryLimit: gasRetryLimit - 1});
+            } else if (nonceRetryLimit > 0 && isNonceError(error)) {
+                // make retry
+                const newNonce = getNonceFromError(error);
+                return _postTxHandleErrors(apiInstance, {...txParams, nonce: newNonce}, {...options, nonceRetryLimit: nonceRetryLimit - 1});
             } else if (mempoolRetryLimit > 0 && isMempoolError(error)) {
                 // make retry
-                mempoolRetryLimit -= 1;
                 return wait(5000)
                     .then(() => {
-                        return _postTxHandleErrors(apiInstance, txParams, {gasRetryLimit, mempoolRetryLimit, ...txOptions});
+                        return _postTxHandleErrors(apiInstance, txParams, {...options, mempoolRetryLimit: mempoolRetryLimit - 1});
                     });
             } else {
                 throw error;
@@ -133,11 +137,11 @@ export function EnsureNonce(apiInstance) {
  * @param error
  * @return {Object|undefined}
  */
-function getTxResult(error) {
-    error = error.response?.data?.error;
-    // gate moves tx_result into root error, so check it too
-    return error && (error.tx_result || error);
-}
+// function getTxResult(error) {
+//     error = error.response?.data?.error;
+//     // gate moves tx_result into root error, so check it too
+//     return error && (error.tx_result || error);
+// }
 
 /**
  * Check if error caused by too low gas
@@ -145,18 +149,25 @@ function getTxResult(error) {
  * @return {boolean}
  */
 function isGasError(error) {
-    const txResult = getTxResult(error);
-    return txResult?.code === 114;
+    return error.response?.data.error.code === '114';
 }
 
 /**
- * Check if error: "Tx from address already exists in mempool"
+ * Check if error caused by: "Tx from address already exists in mempool"
  * @param error
  * @return {boolean}
  */
 function isMempoolError(error) {
-    const txResult = getTxResult(error);
-    return txResult?.code === 113;
+    return error.response?.data.error.code === '113';
+}
+
+/**
+ * Check if error caused by nonce
+ * @param error
+ * @return {boolean}
+ */
+function isNonceError(error) {
+    return error.response?.data.error.code === '101';
 }
 
 /**
@@ -165,6 +176,14 @@ function isMempoolError(error) {
  * @return {number}
  */
 function getMinGasFromError(error) {
-    const txResult = getTxResult(error);
-    return Number(txResult.message.replace('Gas price of tx is too low to be included in mempool. Expected ', ''));
+    return Number(error.response?.data.error.data.min_gas_price);
+}
+
+/**
+ * Retrieve required min gas value from error message
+ * @param error
+ * @return {number}
+ */
+function getNonceFromError(error) {
+    return Number(error.response?.data.error.data.expected_nonce);
 }

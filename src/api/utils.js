@@ -5,6 +5,6 @@ export function getData(response, apiType) {
     if (apiType === API_TYPE_GATE) {
         return response.data.data;
     } else {
-        return response.data.result;
+        return response.data;
     }
 }

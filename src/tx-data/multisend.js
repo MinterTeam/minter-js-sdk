@@ -1,11 +1,11 @@
 import {TxDataMultisend} from 'minterjs-tx';
 // import TxDataMultisend from 'minterjs-tx/src/tx-data/create-coin.js';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
-import {convertToPip, toBuffer, coinToBuffer} from 'minterjs-util';
+import {convertToPip, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
 import SendTxData from './send.js';
-import {addTxDataFields, validateAddress, validateAmount, validateCoin} from '../utils.js';
+import {addTxDataFields, integerToHexString, validateAddress, validateAmount, validateUint} from '../utils.js';
 
 /**
  * @param {Array} list
@@ -18,7 +18,7 @@ export default function MultisendTxData({list}) {
     list.forEach((item, index) => {
         try {
             validateAddress(item.to, `list[${index}].to`);
-            validateCoin(item.coin, `list[${index}].coin`);
+            validateUint(item.coin, `list[${index}].coin`);
             validateAmount(item.value, `list[${index}].value`);
         } catch (e) {
             throw new Error(`Field \`list\` contains invalid item at index ${index}. ${e.message}`);
@@ -31,7 +31,7 @@ export default function MultisendTxData({list}) {
         list: list.map((item) => {
             return {
                 to: toBuffer(item.to),
-                coin: coinToBuffer(item.coin),
+                coin: integerToHexString(item.coin),
                 value: `0x${convertToPip(item.value, 'hex')}`,
             };
         }),

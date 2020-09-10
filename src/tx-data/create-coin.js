@@ -3,19 +3,7 @@ import {TxDataCreateCoin} from 'minterjs-tx';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
 import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
-import {addTxDataFields, bufferToInteger, integerToHexString, NETWORK_MAX_AMOUNT, validateAmount, validateCoin} from '../utils.js';
-
-// limit in bips
-/**
- * @deprecated
- * @type {number}
- */
-export const MAX_MAX_SUPPLY = COIN_MAX_MAX_SUPPLY;
-/**
- * @deprecated
- * @type {number}
- */
-export const MIN_MAX_SUPPLY = COIN_MIN_MAX_SUPPLY;
+import {addTxDataFields, bufferToInteger, integerToHexString, validateAmount, validateCoin} from '../utils.js';
 
 /**
  * @param {string} name
@@ -50,7 +38,7 @@ export default function CreateCoinTxData({name, symbol, initialAmount, initialRe
         symbol: coinToBuffer(symbol),
         initialAmount: `0x${convertToPip(initialAmount, 'hex')}`,
         initialReserve: `0x${convertToPip(initialReserve, 'hex')}`,
-        constantReserveRatio: `0x${integerToHexString(constantReserveRatio)}`,
+        constantReserveRatio: integerToHexString(constantReserveRatio),
         maxSupply: `0x${convertToPip(maxSupply, 'hex')}`,
     });
 

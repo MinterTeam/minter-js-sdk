@@ -11,14 +11,10 @@ export default function GetMinGasPrice(apiInstance) {
      * @return {Promise<number>}
      */
     return function getMinGasPrice() {
-        const minGasPriceUrl = apiInstance.defaults.apiType === API_TYPE_GATE
-            ? 'min-gas'
-            : 'min_gas_price';
-
-        return apiInstance.get(minGasPriceUrl)
+        return apiInstance.get('min_gas_price')
             .then((response) => {
-                const resData = getData(response, apiInstance.defaults.apiType);
-                const minGasPrice = apiInstance.defaults.apiType === API_TYPE_GATE ? resData.gas : resData;
+                const resData = response.data;
+                const minGasPrice = resData.min_gas_price;
                 return Number(minGasPrice);
             });
     };

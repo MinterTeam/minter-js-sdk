@@ -1,5 +1,12 @@
 ## WIP
 - **BREAKING** remove all deprecated TxParams constructors
+- **BREAKING** remove deprecated `NETWORK_MAX_AMOUNT`, `MAX_MAX_SUPPLY`, `MIN_MAX_SUPPLY`, use minterjs-util's `COIN_MAX_AMOUNT`, `COIN_MAX_MAX_SUPPLY`, `COIN_MIN_MAX_SUPPLY` instead
+- **BREAKING** `integerToHexString` now returns `0x` prefixed string
+- **BREAKING** `issueCheck`'s `coinSymbol` alias param is removed, use `coin` param
+- **BREAKING** `decodeLink` drop support of old-style links
+- **BREAKING** `estimateCoinSell`, `estimateCoinBuy`: drop support of snake_case params
+- **BREAKING** `estimateTxCommission` now accept tx string directly instead of object `{tx: string}`
+- add `nonceRetryLimit` option to `postTx`
 
 ## 0.33.0 - 2020-08-12
 - **BREAKING** string private keys now should be `0x`-prefixed

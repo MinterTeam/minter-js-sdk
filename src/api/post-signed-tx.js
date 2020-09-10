@@ -12,19 +12,12 @@ export default function PostSignedTx(apiInstance) {
      */
     return function postSignedTx(signedTx) {
         if (Buffer.isBuffer(signedTx)) {
-            signedTx = signedTx.toString('hex');
+            signedTx = `0x${signedTx.toString('hex')}`;
         }
 
-        let postTxPromise;
-        if (apiInstance.defaults.apiType === API_TYPE_GATE) {
-            postTxPromise = apiInstance.post('transaction/push', {
-                transaction: signedTx,
-            });
-        } else {
-            postTxPromise = apiInstance.get(`send_transaction?tx=0x${signedTx}`);
-        }
-
-        return postTxPromise
+        return apiInstance.post('send_transaction', {
+            tx: signedTx,
+        })
             .then((response) => {
                 const resData = getData(response, apiInstance.defaults.apiType);
                 let txData = resData.transaction ? resData.transaction : {hash: resData.hash};

@@ -17,8 +17,10 @@ const TESTNET_MENMONIC = 'exercise fantasy smooth enough arrive steak demise don
 const TESTNET_MENMONIC_2 = 'balance exist engage bargain slab genuine urge tooth critic slab admit coyote';
 const QA_MNEMONIC = 'puzzle feed enlist rack cliff divert exist bind swamp kiwi casino pull';
 const QA_MNEMONIC_2 = 'air model item valley auction bullet crisp always erosion paper orient fog';
-const CHILI_MNEMONIC = 'echo figure script juice spell trigger climb south special school biology motor';
-const CHILI_MNEMONIC_2 = 'measure enhance jealous amateur object cash reflect blood lab dawn oxygen garage';
+const CHILI_MNEMONIC = 'puzzle feed enlist rack cliff divert exist bind swamp kiwi casino pull';
+const CHILI_MNEMONIC_2 = 'air model item valley auction bullet crisp always erosion paper orient fog';
+// const CHILI_MNEMONIC = 'echo figure script juice spell trigger climb south special school biology motor';
+// const CHILI_MNEMONIC_2 = 'measure enhance jealous amateur object cash reflect blood lab dawn oxygen garage';
 
 const ENV_SETTINGS = {
     [ENV_TESTNET]: {
@@ -44,21 +46,21 @@ const ENV_SETTINGS = {
         address2: 'Mx634550aa7dc347d5e60888da2529c56f1818e403',
         customCoin: 'TESTCOIN01',
     },
-    // [ENV_CHILI_TESTNET]: {
-    //     nodeBaseUrl: 'http://68.183.211.176:8841/',
-    //     gateBaseUrl: 'https://qa.gate-api.minter.network/api/v1/',
-    //     mnemonic: CHILI_MNEMONIC,
-    //     privateKey: walletFromMnemonic(CHILI_MNEMONIC).getPrivateKeyString(),
-    //     address: 'Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4',
-    //     mnemonic2: CHILI_MNEMONIC_2,
-    //     privateKey2: walletFromMnemonic(CHILI_MNEMONIC_2).getPrivateKeyString(),
-    //     address2: 'Mx634550aa7dc347d5e60888da2529c56f1818e403',
-    //     customCoin: 'TESTCOIN01',
-    // },
+    [ENV_CHILI_TESTNET]: {
+        nodeBaseUrl: 'http://node.chilinet.minter.network:28843/',
+        gateBaseUrl: 'https://gate-api.chilinet.minter.network/api/v2/',
+        mnemonic: CHILI_MNEMONIC,
+        privateKey: walletFromMnemonic(CHILI_MNEMONIC).getPrivateKeyString(),
+        address: 'Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4',
+        mnemonic2: CHILI_MNEMONIC_2,
+        privateKey2: walletFromMnemonic(CHILI_MNEMONIC_2).getPrivateKeyString(),
+        address2: 'Mx634550aa7dc347d5e60888da2529c56f1818e403',
+        customCoin: 'TESTCOIN01',
+    },
 };
 
 // select environment
-const currentEnv = ENV_QA_TESTNET;
+const currentEnv = ENV_CHILI_TESTNET;
 export const ENV_DATA = ENV_SETTINGS[currentEnv];
 
 

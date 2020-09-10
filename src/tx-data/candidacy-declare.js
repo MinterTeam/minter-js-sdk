@@ -1,23 +1,23 @@
 import {TxDataDeclareCandidacy} from 'minterjs-tx';
 // import TxDataDeclareCandidacy from 'minterjs-tx/src/tx-data/declare-candidacy.js';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
-import {addressToString, convertFromPip, convertToPip, publicToString, toBuffer, coinToBuffer, bufferToCoin} from 'minterjs-util';
+import {addressToString, convertFromPip, convertToPip, publicToString, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
-import {addTxDataFields, bufferToInteger, integerToHexString, validateAddress, validateAmount, validateCoin, validatePublicKey} from '../utils.js';
+import {addTxDataFields, bufferToInteger, integerToHexString, validateAddress, validateAmount, validateUint, validatePublicKey} from '../utils.js';
 
 /**
  * @param {string} address
  * @param {string} publicKey
  * @param {number|string} commission
- * @param {string} coin
+ * @param {number|string} coin - coin id
  * @param {number|string} stake
  * @constructor
  */
 export default function DeclareCandidacyTxData({address, publicKey, commission, coin, stake}) {
     validateAddress(address, 'address');
     validatePublicKey(publicKey, 'publicKey');
-    validateCoin(coin, 'coin');
+    validateUint(coin, 'coin');
     validateAmount(stake, 'stake');
 
     this.address = address;
@@ -29,8 +29,8 @@ export default function DeclareCandidacyTxData({address, publicKey, commission, 
     this.txData = new TxDataDeclareCandidacy({
         address: toBuffer(address),
         publicKey: toBuffer(publicKey),
-        commission: `0x${integerToHexString(commission)}`,
-        coin: coinToBuffer(coin),
+        commission: integerToHexString(commission),
+        coin: integerToHexString(coin),
         stake: `0x${convertToPip(stake, 'hex')}`,
     });
 
@@ -54,7 +54,7 @@ DeclareCandidacyTxData.fromBufferFields = function fromBufferFields({address, pu
         address: addressToString(address),
         publicKey: publicToString(publicKey),
         commission: bufferToInteger(toBuffer(commission)),
-        coin: bufferToCoin(toBuffer(coin)),
+        coin: bufferToInteger(toBuffer(coin)),
         stake: convertFromPip(bufferToInteger(toBuffer(stake))),
     });
 };

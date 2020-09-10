@@ -1,10 +1,9 @@
-import {defineProperties} from 'ethereumjs-util/dist/object.js';
 import {toBuffer as toBufferUtil} from 'ethereumjs-util/dist/bytes.js';
 import {decode as rlpDecode} from 'rlp';
 import {isHexPrefixed} from 'ethjs-util';
 import {fromByteArray as base64encode, toByteArray as base64decode} from 'base64-js';
-import {TxDataRedeemCheck} from 'minterjs-tx';
-import {TX_TYPE, normalizeTxType, bufferToCoin, coinToBuffer} from 'minterjs-util';
+import {TxDataRedeemCheck, defineProperties} from 'minterjs-tx';
+import {TX_TYPE, normalizeTxType} from 'minterjs-util';
 import {ensureBufferData, decodeTxData} from './tx-data/index.js';
 import RedeemCheckTxData from './tx-data/redeem-check.js';
 import {bufferToInteger, integerToHexString} from './utils.js';
@@ -45,7 +44,8 @@ class Link {
             name: 'gasCoin',
             length: 10,
             allowLess: true,
-            default: Buffer.from([]),
+            allowNonBinaryArray: true,
+            default: [],
         }];
 
         /**
@@ -64,7 +64,7 @@ class Link {
  * @typedef {Object} LinkParams
  * @property {number|string} [nonce]
  * @property {number|string} [gasPrice]
- * @property {string} [gasCoin]
+ * @property {number|string} [gasCoin]
  * @property {string|Buffer|TX_TYPE} type
  * @property {string|Buffer|TX_TYPE} [txType] - deprecated
  * @property {Buffer|Object|TxData} data
@@ -83,9 +83,9 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
     const {nonce, gasPrice, gasCoin, type, txType, data, txData, password} = txParams;
 
     const txProps = {
-        nonce: nonce && `0x${integerToHexString(nonce)}`,
-        gasPrice: gasPrice && `0x${integerToHexString(gasPrice)}`,
-        gasCoin: gasCoin && coinToBuffer(gasCoin),
+        nonce: nonce || nonce === 0 ? integerToHexString(nonce) : [],
+        gasPrice: gasPrice || gasPrice === 0 ? integerToHexString(gasPrice) : [],
+        gasCoin: gasCoin || gasCoin === 0 ? integerToHexString(gasCoin) : [],
         type: type || txType,
         data: ensureBufferData(data || txData, type || txType),
     };
@@ -123,23 +123,11 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
  * @return {TxParams}
  */
 export function decodeLink(url, {address, privateKey, decodeCheck} = {}) {
-    let tx;
-    /** @type string|Buffer */
-    let password;
-    if (url.indexOf('?d=') >= 0) {
-        // old style links
-        const txString = url.replace(/^.*\?d=/, '').replace(/&p=.*$/, '');
-        const passwordHex = url.indexOf('&p=') >= 0 ? url.replace(/^.*&p=/, '') : '';
-        password = passwordHex ? rlpDecode(Buffer.from(passwordHex, 'hex')) : '';
-        tx = new Link(txString);
-    } else {
-        // default style links
-        const txBase64 = url.replace(/^.*\/tx\//, '').replace(/\?.*$/, '');
-        const txBytes = rlpDecode(base64urlDecode(txBase64));
-        const passwordBase64 = url.search(/[?&]p=/) >= 0 ? url.replace(/^.*[?&]p=/, '') : '';
-        password = passwordBase64 ? Buffer.from(base64urlDecode(passwordBase64)) : '';
-        tx = new Link(txBytes);
-    }
+    const txBase64 = url.replace(/^.*\/tx\//, '').replace(/\?.*$/, '');
+    const txBytes = rlpDecode(base64urlDecode(txBase64));
+    const passwordBase64 = url.search(/[?&]p=/) >= 0 ? url.replace(/^.*[?&]p=/, '') : '';
+    const password = passwordBase64 ? Buffer.from(base64urlDecode(passwordBase64)) : '';
+    const tx = new Link(txBytes);
     const txType = normalizeTxType(tx.type);
     if (txType === TX_TYPE.REDEEM_CHECK && password) {
         if (!privateKey && !address) {
@@ -155,9 +143,9 @@ export function decodeLink(url, {address, privateKey, decodeCheck} = {}) {
     const txData = decodeTxData(tx.type, tx.data, {decodeCheck});
 
     return {
-        nonce: tx.nonce.length ? bufferToInteger(tx.nonce) : undefined,
-        gasPrice: tx.gasPrice.length ? bufferToInteger(tx.gasPrice) : undefined,
-        gasCoin: tx.gasCoin.length ? bufferToCoin(tx.gasCoin) : undefined,
+        nonce: Array.isArray(tx.nonce) ? undefined : bufferToInteger(tx.nonce),
+        gasPrice: Array.isArray(tx.gasPrice) ? undefined : bufferToInteger(tx.gasPrice),
+        gasCoin: Array.isArray(tx.gasCoin) ? undefined : bufferToInteger(tx.gasCoin),
         type: txType,
         data: txData,
         payload: tx.payload.toString('utf-8'),

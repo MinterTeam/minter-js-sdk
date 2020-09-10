@@ -1,10 +1,10 @@
 import {toBuffer} from 'ethereumjs-util/dist/bytes.js';
 import {Tx, TxSignature, TxMultisignature} from 'minterjs-tx';
-import {coinToBuffer, normalizeTxType, bufferToCoin} from 'minterjs-util';
+import {normalizeTxType} from 'minterjs-util';
 // import Tx from 'minterjs-tx/src/tx';
 // import TxSignature from 'minterjs-tx/src/tx-signature.js';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
-import {bufferToInteger, integerToHexString, toInteger} from './utils.js';
+import {bufferToInteger, integerToHexString, toInteger, validateUint} from './utils.js';
 import decorateTxParams from './tx-decorator/index.js';
 import {decodeTxData, ensureBufferData} from './tx-data/index.js';
 
@@ -13,7 +13,7 @@ import {decodeTxData, ensureBufferData} from './tx-data/index.js';
  * @property {number} [nonce]
  * @property {number} [chainId=1]
  * @property {number} [gasPrice=1]
- * @property {string} [gasCoin='BIP']
+ * @property {number|string} [gasCoin='0']
  * @property {string|Buffer|TX_TYPE} type
  * @property {string|Buffer|TX_TYPE} [txType] - deprecated
  * @property {Buffer|TxData|Object} data
@@ -68,12 +68,11 @@ export function prepareTx(txParams = {}, options = {}) {
         payload: txParams.payload || txParams.message,
     };
     txParams = decorateTxParams(txParams);
-    const {nonce, chainId = 1, gasPrice = 1, type: txType, signatureType, signatureData} = txParams;
-    let {gasCoin, payload, data: txData} = txParams;
-    // throw on falsy nonce except 0
-    if (!nonce && typeof nonce !== 'number') {
-        throw new Error('Invalid nonce specified, tx can\'t be prepared');
-    }
+    const {nonce, chainId = 1, gasPrice = 1, gasCoin = 0, type: txType, signatureType, signatureData} = txParams;
+    let {payload, data: txData} = txParams;
+
+    validateUint(nonce, 'nonce');
+    validateUint(gasCoin, 'gasCoin');
     if (!txType && typeof txType !== 'number') {
         throw new Error('Invalid type specified, tx can\'t be prepared');
     }
@@ -81,24 +80,16 @@ export function prepareTx(txParams = {}, options = {}) {
         throw new Error('Invalid signatureType specified, tx can\'t be prepared');
     }
 
-    if (!gasCoin) {
-        if (toInteger(chainId) === '2') {
-            gasCoin = 'MNT';
-        } else {
-            gasCoin = 'BIP';
-        }
-    }
-
     txData = ensureBufferData(txData, txType, options);
 
     const txProps = {
-        nonce: `0x${integerToHexString(nonce)}`,
-        chainId: `0x${integerToHexString(chainId)}`,
-        gasPrice: `0x${integerToHexString(gasPrice)}`,
-        gasCoin: coinToBuffer(gasCoin),
+        nonce: integerToHexString(nonce),
+        chainId: integerToHexString(chainId),
+        gasPrice: integerToHexString(gasPrice),
+        gasCoin: integerToHexString(gasCoin),
         type: txType,
         data: txData,
-        signatureType: `0x${integerToHexString(signatureType)}`,
+        signatureType: integerToHexString(signatureType),
         signatureData: ensureBufferSignature(signatureData, signatureType),
     };
 
@@ -135,8 +126,7 @@ export function makeSignature(tx, privateKey) {
  * @return {TxParams}
  */
 export function decodeTx(txRlp, {decodeCheck} = {}) {
-    const txString = txRlp.replace('0x', '');
-    const tx = new Tx(txString);
+    const tx = new Tx(txRlp);
     const txType = normalizeTxType(tx.type);
     const txData = decodeTxData(tx.type, tx.data, {decodeCheck});
 
@@ -144,7 +134,7 @@ export function decodeTx(txRlp, {decodeCheck} = {}) {
         nonce: tx.nonce.length ? bufferToInteger(tx.nonce) : undefined,
         chainId: tx.chainId.length ? bufferToInteger(tx.chainId) : undefined,
         gasPrice: tx.gasPrice.length ? bufferToInteger(tx.gasPrice) : undefined,
-        gasCoin: tx.gasCoin.length ? bufferToCoin(tx.gasCoin) : undefined,
+        gasCoin: bufferToInteger(tx.gasCoin),
         type: txType,
         data: txData,
         payload: tx.payload.toString('utf-8'),

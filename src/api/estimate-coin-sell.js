@@ -17,45 +17,35 @@ export default function EstimateCoinSell(apiInstance) {
     /**
      * Get nonce for new transaction: last transaction number + 1
      * @param {Object} params
-     *
-     * @param {string} [params.coinToSell]
+     * @param {number|string} [params.coinIdToSell] - ID of the coin to sell
+     * @param {string} [params.coinToSell] - symbol of the coin to sell
      * @param {string|number} [params.valueToSell]
-     * @param {string} [params.coinToBuy]
-     *
-     * @param {string} [params.coin_to_sell]
-     * @param {string|number} [params.value_to_sell]
-     * @param {string} [params.coin_to_buy]
-     *
+     * @param {number|string} [params.coinIdToBuy] - ID of the coin to buy
+     * @param {string} [params.coinToBuy] - symbol of the coin to buy
      * @return {Promise<EstimateSellResult>}
      */
     return function estimateCoinSell(params) {
-        if (!params.coinToSell && !params.coin_to_sell) {
+        if (!params.coinToSell && (!params.coinIdToSell && params.coinIdToSell !== 0)) {
             return Promise.reject(new Error('Coin to sell not specified'));
         }
-        if (!params.valueToSell && !params.value_to_sell) {
+        if (!params.valueToSell) {
             return Promise.reject(new Error('Value to sell not specified'));
         }
-        if (!params.coinToBuy && !params.coin_to_buy) {
+        if (!params.coinToBuy && (!params.coinIdToBuy && params.coinIdToBuy !== 0)) {
             return Promise.reject(new Error('Coin to buy not specified'));
         }
 
-        const url = apiInstance.defaults.apiType === API_TYPE_GATE
-            ? 'estimate/coin-sell'
-            : 'estimate_coin_sell';
-
-        params = apiInstance.defaults.apiType === API_TYPE_GATE ? {
-            coinToSell: params.coinToSell || params.coin_to_sell,
-            valueToSell: convertToPip(params.valueToSell || params.value_to_sell),
-            coinToBuy: params.coinToBuy || params.coin_to_buy,
-        } : {
-            coin_to_sell: params.coinToSell || params.coin_to_sell,
-            value_to_sell: convertToPip(params.valueToSell || params.value_to_sell),
-            coin_to_buy: params.coinToBuy || params.coin_to_buy,
+        params = {
+            coin_id_to_sell: params.coinIdToSell,
+            coin_to_sell: params.coinToSell,
+            value_to_sell: convertToPip(params.valueToSell),
+            coin_id_to_buy: params.coinIdToBuy,
+            coin_to_buy: params.coinToBuy,
         };
 
-        return apiInstance.get(url, {params})
+        return apiInstance.get('estimate_coin_sell', {params})
             .then((response) => {
-                const resData = getData(response, apiInstance.defaults.apiType);
+                const resData = response.data;
                 // receive pips from node and convert them
                 return {
                     will_get: convertFromPip(resData.will_get),

@@ -2,8 +2,8 @@ import {SellAllTxData} from '~/src';
 
 describe('SellAllTxData', () => {
     const txParamsData = {
-        coinToSell: 'MNT',
-        coinToBuy: 'BELTCOIN',
+        coinToSell: '0',
+        coinToBuy: '1',
     };
     const txData = new SellAllTxData(txParamsData).serialize();
 

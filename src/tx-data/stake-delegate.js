@@ -1,18 +1,18 @@
 import {TxDataDelegate} from 'minterjs-tx';
-import {convertToPip, convertFromPip, toBuffer, publicToString, coinToBuffer, bufferToCoin} from 'minterjs-util';
+import {convertToPip, convertFromPip, toBuffer, publicToString} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
-import {addTxDataFields, bufferToInteger, validateAmount, validateCoin, validatePublicKey} from '../utils.js';
+import {addTxDataFields, bufferToInteger, validateAmount, validateUint, validatePublicKey, integerToHexString} from '../utils.js';
 
 /**
  * @param {string} publicKey
- * @param {string} coin
+ * @param {number|string} coin - coin id
  * @param {number|string} stake
  * @constructor
  */
 export default function DelegateTxData({publicKey, coin, stake}) {
     validatePublicKey(publicKey, 'publicKey');
-    validateCoin(coin, 'coin');
+    validateUint(coin, 'coin');
     validateAmount(stake, 'stake');
 
     this.publicKey = publicKey;
@@ -21,7 +21,7 @@ export default function DelegateTxData({publicKey, coin, stake}) {
 
     this.txData = new TxDataDelegate({
         publicKey: toBuffer(publicKey),
-        coin: coinToBuffer(coin),
+        coin: integerToHexString(coin),
         stake: `0x${convertToPip(stake, 'hex')}`,
     });
 
@@ -41,13 +41,10 @@ export default function DelegateTxData({publicKey, coin, stake}) {
  * @return {DelegateTxData}
  */
 DelegateTxData.fromBufferFields = function fromBufferFields({publicKey, coin, stake}) {
-    if (Buffer.isBuffer(stake)) {
-        stake = bufferToInteger(stake);
-    }
     return new DelegateTxData({
         publicKey: publicToString(publicKey),
-        coin: bufferToCoin(toBuffer(coin)),
-        stake: convertFromPip(stake),
+        coin: bufferToInteger(toBuffer(coin)),
+        stake: convertFromPip(bufferToInteger(toBuffer(stake))),
     });
 };
 

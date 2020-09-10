@@ -10,30 +10,17 @@ import {getData} from './utils.js';
 export default function EstimateTxCommission(apiInstance) {
     /**
      * Get nonce for new transaction: last transaction number + 1
-     * @param {Object} params
-     * @param {string} [params.tx] - rawTx
-     * @param {string} [params.transaction] - rawTx
-     * @return {Promise<string>}
+     * @param {string} tx
+     * @return {Promise<number|string>}
      */
-    return function estimateCoinBuy(params) {
-        if (!params.tx && !params.transaction) {
+    return function estimateTxCommission(tx) {
+        if (!tx) {
             return Promise.reject(new Error('Transaction not specified'));
         }
 
-        const url = apiInstance.defaults.apiType === API_TYPE_GATE
-            ? 'estimate/tx-commission'
-            : 'estimate_tx_commission';
-
-        params = apiInstance.defaults.apiType === API_TYPE_GATE ? {
-            transaction: params.transaction || params.tx,
-        } : {
-            tx: `0x${params.transaction || params.tx}`,
-        };
-
-        return apiInstance.get(url, {params})
+        return apiInstance.get(`estimate_tx_commission/${tx}`)
             .then((response) => {
-                const resData = getData(response, apiInstance.defaults.apiType);
-                return resData.commission;
+                return response.data.commission;
             });
     };
 }

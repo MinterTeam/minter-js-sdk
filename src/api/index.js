@@ -32,34 +32,37 @@ export default function MinterApi(options = {}) {
 
     // @TODO duplication with getData
     // transform response from gate to minter-node api format
-    if (options.apiType === API_TYPE_GATE) {
-        options.transformResponse.push((data) => {
-            data = parseData(data);
-            // transform `then`
-            // `data: {data: {}}` to `data: {result: {}}`
-            if (data.data) {
-                data.result = data.data;
-            }
-
-            return data;
-        });
-    }
+    // if (options.apiType === API_TYPE_GATE) {
+    //     options.transformResponse.push((data) => {
+    //         data = parseData(data);
+    //         // transform `then`
+    //         // `data: {data: {}}` to `data: {result: {}}`
+    //         // if (data.data) {
+    //         //     data.result = data.data;
+    //         // }
+    //
+    //         return data;
+    //     });
+    // }
 
     // ensure, that error.message exists
     options.transformResponse.push((data) => {
         data = parseData(data);
+        if (data.error?.details) {
+            data.error.data = data.error.details;
+        }
         // transform `result` to `error` if its failed
         // if (data.result && data.result.log) {
         //     data.error = data.result;
         // }
         // rename error.log
-        if (data.error && data.error.log && !data.error.message) {
-            data.error.message = data.error.log;
-        }
+        // if (data.error && data.error.log && !data.error.message) {
+        //     data.error.message = data.error.log;
+        // }
         // rename error.tx_result.log
-        if (data.error && data.error.tx_result && data.error.tx_result.log && !data.error.tx_result.message) {
-            data.error.tx_result.message = data.error.tx_result.log;
-        }
+        // if (data.error && data.error.tx_result && data.error.tx_result.log && !data.error.tx_result.message) {
+        //     data.error.tx_result.message = data.error.tx_result.log;
+        // }
 
         return data;
     });
@@ -112,6 +115,7 @@ function parseData(data) {
             data = JSON.parse(data);
         } catch (e) {
             console.log(e);
+            console.log(data);
             data = {
                 error: {
                     message: 'Invalid response',

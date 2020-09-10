@@ -4,12 +4,6 @@ import {padToEven, isHexPrefixed} from 'ethjs-util';
 import {isValidAddress, isValidPublicKeyString, isValidCheck, numToBig, COIN_MAX_AMOUNT} from 'minterjs-util';
 
 /**
- * @deprecated
- * @type {number}
- */
-export const NETWORK_MAX_AMOUNT = COIN_MAX_AMOUNT;
-
-/**
  * @param {number|string} num
  * @return {boolean}
  */
@@ -32,7 +26,7 @@ export function integerToHexString(num) {
     num = (new Big(num)).toFixed();
     // convert to hex
     const hexNum = (new BN(num, 10)).toString(16);
-    return padToEven(hexNum);
+    return `0x${padToEven(hexNum)}`;
 }
 
 /**
@@ -147,12 +141,29 @@ export function validateAmount(value, fieldName) {
             throw new Error(`Field \`${fieldName}\` is invalid number`);
         }
 
-        if (valueBig && valueBig.gt(NETWORK_MAX_AMOUNT)) {
+        if (valueBig && valueBig.gt(COIN_MAX_AMOUNT)) {
             throw new Error(`Field \`${fieldName}\` has value which is greater than network's max amount: 10^15`);
         }
         if (valueBig && valueBig.lt(0)) {
             throw new Error(`Field \`${fieldName}\` has negative amount`);
         }
+    }
+}
+
+export function validateUint(value, fieldName) {
+    validateNotEmpty(value, fieldName);
+
+    value = Number(value);
+    if (Number.isNaN(value)) {
+        throw new Error(`Field \`${fieldName}\` is not a number`);
+    }
+
+    if (value < 0) {
+        throw new Error(`Field \`${fieldName}\` should be positive integer`);
+    }
+
+    if (Math.round(value) !== value) {
+        throw new Error(`Field \`${fieldName}\` should be integer, decimal given`);
     }
 }
 

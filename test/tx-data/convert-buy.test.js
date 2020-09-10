@@ -3,8 +3,8 @@ import {clearData} from '~/test/utils';
 
 describe('BuyTxData', () => {
     const txParamsData = {
-        coinToSell: 'MNT',
-        coinToBuy: 'BELTCOIN',
+        coinToSell: '0',
+        coinToBuy: '1',
         valueToBuy: '20',
     };
     const txData = new BuyTxData(txParamsData).serialize();

@@ -1,20 +1,20 @@
 import {TxDataSend} from 'minterjs-tx';
-import {convertToPip, convertFromPip, toBuffer, addressToString, coinToBuffer, bufferToCoin} from 'minterjs-util';
+import {convertToPip, convertFromPip, toBuffer, addressToString} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
-import {bufferToInteger, addTxDataFields, validateAddress, validateCoin, validateAmount} from '../utils.js';
+import {bufferToInteger, integerToHexString, addTxDataFields, validateAddress, validateUint, validateAmount} from '../utils.js';
 
 
 /**
  *
  * @param {string} to
  * @param {number|string} value
- * @param {string} coin
+ * @param {number|string} coin - coin id
  * @constructor
  */
 export default function SendTxData({to, value = 0, coin}) {
     validateAddress(to, 'to');
-    validateCoin(coin, 'coin');
+    validateUint(coin, 'coin');
     validateAmount(value, 'value');
 
     this.to = to;
@@ -23,7 +23,7 @@ export default function SendTxData({to, value = 0, coin}) {
 
     this.txData = new TxDataSend({
         to: toBuffer(to),
-        coin: coinToBuffer(coin),
+        coin: integerToHexString(coin),
         value: `0x${convertToPip(value, 'hex')}`,
     });
 
@@ -41,13 +41,10 @@ export default function SendTxData({to, value = 0, coin}) {
  * @return {SendTxData}
  */
 SendTxData.fromBufferFields = function fromBufferFields({to, value, coin}) {
-    if (Buffer.isBuffer(value)) {
-        value = bufferToInteger(value);
-    }
     return new SendTxData({
         to: addressToString(to),
-        coin: bufferToCoin(toBuffer(coin)),
-        value: convertFromPip(value),
+        coin: bufferToInteger(toBuffer(coin)),
+        value: convertFromPip(bufferToInteger(toBuffer(value))),
     });
 };
 

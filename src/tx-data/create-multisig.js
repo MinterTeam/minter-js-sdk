@@ -2,7 +2,7 @@ import {TxDataCreateMultisig} from 'minterjs-tx';
 // import TxDataCreateMultisig from 'minterjs-tx/src/tx-data/create-multisig.js';
 import {addressToString, toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
-import {addTxDataFields, bufferToInteger, integerToHexString, validateAddress} from '../utils.js';
+import {addTxDataFields, bufferToInteger, integerToHexString, validateAddress, validateUint} from '../utils.js';
 
 /**
  * @param {Array} addresses
@@ -39,12 +39,18 @@ export default function CreateMultisigTxData({addresses, weights, threshold}) {
         if (weight > 1023 || weight < 0) {
             throw new Error(`\`weights\` field contains invalid weight at index: ${index}, it should be between 0 and 1023`);
         }
+        try {
+            validateUint(weight, 'weights');
+        } catch (e) {
+            // update error message
+            throw new Error(e.message.replace('`weights`', `\`weights\` contain invalid weight at index: ${index}, it `));
+        }
     });
 
     this.txData = new TxDataCreateMultisig({
         addresses: addresses.map((address) => toBuffer(address)),
-        weights: weights.map((weight) => `0x${integerToHexString(weight)}`),
-        threshold: `0x${integerToHexString(threshold)}`,
+        weights: weights.map((weight) => integerToHexString(weight)),
+        threshold: integerToHexString(threshold),
     });
 
     addTxDataFields(this);

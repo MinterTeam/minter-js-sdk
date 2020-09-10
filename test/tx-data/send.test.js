@@ -4,7 +4,7 @@ describe('SendTxData', () => {
     const txParamsData = {
         to: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
         value: '10',
-        coin: 'MNT',
+        coin: '0',
     };
     const txData = new SendTxData(txParamsData).serialize();
 

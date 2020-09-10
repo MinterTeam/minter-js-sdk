@@ -1,18 +1,18 @@
 import {TxDataBuy} from 'minterjs-tx';
-import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_AMOUNT} from 'minterjs-util';
-import {addTxDataFields, bufferToInteger, validateAmount, validateCoin} from '../utils.js';
+import {convertFromPip, convertToPip, toBuffer, COIN_MAX_AMOUNT} from 'minterjs-util';
+import {addTxDataFields, bufferToInteger, integerToHexString, validateAmount, validateUint} from '../utils.js';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 
 /**
- * @param {string} coinToSell
- * @param {string} coinToBuy
+ * @param {number|string} coinToSell - coin id
+ * @param {number|string} coinToBuy - coin id
  * @param {number|string} valueToBuy
  * @param {number|string} [maximumValueToSell]
  * @constructor
  */
 export default function BuyTxData({coinToSell, coinToBuy, valueToBuy, maximumValueToSell = COIN_MAX_AMOUNT}) {
-    validateCoin(coinToSell, 'coinToSell');
-    validateCoin(coinToBuy, 'coinToBuy');
+    validateUint(coinToSell, 'coinToSell');
+    validateUint(coinToBuy, 'coinToBuy');
     validateAmount(valueToBuy, 'valueToBuy');
     validateAmount(maximumValueToSell, 'maximumValueToSell');
 
@@ -22,8 +22,8 @@ export default function BuyTxData({coinToSell, coinToBuy, valueToBuy, maximumVal
     this.maximumValueToSell = maximumValueToSell;
 
     this.txData = new TxDataBuy({
-        coinToSell: coinToBuffer(coinToSell),
-        coinToBuy: coinToBuffer(coinToBuy),
+        coinToSell: integerToHexString(coinToSell),
+        coinToBuy: integerToHexString(coinToBuy),
         valueToBuy: `0x${convertToPip(valueToBuy, 'hex')}`,
         maximumValueToSell: `0x${convertToPip(maximumValueToSell, 'hex')}`,
     });
@@ -44,8 +44,8 @@ export default function BuyTxData({coinToSell, coinToBuy, valueToBuy, maximumVal
  */
 BuyTxData.fromBufferFields = function fromBufferFields({coinToSell, valueToBuy, coinToBuy, maximumValueToSell}) {
     return new BuyTxData({
-        coinToSell: bufferToCoin(toBuffer(coinToSell)),
-        coinToBuy: bufferToCoin(toBuffer(coinToBuy)),
+        coinToSell: bufferToInteger(toBuffer(coinToSell)),
+        coinToBuy: bufferToInteger(toBuffer(coinToBuy)),
         valueToBuy: convertFromPip(bufferToInteger(toBuffer(valueToBuy))),
         maximumValueToSell: convertFromPip(bufferToInteger(toBuffer(maximumValueToSell))),
     });

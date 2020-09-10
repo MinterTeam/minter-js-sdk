@@ -1,12 +1,12 @@
-import {defineProperties} from 'ethereumjs-util/dist/object.js';
 import {ecsign} from 'ethereumjs-util/dist/signature.js';
 import {rlphash, sha256} from 'ethereumjs-util/dist/hash.js';
 import {toBuffer as ethToBuffer} from 'ethereumjs-util/dist/bytes.js';
 import secp256k1 from 'secp256k1';
-import {convertToPip, convertFromPip, mPrefixStrip, toBuffer, coinToBuffer, bufferToCoin} from 'minterjs-util';
+import {defineProperties} from 'minterjs-tx';
+import {convertToPip, convertFromPip, mPrefixStrip, toBuffer} from 'minterjs-util';
 // import {convertToPip, convertFromPip} from 'minterjs-util/src/converter.js';
 // import {mPrefixStrip} from 'minterjs-util/src/prefix.js';
-import {isNumericInteger, integerToHexString, bufferToInteger, toInteger} from './utils.js';
+import {integerToHexString, bufferToInteger, validateUint, validateAmount} from './utils.js';
 
 class Check {
     constructor(data) {
@@ -26,7 +26,7 @@ class Check {
                 name: 'chainId',
                 length: 1,
                 allowLess: true,
-                default: new Buffer([]),
+                default: Buffer.from([]),
             }, {
                 name: 'dueBlock',
                 length: 8,
@@ -34,7 +34,8 @@ class Check {
                 default: Buffer.from([]),
             }, {
                 name: 'coin',
-                length: 10,
+                length: 4,
+                allowZero: true,
                 allowLess: true,
                 default: Buffer.from([]),
             }, {
@@ -45,9 +46,10 @@ class Check {
                 default: Buffer.from([]),
             }, {
                 name: 'gasCoin',
-                length: 10,
-                allowLess: false,
-                default: Buffer.alloc(10),
+                length: 4,
+                allowZero: true,
+                allowLess: true,
+                default: Buffer.from([]),
             }, {
                 name: 'lock',
                 allowZero: true,
@@ -116,39 +118,28 @@ class Check {
  * @param {string} password - utf8
  * @param {string} nonce
  * @param {number} [chainId=1]
- * @param {string} coin
- * @param {string} [coinSymbol]
+ * @param {number|string} coin
  * @param {number|string} value
- * @param {string} gasCoin
+ * @param {number|string} gasCoin
  * @param {number} [dueBlock=999999999]
  * @param {boolean} [isReturnObject]
  * @return {string|Check}
  */
-export default function issueCheck({privateKey, password, nonce, chainId = 1, coin, coinSymbol, value, gasCoin, dueBlock = 999999999} = {}, isReturnObject) {
-    // @TODO accept exponential
-    if (!isNumericInteger(dueBlock)) {
-        throw new Error('Invalid due block. Should be a numeric integer');
-    }
+export default function issueCheck({privateKey, password, nonce, chainId = 1, coin, value, gasCoin = 0, dueBlock = 999999999} = {}, isReturnObject) {
+    validateUint(dueBlock, 'dueBlock');
+    validateUint(coin, 'coin');
+    validateUint(gasCoin, 'gasCoin');
+    validateAmount(value, 'value');
 
     privateKey = ethToBuffer(privateKey);
 
-    if (!gasCoin) {
-        gasCoin = toInteger(chainId) === '2' ? 'MNT' : 'BIP';
-    }
-
-    if (typeof gasCoin !== 'string' || gasCoin.length < 3) {
-        throw new Error('issueCheck failed: invalid gasCoin given');
-    }
-
-    coin = coin || coinSymbol;
-
     let check = new Check({
         nonce: Buffer.from(nonce.toString(), 'utf-8'),
-        chainId: `0x${integerToHexString(chainId)}`,
-        coin: coinToBuffer(coin),
+        chainId: integerToHexString(chainId),
+        coin: integerToHexString(coin),
         value: `0x${convertToPip(value, 'hex')}`,
-        gasCoin: coinToBuffer(gasCoin),
-        dueBlock: `0x${integerToHexString(dueBlock)}`,
+        gasCoin: integerToHexString(gasCoin),
+        dueBlock: integerToHexString(dueBlock),
     });
     check.sign(privateKey, password);
 
@@ -161,9 +152,9 @@ export function decodeCheck(rawCheck) {
     return {
         nonce: check.nonce.toString('utf-8'),
         chainId: bufferToInteger(check.chainId),
-        coin: bufferToCoin(check.coin),
+        coin: bufferToInteger(check.coin),
         value: convertFromPip(bufferToInteger(check.value)),
-        gasCoin: bufferToCoin(check.gasCoin),
+        gasCoin: bufferToInteger(check.gasCoin),
         dueBlock: bufferToInteger(check.dueBlock),
     };
 }
@@ -174,5 +165,5 @@ export function decodeCheck(rawCheck) {
  */
 export function getGasCoinFromCheck(rawCheck) {
     const check = new Check(toBuffer(rawCheck));
-    return bufferToCoin(check.gasCoin);
+    return bufferToInteger(check.gasCoin);
 }
