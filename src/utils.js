@@ -34,6 +34,9 @@ export function integerToHexString(num) {
  * @return {string}
  */
 export function toInteger(num) {
+    if (typeof num === 'number') {
+        return num.toString();
+    }
     if (typeof num !== 'undefined' && num !== null && num.length) {
         // handle hex prefixed string
         if (typeof num === 'string' && isHexPrefixed(num)) {

@@ -72,13 +72,15 @@ function _postTxHandleErrors(apiInstance, txParams, options) {
     return _postTx(apiInstance, txParams, txOptions)
         .catch((error) => {
             // @TODO limit max gas_price to prevent sending tx with to high fees
-            if (gasRetryLimit > 0 && isGasError(error)) {
-                // make retry
+            if (toInteger(txParams.signatureType) !== '2' && gasRetryLimit > 0 && isGasError(error)) {
                 const minGas = getMinGasFromError(error);
+                // eslint-disable-next-line no-console
+                console.log(`make postTx retry, old gasPrice ${txParams.gasPrice}, new gasPrice ${minGas}`);
                 return _postTxHandleErrors(apiInstance, {...txParams, gasPrice: minGas}, {...options, gasRetryLimit: gasRetryLimit - 1});
-            } else if (nonceRetryLimit > 0 && isNonceError(error)) {
-                // make retry
+            } else if (toInteger(txParams.signatureType) !== '2' && nonceRetryLimit > 0 && isNonceError(error)) {
                 const newNonce = getNonceFromError(error);
+                // eslint-disable-next-line no-console
+                console.log(`make postTx retry, old nonce ${txParams.nonce}, new nonce ${newNonce}`);
                 return _postTxHandleErrors(apiInstance, {...txParams, nonce: newNonce}, {...options, nonceRetryLimit: nonceRetryLimit - 1});
             } else if (mempoolRetryLimit > 0 && isMempoolError(error)) {
                 // make retry

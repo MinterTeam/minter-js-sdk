@@ -13,6 +13,12 @@ import DelegateTxData from './stake-delegate.js';
 import UnbondTxData from './stake-unbond.js';
 import RedeemCheckTxData from './redeem-check.js';
 import CreateMultisigTxData from './create-multisig.js';
+import SetHaltBlockTxData from './set-halt-block.js';
+import RecreateCoinTxData from './recreate-coin.js';
+import EditCoinOwnerTxData from './edit-coin-owner.js';
+import EditMultisigTxData from './edit-multisig.js';
+import PriceVoteTxData from './price-vote.js';
+import EditCandidatePublicKeyTxData from './candidate-edit-public-key.js';
 import {decodeCheck} from '../check.js';
 
 const TX_DATA_CONSTRUCTOR = {
@@ -30,6 +36,12 @@ const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.UNBOND]: UnbondTxData,
     [TX_TYPE.REDEEM_CHECK]: RedeemCheckTxData,
     [TX_TYPE.CREATE_MULTISIG]: CreateMultisigTxData,
+    [TX_TYPE.SET_HALT_BLOCK]: SetHaltBlockTxData,
+    [TX_TYPE.RECREATE_COIN]: RecreateCoinTxData,
+    [TX_TYPE.EDIT_COIN_OWNER]: EditCoinOwnerTxData,
+    [TX_TYPE.EDIT_MULTISIG]: EditMultisigTxData,
+    [TX_TYPE.PRICE_VOTE]: PriceVoteTxData,
+    [TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY]: EditCandidatePublicKeyTxData,
 };
 
 /**

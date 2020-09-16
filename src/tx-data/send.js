@@ -29,7 +29,7 @@ export default function SendTxData({to, value = 0, coin}) {
 
     addTxDataFields(this);
 
-    // proxy TxDataSend
+    // proxy TxData
     this.raw = this.txData.raw;
     this.serialize = this.txData.serialize;
 }

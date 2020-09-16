@@ -1,5 +1,3 @@
-import {API_TYPE_GATE} from '../variables.js';
-import {getData} from './utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
@@ -19,16 +17,9 @@ export default function PostSignedTx(apiInstance) {
             tx: signedTx,
         })
             .then((response) => {
-                const resData = getData(response, apiInstance.defaults.apiType);
-                let txData = resData.transaction ? resData.transaction : {hash: resData.hash};
-                let txHash = txData.hash.toLowerCase();
-                // @TODO is transform needed?
-                if (txHash.indexOf('mt') !== 0) {
-                    txHash = `Mt${txHash}`;
-                } else {
-                    txHash = txHash.replace(/^mt/, 'Mt');
-                }
-                txData.hash = txHash;
+                const resData = response.data;
+                // @TODO use transaction when gate will be fixed
+                let txData = (resData.transaction || resData.data) ? (resData.transaction || resData.data) : {hash: resData.hash};
 
                 return txData;
             });

@@ -74,10 +74,10 @@ export function prepareTx(txParams = {}, options = {}) {
     validateUint(nonce, 'nonce');
     validateUint(gasCoin, 'gasCoin');
     if (!txType && typeof txType !== 'number') {
-        throw new Error('Invalid type specified, tx can\'t be prepared');
+        throw new Error('Falsy tx type specified, tx can\'t be prepared');
     }
     if (!signatureType && typeof signatureType !== 'number') {
-        throw new Error('Invalid signatureType specified, tx can\'t be prepared');
+        throw new Error('Falsy signatureType specified, tx can\'t be prepared');
     }
 
     txData = ensureBufferData(txData, txType, options);

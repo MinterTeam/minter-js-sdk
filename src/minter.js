@@ -17,6 +17,7 @@ import EstimateTxCommission from './api/estimate-tx-commission.js';
  */
 export default function (options) {
     const apiInstance = new MinterApi(options);
+    this.apiInstance = apiInstance;
 
     this.postTx = PostTx(apiInstance);
 

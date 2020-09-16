@@ -144,6 +144,23 @@ const testData = {
             result: '0xf88d822b6701018008adeca0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a38089056bc75e2d631000008e637573746f6d206d6573736167658001b845f8431ca0a007dfc1b8c21a4564cff980c7d066050f8d7b6b7083f0805828c3e91aa0bf63a010cc83602990213f6b338cdafe2249f137abcaba4bb656b5e46f540b90c76998',
             link: 'https://bip.to/tx/-EMIreyg-eA2g5op9_ui1TlL1IntqSfMuVrMmeUG5ojkiICCs6OAiQVrx14tYxAAAI5jdXN0b20gbWVzc2FnZYIrZwGA',
         },
+        // 0x09 REDEEM CHECK
+        {
+            params: {
+                nonce: 1,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 9,
+                data: {
+                    check: VALID_CHECK,
+                },
+            },
+            options: {
+                password: 'pass',
+            },
+            result: '0xf901310101018009b8e0f8deb899f8973101830f423f80888ac7230489e8000080b84199953f49ef0ed10d971b8df2c018e7699cd749feca03cad9d03f32a8992d77ab6c818d770466500b41165c18a1826662fb0d45b3a9193fcacc13a4131702e017011ba069f7cfdead0ea971e9f3e7b060463e10929ccf2f4309b8145c0916f51f4c5040a025767d4ea835ee8fc2a096b8f99717ef65627cad5e99c2427e34a9928881ba34b8410497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d01808001b845f8431ca0133f06b794c07acf1a7663ca0ea996be81c5f94edbf6f7152c06ab57ce71685ca0421b94ac1df5185ed885004edcf5d732ff142688fa63eefb5340f29d6423f310',
+            link: 'https://bip.to/tx/-KUJuJ74nLiZ-JcxAYMPQj-AiIrHIwSJ6AAAgLhBmZU_Se8O0Q2XG43ywBjnaZzXSf7KA8rZ0D8yqJktd6tsgY13BGZQC0EWXBihgmZi-w1Fs6kZP8rME6QTFwLgFwEboGn3z96tDqlx6fPnsGBGPhCSnM8vQwm4FFwJFvUfTFBAoCV2fU6oNe6PwqCWuPmXF-9lYnytXpnCQn40qZKIgbo0gIABAYA?p=cGFzcw',
+        },
         // 0x0A SET CANDIDATE ON
         {
             params: {
@@ -173,23 +190,6 @@ const testData = {
             },
             result: '0xf882822b670101800ba2e1a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a38e637573746f6d206d6573736167658001b845f8431ca0ef308c01aa7fd43d3f1528e98a81d561633f0337cb6fe92d6215f2b476884066a03ab8ca73f023ee82fe77f7f72b3f953ea58e29408a2f27915120458faf8bed89',
             link: 'https://bip.to/tx/-DgLouGg-eA2g5op9_ui1TlL1IntqSfMuVrMmeUG5ojkiICCs6OOY3VzdG9tIG1lc3NhZ2WCK2cBgA',
-        },
-        // 0x09 REDEEM CHECK
-        {
-            params: {
-                nonce: 1,
-                gasPrice: 1,
-                gasCoin: 0,
-                type: 9,
-                data: {
-                    check: VALID_CHECK,
-                },
-            },
-            options: {
-                password: 'pass',
-            },
-            result: '0xf901310101018009b8e0f8deb899f8973101830f423f80888ac7230489e8000080b84199953f49ef0ed10d971b8df2c018e7699cd749feca03cad9d03f32a8992d77ab6c818d770466500b41165c18a1826662fb0d45b3a9193fcacc13a4131702e017011ba069f7cfdead0ea971e9f3e7b060463e10929ccf2f4309b8145c0916f51f4c5040a025767d4ea835ee8fc2a096b8f99717ef65627cad5e99c2427e34a9928881ba34b8410497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d01808001b845f8431ca0133f06b794c07acf1a7663ca0ea996be81c5f94edbf6f7152c06ab57ce71685ca0421b94ac1df5185ed885004edcf5d732ff142688fa63eefb5340f29d6423f310',
-            link: 'https://bip.to/tx/-KUJuJ74nLiZ-JcxAYMPQj-AiIrHIwSJ6AAAgLhBmZU_Se8O0Q2XG43ywBjnaZzXSf7KA8rZ0D8yqJktd6tsgY13BGZQC0EWXBihgmZi-w1Fs6kZP8rME6QTFwLgFwEboGn3z96tDqlx6fPnsGBGPhCSnM8vQwm4FFwJFvUfTFBAoCV2fU6oNe6PwqCWuPmXF-9lYnytXpnCQn40qZKIgbo0gIABAYA?p=cGFzcw',
         },
         // 0x0C CREATE MULTISIG
         {
@@ -243,15 +243,113 @@ const testData = {
                 type: 14,
                 data: {
                     publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
-                    newPublicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
                     rewardAddress: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
                     ownerAddress: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
                     controlAddress: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
                 },
                 payload: 'custom message',
             },
-            result: '0xf8e4822b670101800eb883f881a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3947633980c000139dd3bd24a3f54e06474fa941e16947633980c000139dd3bd24a3f54e06474fa941e16947633980c000139dd3bd24a3f54e06474fa941e168e637573746f6d206d6573736167658001b845f8431ca0429d4e1321c8d8f5ffbd66487ef445cd2ab572cfd2a73932e77c5b4304c8427fa0674e406edd99588301a9ba6e82daf5886108cd32ff676fe5c71816ce9feae68a',
-            link: 'https://bip.to/tx/-JoOuIP4gaD54DaDmin3-6LVOUvUie2pJ8y5WsyZ5QbmiOSIgIKzo6D54DaDmin3-6LVOUvUie2pJ8y5WsyZ5QbmiOSIgIKzo5R2M5gMAAE53TvSSj9U4GR0-pQeFpR2M5gMAAE53TvSSj9U4GR0-pQeFpR2M5gMAAE53TvSSj9U4GR0-pQeFo5jdXN0b20gbWVzc2FnZYIrZwGA',
+            result: '0xf8c3822b670101800eb862f860a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3947633980c000139dd3bd24a3f54e06474fa941e16947633980c000139dd3bd24a3f54e06474fa941e16947633980c000139dd3bd24a3f54e06474fa941e168e637573746f6d206d6573736167658001b845f8431ca07f20bc0ff74bd287023324459b8647755e8922ca067be51bd49a863c505510e7a00f30242b6d01af1ef0c50a451ac51840988f304bf6a07a28967051718a8974a2',
+            link: 'https://bip.to/tx/-HkOuGL4YKD54DaDmin3-6LVOUvUie2pJ8y5WsyZ5QbmiOSIgIKzo5R2M5gMAAE53TvSSj9U4GR0-pQeFpR2M5gMAAE53TvSSj9U4GR0-pQeFpR2M5gMAAE53TvSSj9U4GR0-pQeFo5jdXN0b20gbWVzc2FnZYIrZwGA',
+        },
+        // 0x0F SET HALT BLOCK
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x0f,
+                data: {
+                    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+                    height: 123456789,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf887822b670101800fa7e6a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a384075bcd158e637573746f6d206d6573736167658001b845f8431ba0921cad95b8c005b26781fc4ae1f7154e0ffb8158fb0e6b8d453a63d8294bc95aa063aaa620575ac7d5649e06cce706b4c7811258bca577605ad9ef1068ce63fcda',
+            link: 'https://bip.to/tx/-D0Pp-ag-eA2g5op9_ui1TlL1IntqSfMuVrMmeUG5ojkiICCs6OEB1vNFY5jdXN0b20gbWVzc2FnZYIrZwGA',
+        },
+        // 0x10 RECREATE COIN
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x10,
+                data: {
+                    name: 'My Coin',
+                    symbol: 'MYCOIN',
+                    initialAmount: 5,
+                    constantReserveRatio: 10,
+                    initialReserve: 20,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf897822b6701018010b7f6874d7920436f696e8a4d59434f494e00000000884563918244f400008901158e460913d000000a8e314dc6448d9338c15b0a000000008e637573746f6d206d6573736167658001b845f8431ca062dfd967db7228c846dc06ed95c8b035b75dcad212b616804256a345d2d2dc68a02998861fede069768f7f33f3648be61249ced816b8b3cde59293eb9a5d0f7988',
+            link: 'https://bip.to/tx/-E0Qt_aHTXkgQ29pbopNWUNPSU4AAAAAiEVjkYJE9AAAiQEVjkYJE9AAAAqOMU3GRI2TOMFbCgAAAACOY3VzdG9tIG1lc3NhZ2WCK2cBgA',
+        },
+        // 0x11 EDIT COIN OWNER
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x11,
+                data: {
+                    symbol: 'MYCOIN',
+                    newOwner: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+                },
+                payload: 'custom message',
+            },
+            result: '0xf881822b6701018011a1e08a4d59434f494e00000000947633980c000139dd3bd24a3f54e06474fa941e168e637573746f6d206d6573736167658001b845f8431ca0f5e49304699574c6802c1a7f8fe33f4c5771fbf39d1828aca11bd9cf999c7c57a07573ca70f05004bbd1f9c0515fc7b2971c45c2a0559ad72549246aa32a3e2298',
+            link: 'https://bip.to/tx/9xGh4IpNWUNPSU4AAAAAlHYzmAwAATndO9JKP1TgZHT6lB4WjmN1c3RvbSBtZXNzYWdlgitnAYA',
+        },
+        // 0x12 EDIT MULTISIG
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x12,
+                data: {
+                    addresses: ['Mxee81347211c72524338f9680072af90744333146', 'Mxee81347211c72524338f9680072af90744333145', 'Mxee81347211c72524338f9680072af90744333144'],
+                    weights: [1, 3, 5],
+                    threshold: 7,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf8a9822b6701018012b848f84607c3010305f83f94ee81347211c72524338f9680072af9074433314694ee81347211c72524338f9680072af9074433314594ee81347211c72524338f9680072af907443331448e637573746f6d206d6573736167658001b845f8431ca02fb66ac2e62be4c9253974daa4df3ea057cc09b7b24f267f9d3ebec6b7390d13a0648261b9d6e6e7c8b314f30ea2e899465deb9d97ed19f38b47a0759e1b1749db',
+            link: 'https://bip.to/tx/-F8SuEj4RgfDAQMF-D-U7oE0chHHJSQzj5aAByr5B0QzMUaU7oE0chHHJSQzj5aAByr5B0QzMUWU7oE0chHHJSQzj5aAByr5B0QzMUSOY3VzdG9tIG1lc3NhZ2WCK2cBgA',
+        },
+        // 0x13 PRICE VOTE
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x13,
+                data: {
+                    price: 1234567890,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf866822b670101801386c584499602d28e637573746f6d206d6573736167658001b845f8431ca054932d530253ba3e9cff4db036bb8320e9597e1ad59c429ceff00e572f947240a01bf7641b7ad6e0ef0ed419cdbe91728b66ddd79b62c27e08baf10fea42280ecb',
+            link: 'https://bip.to/tx/3BOGxYRJlgLSjmN1c3RvbSBtZXNzYWdlgitnAYA',
+        },
+        // 0x14 DELEGATE
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x14,
+                data: {
+                    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+                    newPublicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a4',
+                },
+                payload: 'custom message',
+            },
+            result: '0xf8a5822b6701018014b844f842a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a48e637573746f6d206d6573736167658001b845f8431ca0234ca815eb34d27a13a6aa55aabe60af485d932f2042189fcf81bf5e61c4ec77a02f1e24392b66feb555a25de8953e8d6a3d34e95fc6db8a021af98f466010fe21',
+            link: 'https://bip.to/tx/-FsUuET4QqD54DaDmin3-6LVOUvUie2pJ8y5WsyZ5QbmiOSIgIKzo6D54DaDmin3-6LVOUvUie2pJ8y5WsyZ5QbmiOSIgIKzpI5jdXN0b20gbWVzc2FnZYIrZwGA',
         },
     ],
 };

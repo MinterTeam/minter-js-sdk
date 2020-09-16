@@ -7,16 +7,24 @@ import {
     BuyTxData,
     DeclareCandidacyTxData,
     EditCandidateTxData,
+    EditCandidatePublicKeyTxData,
     DelegateTxData,
     UnbondTxData,
     RedeemCheckTxData,
     SetCandidateOnTxData,
     SetCandidateOffTxData,
     CreateMultisigTxData,
+    EditMultisigTxData,
     CreateCoinTxData,
+    RecreateCoinTxData,
+    EditCoinOwnerTxData,
+    SetHaltBlockTxData,
+    PriceVoteTxData,
     SellAllTxData,
     issueCheck,
+    prepareTx,
     prepareSignedTx,
+    makeSignature,
 } from '~/src';
 import {ENV_DATA, minterGate, minterNode} from './variables';
 import {ensureCustomCoin} from '~/test/utils.js';
@@ -24,7 +32,11 @@ import {ensureCustomCoin} from '~/test/utils.js';
 const newCandidatePublicKeyGate = generateWallet().getPublicKeyString();
 const newCandidatePublicKeyNode = generateWallet().getPublicKeyString();
 
-const NOT_EXISTENT_COIN = 4294967295;
+function getRandomCoin() {
+    return Math.random().toString().substring(2, 10 + 2);
+}
+
+const NOT_EXISTENT_COIN = '4294967295';
 
 const API_TYPE_LIST = [
     {
@@ -33,6 +45,7 @@ const API_TYPE_LIST = [
         privateKey: ENV_DATA.privateKey2,
         address: ENV_DATA.address2,
         customCoin: 'TESTCOIN03',
+        newCoin: getRandomCoin(),
         newCandidatePublicKey: newCandidatePublicKeyNode,
         toString() {
             return 'node';
@@ -44,6 +57,7 @@ const API_TYPE_LIST = [
         privateKey: ENV_DATA.privateKey,
         address: ENV_DATA.address,
         customCoin: ENV_DATA.customCoin,
+        newCoin: getRandomCoin(),
         newCandidatePublicKey: newCandidatePublicKeyGate,
         toString() {
             return 'gate';
@@ -142,7 +156,6 @@ describe('PostTx: send', () => {
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
                 console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -204,7 +217,6 @@ describe('PostTx handle low gasPrice', () => {
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
                 // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -243,7 +255,6 @@ describe('PostTx: multisend', () => {
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
                 console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -269,7 +280,6 @@ describe('PostTx: multisend', () => {
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
                 console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -318,7 +328,6 @@ describe('PostTx: sell', () => {
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
                 // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -340,7 +349,128 @@ describe('PostTx: sell', () => {
 });
 
 // @TODO sellAll
-// @TODO create coin
+
+describe('coin', () => {
+    describe('PostTx: create coin', () => {
+        const txParamsData = (apiType, data) => ({
+            chainId: 2,
+            type: TX_TYPE.CREATE_COIN,
+            data: new CreateCoinTxData(Object.assign({
+                name: apiType.newCoin,
+                symbol: apiType.newCoin,
+                initialAmount: 20000,
+                initialReserve: 10000,
+                constantReserveRatio: 50,
+            }, data)),
+            gasCoin: 0,
+            payload: 'custom message',
+        });
+
+        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+            expect.assertions(2);
+            const txParams = txParamsData(apiType);
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .then(({hash: txHash}) => {
+                    // console.log(txHash);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                });
+        }, 30000);
+
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+            expect.assertions(1);
+            const txParams = txParamsData(apiType, {symbol: getRandomCoin(), initialReserve: 0});
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    // Coin reserve should be greater
+                    expect(error.response.data.error.code).toBe('205');
+                });
+        }, 70000);
+    });
+
+    describe('PostTx: recreate coin', () => {
+        const txParamsData = (apiType, data) => ({
+            chainId: 2,
+            type: TX_TYPE.RECREATE_COIN,
+            data: new RecreateCoinTxData(Object.assign({
+                name: `${apiType.newCoin} recreated`,
+                symbol: apiType.newCoin,
+                initialAmount: 20000,
+                initialReserve: 10000,
+                constantReserveRatio: 100,
+            }, data)),
+            gasCoin: 0,
+            payload: 'custom message',
+        });
+
+        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+            expect.assertions(2);
+            const txParams = txParamsData(apiType);
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .then(({hash: txHash}) => {
+                    // console.log(txHash);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                });
+        }, 30000);
+
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+            expect.assertions(1);
+            const txParams = txParamsData(apiType, {symbol: NOT_EXISTENT_COIN});
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    // Coin not exists
+                    expect(error.response.data.error.code).toBe('102');
+                });
+        }, 70000);
+    });
+
+    describe('PostTx: edit coin owner', () => {
+        const txParamsData = (apiType, data) => ({
+            chainId: 2,
+            type: TX_TYPE.EDIT_COIN_OWNER,
+            data: new EditCoinOwnerTxData(Object.assign({
+                symbol: apiType.newCoin,
+                newOwner: generateWallet().getAddressString(),
+            }, data)),
+            gasCoin: 0,
+            payload: 'custom message',
+        });
+
+        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+            expect.assertions(2);
+            const txParams = txParamsData(apiType);
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .then(({hash: txHash}) => {
+                    // console.log(txHash);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                });
+        }, 30000);
+
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+            expect.assertions(1);
+            const txParams = txParamsData(apiType, {symbol: NOT_EXISTENT_COIN});
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    // Coin not exists
+                    expect(error.response.data.error.code).toBe('102');
+                });
+        }, 70000);
+    });
+});
 
 
 describe('PostTx: buy', () => {
@@ -362,7 +492,6 @@ describe('PostTx: buy', () => {
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
                 // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -406,7 +535,6 @@ describe('validator', () => {
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .then(({hash: txHash}) => {
                     console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
@@ -448,7 +576,6 @@ describe('validator', () => {
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .then(({hash: txHash}) => {
                     console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
@@ -489,7 +616,6 @@ describe('validator', () => {
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .then(({hash: txHash}) => {
                     // console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
@@ -532,7 +658,6 @@ describe('validator', () => {
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .then(({hash: txHash}) => {
                     // console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
@@ -571,7 +696,6 @@ describe('validator', () => {
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .then(({hash: txHash}) => {
                     // console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
@@ -613,7 +737,6 @@ describe('validator', () => {
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .then(({hash: txHash}) => {
                     // console.log(txHash);
-                    // txHash = txHash.replace(/^Mt/);
                     expect(txHash).toHaveLength(66);
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
@@ -629,6 +752,122 @@ describe('validator', () => {
                 .then((res) => {
                     console.log({res});
                 })
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    // Candidate with such public key not found
+                    expect(error.response.data.error.code).toBe('403');
+                });
+        }, 70000);
+    });
+
+    describe('PostTx: set halt block', () => {
+        const txParamsData = (apiType, data) => ({
+            chainId: 2,
+            type: TX_TYPE.SET_HALT_BLOCK,
+            data: new SetHaltBlockTxData(Object.assign({
+                publicKey: apiType.newCandidatePublicKey,
+                height: 123456789,
+            }, data)),
+            gasCoin: 0,
+            payload: 'custom message',
+        });
+
+        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+            expect.assertions(2);
+            const txParams = txParamsData(apiType);
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .then(({hash: txHash}) => {
+                    console.log(txHash);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                });
+        }, 30000);
+
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+            expect.assertions(1);
+            const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    // Candidate with such public key not found
+                    expect(error.response.data.error.code).toBe('403');
+                });
+        }, 70000);
+    });
+
+    describe('PostTx: price vote', () => {
+        const txParamsData = (apiType, data) => ({
+            chainId: 2,
+            type: TX_TYPE.PRICE_VOTE,
+            data: new PriceVoteTxData(Object.assign({
+                price: 123456789,
+            }, data)),
+            gasCoin: 0,
+            payload: 'custom message',
+        });
+
+        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+            expect.assertions(2);
+            const txParams = txParamsData(apiType);
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .then(({hash: txHash}) => {
+                    console.log(txHash);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                });
+        }, 30000);
+
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+            expect.assertions(1);
+            const txParams = txParamsData(apiType, {price: 100000000000000000000000000000000});
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .then(({hash: txHash}) => {
+                    console.log(txHash);
+                })
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    // rlp: input string too long for uint
+                    expect(error.response.data.error.code).toBe('106');
+                });
+        }, 70000);
+    });
+
+    describe('PostTx: edit candidate public key', () => {
+        const txParamsData = (apiType, data) => ({
+            chainId: 2,
+            type: TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY,
+            data: new EditCandidatePublicKeyTxData(Object.assign({
+                publicKey: apiType.newCandidatePublicKey,
+                newPublicKey: generateWallet().getPublicKeyString(),
+            }, data)),
+            gasCoin: 0,
+            payload: 'custom message',
+        });
+
+        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+            expect.assertions(2);
+            const txParams = txParamsData(apiType);
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .then(({hash: txHash}) => {
+                    console.log(txHash);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                });
+        }, 30000);
+
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+            expect.assertions(1);
+            const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
                     // Candidate with such public key not found
@@ -669,7 +908,6 @@ describe('PostTx: redeem check', () => {
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
                 // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -684,7 +922,6 @@ describe('PostTx: redeem check', () => {
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
                 // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -707,46 +944,202 @@ describe('PostTx: redeem check', () => {
 });
 
 
-describe('PostTx: create multisig', () => {
-    const txParamsData = (apiType, data) => ({
-        chainId: 2,
-        type: TX_TYPE.CREATE_MULTISIG,
-        data: new CreateMultisigTxData(Object.assign({
-            addresses: [apiType.address, 'Mx7633980c000139dd3bd24a3f54e06474fa941e01'],
-            weights: [1, 2],
-            threshold: 100,
-        }, data)),
-        gasCoin: 0,
+describe('multisig', () => {
+    describe('PostTx: create multisig', () => {
+        const txParamsData = (apiType, data) => ({
+            chainId: 2,
+            type: TX_TYPE.CREATE_MULTISIG,
+            data: new CreateMultisigTxData(Object.assign({
+                addresses: [apiType.address, 'Mx7633980c000139dd3bd24a3f54e06474fa941e01'],
+                weights: [2, 2],
+                threshold: 2,
+            }, data)),
+            gasCoin: 0,
+        });
+
+        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+            expect.assertions(2);
+            const txParams = txParamsData(apiType, {
+                weights: [2, Math.random()].map((item) => item.toString().replace(/\D/, '').substr(0, 3)),
+            });
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .then((tx) => {
+                    const {hash: txHash} = tx;
+                    console.log(txHash);
+                    if (tx.tags?.['tx.created_multisig']) {
+                        apiType.multisigAddress = tx.tags['tx.created_multisig'];
+                    } else {
+                        apiType.multisigTxHash = txHash;
+                    }
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response.data);
+                });
+        }, 30000);
+
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+            expect.assertions(1);
+            const txParams = txParamsData(apiType, {threshold: 100000000000000000000});
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    // rlp: input string too long for uint, decoding into (transaction.CreateMultisigData).Threshold
+                    expect(error.response.data.error.code).toBe('106');
+                });
+        }, 70000);
     });
 
-    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
-        expect.assertions(2);
-        const txParams = txParamsData(apiType, {
-            weights: [Math.random(), Math.random()].map((item) => item.toString().replace(/\D/, '').substr(0, 3)),
+    describe('fill multisig', () => {
+        const txParamsData = (apiType, data) => ({
+            chainId: 2,
+            type: TX_TYPE.SEND,
+            data: Object.assign({
+                to: '',
+                coin: 0,
+                value: 100,
+            }, data),
+            gasCoin: 0,
         });
-        return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-            .then(({hash: txHash}) => {
-                // console.log(txHash);
-                // txHash = txHash.replace(/^Mt/);
-                expect(txHash).toHaveLength(66);
-                expect(txHash.substr(0, 2)).toEqual('Mt');
-            })
-            .catch((error) => {
-                console.log(error);
-                console.log(error.response.data);
-            });
-    }, 30000);
 
-    test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
-        expect.assertions(1);
-        const txParams = txParamsData(apiType, {threshold: 100000000000000000000});
-        return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-            .catch((error) => {
-                console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
-                // rlp: input string too long for uint, decoding into (transaction.CreateMultisigData).Threshold
-                expect(error.response.data.error.code).toBe('106');
+        test.each(API_TYPE_LIST)('should fill %s', (apiType) => {
+            return getAddress(apiType)
+                .then((multisigAddress) => {
+                    const txParams = txParamsData(apiType, {to: multisigAddress});
+                    return apiType.postTx(txParams, {privateKey: apiType.privateKey});
+                })
+                .then(({hash: txHash}) => {
+                    console.log(txHash);
+                });
+        }, 30000);
+    });
+
+    // @TODO should not retry nonce
+    // @TODO should not retry gasPrice
+    describe('PostTx: send multisig', () => {
+        const txParamsData = (apiType, data) => ({
+            chainId: 2,
+            type: TX_TYPE.SEND,
+            data: new SendTxData(Object.assign({
+                to: apiType.address,
+                value: 1.23,
+                coin: 0,
+            }, data)),
+            gasCoin: 0,
+            signatureType: 2,
+        });
+
+        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+            expect.assertions(2);
+            const txParams = txParamsData(apiType);
+
+            return postMultiSign(apiType, txParams)
+                .then(({hash: txHash}) => {
+                    // console.log(txHash);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response.data);
+                });
+        }, 30000);
+
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+            expect.assertions(1);
+            const txParams = txParamsData(apiType, {coin: NOT_EXISTENT_COIN});
+            return postMultiSign(apiType, txParams)
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    // Coin not exists
+                    expect(error.response.data.error.code).toBe('102');
+                });
+        }, 70000);
+    });
+
+    describe('PostTx: edit multisig', () => {
+        const txParamsData = (apiType, data) => ({
+            chainId: 2,
+            type: TX_TYPE.EDIT_MULTISIG,
+            data: new EditMultisigTxData(Object.assign({
+                addresses: [apiType.address, 'Mx7633980c000139dd3bd24a3f54e06474fa941e01'],
+                weights: [3, 3],
+                threshold: 3,
+            }, data)),
+            gasCoin: 0,
+            signatureType: 2,
+        });
+
+        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+            expect.assertions(2);
+            const txParams = txParamsData(apiType, {
+                weights: [3, Math.random()].map((item) => item.toString().replace(/\D/, '').substr(0, 3)),
             });
-    }, 70000);
+
+
+
+            return postMultiSign(apiType, txParams)
+                .then(({hash: txHash}) => {
+                    // console.log(txHash);
+                    expect(txHash).toHaveLength(66);
+                    expect(txHash.substr(0, 2)).toEqual('Mt');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    console.log(error.response.data);
+                });
+        }, 30000);
+
+        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+            expect.assertions(1);
+            const txParams = txParamsData(apiType, {threshold: 100000000000000000000});
+            return postMultiSign(apiType, txParams)
+                .catch((error) => {
+                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    // rlp: input string too long for uint
+                    expect(error.response.data.error.code).toBe('106');
+                });
+        }, 70000);
+    });
+
+    function getAddress(apiType) {
+        let multisigAddressPromise;
+        if (apiType.multisigAddress) {
+            multisigAddressPromise = Promise.resolve(apiType.multisigAddress);
+        } else {
+            multisigAddressPromise = apiType.apiInstance.get(`transaction/${apiType.multisigTxHash}`)
+                .then((response) => {
+                    return response.data.tags['tx.created_multisig'];
+                });
+        }
+
+        return multisigAddressPromise
+            .then((multisigAddress) => {
+                return `Mx${multisigAddress}`;
+            });
+    }
+
+    function getAddressAndNonce(apiType) {
+        return getAddress(apiType).then((multisigAddress) => {
+            return Promise.all([Promise.resolve(multisigAddress), apiType.getNonce(multisigAddress)]);
+        });
+    }
+
+    function postMultiSign(apiType, txParams) {
+        return getAddressAndNonce(apiType)
+            .then(([multisigAddress, nonce]) => {
+                const tx = prepareTx({...txParams, nonce});
+                const signature = makeSignature(tx, apiType.privateKey);
+                return apiType.postTx({
+                    ...txParams,
+                    nonce,
+                    signatureData: {
+                        multisig: multisigAddress,
+                        signatures: [signature],
+                    },
+                });
+            });
+    }
 });
-
-// @TODO test multisig tx
