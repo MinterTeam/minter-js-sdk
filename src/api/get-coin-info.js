@@ -10,7 +10,10 @@ export default function GetCoinInfo(apiInstance) {
      */
     return function getCoinInfo(coinSymbol) {
         return apiInstance.get(`coin_info/${coinSymbol}`)
-            .then((response) => response.data);
+            .then((response) => {
+                response.data.id = Number(response.data.id);
+                return response.data;
+            });
     };
 }
 

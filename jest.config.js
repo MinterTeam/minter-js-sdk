@@ -7,7 +7,7 @@ module.exports = {
         '^.+\\.jsx?$': 'babel-jest',
     },
     transformIgnorePatterns: [
-        'node_modules/(?!(minterjs-tx|minterjs-util|minterjs-wallet)/)',
+        'node_modules/(?!(minterjs-tx|minterjs-util|minterjs-wallet|lodash-es)/)',
     ],
     testEnvironment: 'node',
 };

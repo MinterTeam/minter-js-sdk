@@ -7,6 +7,8 @@
 - **BREAKING** `estimateCoinSell`, `estimateCoinBuy`: drop support of snake_case params
 - **BREAKING** `estimateTxCommission` now accept tx string directly instead of object `{tx: string}`
 - add `nonceRetryLimit` option to `postTx`
+- add `getCoinInfo` api methods
+- add `replaceCoinSymbol` api method
 
 ## 0.33.0 - 2020-08-12
 - **BREAKING** string private keys now should be `0x`-prefixed

@@ -7,6 +7,7 @@ import PostSignedTx from './api/post-signed-tx.js';
 import EstimateCoinSell from './api/estimate-coin-sell.js';
 import EstimateCoinBuy from './api/estimate-coin-buy.js';
 import EstimateTxCommission from './api/estimate-tx-commission.js';
+import ReplaceCoinSymbol from './api/replace-coin-symbol.js';
 
 /**
  * @param {Object} [options]
@@ -36,4 +37,6 @@ export default function (options) {
     this.estimateCoinBuy = EstimateCoinBuy(apiInstance);
 
     this.estimateTxCommission = EstimateTxCommission(apiInstance);
+
+    this.replaceCoinSymbol = ReplaceCoinSymbol(apiInstance);
 }
