@@ -1,6 +1,5 @@
 import {TX_TYPE} from 'minterjs-util';
 import {ENV_DATA, minterGate, minterNode} from './variables';
-import {ensureCustomCoin} from '~/test/utils.js';
 
 const API_TYPE_LIST = [
     {

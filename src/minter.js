@@ -7,7 +7,7 @@ import PostSignedTx from './api/post-signed-tx.js';
 import EstimateCoinSell from './api/estimate-coin-sell.js';
 import EstimateCoinBuy from './api/estimate-coin-buy.js';
 import EstimateTxCommission from './api/estimate-tx-commission.js';
-import ReplaceCoinSymbol from './api/replace-coin-symbol.js';
+import ReplaceCoinSymbol, {ReplaceCoinSymbolByPath} from './api/replace-coin-symbol.js';
 
 /**
  * @param {Object} [options]
@@ -21,22 +21,19 @@ export default function (options) {
     this.apiInstance = apiInstance;
 
     this.postTx = PostTx(apiInstance);
-
     this.postSignedTx = PostSignedTx(apiInstance);
 
     this.getNonce = GetNonce(apiInstance);
+    this.ensureNonce = EnsureNonce(apiInstance);
 
     this.getCoinInfo = GetCoinInfo(apiInstance);
-
-    this.ensureNonce = EnsureNonce(apiInstance);
 
     this.getMinGasPrice = GetMinGasPrice(apiInstance);
 
     this.estimateCoinSell = EstimateCoinSell(apiInstance);
-
     this.estimateCoinBuy = EstimateCoinBuy(apiInstance);
-
     this.estimateTxCommission = EstimateTxCommission(apiInstance);
 
     this.replaceCoinSymbol = ReplaceCoinSymbol(apiInstance);
+    this.replaceCoinSymbolByPath = ReplaceCoinSymbolByPath(apiInstance);
 }

@@ -48,7 +48,7 @@ const ENV_SETTINGS = {
     },
     [ENV_CHILI_TESTNET]: {
         nodeBaseUrl: 'http://node.chilinet.minter.network:28843/',
-        gateBaseUrl: 'https://gate-api.chilinet.minter.network/api/v2/',
+        gateBaseUrl: 'https://gate-api.testnet.minter.network/api/v2/',
         mnemonic: CHILI_MNEMONIC,
         privateKey: walletFromMnemonic(CHILI_MNEMONIC).getPrivateKeyString(),
         address: 'Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4',

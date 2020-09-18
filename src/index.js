@@ -3,9 +3,15 @@ import {TX_TYPE} from 'minterjs-util';
 import {API_TYPE_NODE, API_TYPE_GATE} from './variables.js';
 import Minter from './minter.js';
 import MinterApi from './api/index.js';
-import PostTx from './api/post-tx.js';
-import EstimateCoinSell from './api/estimate-coin-sell.js';
+import PostTx, {EnsureNonce} from './api/post-tx.js';
+import PostSignedTx from './api/post-signed-tx.js';
 import GetNonce from './api/get-nonce.js';
+import GetCoinInfo from './api/get-coin-info.js';
+import GetMinGasPrice from './api/get-min-gas-price.js';
+import EstimateCoinSell from './api/estimate-coin-sell.js';
+import EstimateCoinBuy from './api/estimate-coin-buy.js';
+import EstimateTxCommission from './api/estimate-tx-commission.js';
+import ReplaceCoinSymbol, {ReplaceCoinSymbolByPath} from './api/replace-coin-symbol.js';
 import issueCheck, {decodeCheck, getGasCoinFromCheck} from './check.js';
 import {prepareLink, decodeLink} from './link.js';
 
@@ -40,8 +46,16 @@ export {
     Minter,
     MinterApi,
     PostTx,
-    EstimateCoinSell,
+    PostSignedTx,
     GetNonce,
+    EnsureNonce,
+    GetCoinInfo,
+    GetMinGasPrice,
+    EstimateCoinSell,
+    EstimateCoinBuy,
+    EstimateTxCommission,
+    ReplaceCoinSymbol,
+    ReplaceCoinSymbolByPath,
     //
     prepareSignedTx,
     prepareTx,
