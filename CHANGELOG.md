@@ -1,14 +1,20 @@
-## WIP
+## 0.34.0
+Support of minter-go-node v1.2 aka Chili
+- **BREAKING** change coin tickers to coin id in tx params. Affected: postTx, prepareTx, Buy, DeclareCandidacy, Delegate, Sell, SellAll, Send, Multisend, Unbond. You can use `replaceCoinSymbol` method to work with tickers and replace it with ids automatically.
+- **BREAKING** add `controlAddress` field to EditCandidateData
+- **BREAKING** `integerToHexString` now returns `0x` prefixed string
+- add `nonceRetryLimit` option to `postTx`
+- add `getCoinInfo` and `replaceCoinSymbol` api methods
+- add `EditMultisigTxData`, `RecreateCoinTxData`, `EditCoinOwnerTxData`, `EditCandidatePublicKeyTxData`, `SetHaltBlockTxData`, and `PriceVoteTxData` tx data constructors
+- add: `estimateCoinSell`, `estimateCoinBuy` now support both ticker and id params, e.g. `coinToBuy` and `coinIdToBuy`.
+
+Drop deprecations
 - **BREAKING** remove all deprecated TxParams constructors
 - **BREAKING** remove deprecated `NETWORK_MAX_AMOUNT`, `MAX_MAX_SUPPLY`, `MIN_MAX_SUPPLY`, use minterjs-util's `COIN_MAX_AMOUNT`, `COIN_MAX_MAX_SUPPLY`, `COIN_MIN_MAX_SUPPLY` instead
-- **BREAKING** `integerToHexString` now returns `0x` prefixed string
 - **BREAKING** `issueCheck`'s `coinSymbol` alias param is removed, use `coin` param
-- **BREAKING** `decodeLink` drop support of old-style links
 - **BREAKING** `estimateCoinSell`, `estimateCoinBuy`: drop support of snake_case params
 - **BREAKING** `estimateTxCommission` now accept tx string directly instead of object `{tx: string}`
-- add `nonceRetryLimit` option to `postTx`
-- add `getCoinInfo` api methods
-- add `replaceCoinSymbol` api method
+- **BREAKING** `decodeLink` drop support of old-style links
 
 ## 0.33.0 - 2020-08-12
 - **BREAKING** string private keys now should be `0x`-prefixed

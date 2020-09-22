@@ -28,7 +28,7 @@ import {decodeTxData, ensureBufferData} from './tx-data/index.js';
  * @typedef {Object} TxOptions
  * @property {ByteArray} [privateKey] - to sign tx or get nonce or to make proof for redeemCheck tx
  * @property {ByteArray} [address] - to get nonce (useful for multisignatures) or to make proof for redeemCheck tx
- * @property {ByteArray} [password] - to make proof for redeemCheck tx
+ * @property {ByteArray} [password] - to make proof for RedeemCheckTxData
  */
 
 /**

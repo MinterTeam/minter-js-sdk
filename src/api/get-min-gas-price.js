@@ -1,5 +1,3 @@
-import {API_TYPE_GATE} from '../variables.js';
-import {getData} from './utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance

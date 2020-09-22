@@ -1,7 +1,5 @@
 import {convertFromPip, convertToPip} from 'minterjs-util';
 // import {convertFromPip, convertToPip} from 'minterjs-util/src/converter.js';
-import {API_TYPE_GATE, API_TYPE_NODE} from '../variables.js';
-import {getData} from './utils.js';
 
 /**
  * @typedef {Object} EstimateBuyResult

@@ -9,9 +9,9 @@ import {bufferFromBytes, toInteger, wait} from '../utils.js';
  * @typedef {TxOptions & PostTxOptionsExtra} PostTxOptions
  *
  * @typedef {Object} PostTxOptionsExtra
- * @property {number} [gasRetryLimit] - max number of autofix retries after gas error
- * @property {number} [nonceRetryLimit] - max number of autofix retries after nonce error
- * @preserve {number} [mempoolRetryLimit] - max number of retries after "already exists in mempool" error
+ * @property {number} [gasRetryLimit=2] - max number of autofix retries after gas error
+ * @property {number} [nonceRetryLimit=0] - max number of autofix retries after nonce error
+ * @preserve {number} [mempoolRetryLimit=0] - max number of retries after "already exists in mempool" error
  */
 
 /**
@@ -24,7 +24,7 @@ export default function PostTx(apiInstance) {
      * @param {PostTxOptions} options
      * @return {Promise<string>}
      */
-    return function postTx(txParams, {gasRetryLimit = 2, mempoolRetryLimit = 0, ...txOptions} = {}) {
+    return function postTx(txParams, {gasRetryLimit = 2, nonceRetryLimit = 0, mempoolRetryLimit = 0, ...txOptions} = {}) {
         if (!txOptions.privateKey && txParams.privateKey) {
             txOptions.privateKey = txParams.privateKey;
             // eslint-disable-next-line no-console
@@ -33,7 +33,7 @@ export default function PostTx(apiInstance) {
         // @TODO asserts
 
         return ensureNonce(apiInstance, txParams, txOptions)
-            .then((newNonce) => _postTxHandleErrors(apiInstance, {...txParams, nonce: newNonce}, {gasRetryLimit, mempoolRetryLimit, ...txOptions}));
+            .then((newNonce) => _postTxHandleErrors(apiInstance, {...txParams, nonce: newNonce}, {gasRetryLimit, nonceRetryLimit, mempoolRetryLimit, ...txOptions}));
     };
 }
 
@@ -83,7 +83,8 @@ function _postTxHandleErrors(apiInstance, txParams, options) {
                 console.log(`make postTx retry, old nonce ${txParams.nonce}, new nonce ${newNonce}`);
                 return _postTxHandleErrors(apiInstance, {...txParams, nonce: newNonce}, {...options, nonceRetryLimit: nonceRetryLimit - 1});
             } else if (mempoolRetryLimit > 0 && isMempoolError(error)) {
-                // make retry
+                // eslint-disable-next-line no-console
+                console.log('make postTx retry: tx exists in mempool');
                 return wait(5000)
                     .then(() => {
                         return _postTxHandleErrors(apiInstance, txParams, {...options, mempoolRetryLimit: mempoolRetryLimit - 1});

@@ -37,9 +37,9 @@ export default function ReplaceCoinSymbol(apiInstance) {
 export function ReplaceCoinSymbolByPath(apiInstance) {
     const getCoinInfo = GetCoinInfo(apiInstance);
     /**
-     * @param {TxParams} txParams
+     * @param {Object} txParams
      * @param {Array<string>} pathList
-     * @return {Promise<TxParams>}
+     * @return {Promise<Object>}
      */
     return function replaceCoinSymbolByPath(txParams, pathList) {
         let promiseList = {};

@@ -47,7 +47,7 @@ const ENV_SETTINGS = {
         customCoin: 'TESTCOIN01',
     },
     [ENV_CHILI_TESTNET]: {
-        nodeBaseUrl: 'http://node.chilinet.minter.network:28843/',
+        nodeBaseUrl: 'https://node-api.testnet.minter.network/v2/',
         gateBaseUrl: 'https://gate-api.testnet.minter.network/api/v2/',
         mnemonic: CHILI_MNEMONIC,
         privateKey: walletFromMnemonic(CHILI_MNEMONIC).getPrivateKeyString(),
