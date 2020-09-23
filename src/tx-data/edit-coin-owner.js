@@ -1,6 +1,6 @@
 import {TxDataEditCoinOwner} from 'minterjs-tx';
 import {toBuffer, coinToBuffer, bufferToCoin, addressToString} from 'minterjs-util';
-import {addTxDataFields, validateAddress, validateCoin} from '../utils.js';
+import {proxyNestedTxData, validateAddress, validateCoin} from '../utils.js';
 
 /**
  * @param {string} symbol
@@ -19,11 +19,7 @@ export default function EditCoinOwnerTxData({symbol, newOwner}) {
         newOwner: toBuffer(newOwner),
     });
 
-    addTxDataFields(this);
-
-    // proxy TxData
-    this.raw = this.txData.raw;
-    this.serialize = this.txData.serialize;
+    proxyNestedTxData(this);
 }
 
 /**

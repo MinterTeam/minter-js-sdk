@@ -113,8 +113,10 @@ function parseData(data) {
     if (typeof data === 'string') {
         try {
             data = JSON.parse(data);
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log(error);
+            // eslint-disable-next-line no-console
             console.log(data);
             data = {
                 error: {

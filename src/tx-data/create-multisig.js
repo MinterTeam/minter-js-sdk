@@ -2,7 +2,7 @@ import {TxDataCreateMultisig} from 'minterjs-tx';
 // import TxDataCreateMultisig from 'minterjs-tx/src/tx-data/create-multisig.js';
 import {addressToString, toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
-import {addTxDataFields, bufferToInteger, integerToHexString, validateAddress, validateUint} from '../utils.js';
+import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAddress, validateUint} from '../utils.js';
 
 /**
  * @param {Array} addresses
@@ -16,10 +16,10 @@ export default function CreateMultisigTxData({addresses, weights, threshold}) {
     this.threshold = threshold;
 
     if (!Array.isArray(addresses)) {
-        throw new Error('Field `addresses` is not an array');
+        throw new TypeError('Field `addresses` is not an array');
     }
     if (!Array.isArray(weights)) {
-        throw new Error('Field `weights` is not an array');
+        throw new TypeError('Field `weights` is not an array');
     }
     if (addresses.length > 32) {
         throw new Error('Invalid `addresses` count, it must not be greater than 32');
@@ -30,8 +30,8 @@ export default function CreateMultisigTxData({addresses, weights, threshold}) {
     addresses.forEach((address, index) => {
         try {
             validateAddress(address, `addresses[${index}]`);
-        } catch (e) {
-            throw new Error(`Field \`addresses\` contains invalid address at index: ${index}. ${e.message}`);
+        } catch (error) {
+            throw new Error(`Field \`addresses\` contains invalid address at index: ${index}. ${error.message}`);
         }
     });
 
@@ -41,9 +41,9 @@ export default function CreateMultisigTxData({addresses, weights, threshold}) {
         }
         try {
             validateUint(weight, 'weights');
-        } catch (e) {
+        } catch (error) {
             // update error message
-            throw new Error(e.message.replace('`weights`', `\`weights\` contain invalid weight at index: ${index}, it `));
+            throw new Error(error.message.replace('`weights`', `\`weights\` contain invalid weight at index: ${index}, it `));
         }
     });
 
@@ -53,11 +53,7 @@ export default function CreateMultisigTxData({addresses, weights, threshold}) {
         threshold: integerToHexString(threshold),
     });
 
-    addTxDataFields(this);
-
-    // proxy TxDataCreateMultisig
-    this.raw = this.txData.raw;
-    this.serialize = this.txData.serialize;
+    proxyNestedTxData(this);
 }
 
 /**

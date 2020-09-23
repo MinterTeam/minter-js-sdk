@@ -2,7 +2,7 @@ import {TxDataSetCandidateOn} from 'minterjs-tx';
 // import TxDataSetCandidateOn from 'minterjs-tx/src/tx-data/set-candidate-on.js';
 import {publicToString, toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
-import {addTxDataFields, validatePublicKey} from '../utils.js';
+import {proxyNestedTxData, validatePublicKey} from '../utils.js';
 
 /**
  * @param {string} publicKey
@@ -17,11 +17,7 @@ export default function SetCandidateOnTxData({publicKey}) {
         publicKey: toBuffer(publicKey),
     });
 
-    addTxDataFields(this);
-
-    // proxy TxDataSetCandidateOn
-    this.raw = this.txData.raw;
-    this.serialize = this.txData.serialize;
+    proxyNestedTxData(this);
 }
 
 /**

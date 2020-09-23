@@ -1,6 +1,6 @@
 import {TxDataSetHaltBlock} from 'minterjs-tx';
 import {toBuffer, publicToString} from 'minterjs-util';
-import {bufferToInteger, integerToHexString, addTxDataFields, validateUint, validatePublicKey} from '../utils.js';
+import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint, validatePublicKey} from '../utils.js';
 
 
 /**
@@ -21,11 +21,7 @@ export default function SetHaltBlockTxData({publicKey, height}) {
         height: integerToHexString(height),
     });
 
-    addTxDataFields(this);
-
-    // proxy TxData
-    this.raw = this.txData.raw;
-    this.serialize = this.txData.serialize;
+    proxyNestedTxData(this);
 }
 
 /**

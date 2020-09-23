@@ -1,7 +1,7 @@
 import {ENV_DATA, minterGate, minterNode} from './variables';
 import {ensureCustomCoin} from '~/test/utils.js';
 
-beforeAll(async () => {
+beforeAll(async() => {
     await ensureCustomCoin();
 }, 30000);
 

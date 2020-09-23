@@ -5,7 +5,7 @@ import {isHexPrefixed, isHexString} from 'ethjs-util';
 import {TxDataRedeemCheck} from 'minterjs-tx';
 // import TxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check.js';
 import {toBuffer, checkToString} from 'minterjs-util';
-import {addTxDataFields, validateCheck} from '../utils.js';
+import {proxyNestedTxData, validateCheck} from '../utils.js';
 
 
 /**
@@ -45,11 +45,7 @@ export default function RedeemCheckTxData({check, proof}, options = {}) {
     });
     this.proof = proof ? `0x${proof.toString('hex')}` : undefined;
 
-    addTxDataFields(this);
-
-    // proxy TxDataRedeemCheck
-    this.raw = this.txData.raw;
-    this.serialize = this.txData.serialize;
+    proxyNestedTxData(this);
 }
 
 /**
@@ -84,7 +80,7 @@ function getProofWithRecovery({password, address, privateKey}) {
     if (address) {
         addressBuffer = toBuffer(address);
     } else if (privateKey) {
-        if (typeof privateKey === 'string' && privateKey.length && !isHexPrefixed(privateKey) && isHexString(`0x${privateKey}`)) {
+        if (typeof privateKey === 'string' && privateKey.length > 0 && !isHexPrefixed(privateKey) && isHexString(`0x${privateKey}`)) {
             privateKey = `0x${privateKey}`;
             // eslint-disable-next-line no-console
             console.warn('Usage of privateKey string without 0x prefix is deprecated');

@@ -1,6 +1,6 @@
 import {TxDataRecreateCoin} from 'minterjs-tx';
 import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
-import {addTxDataFields, bufferToInteger, integerToHexString, validateAmount, validateCoin} from '../utils.js';
+import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateCoin} from '../utils.js';
 
 /**
  * @param {string} name
@@ -39,11 +39,7 @@ export default function RecreateCoinTxData({name, symbol, initialAmount, initial
         maxSupply: `0x${convertToPip(maxSupply, 'hex')}`,
     });
 
-    addTxDataFields(this);
-
-    // proxy TxData
-    this.raw = this.txData.raw;
-    this.serialize = this.txData.serialize;
+    proxyNestedTxData(this);
 }
 
 /**

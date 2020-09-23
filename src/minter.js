@@ -16,7 +16,7 @@ import ReplaceCoinSymbol, {ReplaceCoinSymbolByPath} from './api/replace-coin-sym
  * @param {string} [options.baseURL]
  * @constructor
  */
-export default function (options) {
+export default function Minter(options) {
     const apiInstance = new MinterApi(options);
     this.apiInstance = apiInstance;
 

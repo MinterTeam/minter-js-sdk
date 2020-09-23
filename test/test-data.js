@@ -311,14 +311,14 @@ const testData = {
                 gasCoin: 0,
                 type: 0x12,
                 data: {
-                    addresses: ['Mxee81347211c72524338f9680072af90744333146', 'Mxee81347211c72524338f9680072af90744333145', 'Mxee81347211c72524338f9680072af90744333144'],
-                    weights: [1, 3, 5],
+                    addresses: ['Mxee81347211c72524338f9680072af90744333144', 'Mxee81347211c72524338f9680072af90744333145', 'Mxee81347211c72524338f9680072af90744333146'],
+                    weights: [5, 3, 1],
                     threshold: 7,
                 },
                 payload: 'custom message',
             },
-            result: '0xf8a9822b6701018012b848f84607c3010305f83f94ee81347211c72524338f9680072af9074433314694ee81347211c72524338f9680072af9074433314594ee81347211c72524338f9680072af907443331448e637573746f6d206d6573736167658001b845f8431ca02fb66ac2e62be4c9253974daa4df3ea057cc09b7b24f267f9d3ebec6b7390d13a0648261b9d6e6e7c8b314f30ea2e899465deb9d97ed19f38b47a0759e1b1749db',
-            link: 'https://bip.to/tx/-F8SuEj4RgfDAQMF-D-U7oE0chHHJSQzj5aAByr5B0QzMUaU7oE0chHHJSQzj5aAByr5B0QzMUWU7oE0chHHJSQzj5aAByr5B0QzMUSOY3VzdG9tIG1lc3NhZ2WCK2cBgA',
+            result: '0xf8a9822b6701018012b848f84607c3050301f83f94ee81347211c72524338f9680072af9074433314494ee81347211c72524338f9680072af9074433314594ee81347211c72524338f9680072af907443331468e637573746f6d206d6573736167658001b845f8431ba0fbadd54a67d2b6270f4164919bb0f14a40328feb2ea4bc9c6f1e9542a7c17f11a026284b2d96b16e0219fcb1506a015731f6420d400d2fe447795837650b8e4ea9',
+            link: 'https://bip.to/tx/-F8SuEj4RgfDBQMB-D-U7oE0chHHJSQzj5aAByr5B0QzMUSU7oE0chHHJSQzj5aAByr5B0QzMUWU7oE0chHHJSQzj5aAByr5B0QzMUaOY3VzdG9tIG1lc3NhZ2WCK2cBgA',
         },
         // 0x13 PRICE VOTE
         {
@@ -363,7 +363,7 @@ testData.txList.forEach((item) => {
 
 const fullTestData = JSON.parse(JSON.stringify(testData));
 fullTestData.txList = fullTestData.txList.map((item) => {
-    item.params = decodeTx(prepareSignedTx(item.params, item.options).serialize().toString('hex'));
+    item.params = decodeTx(prepareSignedTx(item.params, item.options).serialize());
     return item;
 });
 

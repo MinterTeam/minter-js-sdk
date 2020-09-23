@@ -165,13 +165,13 @@ function base64urlDecode(base64urlString) {
 
 /**
  * toBuffer which supports UTF8 strings
- * @param val
+ * @param value
  * @return {Buffer}
  */
-function toBuffer(val) {
-    if (typeof val === 'string' && !isHexPrefixed(val)) {
-        return Buffer.from(val, 'utf8');
+function toBuffer(value) {
+    if (typeof value === 'string' && !isHexPrefixed(value)) {
+        return Buffer.from(value, 'utf8');
     } else {
-        return toBufferUtil(val);
+        return toBufferUtil(value);
     }
 }

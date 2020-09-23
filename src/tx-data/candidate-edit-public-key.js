@@ -1,6 +1,6 @@
 import {TxDataEditCandidatePublicKey} from 'minterjs-tx';
 import {publicToString, toBuffer} from 'minterjs-util';
-import {addTxDataFields, validatePublicKey} from '../utils.js';
+import {proxyNestedTxData, validatePublicKey} from '../utils.js';
 
 /**
  * @param {string} publicKey
@@ -19,11 +19,7 @@ export default function EditCandidatePublicKeyTxData({publicKey, newPublicKey}) 
         newPublicKey: toBuffer(newPublicKey),
     });
 
-    addTxDataFields(this);
-
-    // proxy TxDataEditCandidate
-    this.raw = this.txData.raw;
-    this.serialize = this.txData.serialize;
+    proxyNestedTxData(this);
 }
 
 /**

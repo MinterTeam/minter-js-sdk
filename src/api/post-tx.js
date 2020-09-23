@@ -55,7 +55,7 @@ function _postTx(apiInstance, txParams, options) {
         tx = prepareTx(txParams, options);
     }
 
-    return (new PostSignedTx(apiInstance))(`0x${tx.serialize().toString('hex')}`);
+    return (new PostSignedTx(apiInstance))(tx.serializeToString());
 }
 
 /**

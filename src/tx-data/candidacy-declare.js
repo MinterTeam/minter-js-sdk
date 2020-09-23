@@ -4,7 +4,7 @@ import {TxDataDeclareCandidacy} from 'minterjs-tx';
 import {addressToString, convertFromPip, convertToPip, publicToString, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
-import {addTxDataFields, bufferToInteger, integerToHexString, validateAddress, validateAmount, validateUint, validatePublicKey} from '../utils.js';
+import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAddress, validateAmount, validateUint, validatePublicKey} from '../utils.js';
 
 /**
  * @param {string} address
@@ -34,11 +34,7 @@ export default function DeclareCandidacyTxData({address, publicKey, commission, 
         stake: `0x${convertToPip(stake, 'hex')}`,
     });
 
-    addTxDataFields(this);
-
-    // proxy TxDataDeclareCandidacy
-    this.raw = this.txData.raw;
-    this.serialize = this.txData.serialize;
+    proxyNestedTxData(this);
 }
 
 /**

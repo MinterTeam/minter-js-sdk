@@ -2,7 +2,7 @@ import {TxDataUnbond} from 'minterjs-tx';
 import {convertToPip, convertFromPip, toBuffer, publicToString} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
-import {addTxDataFields, bufferToInteger, validateAmount, validateUint, validatePublicKey, integerToHexString} from '../utils.js';
+import {proxyNestedTxData, bufferToInteger, validateAmount, validateUint, validatePublicKey, integerToHexString} from '../utils.js';
 
 /**
  * @param {string} publicKey
@@ -25,11 +25,7 @@ export default function UnbondTxData({publicKey, coin, stake}) {
         stake: `0x${convertToPip(stake, 'hex')}`,
     });
 
-    addTxDataFields(this);
-
-    // proxy TxDataUnbond
-    this.raw = this.txData.raw;
-    this.serialize = this.txData.serialize;
+    proxyNestedTxData(this);
 }
 
 

@@ -1,7 +1,9 @@
+/* eslint-disable unicorn/prevent-abbreviations */
+
 import Big from 'big.js';
 import BN from 'bn.js';
 import {padToEven, isHexPrefixed} from 'ethjs-util';
-import {isValidAddress, isValidPublicKeyString, isValidCheck, numToBig, COIN_MAX_AMOUNT} from 'minterjs-util';
+import {isValidAddress, isValidPublicKeyString, isValidCheck, numberToBig, COIN_MAX_AMOUNT} from 'minterjs-util';
 
 /**
  * @param {number|string} num
@@ -11,7 +13,7 @@ export function isNumericInteger(num) {
     try {
         // `new Big()` checks for valid numeric
         return (new Big(num)).round().toFixed() === (new Big(num)).toFixed();
-    } catch (e) {
+    } catch (error) {
         return false;
     }
 }
@@ -37,7 +39,7 @@ export function toInteger(num) {
     if (typeof num === 'number') {
         return num.toString();
     }
-    if (typeof num !== 'undefined' && num !== null && num.length) {
+    if (typeof num !== 'undefined' && num !== null && num.length > 0) {
         // handle hex prefixed string
         if (typeof num === 'string' && isHexPrefixed(num)) {
             return bufferToInteger(num);
@@ -48,7 +50,7 @@ export function toInteger(num) {
         }
     }
 
-    num = parseInt(num, 10);
+    num = Number.parseInt(num, 10);
 
     return Number.isNaN(num) ? '' : num.toString();
 }
@@ -90,6 +92,15 @@ export function bufferFromBytes(bytes) {
  * @borrows integerToHexString
  */
 export const toHexString = integerToHexString;
+
+export function proxyNestedTxData(obj) {
+    addTxDataFields(obj);
+
+    // proxy TxData
+    obj.raw = obj.txData.raw;
+    obj.serialize = obj.txData.serialize;
+    obj.serializeToString = obj.txData.serializeToString;
+}
 
 export function addTxDataFields(txData) {
     Object.defineProperty(txData, 'fields', {
@@ -139,8 +150,8 @@ export function validateAmount(value, fieldName) {
     if (typeof value === 'string' || typeof value === 'number') {
         let valueBig;
         try {
-            valueBig = numToBig(value);
-        } catch (e) {
+            valueBig = numberToBig(value);
+        } catch (error) {
             throw new Error(`Field \`${fieldName}\` is invalid number`);
         }
 
@@ -158,7 +169,7 @@ export function validateUint(value, fieldName) {
 
     value = Number(value);
     if (Number.isNaN(value)) {
-        throw new Error(`Field \`${fieldName}\` is not a number`);
+        throw new TypeError(`Field \`${fieldName}\` is not a number`);
     }
 
     if (value < 0) {
@@ -180,7 +191,7 @@ export function validateCoin(value, fieldName) {
 
 function validateNotEmpty(value, fieldName) {
     if (typeof value === 'undefined') {
-        throw new Error(`Field \`${fieldName}\` is undefined`);
+        throw new TypeError(`Field \`${fieldName}\` is undefined`);
     }
     if (value === null) {
         throw new Error(`Field \`${fieldName}\` is null`);

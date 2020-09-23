@@ -1,6 +1,6 @@
 import {TxDataPriceVote} from 'minterjs-tx';
 import {toBuffer} from 'minterjs-util';
-import {bufferToInteger, integerToHexString, addTxDataFields, validateUint} from '../utils.js';
+import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint} from '../utils.js';
 
 
 /**
@@ -17,11 +17,7 @@ export default function PriceVoteTxData({price}) {
         price: integerToHexString(price),
     });
 
-    addTxDataFields(this);
-
-    // proxy TxData
-    this.raw = this.txData.raw;
-    this.serialize = this.txData.serialize;
+    proxyNestedTxData(this);
 }
 
 /**

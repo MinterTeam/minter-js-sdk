@@ -74,13 +74,13 @@ function isCoinSymbol(coin) {
     }
 
     // hex prefixed
-    if (coin.substring(0, 2) === '0x') {
+    if (coin.slice(0, 2) === '0x') {
         return false;
     }
 
     try {
         validateCoin(coin.split('-')[0]);
-    } catch (e) {
+    } catch (error) {
         return false;
     }
 

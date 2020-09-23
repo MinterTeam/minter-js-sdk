@@ -5,7 +5,7 @@ import {convertToPip, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
 import SendTxData from './send.js';
-import {addTxDataFields, integerToHexString, validateAddress, validateAmount, validateUint} from '../utils.js';
+import {proxyNestedTxData, integerToHexString, validateAddress, validateAmount, validateUint} from '../utils.js';
 
 /**
  * @param {Array} list
@@ -13,15 +13,15 @@ import {addTxDataFields, integerToHexString, validateAddress, validateAmount, va
  */
 export default function MultisendTxData({list}) {
     if (!Array.isArray(list)) {
-        throw new Error('Field `list` is not an array');
+        throw new TypeError('Field `list` is not an array');
     }
     list.forEach((item, index) => {
         try {
             validateAddress(item.to, `list[${index}].to`);
             validateUint(item.coin, `list[${index}].coin`);
             validateAmount(item.value, `list[${index}].value`);
-        } catch (e) {
-            throw new Error(`Field \`list\` contains invalid item at index ${index}. ${e.message}`);
+        } catch (error) {
+            throw new Error(`Field \`list\` contains invalid item at index ${index}. ${error.message}`);
         }
     });
 
@@ -37,11 +37,7 @@ export default function MultisendTxData({list}) {
         }),
     });
 
-    addTxDataFields(this);
-
-    // proxy TxDataMultisend
-    this.raw = this.txData.raw;
-    this.serialize = this.txData.serialize;
+    proxyNestedTxData(this);
 }
 
 

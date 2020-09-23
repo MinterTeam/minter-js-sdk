@@ -121,7 +121,7 @@ export function makeSignature(tx, privateKey) {
 
 
 /**
- * @param {string} txRlp
+ * @param {string|ByteArray} txRlp
  * @param {boolean} [decodeCheck]
  * @return {TxParams}
  */
@@ -131,15 +131,15 @@ export function decodeTx(txRlp, {decodeCheck} = {}) {
     const txData = decodeTxData(tx.type, tx.data, {decodeCheck});
 
     return {
-        nonce: tx.nonce.length ? bufferToInteger(tx.nonce) : undefined,
-        chainId: tx.chainId.length ? bufferToInteger(tx.chainId) : undefined,
-        gasPrice: tx.gasPrice.length ? bufferToInteger(tx.gasPrice) : undefined,
+        nonce: tx.nonce.length > 0 ? bufferToInteger(tx.nonce) : undefined,
+        chainId: tx.chainId.length > 0 ? bufferToInteger(tx.chainId) : undefined,
+        gasPrice: tx.gasPrice.length > 0 ? bufferToInteger(tx.gasPrice) : undefined,
         gasCoin: bufferToInteger(tx.gasCoin),
         type: txType,
         data: txData,
         payload: tx.payload.toString('utf-8'),
-        signatureType: tx.signatureType.length ? bufferToInteger(tx.signatureType) : undefined,
-        signatureData: tx.signatureData.length ? `0x${tx.signatureData.toString('hex')}` : '',
+        signatureType: tx.signatureType.length > 0 ? bufferToInteger(tx.signatureType) : undefined,
+        signatureData: tx.signatureData.length > 0 ? `0x${tx.signatureData.toString('hex')}` : '',
     };
 }
 

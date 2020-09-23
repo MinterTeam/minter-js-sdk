@@ -14,14 +14,14 @@ describe('should work', () => {
     test.each(txListTable)('prepareSignedTx: %s', (item) => {
         const tx = prepareSignedTx(item.params, item.options);
 
-        expect(`0x${tx.serialize().toString('hex')}`)
+        expect(tx.serializeToString())
             .toEqual(item.result);
     });
 
     test.each(txListTable)('prepareTx: %s', (item) => {
         const tx = prepareTx({...item.params, signatureType: 1}, item.options);
 
-        expect(`0x${tx.serialize().toString('hex')}`)
+        expect(tx.serializeToString())
             .toEqual(item.result);
     });
 });
@@ -198,8 +198,8 @@ describe('redeem check', () => {
         }, txItem.options);
 
         expect(bufferToInteger(tx.gasCoin)).toEqual('5');
-        expect(tx.serialize().toString('hex'))
-            .toEqual('f901310101010509b8e0f8deb899f8973101830f423f80888ac7230489e8000005b841b0fe6d3805fae9f38bafefb74d0f61302fb37a20f0e9337871bef91c7423277646555dcb425fbb1ec35eda8a304bda41e9242dd55cb62a48e9b14a07262bc0d3011ba0ec85458016f3ba8de03000cc0a417836da4d0ae4013be482dce89285e04e559ca065b129e4d743a193774bf287a6421f9d39e23177d8bf603b236be337811be10ab8410497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d01808001b845f8431ca0c1093d36a04837646a5779fb1452f65a59b07e9f42ee1c9f7aadaec6f4259072a06bf274141e66ef8f7f4998f8fbc1835dc32fc4da17e1ddff48c17006c8b7553c');
+        expect(tx.serializeToString())
+            .toEqual('0xf901310101010509b8e0f8deb899f8973101830f423f80888ac7230489e8000005b841b0fe6d3805fae9f38bafefb74d0f61302fb37a20f0e9337871bef91c7423277646555dcb425fbb1ec35eda8a304bda41e9242dd55cb62a48e9b14a07262bc0d3011ba0ec85458016f3ba8de03000cc0a417836da4d0ae4013be482dce89285e04e559ca065b129e4d743a193774bf287a6421f9d39e23177d8bf603b236be337811be10ab8410497ea588f0fc2bd448de76d03a74cf371269e10ac1a02765fb5fa37c29f67e0348fb3faacd3370b8809401e7d562d8943f3642ce96667188d3c344e8e5bff6d01808001b845f8431ca0c1093d36a04837646a5779fb1452f65a59b07e9f42ee1c9f7aadaec6f4259072a06bf274141e66ef8f7f4998f8fbc1835dc32fc4da17e1ddff48c17006c8b7553c');
     });
 
     test('gasPrice should be overwritten with 1', () => {

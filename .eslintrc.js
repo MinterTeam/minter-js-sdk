@@ -10,8 +10,14 @@ module.exports = {
     browser: true,
     jest: true,
   },
-  // https://github.com/standard/standard/blob/master/docs/RULES-en.md
-  extends: 'airbnb-base',
+  plugins: [
+    'jest',
+    'security',
+    'unicorn',
+  ],
+  extends: [
+    'airbnb-base',
+  ],
   settings: {
     'import/resolver': {
       alias: [
@@ -22,8 +28,6 @@ module.exports = {
   },
   // // add your custom rules here
   rules: {
-    // @TODO temporary disabled, wait for optional chaining be supported by eslint or babel-eslint
-    camelcase: 0,
     'indent': ['error', 4],
     // allow paren-less arrow functions
     'arrow-parens': 0,
@@ -47,6 +51,7 @@ module.exports = {
     'no-multiple-empty-lines': 0,
     // allow single line imports
     'object-curly-newline': 0,
+    'prefer-arrow-callback': 0,
     // allow Object.assign()
     'prefer-object-spread': 0,
     'prefer-const': 0,
@@ -57,9 +62,42 @@ module.exports = {
         "object": false
       }
     }],
+    'space-before-function-paren': ['error', {
+      anonymous: 'never',
+      named: 'never',
+      asyncArrow: 'never'
+    }],
     'import/extensions': ['error', 'always', {ignorePackages: true} ],
   },
   overrides: [
+    {
+      files: ['src/**/*'],
+      extends: [
+        'plugin:security/recommended',
+        'plugin:unicorn/recommended',
+      ],
+      rules: {
+        'security/detect-object-injection': 0,
+        'unicorn/better-regex': 0,
+        // full path import is per spec
+        'unicorn/import-index': 0,
+        // IE11 support needed
+        'unicorn/prefer-includes': 0,
+        // allow lowercase hex number
+        'unicorn/number-literal-case': 0,
+        'unicorn/prefer-optional-catch-binding': 0,
+        'unicorn/prevent-abbreviations': ['error', {
+          replacements: {
+            'params': false,
+          },
+          whitelist: {
+            'resData': true,
+            'txParams': true,
+            'txProps': true,
+          }
+        }],
+      },
+    },
     {
       files: ['examples/**/*', 'test/**/*'],
       rules: {
@@ -69,7 +107,11 @@ module.exports = {
     },
     {
       files: ['test/**/*'],
+      extends: [
+        'plugin:jest/recommended',
+      ],
       rules: {
+        'no-unused-vars': 0,
         'import/extensions': 0,
       }
     },

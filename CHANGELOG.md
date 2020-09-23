@@ -1,3 +1,6 @@
+## 0.34.1
+- `EditMultisigTxData` now sorts address and weight lists, so different ordered lists will provide same transaction hash
+
 ## 0.34.0
 Support of minter-go-node v1.2 aka Chili
 - **BREAKING** change coin tickers to coin id in tx params. Affected: postTx, prepareTx, Buy, DeclareCandidacy, Delegate, Sell, SellAll, Send, Multisend, Unbond. You can use `replaceCoinSymbol` method to work with tickers and replace it with ids automatically.

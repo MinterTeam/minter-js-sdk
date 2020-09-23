@@ -71,7 +71,7 @@ function makePostTx(minterApi) {
     };
 }
 
-beforeAll(async () => {
+beforeAll(async() => {
     // fill test ENV_DATA with data from the server
     /*
     if (CURRENT_ENV === ENV_TEST_TESTNET) {
@@ -141,12 +141,12 @@ describe('PostTx: send', () => {
         payload: 'custom message',
     });
 
-    test('should return signed tx', async () => {
+    test('should return signed tx', async() => {
         const nonce = await minterGate.getNonce(ENV_DATA.address);
         const txParams = {...txParamsData(API_TYPE_LIST[0]), nonce, gasPrice: 1};
         const tx = prepareSignedTx(txParams, {privateKey: API_TYPE_LIST[0].privateKey});
-        console.log(tx.serialize().toString('hex'));
-        expect(tx.serialize().toString('hex').length)
+        console.log(tx.serializeToString());
+        expect(tx.serializeToString().length)
             .toBeGreaterThan(0);
     }, 30000);
 
@@ -169,7 +169,7 @@ describe('PostTx: send', () => {
         //     await wait(6000);
         // }, 30000);
 
-        test.each(API_TYPE_LIST)('should fail %s', async (apiType) => {
+        test.each(API_TYPE_LIST)('should fail %s', async(apiType) => {
             expect.assertions(1);
             const txParams = txParamsData(apiType, {value: COIN_MAX_AMOUNT, coin: NOT_EXISTENT_COIN});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
@@ -529,7 +529,7 @@ describe('validator', () => {
             payload: 'custom message',
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+        test.each(API_TYPE_LIST)('should work %s', async(apiType) => {
             expect.assertions(2);
             const txParams = txParamsData(apiType);
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
@@ -570,7 +570,7 @@ describe('validator', () => {
             payload: 'custom message',
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+        test.each(API_TYPE_LIST)('should work %s', async(apiType) => {
             expect.assertions(2);
             const txParams = txParamsData(apiType);
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
@@ -772,7 +772,7 @@ describe('validator', () => {
             payload: 'custom message',
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+        test.each(API_TYPE_LIST)('should work %s', async(apiType) => {
             expect.assertions(2);
             const txParams = txParamsData(apiType);
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
@@ -809,7 +809,7 @@ describe('validator', () => {
             payload: 'custom message',
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+        test.each(API_TYPE_LIST)('should work %s', async(apiType) => {
             expect.assertions(2);
             const txParams = txParamsData(apiType);
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
@@ -850,7 +850,7 @@ describe('validator', () => {
             payload: 'custom message',
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+        test.each(API_TYPE_LIST)('should work %s', async(apiType) => {
             expect.assertions(2);
             const txParams = txParamsData(apiType);
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
