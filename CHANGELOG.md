@@ -1,3 +1,6 @@
+## 0.34.2
+- fix tx decorators to properly handle `gasCoin: 0`
+
 ## 0.34.1
 - `EditMultisigTxData` now sorts address and weight lists, so different ordered lists will provide same transaction hash
 

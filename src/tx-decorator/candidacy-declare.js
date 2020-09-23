@@ -3,7 +3,7 @@
  * @return {TxParams}
  */
 export default function decorateDeclareCandidacyTxParams(params) {
-    if (!params.gasCoin) {
+    if (typeof params.gasCoin === 'undefined') {
         params.gasCoin = params.data.coin;
     }
 
