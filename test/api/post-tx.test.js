@@ -27,7 +27,7 @@ import {
     makeSignature,
 } from '~/src';
 import {ENV_DATA, minterGate, minterNode} from './variables';
-import {ensureCustomCoin} from '~/test/utils.js';
+import {ensureCustomCoin, logError} from '~/test/utils.js';
 
 const newCandidatePublicKeyGate = generateWallet().getPublicKeyString();
 const newCandidatePublicKeyNode = generateWallet().getPublicKeyString();
@@ -67,7 +67,7 @@ const API_TYPE_LIST = [
 
 function makePostTx(minterApi) {
     return function postTxDecorated(txParams, options) {
-        return minterApi.postTx(txParams, {mempoolRetryLimit: 2, nonceRetryLimit: 2, ...options});
+        return minterApi.postTx(txParams, {mempoolRetryLimit: 5, nonceRetryLimit: 2, ...options});
     };
 }
 
@@ -100,13 +100,13 @@ beforeAll(async() => {
     // }
     try {
         await coinPromises[0];
-    } catch (e) {
-        console.log(e.response?.data ? {data: e.response.data, e} : e);
+    } catch (error) {
+        logError(error);
     }
     try {
         await coinPromises[1];
-    } catch (e) {
-        console.log(e.response?.data ? {data: e.response.data, e} : e);
+    } catch (error) {
+        logError(error);
     }
 
     const coinInfoPromises = API_TYPE_LIST.map((apiType) => {
@@ -160,7 +160,7 @@ describe('PostTx: send', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error?.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
             });
     }, 30000);
 
@@ -174,7 +174,7 @@ describe('PostTx: send', () => {
             const txParams = txParamsData(apiType, {value: COIN_MAX_AMOUNT, coin: NOT_EXISTENT_COIN});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    console.log(error?.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Coin not exists
                     expect(error.response.data.error.code).toBe('102');
                 });
@@ -221,7 +221,7 @@ describe('PostTx handle low gasPrice', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error?.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
             });
     }, 30000);
 });
@@ -259,7 +259,7 @@ describe('PostTx: multisend', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error?.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
             });
     }, 30000);
 
@@ -284,7 +284,7 @@ describe('PostTx: multisend', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error?.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
             });
     }, 70000);
 
@@ -301,7 +301,7 @@ describe('PostTx: multisend', () => {
         };
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
-                console.log(error?.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
                 // Coin not exists
                 expect(error.response.data.error.code).toBe('102');
             });
@@ -332,7 +332,7 @@ describe('PostTx: sell', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error?.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
             });
     }, 30000);
 
@@ -341,7 +341,7 @@ describe('PostTx: sell', () => {
         const txParams = txParamsData(apiType, {valueToSell: COIN_MAX_AMOUNT, coinToSell: NOT_EXISTENT_COIN});
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
-                console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
                 // Coin not exists
                 expect(error.response.data.error.code).toBe('102');
             });
@@ -376,7 +376,7 @@ describe('coin', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -385,7 +385,7 @@ describe('coin', () => {
             const txParams = txParamsData(apiType, {symbol: getRandomCoin(), initialReserve: 0});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Coin reserve should be greater
                     expect(error.response.data.error.code).toBe('205');
                 });
@@ -417,7 +417,7 @@ describe('coin', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -426,7 +426,7 @@ describe('coin', () => {
             const txParams = txParamsData(apiType, {symbol: NOT_EXISTENT_COIN});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Coin not exists
                     expect(error.response.data.error.code).toBe('102');
                 });
@@ -455,7 +455,7 @@ describe('coin', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -464,7 +464,7 @@ describe('coin', () => {
             const txParams = txParamsData(apiType, {symbol: NOT_EXISTENT_COIN});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Coin not exists
                     expect(error.response.data.error.code).toBe('102');
                 });
@@ -496,7 +496,7 @@ describe('PostTx: buy', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
             });
     }, 30000);
 
@@ -505,7 +505,7 @@ describe('PostTx: buy', () => {
         const txParams = txParamsData(apiType, {valueToBuy: COIN_MAX_AMOUNT, coinToSell: NOT_EXISTENT_COIN});
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
-                console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
                 // Coin not exists
                 expect(error.response.data.error.code).toBe('102');
             });
@@ -539,7 +539,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -548,7 +548,7 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT, publicKey: generateWallet().getPublicKeyString()});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Insufficient funds for sender account
                     expect(error.response.data.error.code).toBe('107');
                 });
@@ -580,7 +580,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -589,7 +589,7 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Candidate with such public key not found
                     expect(error.response.data.error.code).toBe('403');
                 });
@@ -620,7 +620,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -629,7 +629,7 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Insufficient funds for sender account
                     expect(error.response.data.error.code).toBe('107');
                 });
@@ -662,7 +662,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -671,7 +671,7 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Candidate with such public key not found
                     expect(error.response.data.error.code).toBe('403');
                 });
@@ -700,7 +700,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -712,7 +712,7 @@ describe('validator', () => {
                     console.log({res});
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Candidate with such public key not found
                     expect(error.response.data.error.code).toBe('403');
                 });
@@ -741,7 +741,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -753,7 +753,7 @@ describe('validator', () => {
                     console.log({res});
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Candidate with such public key not found
                     expect(error.response.data.error.code).toBe('403');
                 });
@@ -782,7 +782,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -791,7 +791,7 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Candidate with such public key not found
                     expect(error.response.data.error.code).toBe('403');
                 });
@@ -819,7 +819,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -831,7 +831,7 @@ describe('validator', () => {
                     console.log(txHash);
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // rlp: input string too long for uint
                     expect(error.response.data.error.code).toBe('106');
                 });
@@ -860,7 +860,7 @@ describe('validator', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                 });
         }, 30000);
 
@@ -869,7 +869,7 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Candidate with such public key not found
                     expect(error.response.data.error.code).toBe('403');
                 });
@@ -912,7 +912,7 @@ describe('PostTx: redeem check', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
             });
     }, 30000);
 
@@ -926,8 +926,7 @@ describe('PostTx: redeem check', () => {
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response.data);
+                logError(error);
             });
     }, 30000);
 
@@ -936,7 +935,7 @@ describe('PostTx: redeem check', () => {
         const txParams = txParamsData(apiType, {check: getRandomCheck(apiType, 0, 1)});
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
-                console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
                 // Check expired
                 expect(error.response.data.error.code).toBe('502');
             });
@@ -975,8 +974,7 @@ describe('multisig', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response.data);
+                    logError(error);
                 });
         }, 30000);
 
@@ -985,7 +983,7 @@ describe('multisig', () => {
             const txParams = txParamsData(apiType, {threshold: 100000000000000000000});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // rlp: input string too long for uint, decoding into (transaction.CreateMultisigData).Threshold
                     expect(error.response.data.error.code).toBe('106');
                 });
@@ -1042,8 +1040,7 @@ describe('multisig', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response.data);
+                    logError(error);
                 });
         }, 30000);
 
@@ -1052,7 +1049,7 @@ describe('multisig', () => {
             const txParams = txParamsData(apiType, {coin: NOT_EXISTENT_COIN});
             return postMultiSign(apiType, txParams)
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // Coin not exists
                     expect(error.response.data.error.code).toBe('102');
                 });
@@ -1087,8 +1084,7 @@ describe('multisig', () => {
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response.data);
+                    logError(error);
                 });
         }, 30000);
 
@@ -1097,7 +1093,7 @@ describe('multisig', () => {
             const txParams = txParamsData(apiType, {threshold: 100000000000000000000});
             return postMultiSign(apiType, txParams)
                 .catch((error) => {
-                    console.log(error.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                    logError(error);
                     // rlp: input string too long for uint
                     expect(error.response.data.error.code).toBe('106');
                 });

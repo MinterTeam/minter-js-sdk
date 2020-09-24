@@ -32,7 +32,21 @@ export function ensureCustomCoin({coinSymbol, privateKey} = {}) {
         },
     };
     return minterGate.postTx(txParams, {privateKey: privateKey || ENV_DATA.privateKey})
-        .catch((e) => {
-            console.log(e.response?.data ? {data: e.response.data, e} : e);
+        .catch((error) => {
+            logError(error);
         });
+}
+
+export function logError(error) {
+    const cleanError = new Error(error.message);
+    let axiosRequest;
+    if (error.config) {
+        axiosRequest = {
+            fullUrl: error.config.baseURL + error.config.url,
+            method: error.config.method,
+            data: error.config.data,
+        };
+    }
+    console.log(cleanError);
+    console.log(error?.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, axiosRequest} : error);
 }
