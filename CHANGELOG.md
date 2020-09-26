@@ -1,3 +1,9 @@
+## 0.35.0
+- Add: `ReplaceCoinSymbolByPath` now accept `chainId` param and can get base coin id without network request  
+- Update: `ReplaceCoinSymbol` uses `txParams.chainId` to get base coin id without network request
+- **BREAKING** `ReplaceCoinSymbol` now exported as named not default export
+- **BREAKING** file src/api/replace-coin-symbol.js renamed
+
 ## 0.34.2
 - fix tx decorators to properly handle `gasCoin: 0`
 
@@ -51,6 +57,7 @@ Drop deprecations
 - Add: asserts to `prepareTx`
 
 ## 0.30.0 - 2020-03-06
+Support of minter-go-node v1.1 aka Texas
 - Deprecate TxParams constructors
 - Add: support for multisignatures
 - Add: expose `ensureNonce` on `Minter` instance

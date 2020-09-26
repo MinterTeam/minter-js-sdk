@@ -11,7 +11,7 @@ import GetMinGasPrice from './api/get-min-gas-price.js';
 import EstimateCoinSell from './api/estimate-coin-sell.js';
 import EstimateCoinBuy from './api/estimate-coin-buy.js';
 import EstimateTxCommission from './api/estimate-tx-commission.js';
-import ReplaceCoinSymbol, {ReplaceCoinSymbolByPath} from './api/replace-coin-symbol.js';
+import {ReplaceCoinSymbol, ReplaceCoinSymbolByPath} from './api/replace-coin.js';
 import issueCheck, {decodeCheck, getGasCoinFromCheck} from './check.js';
 import {prepareLink, decodeLink} from './link.js';
 

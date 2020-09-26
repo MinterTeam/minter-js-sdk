@@ -430,10 +430,6 @@ minter.replaceCoinSymbol(txParams)
 Replace coin symbols with coin ids in arbitrary object by path list
 
 ```js
-/**
- * @param {Object} params
- * @return {Promise<TxParams>}
- */
 const params = {
     foo: {
         bar: {
@@ -442,6 +438,12 @@ const params = {
     },
     gasCoin: 'MYCOIN',
 };
+/**
+ * @param {Object} params
+ * @param {Array<string>} pathList
+ * @param {number} [chainId]
+ * @return {Promise<TxParams>}
+ */
 minter.replaceCoinSymbolByPath(params, ['gasCoin', 'foo.bar.coin'])
     .then((newParams) => {
         console.log(newParams);
