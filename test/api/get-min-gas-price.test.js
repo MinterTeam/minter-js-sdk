@@ -1,4 +1,5 @@
 import {minterGate, minterNode} from './variables';
+import {logError} from '~/test/utils.js';
 
 
 describe('GetMinGasPrice', () => {
@@ -10,8 +11,8 @@ describe('GetMinGasPrice', () => {
                 expect(gasPrice).toBeGreaterThan(0);
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+                logError(error);
+                throw error;
             });
     }, 30000);
 
@@ -23,8 +24,8 @@ describe('GetMinGasPrice', () => {
                 expect(Number(gasPrice)).toBeGreaterThan(0);
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+                logError(error);
+                throw error;
             });
     }, 30000);
 });

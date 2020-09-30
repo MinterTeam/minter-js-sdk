@@ -1,7 +1,7 @@
 import {ENV_DATA, minterGate, minterNode} from './variables';
-import {ensureCustomCoin} from '~/test/utils.js';
+import {ensureCustomCoin, logError} from '~/test/utils.js';
 
-beforeAll(async() => {
+beforeAll(async () => {
     await ensureCustomCoin();
 }, 30000);
 
@@ -14,8 +14,8 @@ describe('GetCoinInfo', () => {
                 expect(Number(coinInfo.id)).toBeGreaterThan(0);
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+                logError(error);
+                throw error;
             });
     }, 30000);
 
@@ -27,8 +27,8 @@ describe('GetCoinInfo', () => {
                 expect(Number(coinInfo.id)).toBeGreaterThan(0);
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+                logError(error);
+                throw error;
             });
     }, 30000);
 });

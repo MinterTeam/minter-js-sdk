@@ -1,4 +1,5 @@
 import {ENV_DATA, minterGate, minterNode} from './variables';
+import {logError} from '~/test/utils.js';
 
 
 describe('GetNonce', () => {
@@ -10,8 +11,7 @@ describe('GetNonce', () => {
                 expect(nonce).toBeGreaterThan(0);
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+                logError(error);
             });
     }, 30000);
 
@@ -23,8 +23,7 @@ describe('GetNonce', () => {
                 expect(nonce).toBeGreaterThan(0);
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+                logError(error);
             });
     }, 30000);
 });

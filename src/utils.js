@@ -169,11 +169,11 @@ export function validateUint(value, fieldName) {
 
     value = Number(value);
     if (Number.isNaN(value)) {
-        throw new TypeError(`Field \`${fieldName}\` is not a number`);
+        throw new TypeError(`Field \`${fieldName}\` is not a number. Received: ${value}`);
     }
 
     if (value < 0) {
-        throw new Error(`Field \`${fieldName}\` should be positive integer`);
+        throw new Error(`Field \`${fieldName}\` should be positive integer. Received: ${value}`);
     }
 
     if (Math.round(value) !== value) {

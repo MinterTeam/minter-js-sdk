@@ -71,7 +71,7 @@ function makePostTx(minterApi) {
     };
 }
 
-beforeAll(async() => {
+beforeAll(async () => {
     // fill test ENV_DATA with data from the server
     /*
     if (CURRENT_ENV === ENV_TEST_TESTNET) {
@@ -141,7 +141,7 @@ describe('PostTx: send', () => {
         payload: 'custom message',
     });
 
-    test('should return signed tx', async() => {
+    test('should return signed tx', async () => {
         const nonce = await minterGate.getNonce(ENV_DATA.address);
         const txParams = {...txParamsData(API_TYPE_LIST[0]), nonce, gasPrice: 1};
         const tx = prepareSignedTx(txParams, {privateKey: API_TYPE_LIST[0].privateKey});
@@ -161,6 +161,7 @@ describe('PostTx: send', () => {
             })
             .catch((error) => {
                 logError(error);
+                throw error;
             });
     }, 30000);
 
@@ -169,14 +170,18 @@ describe('PostTx: send', () => {
         //     await wait(6000);
         // }, 30000);
 
-        test.each(API_TYPE_LIST)('should fail %s', async(apiType) => {
+        test.each(API_TYPE_LIST)('should fail %s', async (apiType) => {
             expect.assertions(1);
             const txParams = txParamsData(apiType, {value: COIN_MAX_AMOUNT, coin: NOT_EXISTENT_COIN});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    logError(error);
-                    // Coin not exists
-                    expect(error.response.data.error.code).toBe('102');
+                    try {
+                        // Coin not exists
+                        expect(error.response.data.error.code).toBe('102');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -203,9 +208,12 @@ describe('PostTx handle low gasPrice', () => {
             const txParams = txParamsData(apiType);
             return apiType.postTx(txParams, {privateKey: apiType.privateKey, gasRetryLimit: 0})
                 .catch((error) => {
-                    // console.log(error);
-                    console.log(error.response.data);
-                    expect(Number(error.response.data.error.data.min_gas_price)).toBeGreaterThan(0);
+                    try {
+                        expect(Number(error.response.data.error.data.min_gas_price)).toBeGreaterThan(0);
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -222,6 +230,7 @@ describe('PostTx handle low gasPrice', () => {
             })
             .catch((error) => {
                 logError(error);
+                throw error;
             });
     }, 30000);
 });
@@ -260,6 +269,7 @@ describe('PostTx: multisend', () => {
             })
             .catch((error) => {
                 logError(error);
+                throw error;
             });
     }, 30000);
 
@@ -285,6 +295,7 @@ describe('PostTx: multisend', () => {
             })
             .catch((error) => {
                 logError(error);
+                throw error;
             });
     }, 70000);
 
@@ -301,9 +312,13 @@ describe('PostTx: multisend', () => {
         };
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
-                logError(error);
-                // Coin not exists
-                expect(error.response.data.error.code).toBe('102');
+                try {
+                    // Coin not exists
+                    expect(error.response.data.error.code).toBe('102');
+                } catch (jestError) {
+                    logError(error);
+                    throw jestError;
+                }
             });
     }, 70000);
 });
@@ -333,6 +348,7 @@ describe('PostTx: sell', () => {
             })
             .catch((error) => {
                 logError(error);
+                throw error;
             });
     }, 30000);
 
@@ -341,9 +357,13 @@ describe('PostTx: sell', () => {
         const txParams = txParamsData(apiType, {valueToSell: COIN_MAX_AMOUNT, coinToSell: NOT_EXISTENT_COIN});
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
-                logError(error);
-                // Coin not exists
-                expect(error.response.data.error.code).toBe('102');
+                try {
+                    // Coin not exists
+                    expect(error.response.data.error.code).toBe('102');
+                } catch (jestError) {
+                    logError(error);
+                    throw jestError;
+                }
             });
     }, 70000);
 });
@@ -377,6 +397,7 @@ describe('coin', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -385,9 +406,13 @@ describe('coin', () => {
             const txParams = txParamsData(apiType, {symbol: getRandomCoin(), initialReserve: 0});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    logError(error);
-                    // Coin reserve should be greater
-                    expect(error.response.data.error.code).toBe('205');
+                    try {
+                        // Coin reserve should be greater
+                        expect(error.response.data.error.code).toBe('205');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -418,6 +443,7 @@ describe('coin', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -426,9 +452,13 @@ describe('coin', () => {
             const txParams = txParamsData(apiType, {symbol: NOT_EXISTENT_COIN});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    logError(error);
-                    // Coin not exists
-                    expect(error.response.data.error.code).toBe('102');
+                    try {
+                        // Coin not exists
+                        expect(error.response.data.error.code).toBe('102');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -456,6 +486,7 @@ describe('coin', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -464,9 +495,13 @@ describe('coin', () => {
             const txParams = txParamsData(apiType, {symbol: NOT_EXISTENT_COIN});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    logError(error);
-                    // Coin not exists
-                    expect(error.response.data.error.code).toBe('102');
+                    try {
+                        // Coin not exists
+                        expect(error.response.data.error.code).toBe('102');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -497,6 +532,7 @@ describe('PostTx: buy', () => {
             })
             .catch((error) => {
                 logError(error);
+                throw error;
             });
     }, 30000);
 
@@ -505,9 +541,13 @@ describe('PostTx: buy', () => {
         const txParams = txParamsData(apiType, {valueToBuy: COIN_MAX_AMOUNT, coinToSell: NOT_EXISTENT_COIN});
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
-                logError(error);
-                // Coin not exists
-                expect(error.response.data.error.code).toBe('102');
+                try {
+                    // Coin not exists
+                    expect(error.response.data.error.code).toBe('102');
+                } catch (jestError) {
+                    logError(error);
+                    throw jestError;
+                }
             });
     }, 70000);
 });
@@ -529,7 +569,7 @@ describe('validator', () => {
             payload: 'custom message',
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async(apiType) => {
+        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
             expect.assertions(2);
             const txParams = txParamsData(apiType);
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
@@ -540,6 +580,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -548,9 +589,13 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT, publicKey: generateWallet().getPublicKeyString()});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    logError(error);
-                    // Insufficient funds for sender account
-                    expect(error.response.data.error.code).toBe('107');
+                    try {
+                        // Insufficient funds for sender account
+                        expect(error.response.data.error.code).toBe('107');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -570,7 +615,7 @@ describe('validator', () => {
             payload: 'custom message',
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async(apiType) => {
+        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
             expect.assertions(2);
             const txParams = txParamsData(apiType);
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
@@ -581,6 +626,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -589,9 +635,13 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    logError(error);
-                    // Candidate with such public key not found
-                    expect(error.response.data.error.code).toBe('403');
+                    try {
+                        // Candidate with such public key not found
+                        expect(error.response.data.error.code).toBe('403');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -621,6 +671,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -629,9 +680,13 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    logError(error);
-                    // Insufficient funds for sender account
-                    expect(error.response.data.error.code).toBe('107');
+                    try {
+                        // Insufficient funds for sender account
+                        expect(error.response.data.error.code).toBe('107');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -663,6 +718,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -671,9 +727,13 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    logError(error);
-                    // Candidate with such public key not found
-                    expect(error.response.data.error.code).toBe('403');
+                    try {
+                        // Candidate with such public key not found
+                        expect(error.response.data.error.code).toBe('403');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -701,6 +761,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -712,9 +773,13 @@ describe('validator', () => {
                     console.log({res});
                 })
                 .catch((error) => {
-                    logError(error);
-                    // Candidate with such public key not found
-                    expect(error.response.data.error.code).toBe('403');
+                    try {
+                        // Candidate with such public key not found
+                        expect(error.response.data.error.code).toBe('403');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -742,6 +807,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -753,9 +819,13 @@ describe('validator', () => {
                     console.log({res});
                 })
                 .catch((error) => {
-                    logError(error);
-                    // Candidate with such public key not found
-                    expect(error.response.data.error.code).toBe('403');
+                    try {
+                        // Candidate with such public key not found
+                        expect(error.response.data.error.code).toBe('403');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -772,7 +842,7 @@ describe('validator', () => {
             payload: 'custom message',
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async(apiType) => {
+        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
             expect.assertions(2);
             const txParams = txParamsData(apiType);
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
@@ -783,6 +853,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -791,9 +862,13 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    logError(error);
-                    // Candidate with such public key not found
-                    expect(error.response.data.error.code).toBe('403');
+                    try {
+                        // Candidate with such public key not found
+                        expect(error.response.data.error.code).toBe('403');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -809,7 +884,7 @@ describe('validator', () => {
             payload: 'custom message',
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async(apiType) => {
+        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
             expect.assertions(2);
             const txParams = txParamsData(apiType);
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
@@ -820,6 +895,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -831,9 +907,13 @@ describe('validator', () => {
                     console.log(txHash);
                 })
                 .catch((error) => {
-                    logError(error);
-                    // rlp: input string too long for uint
-                    expect(error.response.data.error.code).toBe('106');
+                    try {
+                        // rlp: input string too long for uint
+                        expect(error.response.data.error.code).toBe('106');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -850,7 +930,7 @@ describe('validator', () => {
             payload: 'custom message',
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async(apiType) => {
+        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
             expect.assertions(2);
             const txParams = txParamsData(apiType);
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
@@ -861,6 +941,7 @@ describe('validator', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -869,9 +950,13 @@ describe('validator', () => {
             const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    logError(error);
-                    // Candidate with such public key not found
-                    expect(error.response.data.error.code).toBe('403');
+                    try {
+                        // Candidate with such public key not found
+                        expect(error.response.data.error.code).toBe('403');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -913,6 +998,7 @@ describe('PostTx: redeem check', () => {
             })
             .catch((error) => {
                 logError(error);
+                throw error;
             });
     }, 30000);
 
@@ -921,12 +1007,13 @@ describe('PostTx: redeem check', () => {
         const txParams = txParamsData(apiType, {}, apiType.customCoinId);
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
-                // console.log(txHash);
+                console.log(txHash);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
             .catch((error) => {
                 logError(error);
+                throw error;
             });
     }, 30000);
 
@@ -935,9 +1022,13 @@ describe('PostTx: redeem check', () => {
         const txParams = txParamsData(apiType, {check: getRandomCheck(apiType, 0, 1)});
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .catch((error) => {
-                logError(error);
-                // Check expired
-                expect(error.response.data.error.code).toBe('502');
+                try {
+                    // Check expired
+                    expect(error.response.data.error.code).toBe('502');
+                } catch (jestError) {
+                    logError(error);
+                    throw jestError;
+                }
             });
     }, 70000);
 });
@@ -975,6 +1066,7 @@ describe('multisig', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -983,9 +1075,13 @@ describe('multisig', () => {
             const txParams = txParamsData(apiType, {threshold: 100000000000000000000});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
-                    logError(error);
-                    // rlp: input string too long for uint, decoding into (transaction.CreateMultisigData).Threshold
-                    expect(error.response.data.error.code).toBe('106');
+                    try {
+                        // rlp: input string too long for uint
+                        expect(error.response.data.error.code).toBe('106');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -1041,6 +1137,7 @@ describe('multisig', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -1049,9 +1146,13 @@ describe('multisig', () => {
             const txParams = txParamsData(apiType, {coin: NOT_EXISTENT_COIN});
             return postMultiSign(apiType, txParams)
                 .catch((error) => {
-                    logError(error);
-                    // Coin not exists
-                    expect(error.response.data.error.code).toBe('102');
+                    try {
+                        // Coin not exists
+                        expect(error.response.data.error.code).toBe('102');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });
@@ -1085,6 +1186,7 @@ describe('multisig', () => {
                 })
                 .catch((error) => {
                     logError(error);
+                    throw error;
                 });
         }, 30000);
 
@@ -1093,9 +1195,13 @@ describe('multisig', () => {
             const txParams = txParamsData(apiType, {threshold: 100000000000000000000});
             return postMultiSign(apiType, txParams)
                 .catch((error) => {
-                    logError(error);
-                    // rlp: input string too long for uint
-                    expect(error.response.data.error.code).toBe('106');
+                    try {
+                        // rlp: input string too long for uint
+                        expect(error.response.data.error.code).toBe('106');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
                 });
         }, 70000);
     });

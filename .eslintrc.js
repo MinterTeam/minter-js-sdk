@@ -65,7 +65,7 @@ module.exports = {
     'space-before-function-paren': ['error', {
       anonymous: 'never',
       named: 'never',
-      asyncArrow: 'never'
+      asyncArrow: 'always'
     }],
     'import/extensions': ['error', 'always', {ignorePackages: true} ],
   },

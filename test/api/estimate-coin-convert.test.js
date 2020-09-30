@@ -1,7 +1,7 @@
 import {ENV_DATA, minterGate, minterNode} from './variables';
-import {ensureCustomCoin} from '~/test/utils.js';
+import {ensureCustomCoin, logError} from '~/test/utils.js';
 
-beforeAll(async() => {
+beforeAll(async () => {
     await ensureCustomCoin();
 }, 30000);
 
@@ -21,8 +21,7 @@ describe('EstimateCoinSell', () => {
                     expect(Number(estimateResult.commission)).toBeGreaterThan(0);
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
+                    logError(error);
                 });
         }, 30000);
 
@@ -34,7 +33,7 @@ describe('EstimateCoinSell', () => {
                 coinToBuy: 'MNT',
             })
                 .catch((error) => {
-                    console.log(error);
+                    logError(error);
                     expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 30000);
@@ -52,8 +51,7 @@ describe('EstimateCoinSell', () => {
                     expect(Number(estimateResult.commission)).toBeGreaterThan(0);
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
+                    logError(error);
                 });
         }, 30000);
 
@@ -84,8 +82,7 @@ describe('EstimateCoinSell', () => {
                     expect(Number(estimateResult.commission)).toBeGreaterThan(0);
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
+                    logError(error);
                 });
         }, 30000);
 
@@ -97,7 +94,7 @@ describe('EstimateCoinSell', () => {
                 coinIdToBuy: 0,
             })
                 .catch((error) => {
-                    console.log(error);
+                    logError(error);
                     expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 30000);
@@ -115,8 +112,7 @@ describe('EstimateCoinSell', () => {
                     expect(Number(estimateResult.commission)).toBeGreaterThan(0);
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
+                    logError(error);
                 });
         }, 30000);
 
@@ -149,8 +145,7 @@ describe('EstimateCoinBuy', () => {
                     expect(Number(estimateResult.commission)).toBeGreaterThan(0);
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
+                    logError(error);
                 });
         }, 30000);
 
@@ -180,8 +175,7 @@ describe('EstimateCoinBuy', () => {
                     expect(Number(estimateResult.commission)).toBeGreaterThan(0);
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
+                    logError(error);
                 });
         }, 30000);
 
@@ -212,8 +206,7 @@ describe('EstimateCoinBuy', () => {
                     expect(Number(estimateResult.commission)).toBeGreaterThan(0);
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
+                    logError(error);
                 });
         }, 30000);
 
@@ -243,8 +236,7 @@ describe('EstimateCoinBuy', () => {
                     expect(Number(estimateResult.commission)).toBeGreaterThan(0);
                 })
                 .catch((error) => {
-                    console.log(error);
-                    console.log(error.response);
+                    logError(error);
                 });
         }, 30000);
 

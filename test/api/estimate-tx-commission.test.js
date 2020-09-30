@@ -1,5 +1,6 @@
 import {minterGate, minterNode} from './variables';
 import {testData} from '~/test/test-data.js';
+import {logError} from '~/test/utils.js';
 
 
 describe('EstimateTxCommission', () => {
@@ -13,8 +14,7 @@ describe('EstimateTxCommission', () => {
                 expect(Number(commission)).toBeGreaterThan(0);
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+                logError(error);
             });
     }, 30000);
 
@@ -26,8 +26,7 @@ describe('EstimateTxCommission', () => {
                 expect(Number(commission)).toBeGreaterThan(0);
             })
             .catch((error) => {
-                console.log(error);
-                console.log(error.response);
+                logError(error);
             });
     }, 30000);
 });

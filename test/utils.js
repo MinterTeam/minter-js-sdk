@@ -13,28 +13,55 @@ export function clearData(dirtyData) {
     return data;
 }
 
+const ensureCoinPromiseList = {};
+
 /**
  * @param {string} [coinSymbol]
  * @param {string} [privateKey]
  * @return {Promise}
  */
 export function ensureCustomCoin({coinSymbol, privateKey} = {}) {
+    coinSymbol = coinSymbol || ENV_DATA.customCoin;
+    privateKey = privateKey || ENV_DATA.privateKey;
+
     // ensure custom coin exists
     const txParams = {
         chainId: 2,
         type: TX_TYPE.CREATE_COIN,
         data: {
-            name: coinSymbol || ENV_DATA.customCoin,
-            symbol: coinSymbol || ENV_DATA.customCoin,
+            name: coinSymbol,
+            symbol: coinSymbol,
             initialAmount: 5000,
-            initialReserve: 10000,
+            initialReserve: 20000,
             constantReserveRatio: 50,
         },
     };
-    return minterGate.postTx(txParams, {privateKey: privateKey || ENV_DATA.privateKey})
+
+    if (ensureCoinPromiseList[coinSymbol]) {
+        return ensureCoinPromiseList[coinSymbol];
+    }
+
+    ensureCoinPromiseList[coinSymbol] = minterGate.postTx(txParams, {privateKey})
+        .catch((error) => {
+            logError(error);
+            return minterGate.replaceCoinSymbol({
+                chainId: 2,
+                type: TX_TYPE.SELL,
+                data: {
+                    coinToBuy: coinSymbol,
+                    coinToSell: 'MNT',
+                    valueToSell: 15000,
+                },
+            });
+        })
+        .then((sellTxParams) => {
+            return minterGate.postTx(sellTxParams, {privateKey});
+        })
         .catch((error) => {
             logError(error);
         });
+
+    return ensureCoinPromiseList[coinSymbol];
 }
 
 export function logError(error) {

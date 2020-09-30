@@ -1,12 +1,13 @@
 import {TX_TYPE} from 'minterjs-util';
 import {ENV_DATA, minterGate, minterNode} from './variables';
+import {ensureCustomCoin, logError} from '~/test/utils.js';
 
 const API_TYPE_LIST = [
     {
         ...minterNode,
         // privateKey: ENV_DATA.privateKey2,
         address: ENV_DATA.address2,
-        // customCoin: 'TESTCOIN03',
+        customCoin: ENV_DATA.customCoin,
         // newCoin: getRandomCoin(),
         // newCandidatePublicKey: newCandidatePublicKeyNode,
         toString() {
@@ -18,7 +19,7 @@ const API_TYPE_LIST = [
         // postTx: makePostTx(minterGate),
         // privateKey: ENV_DATA.privateKey,
         address: ENV_DATA.address,
-        // customCoin: ENV_DATA.customCoin,
+        customCoin: ENV_DATA.customCoin,
         // newCoin: getRandomCoin(),
         // newCandidatePublicKey: newCandidatePublicKeyGate,
         toString() {
@@ -27,9 +28,9 @@ const API_TYPE_LIST = [
     },
 ];
 
-// beforeAll(async () => {
-//     await ensureCustomCoin();
-// }, 30000);
+beforeAll(async () => {
+    await ensureCustomCoin();
+}, 30000);
 
 describe('ReplaceCoinSymbol', () => {
     const txParamsData = (apiType, data) => ({
@@ -62,7 +63,27 @@ describe('ReplaceCoinSymbol', () => {
                 });
             })
             .catch((error) => {
-                console.log(error?.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, error} : error);
+                logError(error);
+                throw error;
+            });
+    }, 30000);
+});
+
+describe('ReplaceCoinSymbolByPath', () => {
+    const txParamsData = (apiType) => ({
+        gasCoin: apiType.customCoin,
+    });
+
+    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+        expect.assertions(1);
+        const txParams = txParamsData(apiType);
+        return apiType.replaceCoinSymbolByPath(txParams, ['gasCoin'])
+            .then((newTxParams) => {
+                expect(newTxParams.gasCoin).toBeGreaterThan(0);
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
             });
     }, 30000);
 });
