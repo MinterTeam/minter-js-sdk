@@ -25,6 +25,7 @@ Contents:
     - [getNonce](#getnonce)
     - [getMinGasPrice](#getmingasprice)
     - [getCoinInfo](#getcoininfo)
+    - [getCoinInfoById](#getcoininfobyid)
     - [estimateCoinSell](#estimatecoinsell)
     - [estimateCoinBuy](#estimatecoinbuy)
     - [estimateTxCommission](#estimatetxcommission)
@@ -197,6 +198,7 @@ const minterNode = new Minter({chainId: 2, apiType: 'node', baseURL: 'https://no
 - [ensureNonce](#ensurenonce)
 - [getMinGasPrice](#getmingasprice)
 - [getCoinInfo](#getcoininfo)
+- [getCoinInfoById](#getcoininfobyid)
 - [estimateCoinSell](#estimatecoinsell)
 - [estimateCoinBuy](#estimatecoinbuy)
 - [estimateTxCommission](#estimatetxcommission)
@@ -329,6 +331,21 @@ Get coin info by coinSymbol.
 minter.getCoinInfo(coinSymbol)
     .then((coinInfo) => {
         console.log(coinInfo.id);
+    });
+```
+
+
+### .getCoinInfoById()
+Get coin info by id.
+
+```js
+/**
+ * @param {string} coinSymbol
+ * @return {Promise<CoinInfo>}
+ */
+minter.getCoinInfo(coinId)
+    .then((coinInfo) => {
+        console.log(coinInfo.symbol);
     });
 ```
 

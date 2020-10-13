@@ -26,5 +26,5 @@ export default function GetCoinInfo(apiInstance) {
  * @property {number|string} crr
  * @property {number|string} reserve_balance
  * @property {number|string} max_supply
- * @property {string} owner_address
+ * @property {string|null} owner_address
  */

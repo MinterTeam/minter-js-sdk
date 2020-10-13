@@ -18,10 +18,8 @@ export default function PostSignedTx(apiInstance) {
         })
             .then((response) => {
                 const resData = response.data;
-                // @TODO use transaction when gate will be fixed
-                let txData = (resData.transaction || resData.data) ? (resData.transaction || resData.data) : {hash: resData.hash};
 
-                return txData;
+                return resData.transaction || {hash: resData.hash};
             });
     };
 }

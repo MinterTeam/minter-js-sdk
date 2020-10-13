@@ -5,13 +5,13 @@ beforeAll(async () => {
     await ensureCustomCoin();
 }, 30000);
 
-describe('GetCoinInfo', () => {
+describe('GetCoinInfoById', () => {
     test('should work gate', () => {
         expect.assertions(1);
 
-        return minterGate.getCoinInfo(ENV_DATA.customCoin)
+        return minterGate.getCoinInfoById(0)
             .then((coinInfo) => {
-                expect(coinInfo.id).toBeGreaterThan(0);
+                expect(coinInfo.symbol === 'MNT' || coinInfo.symbol === 'BIP').toBeTruthy();
             })
             .catch((error) => {
                 logError(error);
@@ -22,9 +22,9 @@ describe('GetCoinInfo', () => {
     test('should work node', () => {
         expect.assertions(1);
 
-        return minterNode.getCoinInfo(ENV_DATA.customCoin)
+        return minterNode.getCoinInfoById(0)
             .then((coinInfo) => {
-                expect(coinInfo.id).toBeGreaterThan(0);
+                expect(coinInfo.symbol === 'MNT' || coinInfo.symbol === 'BIP').toBeTruthy();
             })
             .catch((error) => {
                 logError(error);

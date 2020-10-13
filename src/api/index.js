@@ -12,7 +12,7 @@ import {API_TYPE_GATE, API_TYPE_NODE} from '../variables.js';
 /**
  * @param {Object} [options]
  * @param {string} [options.apiType]
- * @param {string} [options.chainId]
+ * @param {number} [options.chainId]
  * @param {string} [options.baseURL]
  * @param {...AxiosRequestConfig} [options.*]
  * @return {MinterApiInstance}

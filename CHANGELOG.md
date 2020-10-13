@@ -1,3 +1,6 @@
+## 0.35.1
+- Add: 'getCoinInfoById' api method
+
 ## 0.35.0
 - Add: `ReplaceCoinSymbolByPath` now accept `chainId` param and can get base coin id without network request  
 - Update: `ReplaceCoinSymbol` uses `txParams.chainId` to get base coin id without network request
