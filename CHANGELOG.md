@@ -1,3 +1,6 @@
+## 0.35.2
+- Add: `axiosOptions` parameter to all API methods which will be passed to axios request
+
 ## 0.35.1
 - Add: 'getCoinInfoById' api method
 

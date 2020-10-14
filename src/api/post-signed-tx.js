@@ -6,16 +6,17 @@
 export default function PostSignedTx(apiInstance) {
     /**
      * @param {string|Buffer} signedTx
+     * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<NodeTransaction|{hash: string}>}
      */
-    return function postSignedTx(signedTx) {
+    return function postSignedTx(signedTx, axiosOptions) {
         if (Buffer.isBuffer(signedTx)) {
             signedTx = `0x${signedTx.toString('hex')}`;
         }
 
         return apiInstance.post('send_transaction', {
             tx: signedTx,
-        })
+        }, axiosOptions)
             .then((response) => {
                 const resData = response.data;
 

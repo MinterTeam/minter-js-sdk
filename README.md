@@ -244,6 +244,7 @@ Returns promise that resolves with:
 * @param {string|Buffer} [txOptions.privateKey] - to sign tx or get nonce or to make proof for redeemCheck tx
 * @param {string} [txOptions.address] - to get nonce (useful for multisignatures) or to make proof for redeemCheck tx
 * @param {ByteArray} [txOptions.password] - to make proof for RedeemCheckTxData
+* @param {AxiosRequestConfig} [axiosOptions]
 * @return {Promise<NodeTransaction|{hash: string}>}
 */
 minter.postTx(txParams, {privateKey: '...', gasRetryLimit: 2, mempoolRetryLimit: 0})
@@ -265,6 +266,7 @@ Returns promise that resolves with:
 ```js
 /**
 * @param {string|Buffer} signedTx
+* @param {AxiosRequestConfig} [axiosOptions]
 * @return {Promise<NodeTransaction|{hash: string}>}
 */
 minter.postSignedTx('0xf8920102018a4d4e540000000000000001aae98a4d4e5400000000...')
@@ -296,8 +298,10 @@ Ensure nonce for the tx params.
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
- * @param {ByteArray} [privateKey]
- * @param {string} [address]
+ * @param {Object} txOptions
+ * @param {ByteArray} [txOptions.privateKey]
+ * @param {string} [txOptions.address]
+ * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<number>}
  */
 minter.ensureNonce(txParams, {privateKey: '...'})
@@ -326,6 +330,7 @@ Get coin info by coinSymbol.
 ```js
 /**
  * @param {string} coinSymbol
+ * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<CoinInfo>}
  */
 minter.getCoinInfo(coinSymbol)
@@ -341,6 +346,7 @@ Get coin info by id.
 ```js
 /**
  * @param {string} coinSymbol
+ * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<CoinInfo>}
  */
 minter.getCoinInfo(coinId)
@@ -416,6 +422,7 @@ Replace coin symbols with coin ids in txParams object
 ```js
 /**
  * @param {TxParams} txParams
+ * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<TxParams>}
  */
 const txParams = {
@@ -459,6 +466,7 @@ const params = {
  * @param {Object} params
  * @param {Array<string>} pathList
  * @param {number} [chainId]
+ * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<TxParams>}
  */
 minter.replaceCoinSymbolByPath(params, ['gasCoin', 'foo.bar.coin'])

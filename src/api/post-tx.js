@@ -22,9 +22,10 @@ export default function PostTx(apiInstance) {
     /**
      * @param {TxParams} txParams
      * @param {PostTxOptions} options
+     * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<string>}
      */
-    return function postTx(txParams, {gasRetryLimit = 2, nonceRetryLimit = 0, mempoolRetryLimit = 0, ...txOptions} = {}) {
+    return function postTx(txParams, {gasRetryLimit = 2, nonceRetryLimit = 0, mempoolRetryLimit = 0, ...txOptions} = {}, axiosOptions) {
         if (!txOptions.privateKey && txParams.privateKey) {
             txOptions.privateKey = txParams.privateKey;
             // eslint-disable-next-line no-console
@@ -32,8 +33,9 @@ export default function PostTx(apiInstance) {
         }
         // @TODO asserts
 
+        // @TODO should axiosOptions be passed here?
         return ensureNonce(apiInstance, txParams, txOptions)
-            .then((newNonce) => _postTxHandleErrors(apiInstance, {...txParams, nonce: newNonce}, {gasRetryLimit, nonceRetryLimit, mempoolRetryLimit, ...txOptions}));
+            .then((newNonce) => _postTxHandleErrors(apiInstance, {...txParams, nonce: newNonce}, {gasRetryLimit, nonceRetryLimit, mempoolRetryLimit, ...txOptions, axiosOptions}));
     };
 }
 
@@ -41,9 +43,10 @@ export default function PostTx(apiInstance) {
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
  * @param {TxOptions} [options]
+ * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<NodeTransaction|{hash: string}>}
  */
-function _postTx(apiInstance, txParams, options) {
+function _postTx(apiInstance, txParams, options, axiosOptions) {
     if (!txParams.chainId && apiInstance.defaults.chainId) {
         txParams.chainId = apiInstance.defaults.chainId;
     }
@@ -55,7 +58,7 @@ function _postTx(apiInstance, txParams, options) {
         tx = prepareTx(txParams, options);
     }
 
-    return (new PostSignedTx(apiInstance))(tx.serializeToString());
+    return (new PostSignedTx(apiInstance))(tx.serializeToString(), axiosOptions);
 }
 
 /**
@@ -65,29 +68,30 @@ function _postTx(apiInstance, txParams, options) {
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
  * @param {PostTxOptions} options
+ * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<string>}
  */
-function _postTxHandleErrors(apiInstance, txParams, options) {
+function _postTxHandleErrors(apiInstance, txParams, options, axiosOptions) {
     const {gasRetryLimit, nonceRetryLimit, mempoolRetryLimit, ...txOptions} = options;
-    return _postTx(apiInstance, txParams, txOptions)
+    return _postTx(apiInstance, txParams, txOptions, axiosOptions)
         .catch((error) => {
             // @TODO limit max gas_price to prevent sending tx with to high fees
             if (toInteger(txParams.signatureType) !== '2' && gasRetryLimit > 0 && isGasError(error)) {
                 const minGas = getMinGasFromError(error);
                 // eslint-disable-next-line no-console
                 console.log(`make postTx retry, old gasPrice ${txParams.gasPrice}, new gasPrice ${minGas}`);
-                return _postTxHandleErrors(apiInstance, {...txParams, gasPrice: minGas}, {...options, gasRetryLimit: gasRetryLimit - 1});
+                return _postTxHandleErrors(apiInstance, {...txParams, gasPrice: minGas}, {...options, gasRetryLimit: gasRetryLimit - 1}, axiosOptions);
             } else if (toInteger(txParams.signatureType) !== '2' && nonceRetryLimit > 0 && isNonceError(error)) {
                 const newNonce = getNonceFromError(error);
                 // eslint-disable-next-line no-console
                 console.log(`make postTx retry, old nonce ${txParams.nonce}, new nonce ${newNonce}`);
-                return _postTxHandleErrors(apiInstance, {...txParams, nonce: newNonce}, {...options, nonceRetryLimit: nonceRetryLimit - 1});
+                return _postTxHandleErrors(apiInstance, {...txParams, nonce: newNonce}, {...options, nonceRetryLimit: nonceRetryLimit - 1}, axiosOptions);
             } else if (mempoolRetryLimit > 0 && isMempoolError(error)) {
                 // eslint-disable-next-line no-console
                 console.log('make postTx retry: tx exists in mempool');
                 return wait(5000)
                     .then(() => {
-                        return _postTxHandleErrors(apiInstance, txParams, {...options, mempoolRetryLimit: mempoolRetryLimit - 1});
+                        return _postTxHandleErrors(apiInstance, txParams, {...options, mempoolRetryLimit: mempoolRetryLimit - 1}, axiosOptions);
                     });
             } else {
                 throw error;
@@ -98,11 +102,13 @@ function _postTxHandleErrors(apiInstance, txParams, options) {
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
- * @param {ByteArray} [privateKey]
- * @param {string} [address]
+ * @param {Object} txOptions
+ * @param {ByteArray} [txOptions.privateKey]
+ * @param {string} [txOptions.address]
+ * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<number>}
  */
-function ensureNonce(apiInstance, txParams, {privateKey, address} = {}) {
+function ensureNonce(apiInstance, txParams, {privateKey, address} = {}, axiosOptions) {
     const nonce = txParams.nonce;
     if (!nonce && !address && !privateKey) {
         throw new Error('No nonce is given and no address or privateKey to retrieve it from API');
@@ -115,7 +121,7 @@ function ensureNonce(apiInstance, txParams, {privateKey, address} = {}) {
         address = privateToAddressString(privateKeyBuffer);
     }
 
-    return (new GetNonce(apiInstance))(address);
+    return (new GetNonce(apiInstance))(address, axiosOptions);
 }
 
 /**
@@ -124,8 +130,10 @@ function ensureNonce(apiInstance, txParams, {privateKey, address} = {}) {
 export function EnsureNonce(apiInstance) {
     /**
      * @param {TxParams} txParams
-     * @param {ByteArray} [privateKey]
-     * @param {string} [address]
+     * @param {Object} txOptions
+     * @param {ByteArray} [txOptions.privateKey]
+     * @param {string} [txOptions.address]
+     * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<number>}
      */
     return function apiEnsureNonce() {

@@ -20,9 +20,10 @@ export default function EstimateCoinBuy(apiInstance) {
      * @param {string|number} params.valueToBuy
      * @param {number|string} [params.coinIdToSell] - ID of the coin to sell
      * @param {string} [params.coinToSell] - symbol of the coin to sell
+     * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<EstimateBuyResult>}
      */
-    return function estimateCoinBuy(params) {
+    return function estimateCoinBuy(params, axiosOptions) {
         if (!params.coinToBuy && (!params.coinIdToBuy && params.coinIdToBuy !== 0)) {
             return Promise.reject(new Error('Coin to buy not specified'));
         }
@@ -41,7 +42,7 @@ export default function EstimateCoinBuy(apiInstance) {
             coin_to_sell: params.coinToSell,
         };
 
-        return apiInstance.get('estimate_coin_buy', {params})
+        return apiInstance.get('estimate_coin_buy', {...axiosOptions, params})
             .then((response) => {
                 const resData = response.data;
                 // convert pips

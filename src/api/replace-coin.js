@@ -12,12 +12,13 @@ export function ReplaceCoinSymbol(apiInstance) {
     const replaceCoinSymbolByPath = ReplaceCoinSymbolByPath(apiInstance);
     /**
      * @param {TxParams} txParams
+     * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<TxParams>}
      */
-    return function replaceCoinSymbol(txParams) {
+    return function replaceCoinSymbol(txParams, axiosOptions) {
         const pathList = getTxParamsPathList(txParams);
 
-        return replaceCoinSymbolByPath(txParams, pathList, txParams.chainId);
+        return replaceCoinSymbolByPath(txParams, pathList, txParams.chainId, axiosOptions);
     };
 }
 
@@ -27,9 +28,10 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
      * @param {Object} txParams
      * @param {Array<string>} pathList
      * @param {number} [chainId]
+     * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<Object>}
      */
-    return function replaceCoinSymbolByPath(txParams, pathList, chainId) {
+    return function replaceCoinSymbolByPath(txParams, pathList, chainId, axiosOptions) {
         let promiseList = {};
         pathList.forEach((path) => fillPath(path));
 
@@ -44,7 +46,7 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
                     if (isBaseCoin(chainId, symbolValue)) {
                         promiseList[symbolValue] = Promise.resolve(0);
                     } else {
-                        promiseList[symbolValue] = getCoinInfo(symbolValue)
+                        promiseList[symbolValue] = getCoinInfo(symbolValue, axiosOptions)
                             .then((coinInfo) => coinInfo.id);
                     }
                 }

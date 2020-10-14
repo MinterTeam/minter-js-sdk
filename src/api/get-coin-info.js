@@ -6,10 +6,11 @@ export default function GetCoinInfo(apiInstance) {
     /**
      * Get nonce for new transaction: last transaction number + 1
      * @param {string} coinSymbol
+     * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<CoinInfo>}
      */
-    return function getCoinInfo(coinSymbol) {
-        return apiInstance.get(`coin_info/${coinSymbol}`)
+    return function getCoinInfo(coinSymbol, axiosOptions) {
+        return apiInstance.get(`coin_info/${coinSymbol}`, axiosOptions)
             .then((response) => {
                 response.data.id = Number(response.data.id);
                 return response.data;

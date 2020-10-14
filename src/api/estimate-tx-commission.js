@@ -8,14 +8,15 @@ export default function EstimateTxCommission(apiInstance) {
     /**
      * Get nonce for new transaction: last transaction number + 1
      * @param {string} tx
+     * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<number|string>}
      */
-    return function estimateTxCommission(tx) {
+    return function estimateTxCommission(tx, axiosOptions) {
         if (!tx) {
             return Promise.reject(new Error('Transaction not specified'));
         }
 
-        return apiInstance.get(`estimate_tx_commission/${tx}`)
+        return apiInstance.get(`estimate_tx_commission/${tx}`, axiosOptions)
             .then((response) => {
                 return response.data.commission;
             });
