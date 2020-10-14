@@ -2,6 +2,9 @@ language: node_js
 node_js:
   - stable
   - lts/*
+branches:
+  only:
+  - master
 jobs:
   allow_failures:
     - stage: Produce Coverage

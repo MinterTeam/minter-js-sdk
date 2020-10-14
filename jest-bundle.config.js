@@ -1,6 +1,7 @@
 module.exports = {
     moduleNameMapper: {
         '~\/src$': '<rootDir>/dist/index.js',
+        '~\/src\/(.*)$': '<rootDir>/src/$1',
         '~\/test\/(.*)$': '<rootDir>/test/$1',
     },
     transform: {
