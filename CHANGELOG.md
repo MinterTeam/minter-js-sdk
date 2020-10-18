@@ -1,3 +1,6 @@
+## 0.35.3
+- Fix: cjs bundle to not require ES2015 modules
+
 ## 0.35.2
 - Add: `axiosOptions` parameter to all API methods which will be passed to axios request
 

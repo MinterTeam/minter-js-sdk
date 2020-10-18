@@ -27,10 +27,7 @@ import {
     makeSignature,
 } from '~/src';
 import {ENV_DATA, minterGate, minterNode} from './variables';
-import {ensureCustomCoin, logError} from '~/test/utils.js';
-
-const newCandidatePublicKeyGate = generateWallet().getPublicKeyString();
-const newCandidatePublicKeyNode = generateWallet().getPublicKeyString();
+import {ensureCustomCoin, getValidatorMinStake, logError} from '~/test/utils.js';
 
 function getRandomCoin() {
     return Math.random().toString().substring(2, 10 + 2);
@@ -46,7 +43,8 @@ const API_TYPE_LIST = [
         address: ENV_DATA.address2,
         customCoin: 'TESTCOIN03',
         newCoin: getRandomCoin(),
-        newCandidatePublicKey: newCandidatePublicKeyNode,
+        // will be updated during declaration
+        newCandidatePublicKey: '',
         toString() {
             return 'node';
         },
@@ -58,7 +56,8 @@ const API_TYPE_LIST = [
         address: ENV_DATA.address,
         customCoin: ENV_DATA.customCoin,
         newCoin: getRandomCoin(),
-        newCandidatePublicKey: newCandidatePublicKeyGate,
+        // will be updated during declaration
+        newCandidatePublicKey: '',
         toString() {
             return 'gate';
         },
@@ -554,15 +553,20 @@ describe('PostTx: buy', () => {
 
 
 describe('validator', () => {
+    let validatorMinStake = 0;
+    beforeAll(async () => {
+        validatorMinStake = await getValidatorMinStake();
+    }, 30000);
+
     describe('PostTx: declare candidacy', () => {
         const txParamsData = (apiType, data) => ({
             chainId: 2,
             type: TX_TYPE.DECLARE_CANDIDACY,
             data: new DeclareCandidacyTxData(Object.assign({
                 address: apiType.address,
-                publicKey: apiType.newCandidatePublicKey,
+                publicKey: '',
                 coin: 0,
-                stake: 1.211,
+                stake: validatorMinStake,
                 commission: 50,
             }, data)),
             gasCoin: 0,
@@ -571,9 +575,11 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
             expect.assertions(2);
-            const txParams = txParamsData(apiType);
+            const newCandidatePublicKey = generateWallet().getPublicKeyString();
+            const txParams = txParamsData(apiType, {publicKey: newCandidatePublicKey});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .then(({hash: txHash}) => {
+                    apiType.newCandidatePublicKey = newCandidatePublicKey;
                     console.log(txHash);
                     expect(txHash).toHaveLength(66);
                     expect(txHash.substr(0, 2)).toEqual('Mt');
@@ -601,364 +607,374 @@ describe('validator', () => {
     });
 
 
-    describe('PostTx: edit candidate', () => {
-        const txParamsData = (apiType, data) => ({
-            chainId: 2,
-            type: TX_TYPE.EDIT_CANDIDATE,
-            data: new EditCandidateTxData(Object.assign({
-                publicKey: apiType.newCandidatePublicKey,
-                rewardAddress: apiType.address,
-                ownerAddress: apiType.address,
-                controlAddress: apiType.address,
-            }, data)),
-            gasCoin: 0,
-            payload: 'custom message',
+    describe('depend on declare', () => {
+        beforeAll(() => {
+            const notDeclaredList = API_TYPE_LIST.filter((item) => !item.newCandidatePublicKey);
+            const notDeclared = notDeclaredList.map((item) => item.toString()).join(', ');
+            if (notDeclared) {
+                throw new Error(`Candidate was not declared for: ${notDeclared}`);
+            }
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
-            expect.assertions(2);
-            const txParams = txParamsData(apiType);
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .then(({hash: txHash}) => {
-                    console.log(txHash);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    logError(error);
-                    throw error;
-                });
-        }, 30000);
+        describe('PostTx: edit candidate', () => {
+            const txParamsData = (apiType, data) => ({
+                chainId: 2,
+                type: TX_TYPE.EDIT_CANDIDATE,
+                data: new EditCandidateTxData(Object.assign({
+                    publicKey: apiType.newCandidatePublicKey,
+                    rewardAddress: apiType.address,
+                    ownerAddress: apiType.address,
+                    controlAddress: apiType.address,
+                }, data)),
+                gasCoin: 0,
+                payload: 'custom message',
+            });
 
-        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
-            expect.assertions(1);
-            const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .catch((error) => {
-                    try {
-                        // Candidate with such public key not found
-                        expect(error.response.data.error.code).toBe('403');
-                    } catch (jestError) {
+            test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+                expect.assertions(2);
+                const txParams = txParamsData(apiType);
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then(({hash: txHash}) => {
+                        console.log(txHash);
+                        expect(txHash).toHaveLength(66);
+                        expect(txHash.substr(0, 2)).toEqual('Mt');
+                    })
+                    .catch((error) => {
                         logError(error);
-                        throw jestError;
-                    }
-                });
-        }, 70000);
-    });
+                        throw error;
+                    });
+            }, 30000);
 
-
-    describe('PostTx: delegate', () => {
-        const txParamsData = (apiType, data) => ({
-            chainId: 2,
-            type: TX_TYPE.DELEGATE,
-            data: new DelegateTxData(Object.assign({
-                publicKey: apiType.newCandidatePublicKey,
-                coin: 0,
-                stake: 10,
-            }, data)),
-            gasCoin: 0,
-            payload: 'custom message',
-        });
-
-        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
-            expect.assertions(2);
-            const txParams = txParamsData(apiType);
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .then(({hash: txHash}) => {
-                    // console.log(txHash);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    logError(error);
-                    throw error;
-                });
-        }, 30000);
-
-        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
-            expect.assertions(1);
-            const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .catch((error) => {
-                    try {
-                        // Insufficient funds for sender account
-                        expect(error.response.data.error.code).toBe('107');
-                    } catch (jestError) {
-                        logError(error);
-                        throw jestError;
-                    }
-                });
-        }, 70000);
-    });
-
-
-    describe.skip('PostTx: unbond', () => {
-        const txParamsData = (apiType, data) => ({
-            chainId: 2,
-            type: TX_TYPE.UNBOND,
-            data: new UnbondTxData(Object.assign({
-                publicKey: apiType.newCandidatePublicKey,
-                coin: 0,
-                stake: 10,
-            }, data)),
-            gasCoin: 0,
-            payload: 'custom message',
+            test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+                expect.assertions(1);
+                const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .catch((error) => {
+                        try {
+                            // Candidate with such public key not found
+                            expect(error.response.data.error.code).toBe('403');
+                        } catch (jestError) {
+                            logError(error);
+                            throw jestError;
+                        }
+                    });
+            }, 70000);
         });
 
 
-        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
-            console.log('unbond from:', apiType.newCandidatePublicKey);
-            expect.assertions(2);
-            const txParams = txParamsData(apiType);
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .then(({hash: txHash}) => {
-                    // console.log(txHash);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    logError(error);
-                    throw error;
-                });
-        }, 30000);
+        describe('PostTx: delegate', () => {
+            const txParamsData = (apiType, data) => ({
+                chainId: 2,
+                type: TX_TYPE.DELEGATE,
+                data: new DelegateTxData(Object.assign({
+                    publicKey: apiType.newCandidatePublicKey,
+                    coin: 0,
+                    stake: 10,
+                }, data)),
+                gasCoin: 0,
+                payload: 'custom message',
+            });
 
-        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
-            // expect.assertions(1);
-            const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .catch((error) => {
-                    try {
-                        // Candidate with such public key not found
-                        expect(error.response.data.error.code).toBe('403');
-                    } catch (jestError) {
+            test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+                expect.assertions(2);
+                const txParams = txParamsData(apiType);
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then(({hash: txHash}) => {
+                        // console.log(txHash);
+                        expect(txHash).toHaveLength(66);
+                        expect(txHash.substr(0, 2)).toEqual('Mt');
+                    })
+                    .catch((error) => {
                         logError(error);
-                        throw jestError;
-                    }
-                });
-        }, 70000);
-    });
+                        throw error;
+                    });
+            }, 30000);
 
-
-    describe('PostTx: set candidate on', () => {
-        const txParamsData = (apiType, data) => ({
-            chainId: 2,
-            type: TX_TYPE.SET_CANDIDATE_ON,
-            data: new SetCandidateOnTxData(Object.assign({
-                publicKey: apiType.newCandidatePublicKey,
-            }, data)),
-            gasCoin: 0,
-            payload: 'custom message',
+            test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+                expect.assertions(1);
+                const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .catch((error) => {
+                        try {
+                            // Insufficient funds for sender account
+                            expect(error.response.data.error.code).toBe('107');
+                        } catch (jestError) {
+                            logError(error);
+                            throw jestError;
+                        }
+                    });
+            }, 70000);
         });
 
-        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
-            expect.assertions(2);
-            const txParams = txParamsData(apiType);
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .then(({hash: txHash}) => {
-                    // console.log(txHash);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    logError(error);
-                    throw error;
-                });
-        }, 30000);
 
-        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
-            expect.assertions(1);
-            const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .then((res) => {
-                    console.log({res});
-                })
-                .catch((error) => {
-                    try {
-                        // Candidate with such public key not found
-                        expect(error.response.data.error.code).toBe('403');
-                    } catch (jestError) {
+        describe.skip('PostTx: unbond', () => {
+            const txParamsData = (apiType, data) => ({
+                chainId: 2,
+                type: TX_TYPE.UNBOND,
+                data: new UnbondTxData(Object.assign({
+                    publicKey: apiType.newCandidatePublicKey,
+                    coin: 0,
+                    stake: 10,
+                }, data)),
+                gasCoin: 0,
+                payload: 'custom message',
+            });
+
+
+            test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+                console.log('unbond from:', apiType.newCandidatePublicKey);
+                expect.assertions(2);
+                const txParams = txParamsData(apiType);
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then(({hash: txHash}) => {
+                        // console.log(txHash);
+                        expect(txHash).toHaveLength(66);
+                        expect(txHash.substr(0, 2)).toEqual('Mt');
+                    })
+                    .catch((error) => {
                         logError(error);
-                        throw jestError;
-                    }
-                });
-        }, 70000);
-    });
+                        throw error;
+                    });
+            }, 30000);
 
-
-    describe('PostTx: set candidate off', () => {
-        const txParamsData = (apiType, data) => ({
-            chainId: 2,
-            type: TX_TYPE.SET_CANDIDATE_OFF,
-            data: new SetCandidateOffTxData(Object.assign({
-                publicKey: apiType.newCandidatePublicKey,
-            }, data)),
-            gasCoin: 0,
-            payload: 'custom message',
+            test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+                // expect.assertions(1);
+                const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .catch((error) => {
+                        try {
+                            // Candidate with such public key not found
+                            expect(error.response.data.error.code).toBe('403');
+                        } catch (jestError) {
+                            logError(error);
+                            throw jestError;
+                        }
+                    });
+            }, 70000);
         });
 
-        test.each(API_TYPE_LIST)('should work %s', (apiType) => {
-            expect.assertions(2);
-            const txParams = txParamsData(apiType);
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .then(({hash: txHash}) => {
-                    // console.log(txHash);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    logError(error);
-                    throw error;
-                });
-        }, 30000);
 
-        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
-            expect.assertions(1);
-            const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .then((res) => {
-                    console.log({res});
-                })
-                .catch((error) => {
-                    try {
-                        // Candidate with such public key not found
-                        expect(error.response.data.error.code).toBe('403');
-                    } catch (jestError) {
+        describe('PostTx: set candidate on', () => {
+            const txParamsData = (apiType, data) => ({
+                chainId: 2,
+                type: TX_TYPE.SET_CANDIDATE_ON,
+                data: new SetCandidateOnTxData(Object.assign({
+                    publicKey: apiType.newCandidatePublicKey,
+                }, data)),
+                gasCoin: 0,
+                payload: 'custom message',
+            });
+
+            test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+                expect.assertions(2);
+                const txParams = txParamsData(apiType);
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then(({hash: txHash}) => {
+                        // console.log(txHash);
+                        expect(txHash).toHaveLength(66);
+                        expect(txHash.substr(0, 2)).toEqual('Mt');
+                    })
+                    .catch((error) => {
                         logError(error);
-                        throw jestError;
-                    }
-                });
-        }, 70000);
-    });
+                        throw error;
+                    });
+            }, 30000);
 
-    describe('PostTx: set halt block', () => {
-        const txParamsData = (apiType, data) => ({
-            chainId: 2,
-            type: TX_TYPE.SET_HALT_BLOCK,
-            data: new SetHaltBlockTxData(Object.assign({
-                publicKey: apiType.newCandidatePublicKey,
-                height: 123456789,
-            }, data)),
-            gasCoin: 0,
-            payload: 'custom message',
+            test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+                expect.assertions(1);
+                const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then((res) => {
+                        console.log({res});
+                    })
+                    .catch((error) => {
+                        try {
+                            // Candidate with such public key not found
+                            expect(error.response.data.error.code).toBe('403');
+                        } catch (jestError) {
+                            logError(error);
+                            throw jestError;
+                        }
+                    });
+            }, 70000);
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
-            expect.assertions(2);
-            const txParams = txParamsData(apiType);
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .then(({hash: txHash}) => {
-                    console.log(txHash);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    logError(error);
-                    throw error;
-                });
-        }, 30000);
 
-        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
-            expect.assertions(1);
-            const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .catch((error) => {
-                    try {
-                        // Candidate with such public key not found
-                        expect(error.response.data.error.code).toBe('403');
-                    } catch (jestError) {
+        describe('PostTx: set candidate off', () => {
+            const txParamsData = (apiType, data) => ({
+                chainId: 2,
+                type: TX_TYPE.SET_CANDIDATE_OFF,
+                data: new SetCandidateOffTxData(Object.assign({
+                    publicKey: apiType.newCandidatePublicKey,
+                }, data)),
+                gasCoin: 0,
+                payload: 'custom message',
+            });
+
+            test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+                expect.assertions(2);
+                const txParams = txParamsData(apiType);
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then(({hash: txHash}) => {
+                        // console.log(txHash);
+                        expect(txHash).toHaveLength(66);
+                        expect(txHash.substr(0, 2)).toEqual('Mt');
+                    })
+                    .catch((error) => {
                         logError(error);
-                        throw jestError;
-                    }
-                });
-        }, 70000);
-    });
+                        throw error;
+                    });
+            }, 30000);
 
-    describe('PostTx: price vote', () => {
-        const txParamsData = (apiType, data) => ({
-            chainId: 2,
-            type: TX_TYPE.PRICE_VOTE,
-            data: new PriceVoteTxData(Object.assign({
-                price: 123456789,
-            }, data)),
-            gasCoin: 0,
-            payload: 'custom message',
+            test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+                expect.assertions(1);
+                const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then((res) => {
+                        console.log({res});
+                    })
+                    .catch((error) => {
+                        try {
+                            // Candidate with such public key not found
+                            expect(error.response.data.error.code).toBe('403');
+                        } catch (jestError) {
+                            logError(error);
+                            throw jestError;
+                        }
+                    });
+            }, 70000);
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
-            expect.assertions(2);
-            const txParams = txParamsData(apiType);
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .then(({hash: txHash}) => {
-                    console.log(txHash);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    logError(error);
-                    throw error;
-                });
-        }, 30000);
+        describe('PostTx: set halt block', () => {
+            const txParamsData = (apiType, data) => ({
+                chainId: 2,
+                type: TX_TYPE.SET_HALT_BLOCK,
+                data: new SetHaltBlockTxData(Object.assign({
+                    publicKey: apiType.newCandidatePublicKey,
+                    height: 123456789,
+                }, data)),
+                gasCoin: 0,
+                payload: 'custom message',
+            });
 
-        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
-            expect.assertions(1);
-            const txParams = txParamsData(apiType, {price: 100000000000000000000000000000000});
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .then(({hash: txHash}) => {
-                    console.log(txHash);
-                })
-                .catch((error) => {
-                    try {
-                        // rlp: input string too long for uint
-                        expect(error.response.data.error.code).toBe('106');
-                    } catch (jestError) {
+            test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+                expect.assertions(2);
+                const txParams = txParamsData(apiType);
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then(({hash: txHash}) => {
+                        console.log(txHash);
+                        expect(txHash).toHaveLength(66);
+                        expect(txHash.substr(0, 2)).toEqual('Mt');
+                    })
+                    .catch((error) => {
                         logError(error);
-                        throw jestError;
-                    }
-                });
-        }, 70000);
-    });
+                        throw error;
+                    });
+            }, 30000);
 
-    describe('PostTx: edit candidate public key', () => {
-        const txParamsData = (apiType, data) => ({
-            chainId: 2,
-            type: TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY,
-            data: new EditCandidatePublicKeyTxData(Object.assign({
-                publicKey: apiType.newCandidatePublicKey,
-                newPublicKey: generateWallet().getPublicKeyString(),
-            }, data)),
-            gasCoin: 0,
-            payload: 'custom message',
+            test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+                expect.assertions(1);
+                const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .catch((error) => {
+                        try {
+                            // Candidate with such public key not found
+                            expect(error.response.data.error.code).toBe('403');
+                        } catch (jestError) {
+                            logError(error);
+                            throw jestError;
+                        }
+                    });
+            }, 70000);
         });
 
-        test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
-            expect.assertions(2);
-            const txParams = txParamsData(apiType);
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .then(({hash: txHash}) => {
-                    console.log(txHash);
-                    expect(txHash).toHaveLength(66);
-                    expect(txHash.substr(0, 2)).toEqual('Mt');
-                })
-                .catch((error) => {
-                    logError(error);
-                    throw error;
-                });
-        }, 30000);
+        describe('PostTx: price vote', () => {
+            const txParamsData = (apiType, data) => ({
+                chainId: 2,
+                type: TX_TYPE.PRICE_VOTE,
+                data: new PriceVoteTxData(Object.assign({
+                    price: 123456789,
+                }, data)),
+                gasCoin: 0,
+                payload: 'custom message',
+            });
 
-        test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
-            expect.assertions(1);
-            const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
-            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
-                .catch((error) => {
-                    try {
-                        // Candidate with such public key not found
-                        expect(error.response.data.error.code).toBe('403');
-                    } catch (jestError) {
+            test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+                expect.assertions(2);
+                const txParams = txParamsData(apiType);
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then(({hash: txHash}) => {
+                        console.log(txHash);
+                        expect(txHash).toHaveLength(66);
+                        expect(txHash.substr(0, 2)).toEqual('Mt');
+                    })
+                    .catch((error) => {
                         logError(error);
-                        throw jestError;
-                    }
-                });
-        }, 70000);
+                        throw error;
+                    });
+            }, 30000);
+
+            test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+                expect.assertions(1);
+                const txParams = txParamsData(apiType, {price: 100000000000000000000000000000000});
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then(({hash: txHash}) => {
+                        console.log(txHash);
+                    })
+                    .catch((error) => {
+                        try {
+                            // rlp: input string too long for uint
+                            expect(error.response.data.error.code).toBe('106');
+                        } catch (jestError) {
+                            logError(error);
+                            throw jestError;
+                        }
+                    });
+            }, 70000);
+        });
+
+        describe('PostTx: edit candidate public key', () => {
+            const txParamsData = (apiType, data) => ({
+                chainId: 2,
+                type: TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY,
+                data: new EditCandidatePublicKeyTxData(Object.assign({
+                    publicKey: apiType.newCandidatePublicKey,
+                    newPublicKey: generateWallet().getPublicKeyString(),
+                }, data)),
+                gasCoin: 0,
+                payload: 'custom message',
+            });
+
+            test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+                expect.assertions(2);
+                const txParams = txParamsData(apiType);
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then(({hash: txHash}) => {
+                        console.log(txHash);
+                        expect(txHash).toHaveLength(66);
+                        expect(txHash.substr(0, 2)).toEqual('Mt');
+                    })
+                    .catch((error) => {
+                        logError(error);
+                        throw error;
+                    });
+            }, 30000);
+
+            test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+                expect.assertions(1);
+                const txParams = txParamsData(apiType, {publicKey: generateWallet().getPublicKeyString()});
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .catch((error) => {
+                        try {
+                            // Candidate with such public key not found
+                            expect(error.response.data.error.code).toBe('403');
+                        } catch (jestError) {
+                            logError(error);
+                            throw jestError;
+                        }
+                    });
+            }, 70000);
+        });
     });
 });
 

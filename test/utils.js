@@ -1,7 +1,7 @@
 // @TODO replace with .fields
 // eslint-disable-next-line import/prefer-default-export
 import {TX_TYPE} from 'minterjs-util';
-import {ENV_DATA, minterGate} from '~/test/api/variables.js';
+import {ENV_DATA, minterGate, minterNode} from '~/test/api/variables.js';
 
 export function clearData(dirtyData) {
     // eslint-disable-next-line no-unused-vars
@@ -62,6 +62,29 @@ export function ensureCustomCoin({coinSymbol, privateKey} = {}) {
         });
 
     return ensureCoinPromiseList[coinSymbol];
+}
+
+const MAX_VALIDATOR_COUNT = 192;
+// -2 to declare two our new validators
+const LAST_VALIDATOR_NUMBER = MAX_VALIDATOR_COUNT - 2;
+
+/**
+ * @return {Promise<number>}
+ */
+export function getValidatorMinStake() {
+    return minterNode.apiInstance.get('candidates')
+        .then((response) => {
+            const list = response.data.candidates
+                .sort((a, b) => b.total_stake - a.total_stake);
+
+            if (list.length <= LAST_VALIDATOR_NUMBER) {
+                return 0;
+            }
+            // -2 to declare two our new validators
+            const validator = list[LAST_VALIDATOR_NUMBER - 1];
+
+            return Math.ceil(validator.total_stake * 10 ** -18) + 1;
+        });
 }
 
 export function logError(error) {

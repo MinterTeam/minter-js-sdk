@@ -1,6 +1,6 @@
 {
   "name": "minter-js-sdk",
-  "version": "0.35.2",
+  "version": "0.35.3",
   "description": "JS SDK for Minter Blockchain",
   "main": "dist/cjs/index.js",
   "module": "src/index.js",
@@ -15,7 +15,7 @@
   "scripts": {
     "build": "npm run bundle && npm run bundle:minify && npm run bundle:cjs",
     "bundle": "rollup -c build/rollup.config.js",
-    "bundle:cjs": "babel src/ -d dist/cjs/ --config-file ./build/babel-cjs.config.js --no-babelrc",
+    "bundle:cjs": "rollup -c build/rollup.cjs.config.js",
     "bundle:minify": "rollup -c build/rollup.uglify.config.js",
     "prepublishOnly": "npm run lint && npm run jest && npm run build",
     "lint": "eslint --ext .js ./src ./test",
@@ -80,11 +80,12 @@
     "eslint": "^7.11.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-jest": "^24.1.0",
     "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.0",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-unicorn": "^22.0.0",
     "jest": "^26.5.3",
+    "jest-circus": "^26.5.3",
     "jest-environment-jsdom": "^25",
     "minterjs-wallet": "^6.0.0",
     "pre-commit": "^1.2.2",
@@ -92,6 +93,7 @@
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-rename": "^1.0.1",
     "rollup-plugin-terser": "^7.0.2"
   }
 }

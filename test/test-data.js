@@ -335,7 +335,7 @@ const testData = {
             result: '0xf866822b670101801386c584499602d28e637573746f6d206d6573736167658001b845f8431ca054932d530253ba3e9cff4db036bb8320e9597e1ad59c429ceff00e572f947240a01bf7641b7ad6e0ef0ed419cdbe91728b66ddd79b62c27e08baf10fea42280ecb',
             link: 'https://bip.to/tx/3BOGxYRJlgLSjmN1c3RvbSBtZXNzYWdlgitnAYA',
         },
-        // 0x14 DELEGATE
+        // 0x14 EDIT_CANDIDATE_PUBLIC_KEY
         {
             params: {
                 nonce: 11111,
