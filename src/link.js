@@ -169,9 +169,5 @@ function base64urlDecode(base64urlString) {
  * @return {Buffer}
  */
 function toBuffer(value) {
-    if (typeof value === 'string' && !isHexPrefixed(value)) {
-        return Buffer.from(value, 'utf8');
-    } else {
-        return toBufferUtil(value);
-    }
+    return typeof value === 'string' && !isHexPrefixed(value) ? Buffer.from(value, 'utf8') : toBufferUtil(value);
 }

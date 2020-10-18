@@ -11,6 +11,8 @@ This package should be an aid to any developer working on JS applications with t
 
 Please note that this SDK is under active development and is subject to change.
 
+**NOTE:** since 0.34.0 SDK supports only v2 versions of node and gate APIs
+
 It is complemented by the following packages:
 - [minterjs-wallet](https://github.com/MinterTeam/minterjs-wallet) take care of BIP39 mnemonic phrase, private key and address
 - [minterjs-tx](https://github.com/MinterTeam/minterjs-tx) create, manipulate and sign transactions

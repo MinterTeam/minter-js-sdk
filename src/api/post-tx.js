@@ -52,11 +52,7 @@ function _postTx(apiInstance, txParams, options, axiosOptions) {
     }
 
     let tx;
-    if (!txParams.signatureData && toInteger(txParams.signatureType) !== '2') {
-        tx = prepareSignedTx(txParams, options);
-    } else {
-        tx = prepareTx(txParams, options);
-    }
+    tx = !txParams.signatureData && toInteger(txParams.signatureType) !== '2' ? prepareSignedTx(txParams, options) : prepareTx(txParams, options);
 
     return (new PostSignedTx(apiInstance))(tx.serializeToString(), axiosOptions);
 }

@@ -3,10 +3,15 @@ import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 
 export default {
     input: 'src/index.js',
+    output: {
+        file: 'dist/index.js',
+        format: 'umd',
+        name: 'minterSDK',
+    },
     plugins: [
         // nodejs v10 doesn't support optional chaining
         babel({
@@ -32,12 +37,7 @@ export default {
         }),
         babel({
             exclude: 'node_modules/@babel/runtime/**',
-            runtimeHelpers: true,
+            babelHelpers: 'runtime',
         }),
     ],
-    output: {
-        file: 'dist/index.js',
-        format: 'umd',
-        name: 'minterSDK',
-    },
 };

@@ -95,11 +95,7 @@ function getProofWithRecovery({password, address, privateKey}) {
     ]);
 
     // ensure Buffer
-    if (typeof password === 'string') {
-        password = Buffer.from(password, 'utf-8');
-    } else {
-        password = toBuffer(password);
-    }
+    password = typeof password === 'string' ? Buffer.from(password, 'utf-8') : toBuffer(password);
 
     const passwordBuffer = sha256(password);
     const proof = secp256k1.ecdsaSign(addressHash, passwordBuffer);
