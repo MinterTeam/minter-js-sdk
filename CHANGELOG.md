@@ -1,4 +1,4 @@
-## 0.35.3
+## 0.35.4
 - Fix: cjs bundle babel runtime helpers
 
 ## 0.35.3
