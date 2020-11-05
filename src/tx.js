@@ -3,7 +3,6 @@ import {Tx, TxSignature, TxMultisignature} from 'minterjs-tx';
 import {normalizeTxType} from 'minterjs-util';
 // import Tx from 'minterjs-tx/src/tx';
 // import TxSignature from 'minterjs-tx/src/tx-signature.js';
-// import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
 import {bufferToInteger, integerToHexString, toInteger, validateUint} from './utils.js';
 import decorateTxParams from './tx-decorator/index.js';
 import {decodeTxData, ensureBufferData} from './tx-data/index.js';

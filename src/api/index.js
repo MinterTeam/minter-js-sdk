@@ -120,7 +120,7 @@ function parseData(data) {
             console.log(data);
             data = {
                 error: {
-                    message: 'Invalid response',
+                    message: 'Invalid response: failed to parse JSON data. Looks like request URL is invalid.',
                 },
             };
         }

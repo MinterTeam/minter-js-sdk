@@ -1,3 +1,6 @@
+## 0.35.5
+- Improve Check error message
+
 ## 0.35.4
 - Fix: cjs bundle babel runtime helpers
 

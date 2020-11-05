@@ -164,6 +164,11 @@ export function decodeCheck(rawCheck) {
  * @return {string}
  */
 export function getGasCoinFromCheck(rawCheck) {
-    const check = new Check(toBuffer(rawCheck));
-    return bufferToInteger(check.gasCoin);
+    try {
+        const check = new Check(toBuffer(rawCheck));
+        return bufferToInteger(check.gasCoin);
+    } catch (error) {
+        error.message = `Can't decode check: ${error.message}`;
+        throw error;
+    }
 }
