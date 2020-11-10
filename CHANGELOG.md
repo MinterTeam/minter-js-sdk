@@ -1,3 +1,6 @@
+## WIP
+- Improve Uint validation message
+
 ## 0.35.5
 - Improve Check error message
 

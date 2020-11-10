@@ -164,12 +164,12 @@ export function validateAmount(value, fieldName) {
     }
 }
 
-export function validateUint(value, fieldName) {
-    validateNotEmpty(value, fieldName);
+export function validateUint(origValue, fieldName) {
+    validateNotEmpty(origValue, fieldName);
 
-    value = Number(value);
+    const value = Number(origValue);
     if (Number.isNaN(value)) {
-        throw new TypeError(`Field \`${fieldName}\` is not a number. Received: ${value}`);
+        throw new TypeError(`Field \`${fieldName}\` is not a number. Received: ${origValue}`);
     }
 
     if (value < 0) {
