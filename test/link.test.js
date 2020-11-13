@@ -6,7 +6,6 @@ import {testData, fullTestData} from '~/test/test-data.js';
 
 const LINK_CHECK_PROOF = 'https://bip.to/tx/-OcJuOD43riZ-JcxAYMPQj-AiIrHIwSJ6AAAgLhBmZU_Se8O0Q2XG43ywBjnaZzXSf7KA8rZ0D8yqJktd6tsgY13BGZQC0EWXBihgmZi-w1Fs6kZP8rME6QTFwLgFwEboGn3z96tDqlx6fPnsGBGPhCSnM8vQwm4FFwJFvUfTFBAoCV2fU6oNe6PwqCWuPmXF-9lYnytXpnCQn40qZKIgbo0uEEEl-pYjw_CvUSN520Dp0zzcSaeEKwaAnZftfo3wp9n4DSPs_qs0zcLiAlAHn1WLYlD82Qs6WZnGI08NE6OW_9tAYABAYA';
 
-// @TODO empty gasCoin
 describe('prepareLink()', () => {
     describe('should work', () => {
         const txListTable = testData.txList.map((item) => {
@@ -119,14 +118,44 @@ describe('decodeLink()', () => {
         });
     });
 
+    // empty nonce should allow omit nonce in link and request actual nonce in the app
+    test('empty nonce', () => {
+        const fullItem = findFullItem(TX_TYPE.SEND);
+        const link = prepareLink({
+            ...fullItem.params,
+            nonce: undefined,
+        });
+        expect(decodeLink(link).nonce).toEqual(undefined);
+    });
+
+    // empty gasCoin should allow omit gasCoin in link and choose suitable in the app
     test('empty gasCoin', () => {
         const fullItem = findFullItem(TX_TYPE.SEND);
         const link = prepareLink({
             ...fullItem.params,
             gasCoin: undefined,
-            gasPrice: 0,
         });
         expect(decodeLink(link).gasCoin).toEqual(undefined);
+    });
+
+    // zero gasCoin should allow specify base coin (e.g. BIP)
+    test('zero gasCoin', () => {
+        const fullItem = findFullItem(TX_TYPE.SEND);
+        const link = prepareLink({
+            ...fullItem.params,
+            gasCoin: 0,
+        });
+        expect(decodeLink(link).gasCoin).toEqual('0');
+    });
+
+    // non zero gasCoin should allow specify custom coin
+    test('non zero gasCoin', () => {
+        const fullItem = findFullItem(TX_TYPE.SEND);
+        const link = prepareLink({
+            ...fullItem.params,
+            gasCoin: 123,
+        });
+        expect(decodeLink(link).gasCoin).toEqual('123');
     });
 
     test('should not lose precision', () => {

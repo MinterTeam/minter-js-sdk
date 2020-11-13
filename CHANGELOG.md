@@ -1,5 +1,6 @@
-## WIP
+## 0.35.6
 - Improve Uint validation message
+- Fix: allow `nonce` and `gasPrice` to be omitted in the Minter Link 
 
 ## 0.35.5
 - Improve Check error message

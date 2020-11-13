@@ -21,35 +21,25 @@ class Check {
                 name: 'nonce',
                 length: 32,
                 allowLess: true,
-                default: Buffer.from([]),
             }, {
                 name: 'chainId',
                 length: 1,
-                allowLess: true,
-                default: Buffer.from([]),
             }, {
                 name: 'dueBlock',
                 length: 8,
                 allowLess: true,
-                default: Buffer.from([]),
             }, {
                 name: 'coin',
                 length: 4,
-                allowZero: true,
                 allowLess: true,
-                default: Buffer.from([]),
             }, {
                 name: 'value',
                 length: 32,
-                allowZero: true,
                 allowLess: true,
-                default: Buffer.from([]),
             }, {
                 name: 'gasCoin',
                 length: 4,
-                allowZero: true,
                 allowLess: true,
-                default: Buffer.from([]),
             }, {
                 name: 'lock',
                 allowZero: true,

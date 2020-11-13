@@ -19,13 +19,9 @@ class Link {
         const fields = [{
             name: 'type',
             length: 1,
-            allowLess: true,
-            default: Buffer.from([]),
         }, {
             name: 'data',
             alias: 'input',
-            allowZero: true,
-            default: Buffer.from([]),
         }, {
             name: 'payload',
             allowZero: true,
@@ -34,15 +30,13 @@ class Link {
             name: 'nonce',
             length: 32,
             allowLess: true,
-            default: Buffer.from([]),
         }, {
             name: 'gasPrice',
             length: 32,
             allowLess: true,
-            default: Buffer.from([]),
         }, {
             name: 'gasCoin',
-            length: 10,
+            length: 4,
             allowLess: true,
             allowNonBinaryArray: true,
             default: [],
@@ -143,8 +137,9 @@ export function decodeLink(url, {address, privateKey, decodeCheck} = {}) {
     const txData = decodeTxData(tx.type, tx.data, {decodeCheck});
 
     return {
-        nonce: Array.isArray(tx.nonce) ? undefined : bufferToInteger(tx.nonce),
-        gasPrice: Array.isArray(tx.gasPrice) ? undefined : bufferToInteger(tx.gasPrice),
+        nonce: tx.nonce.length > 0 ? bufferToInteger(tx.nonce) : undefined,
+        gasPrice: tx.gasPrice.length > 0 ? bufferToInteger(tx.gasPrice) : undefined,
+        // [] === undefined, <Buffer > === 0
         gasCoin: Array.isArray(tx.gasCoin) ? undefined : bufferToInteger(tx.gasCoin),
         type: txType,
         data: txData,
