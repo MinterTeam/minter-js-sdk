@@ -780,7 +780,7 @@ minter.postTx(txParams, {privateKey: '...', address: '...', password: 'pass'});
 ```
 
 ### Create Multisig
-[Multisig docs](https://docs.minter.network/#section/Multisignatures)
+[Multisig docs](https://docs.minter.network/#multisignatures)
 
 Addresses count must not be greater than 32.  
 Weights count must be equal to addresses count.  
