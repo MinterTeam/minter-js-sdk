@@ -11,6 +11,7 @@ export default {
         file: 'dist/index.js',
         format: 'umd',
         name: 'minterSDK',
+        exports: 'auto',
     },
     plugins: [
         // nodejs v10 doesn't support optional chaining

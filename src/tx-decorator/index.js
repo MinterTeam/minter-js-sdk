@@ -7,6 +7,11 @@ import decorateDeclareCandidacyTxParams from './candidacy-declare.js';
 import decorateDelegateTxParams from './stake-delegate.js';
 import decorateUnbondTxParams from './stake-unbond.js';
 import decorateRedeemCheckTxParams from './redeem-check.js';
+import AddSwapPoolTxData from '../tx-data/swap-add.js';
+import RemoveSwapPoolTxData from '../tx-data/swap-remove.js';
+import BuySwapPoolTxData from '~/src/tx-data/swap-buy.js';
+import SellSwapPoolTxData from '~/src/tx-data/swap-sell.js';
+import SellAllSwapPoolTxData from '~/src/tx-data/swap-sell-all.js';
 
 const noop = (x) => x;
 
@@ -32,6 +37,11 @@ const TX_PARAMS_DECORATOR = {
     [TX_TYPE.EDIT_MULTISIG]: noop,
     [TX_TYPE.PRICE_VOTE]: noop,
     [TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY]: noop,
+    [TX_TYPE.ADD_SWAP_POOL]: noop,
+    [TX_TYPE.REMOVE_SWAP_POOL]: noop,
+    [TX_TYPE.BUY_SWAP_POOL]: decorateBuyTxParams,
+    [TX_TYPE.SELL_SWAP_POOL]: decorateSellTxParams,
+    [TX_TYPE.SELL_ALL_SWAP_POOL]: decorateSellAllTxParams,
 };
 
 /**
