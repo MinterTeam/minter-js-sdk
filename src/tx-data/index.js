@@ -19,6 +19,11 @@ import EditCoinOwnerTxData from './edit-coin-owner.js';
 import EditMultisigTxData from './edit-multisig.js';
 import PriceVoteTxData from './price-vote.js';
 import EditCandidatePublicKeyTxData from './candidate-edit-public-key.js';
+import AddSwapPoolTxData from './swap-add.js';
+import RemoveSwapPoolTxData from './swap-remove.js';
+import BuySwapPoolTxData from './swap-buy.js';
+import SellSwapPoolTxData from './swap-sell.js';
+import SellAllSwapPoolTxData from './swap-sell-all.js';
 import {decodeCheck} from '../check.js';
 
 const TX_DATA_CONSTRUCTOR = {
@@ -42,11 +47,16 @@ const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.EDIT_MULTISIG]: EditMultisigTxData,
     [TX_TYPE.PRICE_VOTE]: PriceVoteTxData,
     [TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY]: EditCandidatePublicKeyTxData,
+    [TX_TYPE.ADD_SWAP_POOL]: AddSwapPoolTxData,
+    [TX_TYPE.REMOVE_SWAP_POOL]: RemoveSwapPoolTxData,
+    [TX_TYPE.BUY_SWAP_POOL]: BuySwapPoolTxData,
+    [TX_TYPE.SELL_SWAP_POOL]: SellSwapPoolTxData,
+    [TX_TYPE.SELL_ALL_SWAP_POOL]: SellAllSwapPoolTxData,
 };
 
 /**
  * @param {TX_TYPE|number|string|Buffer|Uint8Array} txType
- * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData}
+ * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditCoinOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddSwapPoolTxData|RemoveSwapPoolTxData|BuySwapPoolTxData|SellSwapPoolTxData|SellAllSwapPoolTxData}
  */
 export default function getTxData(txType) {
     txType = normalizeTxType(txType);

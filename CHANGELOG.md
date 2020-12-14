@@ -1,3 +1,6 @@
+## WIP 
+- add v2 swap tx data
+
 ## 0.35.6
 - Improve Uint validation message
 - Fix: allow `nonce` and `gasPrice` to be omitted in the Minter Link 
