@@ -1109,7 +1109,7 @@ describe('multisig', () => {
             data: Object.assign({
                 to: '',
                 coin: 0,
-                value: 100,
+                value: 150, // edit 100 + send 2.23
             }, data),
             gasCoin: 0,
         });

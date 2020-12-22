@@ -1,3 +1,6 @@
+## 0.36.0
+- Update deps to support Minter node v1.2.1 (fee calculation changed)
+
 ## 0.35.6
 - Improve Uint validation message
 - Fix: allow `nonce` and `gasPrice` to be omitted in the Minter Link 
