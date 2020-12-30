@@ -1,4 +1,7 @@
-## 0.36.0
+## 0.37.0 - 2020-12-30 
+- **BREAKING** don't autofill `gasCoin` with coin to spent, use base coin (BIP) by default everywhere
+
+## 0.36.0 - 2020-12-22
 - Update deps to support Minter node v1.2.1 (fee calculation changed)
 
 ## 0.35.6

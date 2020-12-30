@@ -19,6 +19,7 @@ export default {
             configFile: false,
             "plugins": [
                 "@babel/plugin-proposal-optional-chaining",
+                "@babel/plugin-proposal-numeric-separator",
             ],
         }),
         commonjs({
