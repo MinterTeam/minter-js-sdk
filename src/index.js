@@ -43,6 +43,12 @@ import RemoveSwapPoolTxData from './tx-data/swap-remove.js';
 import BuySwapPoolTxData from './tx-data/swap-buy.js';
 import SellSwapPoolTxData from './tx-data/swap-sell.js';
 import SellAllSwapPoolTxData from './tx-data/swap-sell-all.js';
+import EditCandidateCommissionTxData from './tx-data/candidate-edit-commission.js';
+import MoveStakeTxData from './tx-data/stake-move.js';
+import MintTokenTxData from './tx-data/token-mint.js';
+import BurnTokenTxData from './tx-data/token-burn.js';
+import CreateTokenTxData from './tx-data/token-create.js';
+import RecreateTokenTxData from './tx-data/token-recreate.js';
 
 export default Minter;
 export {
@@ -91,10 +97,13 @@ export {
     SetCandidateOffTxData,
     EditCandidateTxData,
     EditCandidatePublicKeyTxData,
-    DelegateTxData,
-    UnbondTxData,
+    EditCandidateCommissionTxData,
     SetHaltBlockTxData,
     PriceVoteTxData,
+    // - delegation
+    DelegateTxData,
+    UnbondTxData,
+    MoveStakeTxData,
     // - check
     RedeemCheckTxData,
     // - multisig
@@ -106,4 +115,9 @@ export {
     BuySwapPoolTxData,
     SellSwapPoolTxData,
     SellAllSwapPoolTxData,
+    // - token
+    CreateTokenTxData,
+    RecreateTokenTxData,
+    MintTokenTxData,
+    BurnTokenTxData,
 };

@@ -3,7 +3,7 @@
 import Big from 'big.js';
 import BN from 'bn.js';
 import {padToEven, isHexPrefixed} from 'ethjs-util';
-import {isValidAddress, isValidPublicKeyString, isValidCheck, numberToBig, COIN_MAX_AMOUNT} from 'minterjs-util';
+import {isValidAddress, isValidPublicKeyString, isValidCheck, numberToBig, COIN_MAX_AMOUNT, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
 
 /**
  * @param {number|string} num
@@ -63,6 +63,25 @@ export function bufferToInteger(buf) {
     buf = bufferFromBytes(buf);
 
     return (new BN(buf, 16)).toString(10);
+}
+
+/**
+ * @param {ByteArray} buf
+ * @return {boolean|null}
+ */
+export function bufferToBoolean(buf) {
+    buf = bufferFromBytes(buf);
+
+    if (buf.toString('hex') === '01') {
+        return true;
+    }
+
+    if (buf.toString('hex') === '') {
+        return false;
+    }
+
+    // eslint-disable-next-line unicorn/no-null
+    return null;
 }
 
 /**
@@ -164,6 +183,20 @@ export function validateAmount(value, fieldName) {
     }
 }
 
+/**
+ * @param {number|string} maxSupply
+ * @param {number|string} initialAmount
+ */
+export function validateMaxSupply(maxSupply, initialAmount) {
+    validateAmount(maxSupply, 'maxSupply');
+    if (maxSupply > COIN_MAX_MAX_SUPPLY || maxSupply < COIN_MIN_MAX_SUPPLY) {
+        throw new Error(`Field \`maxSupply\` should be between ${COIN_MIN_MAX_SUPPLY} and ${COIN_MAX_MAX_SUPPLY}`);
+    }
+    if (Number(initialAmount) > Number(maxSupply)) {
+        throw new Error('Field `initialAmount` should be less or equal of `maxSupply`');
+    }
+}
+
 export function validateUint(origValue, fieldName) {
     validateNotEmpty(origValue, fieldName);
 
@@ -201,6 +234,12 @@ function validateNotEmpty(value, fieldName) {
     }
     if (value === '') {
         throw new Error(`Field \`${fieldName}\` is empty string`);
+    }
+}
+
+export function validateBoolean(value, fieldName) {
+    if (typeof value !== 'boolean') {
+        throw new TypeError(`Field \`${fieldName}\` should be boolean, ${typeof value} given`);
     }
 }
 

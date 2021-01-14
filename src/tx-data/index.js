@@ -24,6 +24,12 @@ import RemoveSwapPoolTxData from './swap-remove.js';
 import BuySwapPoolTxData from './swap-buy.js';
 import SellSwapPoolTxData from './swap-sell.js';
 import SellAllSwapPoolTxData from './swap-sell-all.js';
+import EditCandidateCommissionTxData from './candidate-edit-commission.js';
+import MoveStakeTxData from './stake-move.js';
+import MintTokenTxData from './token-mint.js';
+import BurnTokenTxData from './token-burn.js';
+import CreateTokenTxData from './token-create.js';
+import RecreateTokenTxData from './token-recreate.js';
 import {decodeCheck} from '../check.js';
 
 const TX_DATA_CONSTRUCTOR = {
@@ -52,11 +58,17 @@ const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.BUY_SWAP_POOL]: BuySwapPoolTxData,
     [TX_TYPE.SELL_SWAP_POOL]: SellSwapPoolTxData,
     [TX_TYPE.SELL_ALL_SWAP_POOL]: SellAllSwapPoolTxData,
+    [TX_TYPE.EDIT_CANDIDATE_COMMISSION]: EditCandidateCommissionTxData,
+    [TX_TYPE.MOVE_STAKE]: MoveStakeTxData,
+    [TX_TYPE.MINT_TOKEN]: MintTokenTxData,
+    [TX_TYPE.BURN_TOKEN]: BurnTokenTxData,
+    [TX_TYPE.CREATE_TOKEN]: CreateTokenTxData,
+    [TX_TYPE.RECREATE_TOKEN]: RecreateTokenTxData,
 };
 
 /**
  * @param {TX_TYPE|number|string|Buffer|Uint8Array} txType
- * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditCoinOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddSwapPoolTxData|RemoveSwapPoolTxData|BuySwapPoolTxData|SellSwapPoolTxData|SellAllSwapPoolTxData}
+ * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditCoinOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddSwapPoolTxData|RemoveSwapPoolTxData|BuySwapPoolTxData|SellSwapPoolTxData|SellAllSwapPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData}
  */
 export default function getTxData(txType) {
     txType = normalizeTxType(txType);

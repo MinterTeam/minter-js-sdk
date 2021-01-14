@@ -3,7 +3,7 @@ import {TxDataCreateCoin} from 'minterjs-tx';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
 import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
-import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateCoin} from '../utils.js';
+import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateCoin, validateMaxSupply} from '../utils.js';
 
 /**
  * @param {string} name
@@ -18,13 +18,7 @@ export default function CreateCoinTxData({name, symbol, initialAmount, initialRe
     validateCoin(symbol, 'symbol');
     validateAmount(initialAmount, 'initialAmount');
     validateAmount(initialReserve, 'initialReserve');
-    validateAmount(maxSupply, 'maxSupply');
-    if (maxSupply > COIN_MAX_MAX_SUPPLY || maxSupply < COIN_MIN_MAX_SUPPLY) {
-        throw new Error(`Field \`maxSupply\` should be between ${COIN_MIN_MAX_SUPPLY} and ${COIN_MAX_MAX_SUPPLY}`);
-    }
-    if (Number(initialAmount) > Number(maxSupply)) {
-        throw new Error('Field `initialAmount` should be less or equal of maxSupply');
-    }
+    validateMaxSupply(maxSupply, initialAmount);
 
     this.name = name;
     this.symbol = symbol;

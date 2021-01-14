@@ -20,7 +20,7 @@ export default function EstimateCoinSell(apiInstance) {
      * @param {string|number} [params.valueToSell]
      * @param {number|string} [params.coinIdToBuy] - ID of the coin to buy
      * @param {string} [params.coinToBuy] - symbol of the coin to buy
-     * @param {boolean} [params.fromPool] - estimate pool swap
+     * @param {boolean} [params.swapFrom] - estimate pool swap
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<EstimateSellResult>}
      */
@@ -41,7 +41,7 @@ export default function EstimateCoinSell(apiInstance) {
             value_to_sell: convertToPip(params.valueToSell),
             coin_id_to_buy: params.coinIdToBuy,
             coin_to_buy: params.coinToBuy,
-            from_pool: params.fromPool,
+            swap_from: params.swapFrom,
         };
 
         return apiInstance.get('estimate_coin_sell', {...axiosOptions, params})

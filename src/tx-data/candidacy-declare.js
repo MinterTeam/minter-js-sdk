@@ -16,6 +16,7 @@ import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAddress,
 export default function DeclareCandidacyTxData({address, publicKey, commission, coin, stake}) {
     validateAddress(address, 'address');
     validatePublicKey(publicKey, 'publicKey');
+    validateUint(commission, 'commission');
     validateUint(coin, 'coin');
     validateAmount(stake, 'stake');
 

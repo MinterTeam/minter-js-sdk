@@ -1,6 +1,6 @@
 ## WIP 
-- add v2 swap tx data
-- add `fromPool` parameter to estimation API methods
+- add v2 swap, token and other tx data
+- add `swapFrom` parameter to estimation API methods
 
 ## 0.35.6
 - Improve Uint validation message
