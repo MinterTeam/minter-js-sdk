@@ -1109,13 +1109,13 @@ describe('multisig', () => {
             data: Object.assign({
                 to: '',
                 coin: 0,
-                value: 100,
+                value: 1000,
             }, data),
             gasCoin: 0,
         });
 
         test.each(API_TYPE_LIST)('should fill %s', (apiType) => {
-            return getAddress(apiType)
+            return getMultisigAddress(apiType)
                 .then((multisigAddress) => {
                     const txParams = txParamsData(apiType, {to: multisigAddress});
                     return apiType.postTx(txParams, {privateKey: apiType.privateKey});
@@ -1192,8 +1192,6 @@ describe('multisig', () => {
                 weights: [3, Math.random()].map((item) => item.toString().replace(/\D/, '').substr(0, 3)),
             });
 
-
-
             return postMultiSign(apiType, txParams)
                 .then(({hash: txHash}) => {
                     // console.log(txHash);
@@ -1222,7 +1220,7 @@ describe('multisig', () => {
         }, 70000);
     });
 
-    function getAddress(apiType) {
+    function getMultisigAddress(apiType) {
         let multisigAddressPromise;
         if (apiType.multisigAddress) {
             multisigAddressPromise = Promise.resolve(apiType.multisigAddress);
@@ -1239,14 +1237,15 @@ describe('multisig', () => {
             });
     }
 
-    function getAddressAndNonce(apiType) {
-        return getAddress(apiType).then((multisigAddress) => {
-            return Promise.all([Promise.resolve(multisigAddress), apiType.getNonce(multisigAddress)]);
-        });
+    async function getMultisigAddressAndNonce(apiType) {
+        const multisigAddress = await getMultisigAddress(apiType);
+        const nonce = await apiType.getNonce(multisigAddress);
+
+        return [multisigAddress, nonce];
     }
 
     function postMultiSign(apiType, txParams) {
-        return getAddressAndNonce(apiType)
+        return getMultisigAddressAndNonce(apiType)
             .then(([multisigAddress, nonce]) => {
                 const tx = prepareTx({...txParams, nonce});
                 const signature = makeSignature(tx, apiType.privateKey);
