@@ -20,7 +20,7 @@ export default function EstimateCoinBuy(apiInstance) {
      * @param {string|number} params.valueToBuy
      * @param {number|string} [params.coinIdToSell] - ID of the coin to sell
      * @param {string} [params.coinToSell] - symbol of the coin to sell
-     * @param {boolean} [params.swapFrom] - estimate from pool, bancor or optimal
+     * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate from pool, bancor or optimal
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<EstimateBuyResult>}
      */
