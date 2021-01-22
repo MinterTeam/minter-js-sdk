@@ -19,8 +19,8 @@ import EditCoinOwnerTxData from './edit-coin-owner.js';
 import EditMultisigTxData from './edit-multisig.js';
 import PriceVoteTxData from './price-vote.js';
 import EditCandidatePublicKeyTxData from './candidate-edit-public-key.js';
-import AddSwapPoolTxData from './swap-add.js';
-import RemoveSwapPoolTxData from './swap-remove.js';
+import AddLiquidityTxData from './swap-add-liquidity.js';
+import RemoveLiquidityTxData from './swap-remove-liquidity.js';
 import BuySwapPoolTxData from './swap-buy.js';
 import SellSwapPoolTxData from './swap-sell.js';
 import SellAllSwapPoolTxData from './swap-sell-all.js';
@@ -53,8 +53,8 @@ const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.EDIT_MULTISIG]: EditMultisigTxData,
     [TX_TYPE.PRICE_VOTE]: PriceVoteTxData,
     [TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY]: EditCandidatePublicKeyTxData,
-    [TX_TYPE.ADD_SWAP_POOL]: AddSwapPoolTxData,
-    [TX_TYPE.REMOVE_SWAP_POOL]: RemoveSwapPoolTxData,
+    [TX_TYPE.ADD_LIQUIDITY]: AddLiquidityTxData,
+    [TX_TYPE.REMOVE_LIQUIDITY]: RemoveLiquidityTxData,
     [TX_TYPE.BUY_SWAP_POOL]: BuySwapPoolTxData,
     [TX_TYPE.SELL_SWAP_POOL]: SellSwapPoolTxData,
     [TX_TYPE.SELL_ALL_SWAP_POOL]: SellAllSwapPoolTxData,
@@ -68,7 +68,7 @@ const TX_DATA_CONSTRUCTOR = {
 
 /**
  * @param {TX_TYPE|number|string|Buffer|Uint8Array} txType
- * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditCoinOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddSwapPoolTxData|RemoveSwapPoolTxData|BuySwapPoolTxData|SellSwapPoolTxData|SellAllSwapPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData}
+ * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditCoinOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddLiquidityTxData|RemoveLiquidityTxData|BuySwapPoolTxData|SellSwapPoolTxData|SellAllSwapPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData}
  */
 export default function getTxData(txType) {
     txType = normalizeTxType(txType);

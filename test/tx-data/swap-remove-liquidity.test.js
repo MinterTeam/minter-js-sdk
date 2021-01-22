@@ -1,15 +1,15 @@
-import {RemoveSwapPoolTxData} from '~/src';
+import {RemoveLiquidityTxData} from '~/src';
 
-describe('RemoveSwapPoolTxData', () => {
+describe('RemoveLiquidityTxData', () => {
     const txParamsData = {
         coin0: '0',
         coin1: '1',
         liquidity: '20',
     };
-    const txData = new RemoveSwapPoolTxData(txParamsData).serialize();
+    const txData = new RemoveLiquidityTxData(txParamsData).serialize();
 
     test('.fromRlp', () => {
-        const params = RemoveSwapPoolTxData.fromRlp(txData).fields;
+        const params = RemoveLiquidityTxData.fromRlp(txData).fields;
         delete params.minimumVolume0;
         delete params.minimumVolume1;
         expect(params)

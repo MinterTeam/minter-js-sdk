@@ -37,36 +37,42 @@ Contents:
     - [Send](#send)
     - [Multisend](#multisend)
     - [Sell](#sell)
-    - [Sell All](#sell-all)
+    - [Sell all](#sell-all)
     - [Buy](#buy)
-    - [Create Coin](#create-coin)
-    - [Recreate Coin](#recreate-coin)
-    - [Edit Coin Owner](#edit-coin-owner)
-    - [Declare Candidacy](#declare-candidacy)
-    - [Edit Candidate](#edit-candidate)
-    - [Edit Candidate Public key](#edit-candidate-public-key)
+    - [Create coin](#create-coin)
+    - [Recreate coin](#recreate-coin)
+    - [Create token](#create-token)
+    - [Recreate token](#recreate-token)
+    - [Edit coin owner](#edit-coin-owner)
+    - [Mint token](#mint-token)
+    - [Burn token](#burn-token)
+    - [Declare candidacy](#declare-candidacy)
+    - [Edit candidate](#edit-candidate)
+    - [Edit candidate public key](#edit-candidate-public-key)
+    - [Edit candidate commission](#edit-candidate-commission)
     - [Delegate](#delegate)
     - [Unbond](#unbond)
-    - [Set Candidate On](#set-candidate-on)
-    - [Set Candidate Off](#set-candidate-off)
-    - [Set Halt Block](#set-halt-block)
-    - [Price Vote](#price-vote)
-    - [Redeem Check](#redeem-check)
-    - [Create Multisig](#create-multisig)
-    - [Edit Multisig](#edit-multisig)
+    - [Move stake](#move-stake)
+    - [Set candidate on](#set-candidate-on)
+    - [Set candidate off](#set-candidate-off)
+    - [Set halt block](#set-halt-block)
+    - [Price vote](#price-vote)
+    - [Redeem check](#redeem-check)
+    - [Create multisig](#create-multisig)
+    - [Edit multisig](#edit-multisig)
   - [Transaction](#transaction)
-    - [Prepare Transaction](#prepare-transaction)
-    - [Prepare Single Signed Transaction](#prepare-single-signed-transaction)
-    - [Make Signature](#make-signature)
-    - [Multi Signatures](#multi-signatures)
-    - [Decode Transaction](#decode-transaction)
-  - [Minter Check](#minter-check)
+    - [Prepare transaction](#prepare-transaction)
+    - [Prepare single signed transaction](#prepare-single-signed-transaction)
+    - [Make signature](#make-signature)
+    - [Multi signatures](#multi-signatures)
+    - [Decode transaction](#decode-transaction)
+  - [Minter check](#minter-check)
     - [issueCheck](#issuecheck)
     - [decodeCheck](#decodecheck)
-  - [Minter Link](#minter-link)
+  - [Minter link](#minter-link)
     - [prepareLink](#preparelink)
     - [decodeLink](#decodelink)
-  - [Minter Wallet](#minter-wallet)
+  - [Minter wallet](#minter-wallet)
 - [License](#license)
 
 
@@ -109,9 +115,9 @@ const txParams = {
     data: {
         to: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
         value: 10,
-        coin: 0, // BIP id
+        coin: 0, // coin id
     },
-    gasCoin: 0, // BIP id
+    gasCoin: 0, // coin id
     gasPrice: 1,
     payload: 'custom message',
 };
@@ -375,9 +381,9 @@ minter.estimateCoinSell({
 
 // or by coin id
 minter.estimateCoinSell({
-    coinIdToSell: 0, // BIP id
+    coinIdToSell: 0,
     valueToSell: 10,
-    coinIdToBuy: 123, // custom coin id
+    coinIdToBuy: 123,
 })
 ```
 
@@ -398,9 +404,9 @@ minter.estimateCoinBuy({
 // or by coin id
 
 minter.estimateCoinBuy({
-    coinIdToSell: 0, // BIP id
+    coinIdToSell: 0,
     valueToSell: 10,
-    coinIdToBuy: 123, // custom coin id
+    coinIdToBuy: 123,
 })
 ```
 
@@ -498,7 +504,7 @@ const txParams = {
     data: {
         to: 'Mx376615B9A3187747dC7c32e51723515Ee62e37Dc',
         value: 10,
-        coin: 0, // BIP id
+        coin: 0, // coin id
     },
 };
 
@@ -514,12 +520,12 @@ const txParams = {
         list: [
             {
                 value: 10,
-                coin: 0, // BIP id
+                coin: 0, // coin id
                 to: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
             },
             {
                 value: 2,
-                coin: 0, // BIP id
+                coin: 0, // coin id
                 to: 'Mxfe60014a6e9ac91618f5d1cab3fd58cded61ee99',
             }
         ],
@@ -535,9 +541,10 @@ minter.postTx(txParams, {privateKey: '...'});
 const txParams = {
     type: TX_TYPE.SELL,
     data: {
-        coinToSell: 0, // BIP id
-        coinToBuy: 123, // custom coin id
+        coinToSell: 0,
+        coinToBuy: 123,
         valueToSell: 10,
+        minimumValueToBuy: 0, // optional, by default 0
     },
 };
 
@@ -545,14 +552,15 @@ minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
-### Sell All
+### Sell all
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
     type: TX_TYPE.SELL_ALL,
     data: {
-        coinToSell: 0, // BIP id
-        coinToBuy: 123, // custom coin id
+        coinToSell: 0, // coin id
+        coinToBuy: 123, // coin id
+        minimumValueToBuy: 0, // optional, by default 0
     },
 };
 
@@ -566,9 +574,25 @@ import {TX_TYPE} from "minter-js-sdk";
 const txParams = new {
     type: TX_TYPE.BUY,
     data: {
-        coinToSell: 0, // BIP id
-        coinToBuy: 123, // custom coin id
+        coinToSell: 0, // coin id
+        coinToBuy: 123, // coin id
         valueToBuy: 10,
+        maximumValueToSell: 1234 // optional, by default 10^15
+    },
+};
+
+minter.postTx(txParams, {privateKey: '...'});
+```
+
+### Sell from swap pool
+```js
+const txParams = {
+    type: TX_TYPE.SELL_SWAP_POOL,
+    data: {
+        coinToSell: 0,
+        coinToBuy: 123,
+        valueToSell: 10,
+        minimumValueToBuy: 0, // optional, by default 0
     },
 };
 
@@ -576,7 +600,56 @@ minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
-### Create Coin
+### Sell all from swap pool
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.SELL_ALL_SWAP_POOL,
+    data: {
+        coinToSell: 0, // coin id
+        coinToBuy: 123, // coin id
+        minimumValueToBuy: 0, // optional, by default 0
+    },
+};
+
+minter.postTx(txParams, {privateKey: '...'});
+```
+
+### Add liquidity to pool
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = new {
+    type: TX_TYPE.ADD_LIQUIDITY,
+    data: {
+      coin0: 12,
+      coin1: 34,
+      volume0: 123,
+      maximumVolume1: 456,
+    },
+};
+
+minter.postTx(txParams, {privateKey: '...'});
+```
+
+### Remove liquidity from pool
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = new {
+    type: TX_TYPE.REMOVE_LIQUIDITY,
+    data: {
+      coin0: 12,
+      coin1: 34,
+      liquidity: 123,
+      minimumVolume0: 0,
+      minimumVolume1: 0,
+    },
+};
+
+minter.postTx(txParams, {privateKey: '...'});
+```
+
+
+### Create coin
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -594,7 +667,7 @@ const txParams = {
 minter.postTx(txParams, {privateKey: '...'});
 ```
 
-### Recreate Coin
+### Recreate coin
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -612,7 +685,45 @@ const txParams = {
 minter.postTx(txParams, {privateKey: '...'});
 ```
 
-### Edit Coin Owner
+
+### Create token
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.CREATE_TOKEN,
+    data: {
+        name: 'My Coin',
+        symbol: 'MYCOIN',
+        initialAmount: 5,
+        maxSupply: 10000, // optional, by default 10**15
+        mintable: true,
+        burnable: true,
+    },
+};
+
+minter.postTx(txParams, {privateKey: '...'});
+```
+
+### Recreate token
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.RECREATE_TOKEN,
+    data: {
+        name: 'My Coin',
+        symbol: 'MYCOIN',
+        initialAmount: 5,
+        maxSupply: 10000, // optional, by default 10**15
+        mintable: true,
+        burnable: true,
+    },
+};
+
+minter.postTx(txParams, {privateKey: '...'});
+```
+
+
+### Edit coin owner
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -620,6 +731,35 @@ const txParams = {
     data: {
         symbol: 'MYCOIN',
         newOwner: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+    },
+};
+
+minter.postTx(txParams, {privateKey: '...'});
+```
+
+
+### Mint token
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.MINT_TOKEN,
+    data: {
+        coin: 1, // coin id
+        value: 123,
+    },
+};
+
+minter.postTx(txParams, {privateKey: '...'});
+```
+
+### Burn token
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.BURN_TOKEN,
+    data: {
+        coin: 1, // coin id
+        value: 123,
     },
 };
 
@@ -635,9 +775,9 @@ const txParams = {
     data: {
         address: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
         publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
-        commission: 10,
-        coin: 0, // BIP id
-        stake: 100,
+        commission: 10, // percentage
+        coin: 0, // coin id
+        stake: 100, // amount
     },
 };
 
@@ -674,6 +814,20 @@ const txParams = {
 minter.postTx(txParams, {privateKey: '...'});
 ```
 
+### Edit Candidate Commission
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.EDIT_CANDIDATE_COMMISSION,
+    data: {
+        publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+        commission: 10, // percentage
+    },
+};
+
+minter.postTx(txParams, {privateKey: '...'});
+```
+
 
 ### Delegate
 ```js
@@ -682,7 +836,7 @@ const txParams = {
     type: TX_TYPE.DELEGATE,
     data: {
         publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
-        coin: 0, // BIP id
+        coin: 0, // coin id
         stake: 100,
     },
 };
@@ -698,7 +852,7 @@ const txParams = {
     type: TX_TYPE.UNBOND,
     data: {
         publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
-        coin: 0, // BIP id
+        coin: 0, // coin id
         stake: 100,
     },
 };
@@ -707,7 +861,24 @@ minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
-### Set Candidate On
+### Move stake
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.MOVE_STAKE,
+    data: {
+        from: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+        to: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a4',
+        coin: 0, // coin id
+        stake: 100,
+    },
+};
+
+minter.postTx(txParams, {privateKey: '...'});
+```
+
+
+### Set candidate on
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -721,7 +892,7 @@ minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
-### Set Candidate Off
+### Set candidate off
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -735,7 +906,7 @@ minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
-### Set Halt Block
+### Set halt block
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -749,7 +920,7 @@ const txParams = {
 minter.postTx(txParams, {privateKey: '...'});
 ```
 
-### Price Vote
+### Price vote
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -763,7 +934,7 @@ minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
-### Redeem Check
+### Redeem check
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -779,7 +950,7 @@ minter.postTx(txParams, {privateKey: '...', password: 'pass'});
 minter.postTx(txParams, {privateKey: '...', address: '...', password: 'pass'});
 ```
 
-### Create Multisig
+### Create multisig
 [Multisig docs](https://docs.minter.network/#multisignatures)
 
 Addresses count must not be greater than 32.  
@@ -800,7 +971,7 @@ minter.postTx(txParams, {privateKey: '...'});
 ```
 
 
-### Edit Multisig
+### Edit multisig
 Send it from the multisig address
 
 ```js
@@ -868,9 +1039,9 @@ const txParams = {
     data: {
         to: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
         value: 10,
-        coin: 0, // BIP id    
+        coin: 0, // coin id    
     },
-    gasCoin: 0, // BIP id
+    gasCoin: 0, // coin id
     gasPrice: 1,
     payload: 'custom message',
     signatureType: 2, // multiple signature type
@@ -944,9 +1115,9 @@ const check = issueCheck({
     password: 'pass',
     nonce: '1',
     chainId: 1,
-    coin: 0, // BIP id
+    coin: 0, // coin id
     value: 10,
-    gasCoin: 0, // BIP id
+    gasCoin: 0, // coin id
     dueBlock: 999999,
 });
 console.log(check);
@@ -1005,9 +1176,9 @@ const txParams = {
     data: {
         to: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
         value: 10,
-        coin: 0, // BIP id
+        coin: 0, // coin id
     },
-    gasCoin: 0, // BIP id
+    gasCoin: 0, // coin id
     payload: 'custom message',
 };
 prepareLink(txParams);

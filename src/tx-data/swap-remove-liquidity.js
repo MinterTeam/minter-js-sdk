@@ -1,4 +1,4 @@
-import {TxDataRemoveSwapPool} from 'minterjs-tx';
+import {TxDataRemoveLiquidity} from 'minterjs-tx';
 import {convertFromPip, convertToPip, toBuffer} from 'minterjs-util';
 import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateUint} from '../utils.js';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
@@ -11,7 +11,7 @@ import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, 
  * @param {number|string} [minimumVolume1]
  * @constructor
  */
-export default function RemoveSwapPoolTxData({coin0, coin1, liquidity, minimumVolume0 = 0, minimumVolume1 = 0}) {
+export default function RemoveLiquidityTxData({coin0, coin1, liquidity, minimumVolume0 = 0, minimumVolume1 = 0}) {
     validateUint(coin0, 'coin0');
     validateUint(coin1, 'coin1');
     validateAmount(liquidity, 'liquidity');
@@ -24,7 +24,7 @@ export default function RemoveSwapPoolTxData({coin0, coin1, liquidity, minimumVo
     this.minimumVolume0 = minimumVolume0;
     this.minimumVolume1 = minimumVolume1;
 
-    this.txData = new TxDataRemoveSwapPool({
+    this.txData = new TxDataRemoveLiquidity({
         coin0: integerToHexString(coin0),
         coin1: integerToHexString(coin1),
         liquidity: `0x${convertToPip(liquidity, 'hex')}`,
@@ -41,10 +41,10 @@ export default function RemoveSwapPoolTxData({coin0, coin1, liquidity, minimumVo
  * @param {Buffer|string} liquidity
  * @param {Buffer|string} minimumVolume0
  * @param {Buffer|string} minimumVolume1
- * @return {RemoveSwapPoolTxData}
+ * @return {RemoveLiquidityTxData}
  */
-RemoveSwapPoolTxData.fromBufferFields = function fromBufferFields({coin0, minimumVolume0, coin1, liquidity, minimumVolume1}) {
-    return new RemoveSwapPoolTxData({
+RemoveLiquidityTxData.fromBufferFields = function fromBufferFields({coin0, minimumVolume0, coin1, liquidity, minimumVolume1}) {
+    return new RemoveLiquidityTxData({
         coin0: bufferToInteger(toBuffer(coin0)),
         coin1: bufferToInteger(toBuffer(coin1)),
         liquidity: convertFromPip(bufferToInteger(toBuffer(liquidity))),
@@ -55,8 +55,8 @@ RemoveSwapPoolTxData.fromBufferFields = function fromBufferFields({coin0, minimu
 
 /**
  * @param {Buffer|string} data
- * @return {RemoveSwapPoolTxData}
+ * @return {RemoveLiquidityTxData}
  */
-RemoveSwapPoolTxData.fromRlp = function fromRlp(data) {
-    return RemoveSwapPoolTxData.fromBufferFields(new TxDataRemoveSwapPool(data));
+RemoveLiquidityTxData.fromRlp = function fromRlp(data) {
+    return RemoveLiquidityTxData.fromBufferFields(new TxDataRemoveLiquidity(data));
 };

@@ -38,8 +38,8 @@ import CreateMultisigTxData from './tx-data/create-multisig.js';
 import EditMultisigTxData from './tx-data/edit-multisig.js';
 import SetHaltBlockTxData from './tx-data/set-halt-block.js';
 import PriceVoteTxData from './tx-data/price-vote.js';
-import AddSwapPoolTxData from './tx-data/swap-add.js';
-import RemoveSwapPoolTxData from './tx-data/swap-remove.js';
+import AddLiquidityTxData from './tx-data/swap-add-liquidity.js';
+import RemoveLiquidityTxData from './tx-data/swap-remove-liquidity.js';
 import BuySwapPoolTxData from './tx-data/swap-buy.js';
 import SellSwapPoolTxData from './tx-data/swap-sell.js';
 import SellAllSwapPoolTxData from './tx-data/swap-sell-all.js';
@@ -110,8 +110,8 @@ export {
     CreateMultisigTxData,
     EditMultisigTxData,
     // - swap
-    AddSwapPoolTxData,
-    RemoveSwapPoolTxData,
+    AddLiquidityTxData,
+    RemoveLiquidityTxData,
     BuySwapPoolTxData,
     SellSwapPoolTxData,
     SellAllSwapPoolTxData,

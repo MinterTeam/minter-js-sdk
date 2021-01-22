@@ -1,4 +1,4 @@
-import {TxDataAddSwapPool} from 'minterjs-tx';
+import {TxDataAddLiquidity} from 'minterjs-tx';
 import {convertFromPip, convertToPip, toBuffer, COIN_MAX_AMOUNT} from 'minterjs-util';
 import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateUint} from '../utils.js';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
@@ -10,7 +10,7 @@ import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, 
  * @param {number|string} [maximumVolume1]
  * @constructor
  */
-export default function AddSwapPoolTxData({coin0, coin1, volume0, maximumVolume1 = COIN_MAX_AMOUNT}) {
+export default function AddLiquidityTxData({coin0, coin1, volume0, maximumVolume1 = COIN_MAX_AMOUNT}) {
     validateUint(coin0, 'coin0');
     validateUint(coin1, 'coin1');
     validateAmount(volume0, 'volume0');
@@ -21,7 +21,7 @@ export default function AddSwapPoolTxData({coin0, coin1, volume0, maximumVolume1
     this.volume0 = volume0;
     this.maximumVolume1 = maximumVolume1;
 
-    this.txData = new TxDataAddSwapPool({
+    this.txData = new TxDataAddLiquidity({
         coin0: integerToHexString(coin0),
         coin1: integerToHexString(coin1),
         volume0: `0x${convertToPip(volume0, 'hex')}`,
@@ -36,10 +36,10 @@ export default function AddSwapPoolTxData({coin0, coin1, volume0, maximumVolume1
  * @param {Buffer|string} volume0
  * @param {Buffer|string} coin1
  * @param {Buffer|string} maximumVolume1
- * @return {AddSwapPoolTxData}
+ * @return {AddLiquidityTxData}
  */
-AddSwapPoolTxData.fromBufferFields = function fromBufferFields({coin0, volume0, coin1, maximumVolume1}) {
-    return new AddSwapPoolTxData({
+AddLiquidityTxData.fromBufferFields = function fromBufferFields({coin0, volume0, coin1, maximumVolume1}) {
+    return new AddLiquidityTxData({
         coin0: bufferToInteger(toBuffer(coin0)),
         coin1: bufferToInteger(toBuffer(coin1)),
         volume0: convertFromPip(bufferToInteger(toBuffer(volume0))),
@@ -49,8 +49,8 @@ AddSwapPoolTxData.fromBufferFields = function fromBufferFields({coin0, volume0, 
 
 /**
  * @param {Buffer|string} data
- * @return {AddSwapPoolTxData}
+ * @return {AddLiquidityTxData}
  */
-AddSwapPoolTxData.fromRlp = function fromRlp(data) {
-    return AddSwapPoolTxData.fromBufferFields(new TxDataAddSwapPool(data));
+AddLiquidityTxData.fromRlp = function fromRlp(data) {
+    return AddLiquidityTxData.fromBufferFields(new TxDataAddLiquidity(data));
 };
