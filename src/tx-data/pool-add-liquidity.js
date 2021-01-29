@@ -1,7 +1,6 @@
 import {TxDataAddLiquidity} from 'minterjs-tx';
 import {convertFromPip, convertToPip, toBuffer, COIN_MAX_AMOUNT} from 'minterjs-util';
 import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateUint} from '../utils.js';
-// import {convertToPip} from 'minterjs-util/src/converter.js';
 
 /**
  * @param {number|string} coin0 - coin id

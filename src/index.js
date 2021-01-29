@@ -33,22 +33,25 @@ import DelegateTxData from './tx-data/stake-delegate.js';
 import UnbondTxData from './tx-data/stake-unbond.js';
 import CreateCoinTxData from './tx-data/create-coin.js';
 import RecreateCoinTxData from './tx-data/recreate-coin.js';
-import EditCoinOwnerTxData from './tx-data/edit-coin-owner.js';
+import EditTickerOwnerTxData from './tx-data/edit-ticker-owner.js';
 import CreateMultisigTxData from './tx-data/create-multisig.js';
 import EditMultisigTxData from './tx-data/edit-multisig.js';
-import SetHaltBlockTxData from './tx-data/set-halt-block.js';
-import PriceVoteTxData from './tx-data/price-vote.js';
-import AddLiquidityTxData from './tx-data/swap-add-liquidity.js';
-import RemoveLiquidityTxData from './tx-data/swap-remove-liquidity.js';
-import BuySwapPoolTxData from './tx-data/swap-buy.js';
-import SellSwapPoolTxData from './tx-data/swap-sell.js';
-import SellAllSwapPoolTxData from './tx-data/swap-sell-all.js';
+import SetHaltBlockTxData from './tx-data/vote-halt-block.js';
+import PriceVoteTxData from './tx-data/vote-price.js';
+import AddLiquidityTxData from './tx-data/pool-add-liquidity.js';
+import RemoveLiquidityTxData from './tx-data/pool-remove-liquidity.js';
+import BuySwapPoolTxData from './tx-data/pool-buy.js';
+import SellSwapPoolTxData from './tx-data/pool-sell.js';
+import SellAllSwapPoolTxData from './tx-data/pool-sell-all.js';
 import EditCandidateCommissionTxData from './tx-data/candidate-edit-commission.js';
 import MoveStakeTxData from './tx-data/stake-move.js';
 import MintTokenTxData from './tx-data/token-mint.js';
 import BurnTokenTxData from './tx-data/token-burn.js';
 import CreateTokenTxData from './tx-data/token-create.js';
 import RecreateTokenTxData from './tx-data/token-recreate.js';
+import VoteCommissionTxData from './tx-data/vote-commission.js';
+import VoteUpdateTxData from './tx-data/vote-update.js';
+import CreateSwapPoolTxData from './tx-data/pool-create.js';
 
 export default Minter;
 export {
@@ -90,7 +93,7 @@ export {
     BuyTxData,
     CreateCoinTxData,
     RecreateCoinTxData,
-    EditCoinOwnerTxData,
+    EditTickerOwnerTxData,
     // - validator
     DeclareCandidacyTxData,
     SetCandidateOnTxData,
@@ -98,8 +101,11 @@ export {
     EditCandidateTxData,
     EditCandidatePublicKeyTxData,
     EditCandidateCommissionTxData,
+    // - vote
     SetHaltBlockTxData,
     PriceVoteTxData,
+    VoteCommissionTxData,
+    VoteUpdateTxData,
     // - delegation
     DelegateTxData,
     UnbondTxData,
@@ -109,7 +115,8 @@ export {
     // - multisig
     CreateMultisigTxData,
     EditMultisigTxData,
-    // - swap
+    // - pool
+    CreateSwapPoolTxData,
     AddLiquidityTxData,
     RemoveLiquidityTxData,
     BuySwapPoolTxData,

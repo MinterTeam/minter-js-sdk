@@ -12,7 +12,7 @@ import {Minter, API_TYPE_GATE, API_TYPE_NODE} from '~/src';
 
 const ENV_TESTNET = 'testnet';
 const ENV_QA_TESTNET = 'qa';
-const ENV_CHILI_TESTNET = 'chili';
+const ENV_TACO_TESTNET = 'taco';
 const TESTNET_MENMONIC = 'exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone';
 const TESTNET_MENMONIC_2 = 'balance exist engage bargain slab genuine urge tooth critic slab admit coyote';
 const QA_MNEMONIC = 'puzzle feed enlist rack cliff divert exist bind swamp kiwi casino pull';
@@ -44,10 +44,21 @@ const ENV_SETTINGS = {
         address2: 'Mx634550aa7dc347d5e60888da2529c56f1818e403',
         customCoin: 'TESTCOIN01',
     },
+    [ENV_TACO_TESTNET]: {
+        nodeBaseUrl: 'https://node-api.taconet.minter.network/v2/',
+        gateBaseUrl: 'https://gate-api.taconet.minter.network/api/v2/',
+        mnemonic: QA_MNEMONIC,
+        privateKey: walletFromMnemonic(QA_MNEMONIC).getPrivateKeyString(),
+        address: 'Mxeeda61bbe9929bf883af6b22f5796e4b92563ba4',
+        mnemonic2: QA_MNEMONIC_2,
+        privateKey2: walletFromMnemonic(QA_MNEMONIC_2).getPrivateKeyString(),
+        address2: 'Mx634550aa7dc347d5e60888da2529c56f1818e403',
+        customCoin: 'TESTCOIN01',
+    },
 };
 
 // select environment
-const currentEnv = ENV_TESTNET;
+const currentEnv = ENV_TACO_TESTNET;
 export const ENV_DATA = ENV_SETTINGS[currentEnv];
 
 

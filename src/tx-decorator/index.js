@@ -28,7 +28,7 @@ const TX_PARAMS_DECORATOR = {
     [TX_TYPE.CREATE_MULTISIG]: noop,
     [TX_TYPE.SET_HALT_BLOCK]: noop,
     [TX_TYPE.RECREATE_COIN]: noop,
-    [TX_TYPE.EDIT_COIN_OWNER]: noop,
+    [TX_TYPE.EDIT_TICKER_OWNER]: noop,
     [TX_TYPE.EDIT_MULTISIG]: noop,
     [TX_TYPE.PRICE_VOTE]: noop,
     [TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY]: noop,
@@ -43,6 +43,9 @@ const TX_PARAMS_DECORATOR = {
     [TX_TYPE.BURN_TOKEN]: noop,
     [TX_TYPE.CREATE_TOKEN]: noop,
     [TX_TYPE.RECREATE_TOKEN]: noop,
+    [TX_TYPE.VOTE_COMMISSION]: noop,
+    [TX_TYPE.VOTE_UPDATE]: noop,
+    [TX_TYPE.CREATE_SWAP_POOL]: noop,
 };
 
 /**

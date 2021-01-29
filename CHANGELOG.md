@@ -1,6 +1,8 @@
 ## WIP 
-- add v2 swap, token and other tx data
+- add v2 pool, token, vote, and other tx data
 - add `swapFrom` parameter to estimation API methods
+- **BREAKING** rename TX_TYPE `EDIT_COIN_OWNER` to `EDIT_TICKER_OWNER` and `EditCoinOwnerTxData` to `EditTickerOwnerTxData`
+- **BREAKING** rename some file paths
 
 ## 0.35.6
 - Improve Uint validation message

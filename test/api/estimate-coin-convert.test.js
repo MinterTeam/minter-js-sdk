@@ -94,7 +94,7 @@ describe('EstimateCoinSell', () => {
                 coinIdToBuy: 0,
             })
                 .catch((error) => {
-                    logError(error);
+                    // logError(error);
                     expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 30000);

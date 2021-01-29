@@ -13,17 +13,17 @@ import DelegateTxData from './stake-delegate.js';
 import UnbondTxData from './stake-unbond.js';
 import RedeemCheckTxData from './redeem-check.js';
 import CreateMultisigTxData from './create-multisig.js';
-import SetHaltBlockTxData from './set-halt-block.js';
+import SetHaltBlockTxData from './vote-halt-block.js';
 import RecreateCoinTxData from './recreate-coin.js';
-import EditCoinOwnerTxData from './edit-coin-owner.js';
+import EditTickerOwnerTxData from './edit-ticker-owner.js';
 import EditMultisigTxData from './edit-multisig.js';
-import PriceVoteTxData from './price-vote.js';
+import PriceVoteTxData from './vote-price.js';
 import EditCandidatePublicKeyTxData from './candidate-edit-public-key.js';
-import AddLiquidityTxData from './swap-add-liquidity.js';
-import RemoveLiquidityTxData from './swap-remove-liquidity.js';
-import BuySwapPoolTxData from './swap-buy.js';
-import SellSwapPoolTxData from './swap-sell.js';
-import SellAllSwapPoolTxData from './swap-sell-all.js';
+import AddLiquidityTxData from './pool-add-liquidity.js';
+import RemoveLiquidityTxData from './pool-remove-liquidity.js';
+import BuySwapPoolTxData from './pool-buy.js';
+import SellSwapPoolTxData from './pool-sell.js';
+import SellAllSwapPoolTxData from './pool-sell-all.js';
 import EditCandidateCommissionTxData from './candidate-edit-commission.js';
 import MoveStakeTxData from './stake-move.js';
 import MintTokenTxData from './token-mint.js';
@@ -49,7 +49,7 @@ const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.CREATE_MULTISIG]: CreateMultisigTxData,
     [TX_TYPE.SET_HALT_BLOCK]: SetHaltBlockTxData,
     [TX_TYPE.RECREATE_COIN]: RecreateCoinTxData,
-    [TX_TYPE.EDIT_COIN_OWNER]: EditCoinOwnerTxData,
+    [TX_TYPE.EDIT_TICKER_OWNER]: EditTickerOwnerTxData,
     [TX_TYPE.EDIT_MULTISIG]: EditMultisigTxData,
     [TX_TYPE.PRICE_VOTE]: PriceVoteTxData,
     [TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY]: EditCandidatePublicKeyTxData,
@@ -68,7 +68,7 @@ const TX_DATA_CONSTRUCTOR = {
 
 /**
  * @param {TX_TYPE|number|string|Buffer|Uint8Array} txType
- * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditCoinOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddLiquidityTxData|RemoveLiquidityTxData|BuySwapPoolTxData|SellSwapPoolTxData|SellAllSwapPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData}
+ * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditTickerOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddLiquidityTxData|RemoveLiquidityTxData|BuySwapPoolTxData|SellSwapPoolTxData|SellAllSwapPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData}
  */
 export default function getTxData(txType) {
     txType = normalizeTxType(txType);

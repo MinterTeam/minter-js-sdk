@@ -1,4 +1,4 @@
-import {EditCoinOwnerTxData} from '~/src';
+import {EditTickerOwnerTxData} from '~/src';
 
 describe('RecreateCoinTxData', () => {
     const txParamsData = {
@@ -6,10 +6,10 @@ describe('RecreateCoinTxData', () => {
         newOwner: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
 
     };
-    const txData = new EditCoinOwnerTxData(txParamsData).serialize();
+    const txData = new EditTickerOwnerTxData(txParamsData).serialize();
 
     test('.fromRlp', () => {
-        const params = EditCoinOwnerTxData.fromRlp(txData).fields;
+        const params = EditTickerOwnerTxData.fromRlp(txData).fields;
         expect(params)
             .toEqual(txParamsData);
     });

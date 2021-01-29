@@ -1,4 +1,4 @@
-import {TxDataEditCoinOwner} from 'minterjs-tx';
+import {TxDataEditTickerOwner} from 'minterjs-tx';
 import {toBuffer, coinToBuffer, bufferToCoin, addressToString} from 'minterjs-util';
 import {proxyNestedTxData, validateAddress, validateCoin} from '../utils.js';
 
@@ -7,14 +7,14 @@ import {proxyNestedTxData, validateAddress, validateCoin} from '../utils.js';
  * @param {string} newOwner
  * @constructor
  */
-export default function EditCoinOwnerTxData({symbol, newOwner}) {
+export default function EditTickerOwnerTxData({symbol, newOwner}) {
     validateCoin(symbol, 'symbol');
     validateAddress(newOwner, 'newOwner');
 
     this.symbol = symbol;
     this.newOwner = newOwner;
 
-    this.txData = new TxDataEditCoinOwner({
+    this.txData = new TxDataEditTickerOwner({
         symbol: coinToBuffer(symbol),
         newOwner: toBuffer(newOwner),
     });
@@ -26,10 +26,10 @@ export default function EditCoinOwnerTxData({symbol, newOwner}) {
  *
  * @param {Buffer|string} symbol
  * @param {Buffer|string} newOwner
- * @return {EditCoinOwnerTxData}
+ * @return {EditTickerOwnerTxData}
  */
-EditCoinOwnerTxData.fromBufferFields = function fromBufferFields({symbol, newOwner}) {
-    return new EditCoinOwnerTxData({
+EditTickerOwnerTxData.fromBufferFields = function fromBufferFields({symbol, newOwner}) {
+    return new EditTickerOwnerTxData({
         symbol: bufferToCoin(toBuffer(symbol)),
         newOwner: addressToString(newOwner),
     });
@@ -37,8 +37,8 @@ EditCoinOwnerTxData.fromBufferFields = function fromBufferFields({symbol, newOwn
 
 /**
  * @param {Buffer|string} data
- * @return {EditCoinOwnerTxData}
+ * @return {EditTickerOwnerTxData}
  */
-EditCoinOwnerTxData.fromRlp = function fromRlp(data) {
-    return EditCoinOwnerTxData.fromBufferFields(new TxDataEditCoinOwner(data));
+EditTickerOwnerTxData.fromRlp = function fromRlp(data) {
+    return EditTickerOwnerTxData.fromBufferFields(new TxDataEditTickerOwner(data));
 };

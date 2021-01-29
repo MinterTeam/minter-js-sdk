@@ -17,7 +17,7 @@ import {
     EditMultisigTxData,
     CreateCoinTxData,
     RecreateCoinTxData,
-    EditCoinOwnerTxData,
+    EditTickerOwnerTxData,
     SetHaltBlockTxData,
     PriceVoteTxData,
     SellAllTxData,
@@ -88,6 +88,7 @@ beforeAll(async () => {
 
     // ensure custom coin exists
     const coinPromises = API_TYPE_LIST.map((apiType) => {
+        // return [Promise.resolve(), Promise.resolve()];
         return ensureCustomCoin({coinSymbol: apiType.customCoin, privateKey: apiType.privateKey});
     });
 
@@ -141,9 +142,10 @@ describe('PostTx: send', () => {
     });
 
     test('should return signed tx', async () => {
-        const nonce = await minterGate.getNonce(ENV_DATA.address);
-        const txParams = {...txParamsData(API_TYPE_LIST[0]), nonce, gasPrice: 1};
-        const tx = prepareSignedTx(txParams, {privateKey: API_TYPE_LIST[0].privateKey});
+        const apiType = API_TYPE_LIST[0];
+        const nonce = await minterGate.getNonce(apiType.address);
+        const txParams = {...txParamsData(apiType), nonce, gasPrice: 1};
+        const tx = prepareSignedTx(txParams, {privateKey: apiType.privateKey});
         console.log(tx.serializeToString());
         expect(tx.serializeToString().length)
             .toBeGreaterThan(0);
@@ -462,11 +464,11 @@ describe('coin', () => {
         }, 70000);
     });
 
-    describe('PostTx: edit coin owner', () => {
+    describe('PostTx: edit ticker owner', () => {
         const txParamsData = (apiType, data) => ({
             chainId: 2,
-            type: TX_TYPE.EDIT_COIN_OWNER,
-            data: new EditCoinOwnerTxData(Object.assign({
+            type: TX_TYPE.EDIT_TICKER_OWNER,
+            data: new EditTickerOwnerTxData(Object.assign({
                 symbol: apiType.newCoin,
                 newOwner: generateWallet().getAddressString(),
             }, data)),
@@ -899,7 +901,8 @@ describe('validator', () => {
                 payload: 'custom message',
             });
 
-            test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+            // price vote is disabled in the blockchain since v2
+            test.skip.each(API_TYPE_LIST)('should work %s', async (apiType) => {
                 expect.assertions(2);
                 const txParams = txParamsData(apiType);
                 return apiType.postTx(txParams, {privateKey: apiType.privateKey})
