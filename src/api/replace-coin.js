@@ -70,12 +70,12 @@ function getTxParamsPathList(txParams) {
     pathList.push('gasCoin');
 
     const txType = normalizeTxType(txParams.type);
-    if (txType === TX_TYPE.SEND || txType === TX_TYPE.DECLARE_CANDIDACY || txType === TX_TYPE.DELEGATE || txType === TX_TYPE.UNBOND || txType === TX_TYPE.MOVE_STAKE || txType === TX_TYPE.MINT_TOKEN || txType === TX_TYPE.BURN_TOKEN) {
+    if (txType === TX_TYPE.SEND || txType === TX_TYPE.DECLARE_CANDIDACY || txType === TX_TYPE.DELEGATE || txType === TX_TYPE.UNBOND || txType === TX_TYPE.MOVE_STAKE || txType === TX_TYPE.MINT_TOKEN || txType === TX_TYPE.BURN_TOKEN || txType === TX_TYPE.VOTE_COMMISSION) {
         pathList.push('data.coin');
     } else if (txType === TX_TYPE.SELL || txType === TX_TYPE.SELL_ALL || txType === TX_TYPE.BUY || txType === TX_TYPE.BUY_SWAP_POOL || txType === TX_TYPE.SELL_SWAP_POOL || txType === TX_TYPE.SELL_ALL_SWAP_POOL) {
         pathList.push('data.coinToSell');
         pathList.push('data.coinToBuy');
-    } else if (txType === TX_TYPE.ADD_SWAP_POOL || txType === TX_TYPE.REMOVE_SWAP_POOL) {
+    } else if (txType === TX_TYPE.CREATE_SWAP_POOL || txType === TX_TYPE.ADD_LIQUIDITY || txType === TX_TYPE.REMOVE_LIQUIDITY) {
         pathList.push('data.coin0');
         pathList.push('data.coin1');
     } else if (txType === TX_TYPE.MULTISEND) {
