@@ -17,6 +17,7 @@ import issueCheck, {decodeCheck, getGasCoinFromCheck} from './check.js';
 import {prepareLink, decodeLink} from './link.js';
 
 import prepareSignedTx, {decodeTx, prepareTx, makeSignature} from './tx.js';
+import getTxData from './tx-data/index.js';
 
 import RedeemCheckTxData from './tx-data/redeem-check.js';
 import SendTxData from './tx-data/send.js';
@@ -85,6 +86,7 @@ export {
     decodeCheck,
     getGasCoinFromCheck,
     // tx data
+    getTxData,
     // - coin
     SendTxData,
     MultisendTxData,

@@ -30,7 +30,11 @@ import MintTokenTxData from './token-mint.js';
 import BurnTokenTxData from './token-burn.js';
 import CreateTokenTxData from './token-create.js';
 import RecreateTokenTxData from './token-recreate.js';
+import VoteCommissionTxData from './vote-commission.js';
+import VoteUpdateTxData from './vote-update.js';
+import CreateSwapPoolTxData from './pool-create.js';
 import {decodeCheck} from '../check.js';
+
 
 const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.SEND]: SendTxData,
@@ -64,11 +68,14 @@ const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.BURN_TOKEN]: BurnTokenTxData,
     [TX_TYPE.CREATE_TOKEN]: CreateTokenTxData,
     [TX_TYPE.RECREATE_TOKEN]: RecreateTokenTxData,
+    [TX_TYPE.VOTE_COMMISSION]: VoteCommissionTxData,
+    [TX_TYPE.VOTE_UPDATE]: VoteUpdateTxData,
+    [TX_TYPE.CREATE_SWAP_POOL]: CreateSwapPoolTxData,
 };
 
 /**
  * @param {TX_TYPE|number|string|Buffer|Uint8Array} txType
- * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditTickerOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddLiquidityTxData|RemoveLiquidityTxData|BuySwapPoolTxData|SellSwapPoolTxData|SellAllSwapPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData}
+ * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditTickerOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddLiquidityTxData|RemoveLiquidityTxData|BuySwapPoolTxData|SellSwapPoolTxData|SellAllSwapPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData|VoteCommissionTxData|VoteUpdateTxData|CreateSwapPoolTxData}
  */
 export default function getTxData(txType) {
     txType = normalizeTxType(txType);
