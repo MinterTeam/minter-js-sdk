@@ -69,9 +69,9 @@ function mapApiData(data) {
         [TX_TYPE.BURN_TOKEN]: data.burn_token,
         [TX_TYPE.CREATE_TOKEN]: data.create_token,
         [TX_TYPE.RECREATE_TOKEN]: data.recreate_token,
-        [TX_TYPE.VOTE_COMMISSION]: data.price_commission,
-        [TX_TYPE.VOTE_UPDATE]: data.update_network,
-        [TX_TYPE.CREATE_SWAP_POOL]: data.create_pool,
+        [TX_TYPE.VOTE_COMMISSION]: data.vote_commission,
+        [TX_TYPE.VOTE_UPDATE]: data.vote_update,
+        [TX_TYPE.CREATE_SWAP_POOL]: data.create_swap_pool,
     };
 
     return {
@@ -120,6 +120,7 @@ function mapApiData(data) {
  * @property {string|number} set_candidate_off
  * @property {string|number} create_multisig
  * @property {string|number} multisend_delta
+ * @property {string|number} multisend_base
  * @property {string|number} edit_candidate
  * @property {string|number} set_halt_block
  * @property {string|number} edit_ticker_owner
@@ -132,6 +133,7 @@ function mapApiData(data) {
  * @property {string|number} move_stake
  * @property {string|number} mint_token
  * @property {string|number} burn_token
- * @property {string|number} price_commission
- * @property {string|number} update_network
+ * @property {string|number} vote_commission
+ * @property {string|number} vote_update
+ * @property {string|number} create_swap_pool
  */

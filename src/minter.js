@@ -8,7 +8,7 @@ import PostSignedTx from './api/post-signed-tx.js';
 import EstimateCoinSell from './api/estimate-coin-sell.js';
 import EstimateCoinBuy from './api/estimate-coin-buy.js';
 import EstimateTxCommission from './api/estimate-tx-commission.js';
-import {ReplaceCoinSymbol, ReplaceCoinSymbolByPath} from './api/replace-coin.js';
+import {ReplaceCoinSymbol, ReplaceCoinSymbolByPath, GetCoinId} from './api/replace-coin.js';
 import GetCommissionPrice from './api/get-commission-price.js';
 
 /**
@@ -39,6 +39,7 @@ export default function Minter(options) {
 
     this.replaceCoinSymbol = ReplaceCoinSymbol(apiInstance);
     this.replaceCoinSymbolByPath = ReplaceCoinSymbolByPath(apiInstance);
+    this.getCoinId = GetCoinId(apiInstance);
 
     this.getCommissionPrice = GetCommissionPrice(apiInstance);
 }

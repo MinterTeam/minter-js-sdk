@@ -22,8 +22,14 @@ export function ReplaceCoinSymbol(apiInstance) {
     };
 }
 
+/**
+ *
+ * @param apiInstance
+ * @return {function(Object, Array<string>, number=, AxiosRequestConfig=): Promise<Object>}
+ * @constructor
+ */
 export function ReplaceCoinSymbolByPath(apiInstance) {
-    const getCoinInfo = GetCoinInfo(apiInstance);
+    return replaceCoinSymbolByPath;
     /**
      * @param {Object} txParams
      * @param {Array<string>} pathList
@@ -31,24 +37,23 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<Object>}
      */
-    return function replaceCoinSymbolByPath(txParams, pathList, chainId, axiosOptions) {
+    function replaceCoinSymbolByPath(txParams, pathList, chainId, axiosOptions) {
         let promiseList = {};
         pathList.forEach((path) => fillPath(path));
 
         const promiseArray = Object.values(promiseList);
         return Promise.all(promiseArray).then(() => txParams);
 
+        /**
+         * Fill promiseList by path and replace txParams value by path
+         * @param {string} path
+         */
         function fillPath(path) {
             const symbolValue = _get(txParams, path);
             if (isCoinSymbol(symbolValue)) {
                 // coinInfo promise may be used by multiple patchers
                 if (!promiseList[symbolValue]) {
-                    if (isBaseCoin(chainId, symbolValue)) {
-                        promiseList[symbolValue] = Promise.resolve(0);
-                    } else {
-                        promiseList[symbolValue] = getCoinInfo(symbolValue, axiosOptions)
-                            .then((coinInfo) => coinInfo.id);
-                    }
+                    promiseList[symbolValue] = _getCoinId(symbolValue, chainId, apiInstance, axiosOptions);
                 }
                 // append txParams patcher
                 promiseList[symbolValue] = promiseList[symbolValue]
@@ -58,7 +63,45 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
                     });
             }
         }
-    };
+    }
+}
+
+/**
+ * @param apiInstance
+ * @return {function((string|Array<string>), number=, AxiosRequestConfig=): Promise<Object>}
+ */
+export function GetCoinId(apiInstance) {
+    return getCoinId;
+
+    /**
+     * @param {string|Array<string>} symbol
+     * @param {number} [chainId]
+     * @param {AxiosRequestConfig} [axiosOptions]
+     * @return {Promise<Object>}
+     */
+    function getCoinId(symbol, chainId, axiosOptions) {
+        if (Array.isArray(symbol)) {
+            const symbolList = symbol;
+            const promiseList = symbolList.map((symbolValue) => _getCoinId(symbolValue, chainId, apiInstance, axiosOptions));
+            return Promise.all(promiseList);
+        } else {
+            return _getCoinId(symbol, chainId, apiInstance, axiosOptions);
+        }
+    }
+}
+
+function _getCoinId(symbol, chainId, apiInstance, axiosOptions) {
+    if (isCoinSymbol(symbol)) {
+        if (isBaseCoin(chainId, symbol)) {
+            return Promise.resolve(0);
+        } else {
+            const getCoinInfo = GetCoinInfo(apiInstance);
+            return getCoinInfo(symbol, axiosOptions)
+                .then((coinInfo) => coinInfo.id);
+        }
+    } else {
+        return Promise.resolve(symbol);
+    }
 }
 
 /**

@@ -87,3 +87,34 @@ describe('ReplaceCoinSymbolByPath', () => {
             });
     }, 30000);
 });
+
+describe('GetCoinId', () => {
+    const txParamsData = (apiType) => ({
+        gasCoin: apiType.customCoin,
+    });
+
+    test.each(API_TYPE_LIST)('should work single %s', (apiType) => {
+        expect.assertions(1);
+        return apiType.getCoinId(apiType.customCoin)
+            .then((coinId) => {
+                expect(coinId).toBeGreaterThan(0);
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
+            });
+    }, 30000);
+
+    test.each(API_TYPE_LIST)('should work array %s', (apiType) => {
+        expect.assertions(2);
+        return apiType.getCoinId([apiType.customCoin, 'MNT'], 2)
+            .then(([customCoinId, baseCoinId]) => {
+                expect(customCoinId).toBeGreaterThan(0);
+                expect(baseCoinId).toBe(0);
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
+            });
+    }, 30000);
+});

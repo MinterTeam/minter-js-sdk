@@ -1,6 +1,7 @@
 ## WIP 
 - add v2 pool, token, vote, and other tx data
 - add `swapFrom` parameter to estimation API methods
+- add `getCoinId` API method
 - **BREAKING** rename TX_TYPE `EDIT_COIN_OWNER` to `EDIT_TICKER_OWNER` and `EditCoinOwnerTxData` to `EditTickerOwnerTxData`
 - **BREAKING** rename some file paths
 
