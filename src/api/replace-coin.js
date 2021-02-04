@@ -37,7 +37,7 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<Object>}
      */
-    function replaceCoinSymbolByPath(txParams, pathList, chainId, axiosOptions) {
+    function replaceCoinSymbolByPath(txParams, pathList, chainId = apiInstance.chainId, axiosOptions) {
         let promiseList = {};
         pathList.forEach((path) => fillPath(path));
 
@@ -79,7 +79,7 @@ export function GetCoinId(apiInstance) {
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<Object>}
      */
-    function getCoinId(symbol, chainId, axiosOptions) {
+    function getCoinId(symbol, chainId = apiInstance.chainId, axiosOptions) {
         if (Array.isArray(symbol)) {
             const symbolList = symbol;
             const promiseList = symbolList.map((symbolValue) => _getCoinId(symbolValue, chainId, apiInstance, axiosOptions));
