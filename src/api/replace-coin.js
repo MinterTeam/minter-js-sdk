@@ -2,7 +2,7 @@ import _get from 'lodash-es/get.js';
 import _set from 'lodash-es/set.js';
 import {TX_TYPE, normalizeTxType} from 'minterjs-util';
 import GetCoinInfo from './get-coin-info.js';
-import {validateCoin} from '../utils.js';
+import {validateTicker} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
@@ -157,8 +157,12 @@ function isCoinSymbol(coin) {
         return false;
     }
 
+    if (/^P-[0-9]+$/.test(coin)) {
+        return true;
+    }
+
     try {
-        validateCoin(coin.split('-')[0]);
+        validateTicker(coin.split('-')[0]);
     } catch (error) {
         return false;
     }

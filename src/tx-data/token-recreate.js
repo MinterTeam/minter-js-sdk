@@ -1,6 +1,6 @@
 import {TxDataRecreateToken} from 'minterjs-tx';
 import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY} from 'minterjs-util';
-import {proxyNestedTxData, bufferToInteger, validateAmount, validateCoin, validateMaxSupply, validateBoolean, bufferToBoolean} from '../utils.js';
+import {proxyNestedTxData, bufferToInteger, validateAmount, validateTicker, validateMaxSupply, validateBoolean, bufferToBoolean} from '../utils.js';
 
 /**
  * @param {string} name
@@ -12,7 +12,7 @@ import {proxyNestedTxData, bufferToInteger, validateAmount, validateCoin, valida
  * @constructor
  */
 export default function RecreateTokenTxData({name, symbol, initialAmount, maxSupply = COIN_MAX_MAX_SUPPLY, mintable, burnable}) {
-    validateCoin(symbol, 'symbol');
+    validateTicker(symbol, 'symbol');
     validateAmount(initialAmount, 'initialAmount');
     validateMaxSupply(maxSupply, initialAmount);
     validateBoolean(mintable, 'mintable');

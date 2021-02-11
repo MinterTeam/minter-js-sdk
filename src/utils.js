@@ -214,7 +214,7 @@ export function validateUint(origValue, fieldName) {
     }
 }
 
-export function validateCoin(value, fieldName) {
+export function validateTicker(value, fieldName) {
     validateNotEmpty(value, fieldName);
 
     if (typeof value === 'string' && !(/^[A-Z0-9]{3,10}$/.test(value))) {

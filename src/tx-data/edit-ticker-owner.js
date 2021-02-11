@@ -1,6 +1,6 @@
 import {TxDataEditTickerOwner} from 'minterjs-tx';
 import {toBuffer, coinToBuffer, bufferToCoin, addressToString} from 'minterjs-util';
-import {proxyNestedTxData, validateAddress, validateCoin} from '../utils.js';
+import {proxyNestedTxData, validateAddress, validateTicker} from '../utils.js';
 
 /**
  * @param {string} symbol
@@ -8,7 +8,7 @@ import {proxyNestedTxData, validateAddress, validateCoin} from '../utils.js';
  * @constructor
  */
 export default function EditTickerOwnerTxData({symbol, newOwner}) {
-    validateCoin(symbol, 'symbol');
+    validateTicker(symbol, 'symbol');
     validateAddress(newOwner, 'newOwner');
 
     this.symbol = symbol;
