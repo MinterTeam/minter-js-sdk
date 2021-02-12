@@ -1,7 +1,6 @@
 import {toBuffer as toBufferUtil} from 'ethereumjs-util/dist/bytes.js';
 import {decode as rlpDecode} from 'rlp';
 import {isHexPrefixed} from 'ethjs-util';
-import {fromByteArray as base64encode, toByteArray as base64decode} from 'base64-js';
 import {TxDataRedeemCheck, defineProperties} from 'minterjs-tx';
 import {TX_TYPE, normalizeTxType} from 'minterjs-util';
 import {ensureBufferData, decodeTxData} from './tx-data/index.js';
@@ -148,14 +147,15 @@ export function decodeLink(url, {address, privateKey, decodeCheck} = {}) {
 }
 
 function base64urlEncode(byteArray) {
-    return base64encode(byteArray).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    return Buffer.from(byteArray).toString('base64').replace(/\+/g, '-').replace(/\//g, '_')
+        .replace(/=/g, '');
 }
 
 function base64urlDecode(base64urlString) {
     const padModulus = base64urlString.length % 4;
     const padLength = padModulus ? 4 - padModulus : 0;
     const pad = new Array(padLength).fill('=').join('');
-    return base64decode(base64urlString + pad);
+    return Buffer.from(base64urlString + pad, 'base64');
 }
 
 /**

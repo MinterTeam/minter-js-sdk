@@ -151,11 +151,9 @@ export function ensureBufferSignature(signatureData, signatureType) {
     if (!signatureData) {
         return signatureData;
     }
-    if (signatureData && toInteger(signatureType) === '2') {
-        // serialize, if it TxMultisignature
-        if (typeof signatureData.serialize === 'function') {
-            signatureData = signatureData.serialize();
-        }
+    // serialize, if it TxMultisignature
+    if (signatureData && toInteger(signatureType) === '2' && typeof signatureData.serialize === 'function') {
+        signatureData = signatureData.serialize();
     }
 
     // make buffer from object

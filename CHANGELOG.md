@@ -5,6 +5,12 @@
 - **BREAKING** rename TX_TYPE `EDIT_COIN_OWNER` to `EDIT_TICKER_OWNER` and `EditCoinOwnerTxData` to `EditTickerOwnerTxData`
 - **BREAKING** rename some file paths
 
+## 0.37.0 - 2020-12-30 
+- **BREAKING** don't autofill `gasCoin` with coin to spent, use base coin (BIP) by default everywhere
+
+## 0.36.0 - 2020-12-22
+- Update deps to support Minter node v1.2.1 (fee calculation changed)
+
 ## 0.35.6
 - Improve Uint validation message
 - Fix: allow `nonce` and `gasPrice` to be omitted in the Minter Link 
