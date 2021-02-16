@@ -12,9 +12,12 @@ import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint, va
  * @param {number|string} buyBancor
  * @param {number|string} sellBancor
  * @param {number|string} sellAllBancor
- * @param {number|string} buyPool
- * @param {number|string} sellPool
- * @param {number|string} sellAllPool
+ * @param {number|string} buyPoolBase
+ * @param {number|string} buyPoolDelta
+ * @param {number|string} sellPoolBase
+ * @param {number|string} sellPoolDelta
+ * @param {number|string} sellAllPoolBase
+ * @param {number|string} sellAllPoolDelta
  * @param {number|string} createTicker3
  * @param {number|string} createTicker4
  * @param {number|string} createTicker5
@@ -59,9 +62,12 @@ export default function VoteCommissionTxData({
     buyBancor,
     sellBancor,
     sellAllBancor,
-    buyPool,
-    sellPool,
-    sellAllPool,
+    buyPoolBase,
+    buyPoolDelta,
+    sellPoolBase,
+    sellPoolDelta,
+    sellAllPoolBase,
+    sellAllPoolDelta,
     createTicker3,
     createTicker4,
     createTicker5,
@@ -104,9 +110,12 @@ export default function VoteCommissionTxData({
     validateAmount(buyBancor, 'buyBancor');
     validateAmount(sellBancor, 'sellBancor');
     validateAmount(sellAllBancor, 'sellAllBancor');
-    validateAmount(buyPool, 'buyPool');
-    validateAmount(sellPool, 'sellPool');
-    validateAmount(sellAllPool, 'sellAllPool');
+    validateAmount(buyPoolBase, 'buyPoolBase');
+    validateAmount(buyPoolDelta, 'buyPoolDelta');
+    validateAmount(sellPoolBase, 'sellPoolBase');
+    validateAmount(sellPoolDelta, 'sellPoolDelta');
+    validateAmount(sellAllPoolBase, 'sellAllPoolBase');
+    validateAmount(sellAllPoolDelta, 'sellAllPoolDelta');
     validateAmount(createTicker3, 'createTicker3');
     validateAmount(createTicker4, 'createTicker4');
     validateAmount(createTicker5, 'createTicker5');
@@ -149,9 +158,12 @@ export default function VoteCommissionTxData({
     this.buyBancor = buyBancor;
     this.sellBancor = sellBancor;
     this.sellAllBancor = sellAllBancor;
-    this.buyPool = buyPool;
-    this.sellPool = sellPool;
-    this.sellAllPool = sellAllPool;
+    this.buyPoolBase = buyPoolBase;
+    this.buyPoolDelta = buyPoolDelta;
+    this.sellPoolBase = sellPoolBase;
+    this.sellPoolDelta = sellPoolDelta;
+    this.sellAllPoolBase = sellAllPoolBase;
+    this.sellAllPoolDelta = sellAllPoolDelta;
     this.createTicker3 = createTicker3;
     this.createTicker4 = createTicker4;
     this.createTicker5 = createTicker5;
@@ -195,9 +207,12 @@ export default function VoteCommissionTxData({
         buyBancor: `0x${convertToPip(buyBancor, 'hex')}`,
         sellBancor: `0x${convertToPip(sellBancor, 'hex')}`,
         sellAllBancor: `0x${convertToPip(sellAllBancor, 'hex')}`,
-        buyPool: `0x${convertToPip(buyPool, 'hex')}`,
-        sellPool: `0x${convertToPip(sellPool, 'hex')}`,
-        sellAllPool: `0x${convertToPip(sellAllPool, 'hex')}`,
+        buyPoolBase: `0x${convertToPip(buyPoolBase, 'hex')}`,
+        buyPoolDelta: `0x${convertToPip(buyPoolDelta, 'hex')}`,
+        sellPoolBase: `0x${convertToPip(sellPoolBase, 'hex')}`,
+        sellPoolDelta: `0x${convertToPip(sellPoolDelta, 'hex')}`,
+        sellAllPoolBase: `0x${convertToPip(sellAllPoolBase, 'hex')}`,
+        sellAllPoolDelta: `0x${convertToPip(sellAllPoolDelta, 'hex')}`,
         createTicker3: `0x${convertToPip(createTicker3, 'hex')}`,
         createTicker4: `0x${convertToPip(createTicker4, 'hex')}`,
         createTicker5: `0x${convertToPip(createTicker5, 'hex')}`,
@@ -245,9 +260,12 @@ export default function VoteCommissionTxData({
  * @param {Buffer|string|number} buyBancor
  * @param {Buffer|string|number} sellBancor
  * @param {Buffer|string|number} sellAllBancor
- * @param {Buffer|string|number} buyPool
- * @param {Buffer|string|number} sellPool
- * @param {Buffer|string|number} sellAllPool
+ * @param {Buffer|string|number} buyPoolBase
+ * @param {Buffer|string|number} buyPoolDelta
+ * @param {Buffer|string|number} sellPoolBase
+ * @param {Buffer|string|number} sellPoolDelta
+ * @param {Buffer|string|number} sellAllPoolBase
+ * @param {Buffer|string|number} sellAllPoolDelta
  * @param {Buffer|string|number} createTicker3
  * @param {Buffer|string|number} createTicker4
  * @param {Buffer|string|number} createTicker5
@@ -283,7 +301,7 @@ export default function VoteCommissionTxData({
  * @param {Buffer|string|number} createPool
  * @return {VoteCommissionTxData}
  */
-VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, height, coin, payloadByte, send, buyBancor, sellBancor, sellAllBancor, buyPool, sellPool, sellAllPool, createTicker3, createTicker4, createTicker5, createTicker6, createTicker7to10, createCoin, createToken, recreateCoin, recreateToken, declareCandidacy, delegate, unbond, redeemCheck, setCandidateOn, setCandidateOff, createMultisig, multisendBase, multisendDelta, editCandidate, setHaltBlock, editTickerOwner, editMultisig, priceVote, editCandidatePublicKey, addLiquidity, removeLiquidity, editCandidateCommission, moveStake, burnToken, mintToken, voteCommission, voteUpdate, createPool}) {
+VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, height, coin, payloadByte, send, buyBancor, sellBancor, sellAllBancor, buyPoolBase, buyPoolDelta, sellPoolBase, sellPoolDelta, sellAllPoolBase, sellAllPoolDelta, createTicker3, createTicker4, createTicker5, createTicker6, createTicker7to10, createCoin, createToken, recreateCoin, recreateToken, declareCandidacy, delegate, unbond, redeemCheck, setCandidateOn, setCandidateOff, createMultisig, multisendBase, multisendDelta, editCandidate, setHaltBlock, editTickerOwner, editMultisig, priceVote, editCandidatePublicKey, addLiquidity, removeLiquidity, editCandidateCommission, moveStake, burnToken, mintToken, voteCommission, voteUpdate, createPool}) {
     return new VoteCommissionTxData({
         publicKey: publicToString(publicKey),
         height: bufferToInteger(toBuffer(height)),
@@ -293,9 +311,12 @@ VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, he
         buyBancor: convertFromPip(bufferToInteger(toBuffer(buyBancor))),
         sellBancor: convertFromPip(bufferToInteger(toBuffer(sellBancor))),
         sellAllBancor: convertFromPip(bufferToInteger(toBuffer(sellAllBancor))),
-        buyPool: convertFromPip(bufferToInteger(toBuffer(buyPool))),
-        sellPool: convertFromPip(bufferToInteger(toBuffer(sellPool))),
-        sellAllPool: convertFromPip(bufferToInteger(toBuffer(sellAllPool))),
+        buyPoolBase: convertFromPip(bufferToInteger(toBuffer(buyPoolBase))),
+        buyPoolDelta: convertFromPip(bufferToInteger(toBuffer(buyPoolDelta))),
+        sellPoolBase: convertFromPip(bufferToInteger(toBuffer(sellPoolBase))),
+        sellPoolDelta: convertFromPip(bufferToInteger(toBuffer(sellPoolDelta))),
+        sellAllPoolBase: convertFromPip(bufferToInteger(toBuffer(sellAllPoolBase))),
+        sellAllPoolDelta: convertFromPip(bufferToInteger(toBuffer(sellAllPoolDelta))),
         createTicker3: convertFromPip(bufferToInteger(toBuffer(createTicker3))),
         createTicker4: convertFromPip(bufferToInteger(toBuffer(createTicker4))),
         createTicker5: convertFromPip(bufferToInteger(toBuffer(createTicker5))),
