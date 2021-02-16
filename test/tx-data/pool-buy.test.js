@@ -1,16 +1,15 @@
-import {BuySwapPoolTxData} from '~/src';
+import {BuyPoolTxData} from '~/src';
 import {clearData} from '~/test/utils';
 
-describe('BuySwapPoolTxData', () => {
+describe('BuyPoolTxData', () => {
     const txParamsData = {
-        coinToSell: '0',
-        coinToBuy: '1',
+        coins: ['1', '0'],
         valueToBuy: '20',
     };
-    const txData = new BuySwapPoolTxData(txParamsData).serialize();
+    const txData = new BuyPoolTxData(txParamsData).serialize();
 
     test('.fromRlp', () => {
-        const params = BuySwapPoolTxData.fromRlp(txData).fields;
+        const params = BuyPoolTxData.fromRlp(txData).fields;
         delete params.maximumValueToSell;
         expect(params)
             .toEqual(txParamsData);

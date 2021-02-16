@@ -1,6 +1,6 @@
 import {TxDataEditMultisig} from 'minterjs-tx';
 import {addressToString, toBuffer} from 'minterjs-util';
-import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAddress, validateUint} from '../utils.js';
+import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAddress, validateUint, validateUintArray} from '../utils.js';
 
 /**
  * @param {Array} addresses
@@ -9,15 +9,15 @@ import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAddress,
  * @constructor
  */
 export default function EditMultisigTxData({addresses, weights, threshold}) {
+    validateUintArray(weights, 'weights');
+    validateUint(threshold);
+
     this.addresses = addresses;
     this.weights = weights;
     this.threshold = threshold;
 
     if (!Array.isArray(addresses)) {
         throw new TypeError('Field `addresses` is not an array');
-    }
-    if (!Array.isArray(weights)) {
-        throw new TypeError('Field `weights` is not an array');
     }
     if (addresses.length > 32) {
         throw new Error('Invalid `addresses` count, it must not be greater than 32');
@@ -36,12 +36,6 @@ export default function EditMultisigTxData({addresses, weights, threshold}) {
     weights.forEach((weight, index) => {
         if (weight > 1023 || weight < 0) {
             throw new Error(`\`weights\` field contains invalid weight at index: ${index}, it should be between 0 and 1023`);
-        }
-        try {
-            validateUint(weight, 'weights');
-        } catch (error) {
-            // update error message
-            throw new Error(error.message.replace('`weights`', `\`weights\` contain invalid weight at index: ${index}, it `));
         }
     });
 

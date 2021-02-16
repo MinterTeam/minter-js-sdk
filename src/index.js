@@ -41,9 +41,9 @@ import SetHaltBlockTxData from './tx-data/vote-halt-block.js';
 import PriceVoteTxData from './tx-data/vote-price.js';
 import AddLiquidityTxData from './tx-data/pool-add-liquidity.js';
 import RemoveLiquidityTxData from './tx-data/pool-remove-liquidity.js';
-import BuySwapPoolTxData from './tx-data/pool-buy.js';
-import SellSwapPoolTxData from './tx-data/pool-sell.js';
-import SellAllSwapPoolTxData from './tx-data/pool-sell-all.js';
+import BuyPoolTxData from './tx-data/pool-buy.js';
+import SellPoolTxData from './tx-data/pool-sell.js';
+import SellAllPoolTxData from './tx-data/pool-sell-all.js';
 import EditCandidateCommissionTxData from './tx-data/candidate-edit-commission.js';
 import MoveStakeTxData from './tx-data/stake-move.js';
 import MintTokenTxData from './tx-data/token-mint.js';
@@ -52,7 +52,7 @@ import CreateTokenTxData from './tx-data/token-create.js';
 import RecreateTokenTxData from './tx-data/token-recreate.js';
 import VoteCommissionTxData from './tx-data/vote-commission.js';
 import VoteUpdateTxData from './tx-data/vote-update.js';
-import CreateSwapPoolTxData from './tx-data/pool-create.js';
+import CreatePoolTxData from './tx-data/pool-create.js';
 
 export default Minter;
 export {
@@ -118,12 +118,12 @@ export {
     CreateMultisigTxData,
     EditMultisigTxData,
     // - pool
-    CreateSwapPoolTxData,
+    CreatePoolTxData,
     AddLiquidityTxData,
     RemoveLiquidityTxData,
-    BuySwapPoolTxData,
-    SellSwapPoolTxData,
-    SellAllSwapPoolTxData,
+    BuyPoolTxData,
+    SellPoolTxData,
+    SellAllPoolTxData,
     // - token
     CreateTokenTxData,
     RecreateTokenTxData,

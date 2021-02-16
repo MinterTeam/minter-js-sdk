@@ -9,7 +9,7 @@ import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, 
  * @param {number|string} volume1
  * @constructor
  */
-export default function CreateSwapPoolTxData({coin0, coin1, volume0, volume1}) {
+export default function CreatePoolTxData({coin0, coin1, volume0, volume1}) {
     validateUint(coin0, 'coin0');
     validateUint(coin1, 'coin1');
     validateAmount(volume0, 'volume0');
@@ -35,10 +35,10 @@ export default function CreateSwapPoolTxData({coin0, coin1, volume0, volume1}) {
  * @param {Buffer|string} volume0
  * @param {Buffer|string} coin1
  * @param {Buffer|string} volume1
- * @return {CreateSwapPoolTxData}
+ * @return {CreatePoolTxData}
  */
-CreateSwapPoolTxData.fromBufferFields = function fromBufferFields({coin0, volume0, coin1, volume1}) {
-    return new CreateSwapPoolTxData({
+CreatePoolTxData.fromBufferFields = function fromBufferFields({coin0, volume0, coin1, volume1}) {
+    return new CreatePoolTxData({
         coin0: bufferToInteger(toBuffer(coin0)),
         coin1: bufferToInteger(toBuffer(coin1)),
         volume0: convertFromPip(bufferToInteger(toBuffer(volume0))),
@@ -48,8 +48,8 @@ CreateSwapPoolTxData.fromBufferFields = function fromBufferFields({coin0, volume
 
 /**
  * @param {Buffer|string} data
- * @return {CreateSwapPoolTxData}
+ * @return {CreatePoolTxData}
  */
-CreateSwapPoolTxData.fromRlp = function fromRlp(data) {
-    return CreateSwapPoolTxData.fromBufferFields(new TxDataCreateSwapPool(data));
+CreatePoolTxData.fromRlp = function fromRlp(data) {
+    return CreatePoolTxData.fromBufferFields(new TxDataCreateSwapPool(data));
 };

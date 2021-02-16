@@ -214,6 +214,20 @@ export function validateUint(origValue, fieldName) {
     }
 }
 
+export function validateUintArray(origValue, fieldName) {
+    if (!Array.isArray(origValue)) {
+        throw new TypeError(`Field \`${fieldName}\` is not an array`);
+    }
+    origValue.forEach((coin, index) => {
+        try {
+            validateUint(coin, fieldName);
+        } catch (error) {
+            // update error message
+            throw new Error(error.message.replace(`\`${fieldName}\``, `\`${fieldName}\` contain invalid item at index: ${index}, it `));
+        }
+    });
+}
+
 export function validateTicker(value, fieldName) {
     validateNotEmpty(value, fieldName);
 

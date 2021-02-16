@@ -21,9 +21,9 @@ import PriceVoteTxData from './vote-price.js';
 import EditCandidatePublicKeyTxData from './candidate-edit-public-key.js';
 import AddLiquidityTxData from './pool-add-liquidity.js';
 import RemoveLiquidityTxData from './pool-remove-liquidity.js';
-import BuySwapPoolTxData from './pool-buy.js';
-import SellSwapPoolTxData from './pool-sell.js';
-import SellAllSwapPoolTxData from './pool-sell-all.js';
+import BuyPoolTxData from './pool-buy.js';
+import SellPoolTxData from './pool-sell.js';
+import SellAllPoolTxData from './pool-sell-all.js';
 import EditCandidateCommissionTxData from './candidate-edit-commission.js';
 import MoveStakeTxData from './stake-move.js';
 import MintTokenTxData from './token-mint.js';
@@ -32,7 +32,7 @@ import CreateTokenTxData from './token-create.js';
 import RecreateTokenTxData from './token-recreate.js';
 import VoteCommissionTxData from './vote-commission.js';
 import VoteUpdateTxData from './vote-update.js';
-import CreateSwapPoolTxData from './pool-create.js';
+import CreatePoolTxData from './pool-create.js';
 import {decodeCheck} from '../check.js';
 
 
@@ -59,9 +59,9 @@ const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY]: EditCandidatePublicKeyTxData,
     [TX_TYPE.ADD_LIQUIDITY]: AddLiquidityTxData,
     [TX_TYPE.REMOVE_LIQUIDITY]: RemoveLiquidityTxData,
-    [TX_TYPE.BUY_SWAP_POOL]: BuySwapPoolTxData,
-    [TX_TYPE.SELL_SWAP_POOL]: SellSwapPoolTxData,
-    [TX_TYPE.SELL_ALL_SWAP_POOL]: SellAllSwapPoolTxData,
+    [TX_TYPE.BUY_SWAP_POOL]: BuyPoolTxData,
+    [TX_TYPE.SELL_SWAP_POOL]: SellPoolTxData,
+    [TX_TYPE.SELL_ALL_SWAP_POOL]: SellAllPoolTxData,
     [TX_TYPE.EDIT_CANDIDATE_COMMISSION]: EditCandidateCommissionTxData,
     [TX_TYPE.MOVE_STAKE]: MoveStakeTxData,
     [TX_TYPE.MINT_TOKEN]: MintTokenTxData,
@@ -70,12 +70,12 @@ const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.RECREATE_TOKEN]: RecreateTokenTxData,
     [TX_TYPE.VOTE_COMMISSION]: VoteCommissionTxData,
     [TX_TYPE.VOTE_UPDATE]: VoteUpdateTxData,
-    [TX_TYPE.CREATE_SWAP_POOL]: CreateSwapPoolTxData,
+    [TX_TYPE.CREATE_SWAP_POOL]: CreatePoolTxData,
 };
 
 /**
  * @param {TX_TYPE|number|string|Buffer|Uint8Array} txType
- * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditTickerOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddLiquidityTxData|RemoveLiquidityTxData|BuySwapPoolTxData|SellSwapPoolTxData|SellAllSwapPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData|VoteCommissionTxData|VoteUpdateTxData|CreateSwapPoolTxData}
+ * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditTickerOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddLiquidityTxData|RemoveLiquidityTxData|BuyPoolTxData|SellPoolTxData|SellAllPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData|VoteCommissionTxData|VoteUpdateTxData|CreatePoolTxData}
  */
 export default function getTxData(txType) {
     txType = normalizeTxType(txType);
