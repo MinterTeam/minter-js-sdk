@@ -1,6 +1,6 @@
 import {convertFromPip, convertToPip} from 'minterjs-util';
-import {isValidNumber} from '~/src/utils.js';
 // import {convertFromPip, convertToPip} from 'minterjs-util/src/converter.js';
+import {isValidNumber} from '../utils.js';
 
 /**
  * @typedef {Object} EstimateSellResult
