@@ -1,10 +1,12 @@
 import {convertFromPip, convertToPip} from 'minterjs-util';
+import {isValidNumber} from '~/src/utils.js';
 // import {convertFromPip, convertToPip} from 'minterjs-util/src/converter.js';
 
 /**
  * @typedef {Object} EstimateSellResult
  * @property {number|string} will_get - amount of coinToBuy
  * @property {number|string} commission - amount of coinToSell to pay fee
+ * @property {"pool"|"bancor"} swap_from
  */
 
 /**
@@ -47,6 +49,12 @@ export default function EstimateCoinSell(apiInstance) {
         return apiInstance.get('estimate_coin_sell', {...axiosOptions, params})
             .then((response) => {
                 const resData = response.data;
+                if (!isValidNumber(resData.will_get)) {
+                    throw new Error('Invalid estimation data, `will_get` not specified');
+                }
+                if (!isValidNumber(resData.commission)) {
+                    throw new Error('Invalid estimation data, `commission` not specified');
+                }
                 // receive pips from node and convert them
                 return {
                     will_get: convertFromPip(resData.will_get),

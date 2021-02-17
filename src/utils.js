@@ -18,6 +18,11 @@ export function isNumericInteger(num) {
     }
 }
 
+export function isValidNumber(value) {
+    const invalid = (typeof value !== 'number' && typeof value !== 'string') || (typeof value === 'string' && value.length === 0);
+    return !invalid;
+}
+
 /**
  * @param {number|string|ByteArray} num
  * @return {string}
