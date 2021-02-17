@@ -56,10 +56,9 @@ export default function EstimateCoinSell(apiInstance) {
                     throw new Error('Invalid estimation data, `commission` not specified');
                 }
                 // receive pips from node and convert them
-                return {
-                    will_get: convertFromPip(resData.will_get),
-                    commission: convertFromPip(resData.commission),
-                };
+                resData.will_get = convertFromPip(resData.will_get);
+                resData.commission = convertFromPip(resData.commission);
+                return resData;
             });
     };
 }

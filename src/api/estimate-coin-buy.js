@@ -23,6 +23,7 @@ export default function EstimateCoinBuy(apiInstance) {
      * @param {number|string} [params.coinIdToSell] - ID of the coin to sell
      * @param {string} [params.coinToSell] - symbol of the coin to sell
      * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate from pool, bancor or optimal
+     * @param {Array<number>} [params.route]
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<EstimateBuyResult>}
      */
@@ -44,6 +45,7 @@ export default function EstimateCoinBuy(apiInstance) {
             coin_id_to_sell: params.coinIdToSell,
             coin_to_sell: params.coinToSell,
             swap_from: params.swapFrom,
+            route: params.route,
         };
 
         return apiInstance.get('estimate_coin_buy', {...axiosOptions, params})
@@ -56,10 +58,9 @@ export default function EstimateCoinBuy(apiInstance) {
                     throw new Error('Invalid estimation data, `commission` not specified');
                 }
                 // convert pips
-                return {
-                    will_pay: convertFromPip(resData.will_pay),
-                    commission: convertFromPip(resData.commission),
-                };
+                resData.will_pay = convertFromPip(resData.will_pay);
+                resData.commission = convertFromPip(resData.commission);
+                return resData;
             });
     };
 }
