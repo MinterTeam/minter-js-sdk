@@ -154,7 +154,7 @@ const txParams = {
 // replace coin symbols in txParams with coin ids
 minter.replaceCoinSymbol(txParams)
     .then((newTxParams) => {
-        return minter.postTx(txParams, {
+        return minter.postTx(newTxParams, {
             privateKey: '0x5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da'
         })
     })
@@ -210,12 +210,13 @@ const minterNode = new Minter({chainId: 2, apiType: 'node', baseURL: 'https://no
 
 ### .postTx()
 
-Post new transaction to the blockchain
-Accept [tx params](#Tx params constructors) object and make asynchronous request to the blockchain API.
-`txParams.nonce` - optional, if no nonce given, it will be requested by `getNonce` automatically.
-`txParams.gasPrice` - 1 by default, fee multiplier, should be equal or greater than current mempool's min gas price.
-`gasRetryLimit` - count of repeating request, 2 by default. If first request fails because of low gas, it will be repeated with updated `gasPrice`
-`mempoolRetryLimit` - count of repeating request, 0 by default. If first request fails because of error "Tx from address already exists in mempool", it will be repeated after 5 seconds (average time of the block) to try put it in the new block
+Post new transaction to the blockchain.  
+Accept [tx params](#tx-params) object and make asynchronous request to the blockchain API.  
+- `txParams.nonce` - optional, if no nonce given, it will be requested by `getNonce` automatically.  
+- `txParams.gasPrice` - 1 by default, fee multiplier, should be equal or greater than current mempool's min gas price.  
+- `gasRetryLimit` - count of repeating request, 2 by default. If first request fails because of low gas, it will be repeated with updated `gasPrice`  
+- `mempoolRetryLimit` - count of repeating request, 0 by default. If first request fails because of error "Tx from address already exists in mempool", it will be repeated after 5 seconds (average time of the block) to try put it in the new block
+
 Returns promise that resolves with:
  - sent transaction data included in a **block** (from gate), 
  - or transaction hash included in **mempool** (from node). 
@@ -259,8 +260,8 @@ minter.postTx(txParams, {privateKey: '...', gasRetryLimit: 2, mempoolRetryLimit:
 
 ### .postSignedTx()
 
-Post new transaction to the blockchain
-Accept signed tx string or Buffer and make asynchronous request to the blockchain API.
+Post new transaction to the blockchain.  
+Accept signed tx string or Buffer and make asynchronous request to the blockchain API.  
 Returns promise that resolves with:
  - sent transaction data included in a **block** (from gate), 
  - or transaction hash included in **mempool** (from node). 
@@ -280,8 +281,8 @@ minter.postSignedTx('0xf8920102018a4d4e540000000000000001aae98a4d4e5400000000...
 
 ### .getNonce()
 
-Get nonce for the new transaction from given address.
-Accept address string and make asynchronous request to the blockchain API.
+Get nonce for the new transaction from given address.  
+Accept address string and make asynchronous request to the blockchain API.  
 Returns promise that resolves with nonce for new tx (current address tx count + 1).
 
 ```js
@@ -405,8 +406,8 @@ minter.estimateCoinBuy({
 ```
 
 ### .estimateTxCommission()
-Estimate transaction fee. Useful for transactions with `gasCoin` different from base coin BIP (or MNT).
-Accept string with raw signed tx.
+Estimate transaction fee. Useful for transactions with `gasCoin` different from base coin BIP (or MNT).  
+Accept string with raw signed tx.  
 Resolves with commission value.
 
 ```js
@@ -419,7 +420,7 @@ minter.estimateTxCommission('0xf8920101028a4d4e540000000000000001aae98a4d4e...')
 
 
 ### .replaceCoinSymbol()
-Replace coin symbols with coin ids in txParams object
+Replace coin symbols with coin ids in txParams object.
 
 ```js
 /**
@@ -453,7 +454,7 @@ minter.replaceCoinSymbol(txParams)
 
 
 ### .replaceCoinSymbolByPath()
-Replace coin symbols with coin ids in arbitrary object by path list
+Replace coin symbols with coin ids in arbitrary object by path list.
 
 ```js
 const params = {
@@ -855,7 +856,7 @@ makeSignature(tx, privateKey);
 ```
 
 ### Multi Signatures
-Usually you should collect signatures from other multisig participants, which can make it with `makeSignature`.
+Usually you should collect signatures from other multisig participants, which can make it with `makeSignature`.  
 Then you should construct `signatureData` for `TxParams` object and pass such `TxParams` to `postTx` or `prepareTx`
 ```js
 import {Minter, TX_TYPE, prepareTx, makeSignature} from "minter-js-sdk";
