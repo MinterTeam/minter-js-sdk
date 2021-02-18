@@ -89,10 +89,6 @@ describe('ReplaceCoinSymbolByPath', () => {
 });
 
 describe('GetCoinId', () => {
-    const txParamsData = (apiType) => ({
-        gasCoin: apiType.customCoin,
-    });
-
     test.each(API_TYPE_LIST)('should work single %s', (apiType) => {
         expect.assertions(1);
         return apiType.getCoinId(apiType.customCoin)

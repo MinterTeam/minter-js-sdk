@@ -48,7 +48,7 @@ describe('VoteCommissionTxData', () => {
         mintToken: '12',
         voteCommission: '12',
         voteUpdate: '12',
-        createPool: '12',
+        createSwapPool: '12',
     };
     const txData = new VoteCommissionTxData(txParamsData).serialize();
 

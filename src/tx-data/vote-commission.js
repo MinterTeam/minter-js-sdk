@@ -50,7 +50,7 @@ import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint, va
  * @param {number|string} mintToken
  * @param {number|string} voteCommission
  * @param {number|string} voteUpdate
- * @param {number|string} createPool
+ * @param {number|string} createSwapPool
  * @constructor
  */
 export default function VoteCommissionTxData({
@@ -100,7 +100,7 @@ export default function VoteCommissionTxData({
     mintToken,
     voteCommission,
     voteUpdate,
-    createPool,
+    createSwapPool,
 }) {
     validatePublicKey(publicKey, 'publicKey');
     validateUint(height, 'height');
@@ -148,7 +148,7 @@ export default function VoteCommissionTxData({
     validateAmount(mintToken, 'mintToken');
     validateAmount(voteCommission, 'voteCommission');
     validateAmount(voteUpdate, 'voteUpdate');
-    validateAmount(createPool, 'createPool');
+    validateAmount(createSwapPool, 'createSwapPool');
 
     this.publicKey = publicKey;
     this.height = height;
@@ -196,7 +196,7 @@ export default function VoteCommissionTxData({
     this.mintToken = mintToken;
     this.voteCommission = voteCommission;
     this.voteUpdate = voteUpdate;
-    this.createPool = createPool;
+    this.createSwapPool = createSwapPool;
 
     this.txData = new TxDataVoteCommission({
         publicKey: toBuffer(publicKey),
@@ -245,7 +245,7 @@ export default function VoteCommissionTxData({
         mintToken: `0x${convertToPip(mintToken, 'hex')}`,
         voteCommission: `0x${convertToPip(voteCommission, 'hex')}`,
         voteUpdate: `0x${convertToPip(voteUpdate, 'hex')}`,
-        createPool: `0x${convertToPip(createPool, 'hex')}`,
+        createSwapPool: `0x${convertToPip(createSwapPool, 'hex')}`,
     });
 
     proxyNestedTxData(this);
@@ -298,10 +298,10 @@ export default function VoteCommissionTxData({
  * @param {Buffer|string|number} mintToken
  * @param {Buffer|string|number} voteCommission
  * @param {Buffer|string|number} voteUpdate
- * @param {Buffer|string|number} createPool
+ * @param {Buffer|string|number} createSwapPool
  * @return {VoteCommissionTxData}
  */
-VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, height, coin, payloadByte, send, buyBancor, sellBancor, sellAllBancor, buyPoolBase, buyPoolDelta, sellPoolBase, sellPoolDelta, sellAllPoolBase, sellAllPoolDelta, createTicker3, createTicker4, createTicker5, createTicker6, createTicker7to10, createCoin, createToken, recreateCoin, recreateToken, declareCandidacy, delegate, unbond, redeemCheck, setCandidateOn, setCandidateOff, createMultisig, multisendBase, multisendDelta, editCandidate, setHaltBlock, editTickerOwner, editMultisig, priceVote, editCandidatePublicKey, addLiquidity, removeLiquidity, editCandidateCommission, moveStake, burnToken, mintToken, voteCommission, voteUpdate, createPool}) {
+VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, height, coin, payloadByte, send, buyBancor, sellBancor, sellAllBancor, buyPoolBase, buyPoolDelta, sellPoolBase, sellPoolDelta, sellAllPoolBase, sellAllPoolDelta, createTicker3, createTicker4, createTicker5, createTicker6, createTicker7to10, createCoin, createToken, recreateCoin, recreateToken, declareCandidacy, delegate, unbond, redeemCheck, setCandidateOn, setCandidateOff, createMultisig, multisendBase, multisendDelta, editCandidate, setHaltBlock, editTickerOwner, editMultisig, priceVote, editCandidatePublicKey, addLiquidity, removeLiquidity, editCandidateCommission, moveStake, burnToken, mintToken, voteCommission, voteUpdate, createSwapPool}) {
     return new VoteCommissionTxData({
         publicKey: publicToString(publicKey),
         height: bufferToInteger(toBuffer(height)),
@@ -349,7 +349,7 @@ VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, he
         mintToken: convertFromPip(bufferToInteger(toBuffer(mintToken))),
         voteCommission: convertFromPip(bufferToInteger(toBuffer(voteCommission))),
         voteUpdate: convertFromPip(bufferToInteger(toBuffer(voteUpdate))),
-        createPool: convertFromPip(bufferToInteger(toBuffer(createPool))),
+        createSwapPool: convertFromPip(bufferToInteger(toBuffer(createSwapPool))),
     });
 };
 
