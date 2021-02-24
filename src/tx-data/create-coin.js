@@ -6,7 +6,7 @@ import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN
 import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateTicker, validateMaxSupply} from '../utils.js';
 
 /**
- * @param {string} name
+ * @param {string} [name]
  * @param {string} symbol
  * @param {number|string} initialAmount
  * @param {number|string} initialReserve
@@ -14,7 +14,7 @@ import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, 
  * @param {number|string} [maxSupply]
  * @constructor
  */
-export default function CreateCoinTxData({name, symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply = COIN_MAX_MAX_SUPPLY}) {
+export default function CreateCoinTxData({name = '', symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply = COIN_MAX_MAX_SUPPLY}) {
     validateTicker(symbol, 'symbol');
     validateAmount(initialAmount, 'initialAmount');
     validateAmount(initialReserve, 'initialReserve');

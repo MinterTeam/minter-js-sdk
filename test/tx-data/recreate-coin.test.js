@@ -17,4 +17,9 @@ describe('RecreateCoinTxData', () => {
         expect(params)
             .toEqual(txParamsData);
     });
+
+    test('empty name', () => {
+        expect(new RecreateCoinTxData({...txParamsData, name: undefined}).serialize())
+            .toEqual(new RecreateCoinTxData({...txParamsData, name: ''}).serialize());
+    });
 });

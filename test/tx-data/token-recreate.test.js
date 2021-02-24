@@ -17,4 +17,9 @@ describe('RecreateTokenTxData', () => {
         expect(params)
             .toEqual(txParamsData);
     });
+
+    test('empty name', () => {
+        expect(new RecreateTokenTxData({...txParamsData, name: undefined}).serialize())
+            .toEqual(new RecreateTokenTxData({...txParamsData, name: ''}).serialize());
+    });
 });

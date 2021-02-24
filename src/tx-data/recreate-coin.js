@@ -1,9 +1,9 @@
 import {TxDataRecreateCoin} from 'minterjs-tx';
-import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
+import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY} from 'minterjs-util';
 import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateTicker, validateMaxSupply} from '../utils.js';
 
 /**
- * @param {string} name
+ * @param {string} [name]
  * @param {string} symbol
  * @param {number|string} initialAmount
  * @param {number|string} initialReserve
@@ -11,7 +11,7 @@ import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, 
  * @param {number|string} [maxSupply]
  * @constructor
  */
-export default function RecreateCoinTxData({name, symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply = COIN_MAX_MAX_SUPPLY}) {
+export default function RecreateCoinTxData({name = '', symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply = COIN_MAX_MAX_SUPPLY}) {
     validateTicker(symbol, 'symbol');
     validateAmount(initialAmount, 'initialAmount');
     validateAmount(initialReserve, 'initialReserve');

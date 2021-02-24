@@ -3,7 +3,7 @@ import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN
 import {proxyNestedTxData, bufferToInteger, validateAmount, validateTicker, validateMaxSupply, validateBoolean, bufferToBoolean} from '../utils.js';
 
 /**
- * @param {string} name
+ * @param {string} [name]
  * @param {string} symbol
  * @param {number|string} initialAmount
  * @param {number|string} [maxSupply]
@@ -11,7 +11,7 @@ import {proxyNestedTxData, bufferToInteger, validateAmount, validateTicker, vali
  * @param {boolean} burnable
  * @constructor
  */
-export default function CreateTokenTxData({name, symbol, initialAmount, maxSupply = COIN_MAX_MAX_SUPPLY, mintable, burnable}) {
+export default function CreateTokenTxData({name = '', symbol, initialAmount, maxSupply = COIN_MAX_MAX_SUPPLY, mintable, burnable}) {
     validateTicker(symbol, 'symbol');
     validateAmount(initialAmount, 'initialAmount');
     validateMaxSupply(maxSupply, initialAmount);
