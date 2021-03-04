@@ -4,6 +4,7 @@
 - add `getCoinId` API method
 - **BREAKING** rename TX_TYPE `EDIT_COIN_OWNER` to `EDIT_TICKER_OWNER` and `EditCoinOwnerTxData` to `EditTickerOwnerTxData`
 - **BREAKING** rename some file paths
+- **BREAKING** remove deprecated `toHexString`, use `integerToHexString` instead
 
 ## 0.37.0 - 2020-12-30 
 - **BREAKING** don't autofill `gasCoin` with coin to spent, use base coin (BIP) by default everywhere

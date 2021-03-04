@@ -111,12 +111,6 @@ export function bufferFromBytes(bytes) {
     return bytes;
 }
 
-/**
- * @deprecated
- * @borrows integerToHexString
- */
-export const toHexString = integerToHexString;
-
 export function proxyNestedTxData(obj) {
     addTxDataFields(obj);
 

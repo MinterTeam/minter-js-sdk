@@ -71,6 +71,8 @@ export function prepareTx(txParams = {}, options = {}) {
     let {payload, data: txData} = txParams;
 
     validateUint(nonce, 'nonce');
+    validateUint(chainId, 'chainId');
+    validateUint(gasPrice, 'gasPrice');
     validateUint(gasCoin, 'gasCoin');
     if (!txType && typeof txType !== 'number') {
         throw new Error('Falsy tx type specified, tx can\'t be prepared');

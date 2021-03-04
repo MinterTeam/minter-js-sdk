@@ -6,7 +6,6 @@
  */
 export default function EstimateTxCommission(apiInstance) {
     /**
-     * Get nonce for new transaction: last transaction number + 1
      * @param {string} tx
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<number|string>}

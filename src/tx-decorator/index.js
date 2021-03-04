@@ -34,9 +34,9 @@ const TX_PARAMS_DECORATOR = {
     [TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY]: noop,
     [TX_TYPE.ADD_LIQUIDITY]: noop,
     [TX_TYPE.REMOVE_LIQUIDITY]: noop,
-    [TX_TYPE.BUY_SWAP_POOL]: decorateBuyTxParams,
-    [TX_TYPE.SELL_SWAP_POOL]: decorateSellTxParams,
-    [TX_TYPE.SELL_ALL_SWAP_POOL]: decorateSellAllTxParams,
+    [TX_TYPE.BUY_SWAP_POOL]: noop, // decorateBuyTxParams
+    [TX_TYPE.SELL_SWAP_POOL]: noop, // decorateSellTxParams
+    [TX_TYPE.SELL_ALL_SWAP_POOL]: noop, // decorateSellAllTxParams
     [TX_TYPE.EDIT_CANDIDATE_COMMISSION]: noop,
     [TX_TYPE.MOVE_STAKE]: noop,
     [TX_TYPE.MINT_TOKEN]: noop,
