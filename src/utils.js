@@ -173,9 +173,6 @@ export function validateAmount(value, fieldName) {
             throw new Error(`Field \`${fieldName}\` is invalid number`);
         }
 
-        if (valueBig && valueBig.gt(COIN_MAX_AMOUNT)) {
-            throw new Error(`Field \`${fieldName}\` has value which is greater than network's max amount: 10^15`);
-        }
         if (valueBig && valueBig.lt(0)) {
             throw new Error(`Field \`${fieldName}\` has negative amount`);
         }

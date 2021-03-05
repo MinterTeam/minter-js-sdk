@@ -30,7 +30,8 @@ import {ENV_DATA, minterGate, minterNode} from './variables';
 import {ensureCustomCoin, getValidatorMinStake, logError} from '~/test/utils.js';
 
 function getRandomCoin() {
-    return Math.random().toString().substring(2, 10 + 2);
+    const digits = Math.random().toString().substring(2, 9 + 2);
+    return `Z${digits}`;
 }
 
 const NOT_EXISTENT_COIN = '4294967295';
@@ -66,7 +67,7 @@ const API_TYPE_LIST = [
 
 function makePostTx(minterApi) {
     return function postTxDecorated(txParams, options) {
-        return minterApi.postTx(txParams, {mempoolRetryLimit: 5, nonceRetryLimit: 2, ...options});
+        return minterApi.postTx(txParams, {mempoolRetryLimit: 5, nonceRetryLimit: 3, ...options});
     };
 }
 
@@ -594,12 +595,12 @@ describe('validator', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT, publicKey: generateWallet().getPublicKeyString()});
+            const txParams = txParamsData(apiType, {coin: 0xffffffff, publicKey: generateWallet().getPublicKeyString()});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     try {
-                        // Insufficient funds for sender account
-                        expect(error.response.data.error.code).toBe('107');
+                        // Coin not exists
+                        expect(error.response.data.error.code).toBe('102');
                     } catch (jestError) {
                         logError(error);
                         throw jestError;
@@ -694,12 +695,12 @@ describe('validator', () => {
 
             test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
                 expect.assertions(1);
-                const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
+                const txParams = txParamsData(apiType, {coin: 0xffffffff});
                 return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                     .catch((error) => {
                         try {
-                            // Insufficient funds for sender account
-                            expect(error.response.data.error.code).toBe('107');
+                            // Coin not exists
+                            expect(error.response.data.error.code).toBe('102');
                         } catch (jestError) {
                             logError(error);
                             throw jestError;
