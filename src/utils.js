@@ -3,7 +3,41 @@
 import Big from 'big.js';
 import BN from 'bn.js';
 import {padToEven, isHexPrefixed} from 'ethjs-util';
-import {isValidAddress, isValidPublicKeyString, isValidCheck, numberToBig, COIN_MAX_AMOUNT, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
+import {isValidAddress, isValidPublicKeyString, isValidCheck, numberToBig, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
+
+Big.RM = 2;
+
+/**
+ * @param {number|string} chainId
+ * @param {string} coinSymbol
+ * @return {boolean}
+ */
+export function isBaseCoinSymbol(chainId, coinSymbol) {
+    if (typeof chainId === 'string' || typeof chainId === 'number') {
+        chainId = integerToHexString(chainId);
+    }
+    if (chainId === '0x01' && coinSymbol === 'BIP') {
+        return true;
+    }
+    if (chainId === '0x02' && coinSymbol === 'MNT') {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * @param {number|string} coinIdOrSymbol
+ * @return {boolean}
+ */
+export function isCoinId(coinIdOrSymbol) {
+    if (typeof coinIdOrSymbol === 'number') {
+        return true;
+    }
+    if (typeof coinIdOrSymbol !== 'string') {
+        return false;
+    }
+    return /^[0-9]+$/.test(coinIdOrSymbol);
+}
 
 /**
  * @param {number|string} num

@@ -2,7 +2,7 @@ import _get from 'lodash-es/get.js';
 import _set from 'lodash-es/set.js';
 import {TX_TYPE, normalizeTxType} from 'minterjs-util';
 import GetCoinInfo from './get-coin-info.js';
-import {validateTicker} from '../utils.js';
+import {validateTicker, isBaseCoinSymbol, isCoinId} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
@@ -92,7 +92,7 @@ export function GetCoinId(apiInstance) {
 
 function _getCoinId(symbol, chainId, apiInstance, axiosOptions) {
     if (isCoinSymbol(symbol)) {
-        if (isBaseCoin(chainId, symbol)) {
+        if (isBaseCoinSymbol(chainId, symbol)) {
             return Promise.resolve(0);
         } else {
             const getCoinInfo = GetCoinInfo(apiInstance);
@@ -135,23 +135,15 @@ function getTxParamsPathList(txParams) {
 }
 
 
-function isBaseCoin(chainId, coinSymbol) {
-    chainId = Number(chainId);
-    if (chainId === 1 && coinSymbol === 'BIP') {
-        return true;
-    }
-    if (chainId === 2 && coinSymbol === 'MNT') {
-        return true;
-    }
-    return false;
-}
-
 /**
  * May be false positive for coin id strings, e.g. '123'
  * @param {string} coin
  * @return {boolean}
  */
 function isCoinSymbol(coin) {
+    if (isCoinId(coin)) {
+        return false;
+    }
     if (typeof coin !== 'string') {
         return false;
     }
@@ -161,7 +153,7 @@ function isCoinSymbol(coin) {
         return false;
     }
 
-    if (/^P-[0-9]+$/.test(coin)) {
+    if (/^LP-[0-9]+$/.test(coin)) {
         return true;
     }
 

@@ -10,6 +10,7 @@ import EstimateCoinBuy from './api/estimate-coin-buy.js';
 import EstimateTxCommission from './api/estimate-tx-commission.js';
 import {ReplaceCoinSymbol, ReplaceCoinSymbolByPath, GetCoinId} from './api/replace-coin.js';
 import GetCommissionPrice from './api/get-commission-price.js';
+import GetPoolInfo from './api/get-pool-info.js';
 
 /**
  * @param {Object} [options]
@@ -40,6 +41,8 @@ export default function Minter(options) {
     this.replaceCoinSymbol = ReplaceCoinSymbol(apiInstance);
     this.replaceCoinSymbolByPath = ReplaceCoinSymbolByPath(apiInstance);
     this.getCoinId = GetCoinId(apiInstance);
+
+    this.getPoolInfo = GetPoolInfo(apiInstance);
 
     this.getCommissionPrice = GetCommissionPrice(apiInstance);
 }

@@ -1,23 +1,231 @@
+import Big from 'big.js';
+import {convertFromPip, convertToPip, FeePrice, TX_TYPE} from 'minterjs-util';
+import GetCommissionPrice from './get-commission-price.js';
+import GetPoolInfo from './get-pool-info.js';
+import GetCoinInfo from './get-coin-info.js';
+import EstimateCoinBuy from './estimate-coin-buy.js';
+import {prepareTx} from '../tx.js';
+import {isBaseCoinSymbol, isCoinId} from '../utils.js';
+
+Big.RM = 2;
 
 /**
- * @TODO accept txParams
+ *
  * @param {MinterApiInstance} apiInstance
- * @return {function(*): (Promise<string>)}
+ * @return {function((TxParams|string), {direct?: boolean}=, AxiosRequestConfig=): (Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>)}
  */
 export default function EstimateTxCommission(apiInstance) {
+    const getCommissionPrice = GetCommissionPrice(apiInstance);
+    const getPoolInfo = GetPoolInfo(apiInstance);
+    const getCoinInfo = GetCoinInfo(apiInstance);
+    const estimateCoinBuy = EstimateCoinBuy(apiInstance);
+
+    return estimateTxCommission;
+
     /**
-     * @param {string} tx
+     * @param {TxParams|string} txParams
+     * @param {Object} [options]
+     * @param {boolean} [options.direct]
      * @param {AxiosRequestConfig} [axiosOptions]
-     * @return {Promise<number|string>}
+     * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
      */
-    return function estimateTxCommission(tx, axiosOptions) {
-        if (!tx) {
+    function estimateTxCommission(txParams, {direct = true} = {}, axiosOptions) {
+        if (direct) {
+            return estimateFeeDirect(txParams, axiosOptions);
+        } else {
+            return estimateFeeCalculate(txParams, axiosOptions);
+        }
+    }
+
+    /**
+     * @param {string|TxParams} txParams
+     * @param {AxiosRequestConfig} [axiosOptions]
+     * @return {Promise<{commission: number|string}>}
+     */
+    function estimateFeeDirect(txParams, axiosOptions) {
+        if (!txParams) {
             return Promise.reject(new Error('Transaction not specified'));
+        }
+        let tx;
+        if (typeof txParams === 'string') {
+            tx = txParams;
+        } else {
+            txParams = {
+                // chainId: 0,
+                nonce: 0,
+                // gasPrice: 1,
+                signatureType: 1,
+                ...txParams,
+            };
+            tx = prepareTx(txParams).serializeToString();
         }
 
         return apiInstance.get(`estimate_tx_commission/${tx}`, axiosOptions)
             .then((response) => {
-                return response.data.commission;
+                response.data.commission = convertFromPip(response.data.commission);
+                return response.data;
             });
+    }
+
+    /**
+     * @param {TxParams} txParams
+     * @param {AxiosRequestConfig} [axiosOptions]
+     * @return {Promise<{commission: number|string, baseCoinCommission: number|string, priceCoinCommission: number|string, commissionPriceData: CommissionPriceData}>}
+     */
+    async function estimateFeeCalculate(txParams, axiosOptions) {
+        if (!txParams || typeof txParams !== 'object') {
+            return Promise.reject(new TypeError('Invalid txParams'));
+        }
+        if ((!txParams.gasCoin && txParams.gasCoin !== 0) || (typeof txParams.gasCoin !== 'number' && typeof txParams.gasCoin !== 'string')) {
+            return Promise.reject(new TypeError('Invalid gasCoin'));
+        }
+
+        const commissionPriceData = await getCommissionPrice(axiosOptions);
+
+        // priceCoin
+        const feePrice = new FeePrice(commissionPriceData);
+        const priceCoinFee = feePrice.getFeeValue(txParams.type, getFeePriceOptionsFromTxParams(txParams));
+
+        // baseCoin
+        let baseCoinFee;
+        if (isPriceCoinSameAsBaseCoin(commissionPriceData)) {
+            baseCoinFee = priceCoinFee;
+        } else {
+            const priceCoinPool = await getPoolInfo(0, commissionPriceData.coin.id);
+            baseCoinFee = getBaseCoinAmountFromPool(priceCoinFee, priceCoinPool);
+        }
+
+        // gasCoin
+        let fee;
+        if (await isGasCoinSameAsBaseCoin(txParams.gasCoin, txParams.chainId)) {
+            fee = baseCoinFee;
+        } else {
+            const {amount} = await getEstimation(txParams.gasCoin, baseCoinFee);
+            fee = amount;
+        }
+
+
+        return {
+            commission: fee,
+            baseCoinCommission: baseCoinFee,
+            priceCoinCommission: priceCoinFee,
+            commissionPriceData,
+        };
+    }
+
+    /**
+     * @param {number|string} gasCoin
+     * @param {number|string} chainId
+     * @return {Promise<boolean>}
+     */
+    async function isGasCoinSameAsBaseCoin(gasCoin, chainId) {
+        if (isCoinId(gasCoin)) {
+            return Number(gasCoin) === 0;
+        } else if (gasCoin === 'BIP' || gasCoin === 'MNT') {
+            if (chainId) {
+                return isBaseCoinSymbol(chainId, gasCoin);
+            } else {
+                // eslint-disable-next-line no-console
+                console.warn('`chainId` field not specified, it cause extra http request');
+                const gasCoinInfo = await getCoinInfo(gasCoin);
+                return Number(gasCoinInfo.id) === 0;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param {number|string} coinIdOrSymbol
+     * @param {number|string} baseCoinAmount
+     * @return {Promise<{amount: string, baseCoinAmount: string}>}
+     */
+    function getEstimation(coinIdOrSymbol, baseCoinAmount) {
+        return estimateCoinBuy({
+            coinToSell: !isCoinId(coinIdOrSymbol) ? coinIdOrSymbol : undefined,
+            coinIdToSell: isCoinId(coinIdOrSymbol) ? coinIdOrSymbol : undefined,
+            valueToBuy: baseCoinAmount,
+            coinIdToBuy: 0,
+            swapFrom: 'optimal',
+        })
+            .then((result) => {
+                return {
+                    amount: result.will_pay,
+                    baseCoinAmount,
+                };
+            });
+    }
+}
+
+/**
+ * @param {CommissionPriceData} commissionPriceData
+ * @return {boolean}
+ */
+function isPriceCoinSameAsBaseCoin(commissionPriceData) {
+    return Number.parseInt(commissionPriceData?.coin.id, 10) === 0;
+}
+
+
+/**
+ *
+ * @param {number|string} priceCoinAmount
+ * @param {PoolInfo} pool
+ * @return {string|number}
+ */
+function getBaseCoinAmountFromPool(priceCoinAmount, pool) {
+    // amount of base coin in pool
+    const reserveBase = new Big(pool.amount0);
+    // amount of price coin in pool
+    const reservePrice = new Big(pool.amount1);
+    // amount of price coin in pool
+    const priceCoinAmountPip = new Big(convertToPip(priceCoinAmount));
+
+    // reserveBase - (reservePrice * reserveBase) / (priceCoinAmount * 0.998 + reservePrice)
+    let result = reserveBase.minus(reservePrice.times(reserveBase).div(priceCoinAmountPip.times(0.998).plus(reservePrice)));
+
+    // received amount from pool rounds down, spent amount to poll rounds up
+    // round down
+    result = result.round(undefined, 0);
+
+    return convertFromPip(result);
+}
+
+/**
+ * @param {TxParams} txParams
+ * @return FeePriceOptions
+ */
+function getFeePriceOptionsFromTxParams(txParams) {
+    const txType = txParams.type;
+    if (!txType) {
+        throw new Error('Tx `type` not specified');
+    }
+
+    const isTickerType = txType === TX_TYPE.CREATE_COIN || txType === TX_TYPE.CREATE_TOKEN;
+    const coinSymbol = isTickerType ? txParams.data?.symbol : undefined;
+    if (isTickerType && !coinSymbol) {
+        throw new Error('`symbol` not specified for ticker creation tx');
+    }
+
+    let deltaItemCount;
+    if (txType === TX_TYPE.BUY_SWAP_POOL || txType === TX_TYPE.SELL_SWAP_POOL || txType === TX_TYPE.SELL_ALL_SWAP_POOL) {
+        const coinCount = txParams.data?.coins.length;
+        if (!coinCount) {
+            throw new Error('Invalid `coins` field in swap pool tx');
+        }
+        // count of pools
+        deltaItemCount = coinCount - 1;
+    }
+    if (txType === TX_TYPE.MULTISEND) {
+        // count of recipients
+        deltaItemCount = txParams.data?.list.length;
+        if (!deltaItemCount) {
+            throw new Error('Invalid `list` field in multisend tx');
+        }
+    }
+
+    return {
+        payload: txParams.payload,
+        coinSymbol,
+        deltaItemCount,
     };
 }

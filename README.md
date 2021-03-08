@@ -413,13 +413,13 @@ minter.estimateCoinBuy({
 
 ### .estimateTxCommission()
 Estimate transaction fee. Useful for transactions with `gasCoin` different from base coin BIP (or MNT).  
-Accept string with raw signed tx.  
-Resolves with commission value.
+Accept string with raw signed tx or TxParams object.  
+Resolves with object containing commission value.
 
 ```js
 minter.estimateTxCommission('0xf8920101028a4d4e540000000000000001aae98a4d4e...')
-    .then((commission) => {
-        console.log(commission);
+    .then((feeData) => {
+        console.log(feeData.commission);
         // 0.1
     });
 ```

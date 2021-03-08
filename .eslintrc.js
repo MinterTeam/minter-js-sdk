@@ -88,6 +88,7 @@ module.exports = {
         // allow explicitly return undefined
         'unicorn/no-useless-undefined': 0,
         'unicorn/prefer-optional-catch-binding': 0,
+        'unicorn/prefer-ternary': 0,
         'unicorn/prevent-abbreviations': ['error', {
           replacements: {
             'params': false,
