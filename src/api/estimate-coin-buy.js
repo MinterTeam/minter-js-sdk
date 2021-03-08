@@ -11,9 +11,10 @@ import {isValidNumber} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function(*): (Promise<EstimateBuyResult>)}
+ * @return {function({coinIdToBuy?: (number|string), coinToBuy?: string, valueToBuy: (string|number), coinIdToSell?: (number|string), coinToSell?: string, swapFrom?: ESTIMATE_SWAP_TYPE, route?: Array<number>}, axiosOptions: AxiosRequestConfig=): Promise<EstimateBuyResult>}
  */
 export default function EstimateCoinBuy(apiInstance) {
+    return estimateCoinBuy;
     /**
      * Get nonce for new transaction: last transaction number + 1
      * @param {Object} params
@@ -27,7 +28,7 @@ export default function EstimateCoinBuy(apiInstance) {
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<EstimateBuyResult>}
      */
-    return function estimateCoinBuy(params, axiosOptions) {
+    function estimateCoinBuy(params, axiosOptions) {
         if (!params.coinToBuy && (!params.coinIdToBuy && params.coinIdToBuy !== 0)) {
             return Promise.reject(new Error('Coin to buy not specified'));
         }
@@ -62,5 +63,5 @@ export default function EstimateCoinBuy(apiInstance) {
                 resData.commission = convertFromPip(resData.commission);
                 return resData;
             });
-    };
+    }
 }

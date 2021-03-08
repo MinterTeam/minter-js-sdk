@@ -32,7 +32,7 @@ export default function EstimateTxCommission(apiInstance) {
     function estimateTxCommission(txParams, {direct = true} = {}, axiosOptions) {
         let paramsPromise;
         if (typeof txParams === 'object') {
-            paramsPromise = getCoinId(txParams.gasCoin, txParams.chainId)
+            paramsPromise = getCoinId(txParams.gasCoin, txParams.chainId, axiosOptions)
                 .then((coinId) => {
                     validateUint(coinId, 'gasCoin');
                     return {
@@ -105,7 +105,7 @@ export default function EstimateTxCommission(apiInstance) {
         if (isPriceCoinSameAsBaseCoin(commissionPriceData)) {
             baseCoinFee = priceCoinFee;
         } else {
-            const priceCoinPool = await getPoolInfo(0, commissionPriceData.coin.id);
+            const priceCoinPool = await getPoolInfo(0, commissionPriceData.coin.id, axiosOptions);
             baseCoinFee = getBaseCoinAmountFromPool(priceCoinFee, priceCoinPool);
         }
 
@@ -114,7 +114,7 @@ export default function EstimateTxCommission(apiInstance) {
         if (isGasCoinSameAsBaseCoin(txParams.gasCoin)) {
             fee = baseCoinFee;
         } else {
-            const {amount} = await getEstimation(txParams.gasCoin, baseCoinFee);
+            const {amount} = await getEstimation(txParams.gasCoin, baseCoinFee, axiosOptions);
             fee = amount;
         }
 
@@ -130,16 +130,17 @@ export default function EstimateTxCommission(apiInstance) {
     /**
      * @param {number|string} coinIdOrSymbol
      * @param {number|string} baseCoinAmount
+     * @param {AxiosRequestConfig} axiosOptions
      * @return {Promise<{amount: string, baseCoinAmount: string}>}
      */
-    function getEstimation(coinIdOrSymbol, baseCoinAmount) {
+    function getEstimation(coinIdOrSymbol, baseCoinAmount, axiosOptions) {
         return estimateCoinBuy({
             coinToSell: !isCoinId(coinIdOrSymbol) ? coinIdOrSymbol : undefined,
             coinIdToSell: isCoinId(coinIdOrSymbol) ? coinIdOrSymbol : undefined,
             valueToBuy: baseCoinAmount,
             coinIdToBuy: 0,
             swapFrom: 'optimal',
-        })
+        }, axiosOptions)
             .then((result) => {
                 return {
                     amount: result.will_pay,

@@ -1,6 +1,6 @@
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function((number|string), (number|string), AxiosRequestConfig=): (Promise<PoolInfo>)}
+ * @return {function(coin0: number|string, coin1: number|string, axiosOptions: AxiosRequestConfig=): (Promise<PoolInfo>)}
  */
 export default function GetPoolInfo(apiInstance) {
     return getPoolInfo;
