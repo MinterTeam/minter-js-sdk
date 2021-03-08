@@ -21,21 +21,35 @@ const API_TYPE_LIST = [
 ];
 
 describe('EstimateTxCommission', () => {
-    const txParamsData = (apiType, data) => ({
+    const txParamsData = (apiType, extraParams) => Object.assign({
         chainId: 2,
         type: TX_TYPE.SEND,
-        data: Object.assign({
+        data: {
             to: apiType.address,
             value: 10,
             coin: 0,
-        }, data),
+        },
         gasCoin: 0,
         payload: 'custom message',
-    });
+    }, extraParams);
 
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
         const txParams = txParamsData(apiType);
+        return Promise.all([apiType.estimateTxCommission(txParams, {direct: false}), apiType.estimateTxCommission(txParams, {direct: true})])
+            .then(([feeCalculated, feeDirect]) => {
+                expect(Number(feeCalculated.commission)).toBeGreaterThan(0);
+                expect(feeCalculated.commission).toEqual(feeDirect.commission);
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
+            });
+    }, 30000);
+
+    test.each(API_TYPE_LIST)('should work with gasCoin symbol %s', (apiType) => {
+        expect.assertions(2);
+        const txParams = txParamsData(apiType, {gasCoin: 'MNT'});
         return Promise.all([apiType.estimateTxCommission(txParams, {direct: false}), apiType.estimateTxCommission(txParams, {direct: true})])
             .then(([feeCalculated, feeDirect]) => {
                 expect(Number(feeCalculated.commission)).toBeGreaterThan(0);

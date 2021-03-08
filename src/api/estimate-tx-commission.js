@@ -2,10 +2,10 @@ import Big from 'big.js';
 import {convertFromPip, convertToPip, FeePrice, TX_TYPE} from 'minterjs-util';
 import GetCommissionPrice from './get-commission-price.js';
 import GetPoolInfo from './get-pool-info.js';
-import GetCoinInfo from './get-coin-info.js';
+import {GetCoinId} from './replace-coin.js';
 import EstimateCoinBuy from './estimate-coin-buy.js';
 import {prepareTx} from '../tx.js';
-import {isBaseCoinSymbol, isCoinId} from '../utils.js';
+import {isCoinId, validateUint} from '../utils.js';
 
 Big.RM = 2;
 
@@ -17,7 +17,7 @@ Big.RM = 2;
 export default function EstimateTxCommission(apiInstance) {
     const getCommissionPrice = GetCommissionPrice(apiInstance);
     const getPoolInfo = GetPoolInfo(apiInstance);
-    const getCoinInfo = GetCoinInfo(apiInstance);
+    const getCoinId = GetCoinId(apiInstance);
     const estimateCoinBuy = EstimateCoinBuy(apiInstance);
 
     return estimateTxCommission;
@@ -30,11 +30,28 @@ export default function EstimateTxCommission(apiInstance) {
      * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
      */
     function estimateTxCommission(txParams, {direct = true} = {}, axiosOptions) {
-        if (direct) {
-            return estimateFeeDirect(txParams, axiosOptions);
+        let paramsPromise;
+        if (typeof txParams === 'object') {
+            paramsPromise = getCoinId(txParams.gasCoin, txParams.chainId)
+                .then((coinId) => {
+                    validateUint(coinId, 'gasCoin');
+                    return {
+                        ...txParams,
+                        gasCoin: coinId,
+                    };
+                });
         } else {
-            return estimateFeeCalculate(txParams, axiosOptions);
+            paramsPromise = Promise.resolve(txParams);
         }
+
+        return paramsPromise
+            .then((updatedTxParams) => {
+                if (direct) {
+                    return estimateFeeDirect(updatedTxParams, axiosOptions);
+                } else {
+                    return estimateFeeCalculate(updatedTxParams, axiosOptions);
+                }
+            });
     }
 
     /**
@@ -51,9 +68,9 @@ export default function EstimateTxCommission(apiInstance) {
             tx = txParams;
         } else {
             txParams = {
-                // chainId: 0,
+                chainId: 0,
                 nonce: 0,
-                // gasPrice: 1,
+                gasPrice: 1,
                 signatureType: 1,
                 ...txParams,
             };
@@ -76,9 +93,6 @@ export default function EstimateTxCommission(apiInstance) {
         if (!txParams || typeof txParams !== 'object') {
             return Promise.reject(new TypeError('Invalid txParams'));
         }
-        if ((!txParams.gasCoin && txParams.gasCoin !== 0) || (typeof txParams.gasCoin !== 'number' && typeof txParams.gasCoin !== 'string')) {
-            return Promise.reject(new TypeError('Invalid gasCoin'));
-        }
 
         const commissionPriceData = await getCommissionPrice(axiosOptions);
 
@@ -97,7 +111,7 @@ export default function EstimateTxCommission(apiInstance) {
 
         // gasCoin
         let fee;
-        if (await isGasCoinSameAsBaseCoin(txParams.gasCoin, txParams.chainId)) {
+        if (isGasCoinSameAsBaseCoin(txParams.gasCoin)) {
             fee = baseCoinFee;
         } else {
             const {amount} = await getEstimation(txParams.gasCoin, baseCoinFee);
@@ -111,28 +125,6 @@ export default function EstimateTxCommission(apiInstance) {
             priceCoinCommission: priceCoinFee,
             commissionPriceData,
         };
-    }
-
-    /**
-     * @param {number|string} gasCoin
-     * @param {number|string} chainId
-     * @return {Promise<boolean>}
-     */
-    async function isGasCoinSameAsBaseCoin(gasCoin, chainId) {
-        if (isCoinId(gasCoin)) {
-            return Number(gasCoin) === 0;
-        } else if (gasCoin === 'BIP' || gasCoin === 'MNT') {
-            if (chainId) {
-                return isBaseCoinSymbol(chainId, gasCoin);
-            } else {
-                // eslint-disable-next-line no-console
-                console.warn('`chainId` field not specified, it cause extra http request');
-                const gasCoinInfo = await getCoinInfo(gasCoin);
-                return Number(gasCoinInfo.id) === 0;
-            }
-        } else {
-            return false;
-        }
     }
 
     /**
@@ -163,6 +155,14 @@ export default function EstimateTxCommission(apiInstance) {
  */
 function isPriceCoinSameAsBaseCoin(commissionPriceData) {
     return Number.parseInt(commissionPriceData?.coin.id, 10) === 0;
+}
+
+/**
+ * @param {number|string} gasCoinId
+ * @return {boolean}
+ */
+function isGasCoinSameAsBaseCoin(gasCoinId) {
+    return Number.parseInt(gasCoinId, 10) === 0;
 }
 
 

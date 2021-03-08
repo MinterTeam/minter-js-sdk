@@ -68,7 +68,7 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
 
 /**
  * @param apiInstance
- * @return {function((string|Array<string>), number=, AxiosRequestConfig=): Promise<Object>}
+ * @return {function(symbol: string|Array<string>, chainId: number=, axiosOptions: AxiosRequestConfig=): Promise<Object>}
  */
 export function GetCoinId(apiInstance) {
     return getCoinId;
