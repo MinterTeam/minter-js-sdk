@@ -11,9 +11,10 @@ import {isValidNumber} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function(*): (Promise<EstimateSellResult>)}
+ * @return {function({coinIdToSell?: (number|string), coinToSell?: string, valueToSell?: (string|number), coinIdToBuy?: (number|string), coinToBuy?: string, swapFrom?: ESTIMATE_SWAP_TYPE}, axiosOptions: AxiosRequestConfig=): Promise<EstimateSellResult>}
  */
 export default function EstimateCoinSell(apiInstance) {
+    return estimateCoinSell;
     /**
      * Get nonce for new transaction: last transaction number + 1
      * @param {Object} params
@@ -26,7 +27,7 @@ export default function EstimateCoinSell(apiInstance) {
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<EstimateSellResult>}
      */
-    return function estimateCoinSell(params, axiosOptions) {
+    function estimateCoinSell(params, axiosOptions) {
         if (!params.coinToSell && (!params.coinIdToSell && params.coinIdToSell !== 0)) {
             return Promise.reject(new Error('Coin to sell not specified'));
         }
@@ -55,10 +56,13 @@ export default function EstimateCoinSell(apiInstance) {
                 if (!isValidNumber(resData.commission)) {
                     throw new Error('Invalid estimation data, `commission` not specified');
                 }
-                // receive pips from node and convert them
-                resData.will_get = convertFromPip(resData.will_get);
-                resData.commission = convertFromPip(resData.commission);
-                return resData;
+
+                return {
+                    ...resData,
+                    // receive pips from node and convert them
+                    will_get: convertFromPip(resData.will_get),
+                    commission: convertFromPip(resData.commission),
+                };
             });
-    };
+    }
 }

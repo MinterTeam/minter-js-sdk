@@ -58,10 +58,13 @@ export default function EstimateCoinBuy(apiInstance) {
                 if (!isValidNumber(resData.commission)) {
                     throw new Error('Invalid estimation data, `commission` not specified');
                 }
-                // convert pips
-                resData.will_pay = convertFromPip(resData.will_pay);
-                resData.commission = convertFromPip(resData.commission);
-                return resData;
+
+                return {
+                    ...resData,
+                    // convert pips
+                    will_pay: convertFromPip(resData.will_pay),
+                    commission: convertFromPip(resData.commission),
+                };
             });
     }
 }
