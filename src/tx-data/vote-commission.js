@@ -40,12 +40,12 @@ import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint, va
  * @param {number|string} setHaltBlock
  * @param {number|string} editTickerOwner
  * @param {number|string} editMultisig
- * @param {number|string} priceVote
+ * @param {number|string} [priceVote]
  * @param {number|string} editCandidatePublicKey
  * @param {number|string} addLiquidity
  * @param {number|string} removeLiquidity
  * @param {number|string} editCandidateCommission
- * @param {number|string} moveStake
+ * @param {number|string} [moveStake]
  * @param {number|string} burnToken
  * @param {number|string} mintToken
  * @param {number|string} voteCommission
@@ -138,12 +138,12 @@ export default function VoteCommissionTxData({
     validateAmount(setHaltBlock, 'setHaltBlock');
     validateAmount(editTickerOwner, 'editTickerOwner');
     validateAmount(editMultisig, 'editMultisig');
-    validateAmount(priceVote, 'priceVote');
+    // validateAmount(priceVote, 'priceVote');
     validateAmount(editCandidatePublicKey, 'editCandidatePublicKey');
     validateAmount(addLiquidity, 'addLiquidity');
     validateAmount(removeLiquidity, 'removeLiquidity');
     validateAmount(editCandidateCommission, 'editCandidateCommission');
-    validateAmount(moveStake, 'moveStake');
+    // validateAmount(moveStake, 'moveStake');
     validateAmount(burnToken, 'burnToken');
     validateAmount(mintToken, 'mintToken');
     validateAmount(voteCommission, 'voteCommission');
@@ -186,12 +186,12 @@ export default function VoteCommissionTxData({
     this.setHaltBlock = setHaltBlock;
     this.editTickerOwner = editTickerOwner;
     this.editMultisig = editMultisig;
-    this.priceVote = priceVote;
+    // this.priceVote = priceVote;
     this.editCandidatePublicKey = editCandidatePublicKey;
     this.addLiquidity = addLiquidity;
     this.removeLiquidity = removeLiquidity;
     this.editCandidateCommission = editCandidateCommission;
-    this.moveStake = moveStake;
+    // this.moveStake = moveStake;
     this.burnToken = burnToken;
     this.mintToken = mintToken;
     this.voteCommission = voteCommission;
@@ -235,12 +235,12 @@ export default function VoteCommissionTxData({
         setHaltBlock: `0x${convertToPip(setHaltBlock, 'hex')}`,
         editTickerOwner: `0x${convertToPip(editTickerOwner, 'hex')}`,
         editMultisig: `0x${convertToPip(editMultisig, 'hex')}`,
-        priceVote: `0x${convertToPip(priceVote, 'hex')}`,
+        // priceVote: `0x${convertToPip(priceVote, 'hex')}`,
         editCandidatePublicKey: `0x${convertToPip(editCandidatePublicKey, 'hex')}`,
         addLiquidity: `0x${convertToPip(addLiquidity, 'hex')}`,
         removeLiquidity: `0x${convertToPip(removeLiquidity, 'hex')}`,
         editCandidateCommission: `0x${convertToPip(editCandidateCommission, 'hex')}`,
-        moveStake: `0x${convertToPip(moveStake, 'hex')}`,
+        // moveStake: `0x${convertToPip(moveStake, 'hex')}`,
         burnToken: `0x${convertToPip(burnToken, 'hex')}`,
         mintToken: `0x${convertToPip(mintToken, 'hex')}`,
         voteCommission: `0x${convertToPip(voteCommission, 'hex')}`,
@@ -288,12 +288,12 @@ export default function VoteCommissionTxData({
  * @param {Buffer|string|number} setHaltBlock
  * @param {Buffer|string|number} editTickerOwner
  * @param {Buffer|string|number} editMultisig
- * @param {Buffer|string|number} priceVote
+ * @param {Buffer|string|number} [priceVote]
  * @param {Buffer|string|number} editCandidatePublicKey
  * @param {Buffer|string|number} addLiquidity
  * @param {Buffer|string|number} removeLiquidity
  * @param {Buffer|string|number} editCandidateCommission
- * @param {Buffer|string|number} moveStake
+ * @param {Buffer|string|number} [moveStake]
  * @param {Buffer|string|number} burnToken
  * @param {Buffer|string|number} mintToken
  * @param {Buffer|string|number} voteCommission
@@ -339,12 +339,12 @@ VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, he
         setHaltBlock: convertFromPip(bufferToInteger(toBuffer(setHaltBlock))),
         editTickerOwner: convertFromPip(bufferToInteger(toBuffer(editTickerOwner))),
         editMultisig: convertFromPip(bufferToInteger(toBuffer(editMultisig))),
-        priceVote: convertFromPip(bufferToInteger(toBuffer(priceVote))),
+        // priceVote: convertFromPip(bufferToInteger(toBuffer(priceVote))),
         editCandidatePublicKey: convertFromPip(bufferToInteger(toBuffer(editCandidatePublicKey))),
         addLiquidity: convertFromPip(bufferToInteger(toBuffer(addLiquidity))),
         removeLiquidity: convertFromPip(bufferToInteger(toBuffer(removeLiquidity))),
         editCandidateCommission: convertFromPip(bufferToInteger(toBuffer(editCandidateCommission))),
-        moveStake: convertFromPip(bufferToInteger(toBuffer(moveStake))),
+        // moveStake: convertFromPip(bufferToInteger(toBuffer(moveStake))),
         burnToken: convertFromPip(bufferToInteger(toBuffer(burnToken))),
         mintToken: convertFromPip(bufferToInteger(toBuffer(mintToken))),
         voteCommission: convertFromPip(bufferToInteger(toBuffer(voteCommission))),
