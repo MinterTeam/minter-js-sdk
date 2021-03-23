@@ -20,6 +20,11 @@ export default function PostSignedTx(apiInstance) {
             .then((response) => {
                 const resData = response.data;
 
+                if (resData.transaction?.code > 0) {
+                    throw new Error(`Transaction included in the block with error code ${resData.transaction.code}: ${resData.transaction.log}`);
+                }
+
+                // @TODO check error code
                 return resData.transaction || {hash: resData.hash};
             });
     };

@@ -3,6 +3,7 @@
 - add `swapFrom` parameter to estimation API methods
 - add `getCoinId` API method
 - **BREAKING** rename TX_TYPE `EDIT_COIN_OWNER` to `EDIT_TICKER_OWNER` and `EditCoinOwnerTxData` to `EditTickerOwnerTxData`
+- **BREAKING** add error code check when `postTx` made through gate api
 - **BREAKING** rename some file paths
 - **BREAKING** remove deprecated `toHexString`, use `integerToHexString` instead
 - **BREAKING** reworked `estimateTxCommission`
