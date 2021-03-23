@@ -91,6 +91,9 @@ export function GetCoinId(apiInstance) {
 }
 
 function _getCoinId(symbol, chainId, apiInstance, axiosOptions) {
+    if (isCoinId(symbol)) {
+        return Promise.resolve(symbol);
+    }
     if (isCoinSymbol(symbol)) {
         if (isBaseCoinSymbol(chainId, symbol)) {
             return Promise.resolve(0);
@@ -100,7 +103,7 @@ function _getCoinId(symbol, chainId, apiInstance, axiosOptions) {
                 .then((coinInfo) => coinInfo.id);
         }
     } else {
-        return Promise.resolve(symbol);
+        return Promise.reject(new Error('Invalid coin symbol'));
     }
 }
 
@@ -157,9 +160,15 @@ function isCoinSymbol(coin) {
         return true;
     }
 
+    const [ticker, versionId] = coin.split('-');
+
     try {
-        validateTicker(coin.split('-')[0]);
+        validateTicker(ticker);
     } catch (error) {
+        return false;
+    }
+
+    if (versionId && !isCoinId(versionId)) {
         return false;
     }
 
