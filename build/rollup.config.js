@@ -1,6 +1,7 @@
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
+//@TODO replace with rollup-plugin-polyfill-node when it ready
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import babel from '@rollup/plugin-babel';
@@ -14,7 +15,7 @@ export default {
         exports: 'auto',
     },
     plugins: [
-        // nodejs v10 doesn't support optional chaining
+        // old acorn in rollup-plugin-node-globals doesn't support new syntax
         babel({
             babelrc: false,
             configFile: false,

@@ -2,6 +2,7 @@ import {privateToAddressString} from 'minterjs-util';
 // import {privateToAddressString} from 'minterjs-util/src/prefix.js';
 import PostSignedTx from './post-signed-tx.js';
 import GetNonce from './get-nonce.js';
+import {ReplaceCoinSymbol} from './replace-coin.js';
 import prepareSignedTx, {prepareTx} from '../tx.js';
 import {bufferFromBytes, toInteger, wait} from '../utils.js';
 
@@ -19,6 +20,7 @@ import {bufferFromBytes, toInteger, wait} from '../utils.js';
  * @return {Function<Promise>}
  */
 export default function PostTx(apiInstance) {
+    const replaceCoinSymbol = new ReplaceCoinSymbol(apiInstance);
     /**
      * @param {TxParams} txParams
      * @param {PostTxOptions} options
@@ -34,8 +36,11 @@ export default function PostTx(apiInstance) {
         // @TODO asserts
 
         // @TODO should axiosOptions be passed here?
-        return ensureNonce(apiInstance, txParams, txOptions)
-            .then((newNonce) => _postTxHandleErrors(apiInstance, {...txParams, nonce: newNonce}, {gasRetryLimit, nonceRetryLimit, mempoolRetryLimit, ...txOptions, axiosOptions}));
+        return Promise.all([
+            ensureNonce(apiInstance, txParams, txOptions),
+            replaceCoinSymbol(txParams),
+        ])
+            .then(([newNonce, newTxParams]) => _postTxHandleErrors(apiInstance, {...newTxParams, nonce: newNonce}, {gasRetryLimit, nonceRetryLimit, mempoolRetryLimit, ...txOptions, axiosOptions}));
     };
 }
 

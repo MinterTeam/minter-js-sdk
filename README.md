@@ -157,21 +157,21 @@ const txParams = {
     gasCoin: 'MYCOIN', // coin symbol
 };
 
-// replace coin symbols in txParams with coin ids
-minter.replaceCoinSymbol(txParams)
-    .then((newTxParams) => {
-        return minter.postTx(newTxParams, {
-            privateKey: '0x5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da'
+// coin symbols in txParams will be replaced automatically with coin ids
+minter.postTx(newTxParams, {
+          privateKey: '0x5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da'
         })
-    })
     .then((txHash) => {
-        // WARNING
-        // If you use minter-node api, successful response mean that Tx just get in mempool and it is not in blockchain yet. 
-        // You have to wait it in the upcoming block. 
-        // Also you can use gate api instead, it will return succes response only after Tx will be appeared in the blockchain 
-        // WARNING #2 
-        // If Tx was included in the block, it still may has failed status.
-        // Check tx.code to be `0`, to ensure it is successful
+      // WARNINGs for minter-node api users
+      // #1
+      // Successful response mean that Tx just get in mempool and it is not in blockchain yet. 
+      // You have to wait it in the upcoming block.
+      // #2 
+      // If tx was included in the block, it still may has failed status.
+      // Check tx.code to be `0`, to ensure it is successful
+      // Gate api users not affected:
+      // Gate will return succes response only after tx will be appeared in the blockchain
+      // Also gate returns tx data in the response, so SDK will check tx.code automatically and reject promise for non-zero codes
         alert(`Tx created: ${txHash}`);
     }).catch((error) => {
         const errorMessage = error.response.data.error.message
