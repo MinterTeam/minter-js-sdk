@@ -1,3 +1,4 @@
+import {stringify as qsStringify} from 'qs';
 import {convertFromPip, convertToPip} from 'minterjs-util';
 // import {convertFromPip, convertToPip} from 'minterjs-util/src/converter.js';
 import {isCoinId, isValidNumber} from '../utils.js';
@@ -62,7 +63,11 @@ export default function EstimateCoinBuy(apiInstance) {
             coin_commission: !isCoinId(gasCoin) ? gasCoin : undefined,
         };
 
-        return apiInstance.get('estimate_coin_buy', {...axiosOptions, params})
+        return apiInstance.get('estimate_coin_buy', {
+            ...axiosOptions,
+            params,
+            paramsSerializer: (query) => qsStringify(query, {arrayFormat: 'repeat'}),
+        })
             .then((response) => {
                 const resData = response.data;
                 if (!isValidNumber(resData.will_pay)) {
