@@ -1,6 +1,6 @@
 import {TX_TYPE} from 'minterjs-util';
 
-import {API_TYPE_NODE, API_TYPE_GATE} from './variables.js';
+import {API_TYPE_NODE, API_TYPE_GATE, ESTIMATE_SWAP_TYPE} from './variables.js';
 import Minter from './minter.js';
 import MinterApi from './api/index.js';
 import PostTx, {EnsureNonce} from './api/post-tx.js';
@@ -60,6 +60,7 @@ export {
     TX_TYPE,
     API_TYPE_NODE,
     API_TYPE_GATE,
+    ESTIMATE_SWAP_TYPE,
     Minter,
     MinterApi,
     PostTx,

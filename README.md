@@ -27,7 +27,6 @@ Contents:
     - [getNonce](#getnonce)
     - [getMinGasPrice](#getmingasprice)
     - [getCoinInfo](#getcoininfo)
-    - [getCoinInfoById](#getcoininfobyid)
     - [estimateCoinSell](#estimatecoinsell)
     - [estimateCoinBuy](#estimatecoinbuy)
     - [estimateTxCommission](#estimatetxcommission)
@@ -206,7 +205,6 @@ const minterNode = new Minter({chainId: 2, apiType: 'node', baseURL: 'https://no
 - [ensureNonce](#ensurenonce)
 - [getMinGasPrice](#getmingasprice)
 - [getCoinInfo](#getcoininfo)
-- [getCoinInfoById](#getcoininfobyid)
 - [estimateCoinSell](#estimatecoinsell)
 - [estimateCoinBuy](#estimatecoinbuy)
 - [estimateTxCommission](#estimatetxcommission)
@@ -334,33 +332,17 @@ minter.getMinGasPrice()
 
 
 ### .getCoinInfo()
-Get coin info by coinSymbol.
+Get coin info by coin ID or symbol.
 
 ```js
 /**
- * @param {string} coinSymbol
+ * @param {string|number} coin
  * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<CoinInfo>}
  */
-minter.getCoinInfo(coinSymbol)
+minter.getCoinInfo(coin)
     .then((coinInfo) => {
-        console.log(coinInfo.id);
-    });
-```
-
-
-### .getCoinInfoById()
-Get coin info by id.
-
-```js
-/**
- * @param {string} coinSymbol
- * @param {AxiosRequestConfig} [axiosOptions]
- * @return {Promise<CoinInfo>}
- */
-minter.getCoinInfo(coinId)
-    .then((coinInfo) => {
-        console.log(coinInfo.symbol);
+        console.log(coinInfo.id, coinInfo.symbol);
     });
 ```
 

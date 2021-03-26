@@ -5,6 +5,7 @@
 - add `estimateCoinSellAll` API method
 - add `route` and `gasCoin` params to estimate sell/buy API methods
 - **DEPRECATED** `coinIdToSell` and `coinIdToBuy` params in estimate sell/buy API methods, use `coinToSell` and `coinToBuy` instead
+- **DEPRECATED** `getCoinInfoById` API method, use `getCoinInfo` instead
 - **BREAKING** rename TX_TYPE `EDIT_COIN_OWNER` to `EDIT_TICKER_OWNER` and `EditCoinOwnerTxData` to `EditTickerOwnerTxData`
 - **BREAKING** add error code check when `postTx` made through gate api
 - **BREAKING** rename some file paths

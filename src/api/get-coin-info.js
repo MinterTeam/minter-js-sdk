@@ -1,21 +1,32 @@
+import {isCoinId, isCoinSymbol} from '../utils.js';
+
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function(*): (Promise<CoinInfo>)}
+ * @return {function((string|number), AxiosRequestConfig=): (Promise<CoinInfo>)}
  */
 export default function GetCoinInfo(apiInstance) {
+    return getCoinInfo;
     /**
      * Get nonce for new transaction: last transaction number + 1
-     * @param {string} coinSymbol
+     * @param {string|number} coin
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<CoinInfo>}
      */
-    return function getCoinInfo(coinSymbol, axiosOptions) {
-        return apiInstance.get(`coin_info/${coinSymbol}`, axiosOptions)
+    function getCoinInfo(coin, axiosOptions) {
+        let coinInfoPromise;
+        if (isCoinId(coin)) {
+            coinInfoPromise = apiInstance.get(`coin_info_by_id/${coin}`, axiosOptions);
+        } else if (isCoinSymbol(coin)) {
+            coinInfoPromise = apiInstance.get(`coin_info/${coin}`, axiosOptions);
+        } else {
+            return Promise.reject(new Error('Invalid coin'));
+        }
+        return coinInfoPromise
             .then((response) => {
                 response.data.id = Number(response.data.id);
                 return response.data;
             });
-    };
+    }
 }
 
 /**
