@@ -40,6 +40,38 @@ export function isCoinId(coinIdOrSymbol) {
 }
 
 /**
+ * @param {string} coin
+ * @return {boolean}
+ */
+export function isCoinSymbol(coin) {
+    if (isCoinId(coin)) {
+        return false;
+    }
+    if (typeof coin !== 'string') {
+        return false;
+    }
+
+    if (/^LP-[0-9]+$/.test(coin)) {
+        return true;
+    }
+
+    const [ticker, versionId] = coin.split('-');
+
+    try {
+        validateTicker(ticker);
+    } catch (error) {
+        return false;
+    }
+
+    // check version is number
+    if (versionId && !isCoinId(versionId)) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * @param {number|string} num
  * @return {boolean}
  */

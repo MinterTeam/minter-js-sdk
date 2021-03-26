@@ -2,7 +2,7 @@ import _get from 'lodash-es/get.js';
 import _set from 'lodash-es/set.js';
 import {TX_TYPE, normalizeTxType} from 'minterjs-util';
 import GetCoinInfo from './get-coin-info.js';
-import {validateTicker, isBaseCoinSymbol, isCoinId} from '../utils.js';
+import {isBaseCoinSymbol, isCoinId, isCoinSymbol} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
@@ -135,42 +135,4 @@ function getTxParamsPathList(txParams) {
     }
 
     return pathList;
-}
-
-
-/**
- * May be false positive for coin id strings, e.g. '123'
- * @param {string} coin
- * @return {boolean}
- */
-function isCoinSymbol(coin) {
-    if (isCoinId(coin)) {
-        return false;
-    }
-    if (typeof coin !== 'string') {
-        return false;
-    }
-
-    // hex prefixed
-    if (coin.slice(0, 2) === '0x') {
-        return false;
-    }
-
-    if (/^LP-[0-9]+$/.test(coin)) {
-        return true;
-    }
-
-    const [ticker, versionId] = coin.split('-');
-
-    try {
-        validateTicker(ticker);
-    } catch (error) {
-        return false;
-    }
-
-    if (versionId && !isCoinId(versionId)) {
-        return false;
-    }
-
-    return true;
 }

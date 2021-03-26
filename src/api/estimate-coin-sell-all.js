@@ -1,20 +1,19 @@
 import {convertFromPip, convertToPip} from 'minterjs-util';
 // import {convertFromPip, convertToPip} from 'minterjs-util/src/converter.js';
-import {isValidNumber, isCoinId} from '../utils.js';
+import {isCoinId, isValidNumber} from '../utils.js';
 
 /**
- * @typedef {Object} EstimateSellResult
+ * @typedef {Object} EstimateSellAllResult
  * @property {number|string} will_get - amount of coinToBuy
- * @property {number|string} commission - amount of coinToSell to pay fee
  * @property {"pool"|"bancor"} swap_from
  */
 
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function({coinIdToSell?: (number|string), coinToSell?: string, valueToSell?: (string|number), coinIdToBuy?: (number|string), coinToBuy?: string, swapFrom?: ESTIMATE_SWAP_TYPE, route?: Array<string|number>, gasCoin?: (string|number), coinCommission?: (string|number)}, axiosOptions: AxiosRequestConfig=): Promise<EstimateSellResult>}
+ * @return {function({coinToSell?: (string|number), valueToSell?: (string|number), coinToBuy?: (string|number), swapFrom?: ESTIMATE_SWAP_TYPE, route?: Array<string|number>}, axiosOptions: AxiosRequestConfig=): Promise<EstimateSellAllResult>}
  */
-export default function EstimateCoinSell(apiInstance) {
-    return estimateCoinSell;
+export default function EstimateCoinSellAll(apiInstance) {
+    return estimateCoinSellAll;
     /**
      * Get nonce for new transaction: last transaction number + 1
      * @param {Object} params
@@ -23,12 +22,10 @@ export default function EstimateCoinSell(apiInstance) {
      * @param {string|number} [params.coinToBuy] - ID or symbol of the coin to buy
      * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate pool swap
      * @param {Array<string|number>} [params.route] - intermediate coins IDs
-     * @param {string|number} [params.gasCoin]
-     * @param {string|number} [params.coinCommission] - gasCoin alias
      * @param {AxiosRequestConfig} [axiosOptions]
-     * @return {Promise<EstimateSellResult>}
+     * @return {Promise<EstimateSellAllResult>}
      */
-    function estimateCoinSell(params, axiosOptions) {
+    function estimateCoinSellAll(params, axiosOptions) {
         if (params.coinIdToSell || params.coinIdToSell === 0) {
             params.coinToSell = params.coinIdToSell;
             console.warn('coinIdToSell is deprecated, use coinToSell instead');
@@ -48,8 +45,6 @@ export default function EstimateCoinSell(apiInstance) {
             return Promise.reject(new Error('Coin to sell not specified'));
         }
 
-        const gasCoin = params.gasCoin || params.coinCommission;
-
         params = {
             coin_id_to_sell: isCoinId(params.coinToSell) ? params.coinToSell : undefined,
             coin_to_sell: !isCoinId(params.coinToSell) ? params.coinToSell : undefined,
@@ -58,8 +53,6 @@ export default function EstimateCoinSell(apiInstance) {
             coin_to_buy: !isCoinId(params.coinToBuy) ? params.coinToBuy : undefined,
             swap_from: params.swapFrom,
             route: params.route,
-            coin_id_commission: isCoinId(gasCoin) ? gasCoin : undefined,
-            coin_commission: !isCoinId(gasCoin) ? gasCoin : undefined,
         };
 
         return apiInstance.get('estimate_coin_sell', {...axiosOptions, params})

@@ -10,6 +10,7 @@ import GetCoinInfo from './api/get-coin-info.js';
 import GetCoinInfoById from './api/get-coin-info-by-id.js';
 import GetMinGasPrice from './api/get-min-gas-price.js';
 import EstimateCoinSell from './api/estimate-coin-sell.js';
+import EstimateCoinSellAll from './api/estimate-coin-sell-all.js';
 import EstimateCoinBuy from './api/estimate-coin-buy.js';
 import EstimateTxCommission from './api/estimate-tx-commission.js';
 import {ReplaceCoinSymbol, ReplaceCoinSymbolByPath} from './api/replace-coin.js';
@@ -69,6 +70,7 @@ export {
     GetCoinInfoById,
     GetMinGasPrice,
     EstimateCoinSell,
+    EstimateCoinSellAll,
     EstimateCoinBuy,
     EstimateTxCommission,
     ReplaceCoinSymbol,

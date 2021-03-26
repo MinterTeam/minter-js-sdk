@@ -1,6 +1,6 @@
 import {convertFromPip, convertToPip} from 'minterjs-util';
 // import {convertFromPip, convertToPip} from 'minterjs-util/src/converter.js';
-import {isValidNumber} from '../utils.js';
+import {isCoinId, isValidNumber} from '../utils.js';
 
 /**
  * @typedef {Object} EstimateBuyResult
@@ -11,42 +11,55 @@ import {isValidNumber} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function({coinIdToBuy?: (number|string), coinToBuy?: string, valueToBuy: (string|number), coinIdToSell?: (number|string), coinToSell?: string, swapFrom?: ESTIMATE_SWAP_TYPE, route?: Array<number>}, axiosOptions: AxiosRequestConfig=): Promise<EstimateBuyResult>}
+ * @return {function({coinToBuy?: (string|number), valueToBuy: (string|number), coinToSell?: (string|number), swapFrom?: ESTIMATE_SWAP_TYPE, route?: Array<number>, gasCoin?: (string|number), coinCommission?: (string|number)}, axiosOptions: AxiosRequestConfig=): Promise<EstimateBuyResult>}
  */
 export default function EstimateCoinBuy(apiInstance) {
     return estimateCoinBuy;
     /**
      * Get nonce for new transaction: last transaction number + 1
      * @param {Object} params
-     * @param {number|string} [params.coinIdToBuy] - ID of the coin to buy
-     * @param {string} [params.coinToBuy] - symbol of the coin to buy
+     * @param {string|number} [params.coinToBuy] - ID or symbol of the coin to buy
      * @param {string|number} params.valueToBuy
-     * @param {number|string} [params.coinIdToSell] - ID of the coin to sell
-     * @param {string} [params.coinToSell] - symbol of the coin to sell
+     * @param {string|number} [params.coinToSell] - ID or symbol of the coin to sell
      * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate from pool, bancor or optimal
      * @param {Array<number>} [params.route]
+     * @param {string|number} [params.gasCoin]
+     * @param {string|number} [params.coinCommission] - gasCoin alias
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<EstimateBuyResult>}
      */
     function estimateCoinBuy(params, axiosOptions) {
-        if (!params.coinToBuy && (!params.coinIdToBuy && params.coinIdToBuy !== 0)) {
+        if (params.coinIdToSell || params.coinIdToSell === 0) {
+            params.coinToSell = params.coinIdToSell;
+            console.warn('coinIdToSell is deprecated, use coinToSell instead');
+        }
+        if (params.coinIdToBuy || params.coinIdToBuy === 0) {
+            params.coinToBuy = params.coinIdToBuy;
+            console.warn('coinIdToSell is deprecated, use coinToSell instead');
+        }
+
+        if (!params.coinToBuy && params.coinToBuy !== 0) {
             return Promise.reject(new Error('Coin to buy not specified'));
         }
         if (!params.valueToBuy) {
             return Promise.reject(new Error('Value to buy not specified'));
         }
-        if (!params.coinToSell && (!params.coinIdToSell && params.coinIdToSell !== 0)) {
+        if (!params.coinToSell && params.coinToSell !== 0) {
             return Promise.reject(new Error('Coin to sell not specified'));
         }
 
+        const gasCoin = params.gasCoin || params.coinCommission;
+
         params = {
-            coin_id_to_buy: params.coinIdToBuy,
-            coin_to_buy: params.coinToBuy,
+            coin_id_to_buy: isCoinId(params.coinToBuy) ? params.coinToBuy : undefined,
+            coin_to_buy: !isCoinId(params.coinToBuy) ? params.coinToBuy : undefined,
             value_to_buy: convertToPip(params.valueToBuy),
-            coin_id_to_sell: params.coinIdToSell,
-            coin_to_sell: params.coinToSell,
+            coin_id_to_sell: isCoinId(params.coinToSell) ? params.coinToSell : undefined,
+            coin_to_sell: !isCoinId(params.coinToSell) ? params.coinToSell : undefined,
             swap_from: params.swapFrom,
             route: params.route,
+            coin_id_commission: isCoinId(gasCoin) ? gasCoin : undefined,
+            coin_commission: !isCoinId(gasCoin) ? gasCoin : undefined,
         };
 
         return apiInstance.get('estimate_coin_buy', {...axiosOptions, params})

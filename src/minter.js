@@ -6,6 +6,7 @@ import GetMinGasPrice from './api/get-min-gas-price.js';
 import PostTx, {EnsureNonce} from './api/post-tx.js';
 import PostSignedTx from './api/post-signed-tx.js';
 import EstimateCoinSell from './api/estimate-coin-sell.js';
+import EstimateCoinSellAll from './api/estimate-coin-sell-all.js';
 import EstimateCoinBuy from './api/estimate-coin-buy.js';
 import EstimateTxCommission from './api/estimate-tx-commission.js';
 import {ReplaceCoinSymbol, ReplaceCoinSymbolByPath, GetCoinId} from './api/replace-coin.js';
@@ -35,6 +36,7 @@ export default function Minter(options) {
     this.getMinGasPrice = GetMinGasPrice(apiInstance);
 
     this.estimateCoinSell = EstimateCoinSell(apiInstance);
+    this.estimateCoinSellAll = EstimateCoinSellAll(apiInstance);
     this.estimateCoinBuy = EstimateCoinBuy(apiInstance);
     this.estimateTxCommission = EstimateTxCommission(apiInstance);
 
