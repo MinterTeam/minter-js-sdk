@@ -1,7 +1,6 @@
 import secp256k1 from 'secp256k1';
 import {sha256, rlphash} from 'ethereumjs-util/dist/hash.js';
-import {privateToAddress} from 'ethereumjs-util/dist/account.js';
-import {isHexPrefixed, isHexString} from 'ethjs-util';
+import {walletFromMnemonic, walletFromPrivateKey} from 'minterjs-wallet';
 import {TxDataRedeemCheck} from 'minterjs-tx';
 // import TxDataRedeemCheck from 'minterjs-tx/src/tx-data/redeem-check.js';
 import {toBuffer, checkToString} from 'minterjs-util';
@@ -35,7 +34,7 @@ export default function RedeemCheckTxData({check, proof}, options = {}) {
 
     if (proof) {
         proof = toBuffer(proof);
-    } else if (options.address || options.privateKey) {
+    } else if (options.address || options.privateKey || options.seedPhrase) {
         proof = getProofWithRecovery(options);
     }
 
@@ -73,22 +72,20 @@ RedeemCheckTxData.fromRlp = function fromRlp(data) {
  * @param {ByteArray} password
  * @param {ByteArray} [address]
  * @param {ByteArray} [privateKey]
+ * @param {string} [seedPhrase]
  * @return {ArrayBuffer|Buffer}
  */
-function getProofWithRecovery({password, address, privateKey}) {
+function getProofWithRecovery({password, address, privateKey, seedPhrase}) {
     let addressBuffer;
     if (address) {
         addressBuffer = toBuffer(address);
     } else if (privateKey) {
-        if (typeof privateKey === 'string' && privateKey.length > 0 && !isHexPrefixed(privateKey) && isHexString(`0x${privateKey}`)) {
-            privateKey = `0x${privateKey}`;
-            // eslint-disable-next-line no-console
-            console.warn('Usage of privateKey string without 0x prefix is deprecated');
-        }
         privateKey = toBuffer(privateKey);
-        addressBuffer = privateToAddress(privateKey);
+        addressBuffer = walletFromPrivateKey(privateKey).getAddress();
+    } else if (seedPhrase) {
+        addressBuffer = walletFromMnemonic(seedPhrase).getAddress();
     } else {
-        throw new Error('No address or private key given to generate proof');
+        throw new Error('No address nor seed phrase nor private key given to generate proof');
     }
     const addressHash = rlphash([
         addressBuffer,

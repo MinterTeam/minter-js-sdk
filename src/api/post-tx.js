@@ -4,7 +4,7 @@ import PostSignedTx from './post-signed-tx.js';
 import GetNonce from './get-nonce.js';
 import {ReplaceCoinSymbol} from './replace-coin.js';
 import prepareSignedTx, {prepareTx} from '../tx.js';
-import {bufferFromBytes, toInteger, wait} from '../utils.js';
+import {bufferFromBytes, getPrivateKeyFromSeedPhraseAsync, toInteger, wait} from '../utils.js';
 
 /**
  * @typedef {TxOptions & PostTxOptionsExtra} PostTxOptions
@@ -35,12 +35,23 @@ export default function PostTx(apiInstance) {
         }
         // @TODO asserts
 
+
+        let privateKeyPromise;
+        if (txOptions.privateKey) {
+            privateKeyPromise = Promise.resolve(txOptions.privateKey);
+        } else if (txOptions.seedPhrase) {
+            privateKeyPromise = getPrivateKeyFromSeedPhraseAsync(txOptions.seedPhrase);
+        } else {
+            privateKeyPromise = Promise.resolve(undefined);
+        }
+
         // @TODO should axiosOptions be passed here?
         return Promise.all([
             ensureNonce(apiInstance, txParams, txOptions),
             replaceCoinSymbol(txParams),
+            privateKeyPromise,
         ])
-            .then(([newNonce, newTxParams]) => _postTxHandleErrors(apiInstance, {...newTxParams, nonce: newNonce}, {gasRetryLimit, nonceRetryLimit, mempoolRetryLimit, ...txOptions, axiosOptions}));
+            .then(([newNonce, newTxParams, privateKey]) => _postTxHandleErrors(apiInstance, {...newTxParams, nonce: newNonce}, {gasRetryLimit, nonceRetryLimit, mempoolRetryLimit, ...txOptions, privateKey, axiosOptions}));
     };
 }
 

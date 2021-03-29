@@ -6,7 +6,7 @@ import {defineProperties} from 'minterjs-tx';
 import {convertToPip, convertFromPip, mPrefixStrip, toBuffer} from 'minterjs-util';
 // import {convertToPip, convertFromPip} from 'minterjs-util/src/converter.js';
 // import {mPrefixStrip} from 'minterjs-util/src/prefix.js';
-import {integerToHexString, bufferToInteger, validateUint, validateAmount} from './utils.js';
+import {integerToHexString, bufferToInteger, validateUint, validateAmount, getPrivateKeyFromSeedPhrase} from './utils.js';
 
 class Check {
     constructor(data) {
@@ -103,8 +103,8 @@ class Check {
 }
 
 /**
- *
- * @param {string|Buffer} privateKey - hex or Buffer
+ * @param {string} [seedPhrase]
+ * @param {string|Buffer} [privateKey] - hex or Buffer
  * @param {string} password - utf8
  * @param {string} nonce
  * @param {number} [chainId=1]
@@ -115,11 +115,19 @@ class Check {
  * @param {boolean} [isReturnObject]
  * @return {string|Check}
  */
-export default function issueCheck({privateKey, password, nonce, chainId = 1, coin, value, gasCoin = 0, dueBlock = 999999999} = {}, isReturnObject) {
+export default function issueCheck({seedPhrase, privateKey, password, nonce, chainId = 1, coin, value, gasCoin = 0, dueBlock = 999999999} = {}, isReturnObject) {
     validateUint(dueBlock, 'dueBlock');
     validateUint(coin, 'coin');
     validateUint(gasCoin, 'gasCoin');
     validateAmount(value, 'value');
+
+    if (!seedPhrase && !privateKey) {
+        throw new Error('seedPhrase or privateKey are required');
+    }
+
+    if (!privateKey && seedPhrase) {
+        privateKey = getPrivateKeyFromSeedPhrase(seedPhrase);
+    }
 
     privateKey = ethToBuffer(privateKey);
 

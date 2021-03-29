@@ -4,6 +4,7 @@ import Big from 'big.js';
 import BN from 'bn.js';
 import {padToEven, isHexPrefixed} from 'ethjs-util';
 import {isValidAddress, isValidPublicKeyString, isValidCheck, numberToBig, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
+import {walletFromMnemonic, walletFromMnemonicAsync} from 'minterjs-wallet';
 
 Big.RM = 2;
 
@@ -317,6 +318,25 @@ export function validateBoolean(value, fieldName) {
     if (typeof value !== 'boolean') {
         throw new TypeError(`Field \`${fieldName}\` should be boolean, ${typeof value} given`);
     }
+}
+
+/**
+ * @param {string} seedPhrase
+ * @return {string}
+ */
+export function getPrivateKeyFromSeedPhrase(seedPhrase) {
+    return walletFromMnemonic(seedPhrase).getPrivateKeyString();
+}
+
+/**
+ * @param {string} seedPhrase
+ * @return {Promise<string>}
+ */
+export function getPrivateKeyFromSeedPhraseAsync(seedPhrase) {
+    return walletFromMnemonicAsync(seedPhrase)
+        .then((wallet) => {
+            return wallet.getPrivateKeyString();
+        });
 }
 
 /**

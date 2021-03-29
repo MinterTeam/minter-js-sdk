@@ -111,11 +111,12 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
 /**
  * @param {string} url
  * @param {string} [address]
+ * @param {string} [seedPhrase]
  * @param {string} [privateKey]
  * @param {boolean} [decodeCheck]
  * @return {TxParams}
  */
-export function decodeLink(url, {address, privateKey, decodeCheck} = {}) {
+export function decodeLink(url, {address, seedPhrase, privateKey, decodeCheck} = {}) {
     const txBase64 = url.replace(/^.*\/tx\//, '').replace(/\?.*$/, '');
     const txBytes = rlpDecode(base64urlDecode(txBase64));
     const passwordBase64 = url.search(/[?&]p=/) >= 0 ? url.replace(/^.*[?&]p=/, '') : '';
@@ -123,14 +124,14 @@ export function decodeLink(url, {address, privateKey, decodeCheck} = {}) {
     const tx = new Link(txBytes);
     const txType = normalizeTxType(tx.type);
     if (txType === TX_TYPE.REDEEM_CHECK && password) {
-        if (!privateKey && !address) {
-            throw new Error('privateKey or address are required if link has password');
+        if (!seedPhrase && !privateKey && !address) {
+            throw new Error('address or seedPhrase or privateKey are required if link has password');
         }
 
         // get check from data
         const {check} = new TxDataRedeemCheck(tx.data);
         // proof from password
-        const txData = new RedeemCheckTxData({check}, {password, address, privateKey}).serialize();
+        const txData = new RedeemCheckTxData({check}, {password, address, seedPhrase, privateKey}).serialize();
         tx.data = txData;
     }
     const txData = decodeTxData(tx.type, tx.data, {decodeCheck});

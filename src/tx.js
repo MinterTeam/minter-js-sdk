@@ -3,7 +3,7 @@ import {Tx, TxSignature, TxMultisignature} from 'minterjs-tx';
 import {normalizeTxType} from 'minterjs-util';
 // import Tx from 'minterjs-tx/src/tx';
 // import TxSignature from 'minterjs-tx/src/tx-signature.js';
-import {bufferToInteger, integerToHexString, toInteger, validateUint} from './utils.js';
+import {bufferToInteger, getPrivateKeyFromSeedPhrase, integerToHexString, toInteger, validateUint} from './utils.js';
 import decorateTxParams from './tx-decorator/index.js';
 import {decodeTxData, ensureBufferData} from './tx-data/index.js';
 
@@ -25,7 +25,8 @@ import {decodeTxData, ensureBufferData} from './tx-data/index.js';
 
 /**
  * @typedef {Object} TxOptions
- * @property {ByteArray} [privateKey] - to sign tx or get nonce or to make proof for redeemCheck tx
+ * @property {string} [seedPhrase] - to sign tx or get nonce or to make proof for redeemCheck tx
+ * @property {ByteArray} [privateKey] - alternative to seedPhrase
  * @property {ByteArray} [address] - to get nonce (useful for multisignatures) or to make proof for redeemCheck tx
  * @property {ByteArray} [password] - to make proof for RedeemCheckTxData
  */
@@ -103,8 +104,9 @@ export function prepareTx(txParams = {}, options = {}) {
 
     const tx = new Tx(txProps);
 
-    if (toInteger(signatureType) === '1' && options.privateKey) {
-        tx.signatureData = makeSignature(tx, options.privateKey);
+    const privateKey = options.seedPhrase && !options.privateKey ? getPrivateKeyFromSeedPhrase(options.seedPhrase) : options.privateKey;
+    if (toInteger(signatureType) === '1' && privateKey) {
+        tx.signatureData = makeSignature(tx, privateKey);
     }
 
     return tx;
@@ -112,7 +114,7 @@ export function prepareTx(txParams = {}, options = {}) {
 
 /**
  * @param {Tx} tx
- * @param {string|Buffer} privateKey
+ * @param {ByteArray} privateKey
  */
 export function makeSignature(tx, privateKey) {
     // @TODO asserts
