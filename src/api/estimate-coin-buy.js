@@ -49,7 +49,7 @@ export default function EstimateCoinBuy(apiInstance) {
             return Promise.reject(new Error('Coin to sell not specified'));
         }
 
-        const gasCoin = params.gasCoin || params.coinCommission;
+        const gasCoin = (params.gasCoin || params.gasCoin === 0) ? params.gasCoin : params.coinCommission;
 
         params = {
             coin_id_to_buy: isCoinId(params.coinToBuy) ? params.coinToBuy : undefined,
