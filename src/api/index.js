@@ -1,6 +1,6 @@
 import axios from 'axios';
 // import createError from 'axios/lib/core/createError';
-import {API_TYPE_GATE, API_TYPE_NODE} from '../variables.js';
+import {API_TYPE_NODE} from '../variables.js';
 
 /**
  * @typedef {Object} MinterApiInstanceType

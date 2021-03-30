@@ -83,6 +83,7 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
         data: ensureBufferData(data || txData, type || txType),
     };
 
+    // eslint-disable-next-line unicorn/consistent-destructuring
     let payload = txParams.message || txParams.payload;
     if (payload) {
         if (typeof payload === 'string') {
@@ -155,7 +156,7 @@ function base64urlEncode(byteArray) {
 function base64urlDecode(base64urlString) {
     const padModulus = base64urlString.length % 4;
     const padLength = padModulus ? 4 - padModulus : 0;
-    const pad = new Array(padLength).fill('=').join('');
+    const pad = Array.from({length: padLength}, () => '=').join('');
     return Buffer.from(base64urlString + pad, 'base64');
 }
 

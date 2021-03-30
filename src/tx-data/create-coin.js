@@ -1,7 +1,7 @@
 import {TxDataCreateCoin} from 'minterjs-tx';
 // import TxDataCreateCoin from 'minterjs-tx/src/tx-data/create-coin.js';
 // import {coinToBuffer} from 'minterjs-tx/src/helpers.js';
-import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
+import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateTicker, validateMaxSupply} from '../utils.js';
 

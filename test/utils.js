@@ -100,3 +100,14 @@ export function logError(error) {
     console.log(cleanError);
     console.log(error?.response?.data ? {data: error.response.data, errorData: error.response.data.error?.data, axiosRequest} : error);
 }
+
+/**
+ * Promisify setTimeout
+ * @param {number} time - milliseconds
+ * @return {Promise}
+ */
+export function wait(time) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, time);
+    });
+}

@@ -27,7 +27,7 @@ import {
     makeSignature,
 } from '~/src';
 import {ENV_DATA, minterGate, minterNode} from './variables';
-import {ensureCustomCoin, getValidatorMinStake, logError} from '~/test/utils.js';
+import {ensureCustomCoin, getValidatorMinStake, logError, wait} from '~/test/utils.js';
 
 function getRandomCoin() {
     const digits = Math.random().toString().substring(2, 9 + 2);
@@ -1083,6 +1083,9 @@ describe('multisig', () => {
                     }
                     expect(txHash).toHaveLength(66);
                     expect(txHash.substr(0, 2)).toEqual('Mt');
+
+                    // wait for tx to get into block
+                    return wait(5000);
                 })
                 .catch((error) => {
                     logError(error);

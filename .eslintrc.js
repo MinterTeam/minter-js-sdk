@@ -87,6 +87,8 @@ module.exports = {
         'unicorn/number-literal-case': 0,
         // allow explicitly return undefined
         'unicorn/no-useless-undefined': 0,
+        // allow forEach
+        'unicorn/no-array-for-each': 0,
         'unicorn/prefer-optional-catch-binding': 0,
         'unicorn/prefer-ternary': 0,
         'unicorn/prevent-abbreviations': ['error', {

@@ -32,10 +32,12 @@ export default function EstimateCoinSell(apiInstance) {
     function estimateCoinSell(params, axiosOptions) {
         if (params.coinIdToSell || params.coinIdToSell === 0) {
             params.coinToSell = params.coinIdToSell;
+            // eslint-disable-next-line no-console
             console.warn('coinIdToSell is deprecated, use coinToSell instead');
         }
         if (params.coinIdToBuy || params.coinIdToBuy === 0) {
             params.coinToBuy = params.coinIdToBuy;
+            // eslint-disable-next-line no-console
             console.warn('coinIdToSell is deprecated, use coinToSell instead');
         }
 

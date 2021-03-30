@@ -119,11 +119,9 @@ function getTxParamsPathList(txParams) {
     if (txType === TX_TYPE.SEND || txType === TX_TYPE.DECLARE_CANDIDACY || txType === TX_TYPE.DELEGATE || txType === TX_TYPE.UNBOND || txType === TX_TYPE.MOVE_STAKE || txType === TX_TYPE.MINT_TOKEN || txType === TX_TYPE.BURN_TOKEN || txType === TX_TYPE.VOTE_COMMISSION) {
         pathList.push('data.coin');
     } else if (txType === TX_TYPE.SELL || txType === TX_TYPE.SELL_ALL || txType === TX_TYPE.BUY) {
-        pathList.push('data.coinToSell');
-        pathList.push('data.coinToBuy');
+        pathList.push('data.coinToSell', 'data.coinToBuy');
     } else if (txType === TX_TYPE.CREATE_SWAP_POOL || txType === TX_TYPE.ADD_LIQUIDITY || txType === TX_TYPE.REMOVE_LIQUIDITY) {
-        pathList.push('data.coin0');
-        pathList.push('data.coin1');
+        pathList.push('data.coin0', 'data.coin1');
     } else if (txType === TX_TYPE.MULTISEND) {
         txParams.data.list.forEach((item, index) => {
             pathList.push(`data.list[${index}].coin`);
