@@ -16,13 +16,12 @@ import {isCoinId, isValidNumber} from '../utils.js';
 export default function EstimateCoinSellAll(apiInstance) {
     return estimateCoinSellAll;
     /**
-     * Get nonce for new transaction: last transaction number + 1
      * @param {Object} params
-     * @param {string|number} [params.coinToSell] - ID or symbol of the coin to sell
-     * @param {string|number} [params.valueToSell]
-     * @param {string|number} [params.coinToBuy] - ID or symbol of the coin to buy
+     * @param {string|number} params.coinToSell - ID or symbol of the coin to sell
+     * @param {string|number} params.valueToSell
+     * @param {string|number} params.coinToBuy - ID or symbol of the coin to buy
      * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate pool swap
-     * @param {Array<string|number>} [params.route] - intermediate coins IDs
+     * @param {Array<string|number>} [params.route] - intermediate coins IDs for pool swaps
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<EstimateSellAllResult>}
      */

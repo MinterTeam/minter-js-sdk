@@ -25,14 +25,14 @@ export default function EstimateTxCommission(apiInstance) {
     /**
      * @param {TxParams|string} txParams
      * @param {Object} [options]
-     * @param {boolean} [options.direct]
+     * @param {boolean} [options.direct = true]
      * @param {AxiosRequestConfig} [axiosOptions]
      * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
      */
     function estimateTxCommission(txParams, {direct = true} = {}, axiosOptions) {
         let paramsPromise;
         if (typeof txParams === 'object') {
-            paramsPromise = getCoinId(txParams.gasCoin, txParams.chainId, axiosOptions)
+            paramsPromise = getCoinId(txParams.gasCoin || 0, txParams.chainId, axiosOptions)
                 .then((coinId) => {
                     validateUint(coinId, 'gasCoin');
                     return {

@@ -1,18 +1,17 @@
 ## WIP 
 - add v2 pool, token, vote, and other tx data
-- add `swapFrom` parameter to estimation API methods
-- add `getCoinId` API method
 - add `estimateCoinSellAll` API method
-- add `route` and `gasCoin` params to estimate sell/buy API methods
+- add `swapFrom`, `route` and `gasCoin` parameters to estimation API methods
+- add `getCoinId` API method
 - add `seedPharse` param as alternative to `privateKey`
-- **DEPRECATED** `coinIdToSell` and `coinIdToBuy` params in estimate sell/buy API methods, use `coinToSell` and `coinToBuy` instead
-- **DEPRECATED** `getCoinInfoById` API method, use `getCoinInfo` instead
+- **BREAKING** reworked `estimateTxCommission`
 - **BREAKING** rename TX_TYPE `EDIT_COIN_OWNER` to `EDIT_TICKER_OWNER` and `EditCoinOwnerTxData` to `EditTickerOwnerTxData`
 - **BREAKING** add error code check when `postTx` made through gate api
 - **BREAKING** rename some file paths
 - **BREAKING** remove deprecated `toHexString`, use `integerToHexString` instead
 - **BREAKING** disabled deprecated usage of `privateKey` hex string without hex prefix
-- **BREAKING** reworked `estimateTxCommission`
+- **DEPRECATED** `coinIdToSell` and `coinIdToBuy` params in estimate sell/buy API methods, use `coinToSell` and `coinToBuy` instead
+- **DEPRECATED** `getCoinInfoById` API method, use `getCoinInfo` instead
 
 ## 0.37.0 - 2020-12-30 
 - **BREAKING** don't autofill `gasCoin` with coin to spent, use base coin (BIP) by default everywhere

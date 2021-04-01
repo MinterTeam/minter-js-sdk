@@ -17,10 +17,10 @@ import {decodeTxData, ensureBufferData} from './tx-data/index.js';
  * @property {string|Buffer|TX_TYPE} [txType] - deprecated
  * @property {Buffer|TxData|Object} data
  * @property {Buffer|TxData|Object} [txData] - deprecated
- * @property {string} payload
+ * @property {string} [payload]
  * @property {string} [message] - deprecated
- * @property {number} signatureType
- * @property {ByteArray|Array<ByteArray>} signatureData
+ * @property {number} [signatureType]
+ * @property {ByteArray|{multisig: ByteArray, signatures: Array<ByteArray>}} [signatureData]
  */
 
 /**

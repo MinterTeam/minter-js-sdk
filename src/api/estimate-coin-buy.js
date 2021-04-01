@@ -17,13 +17,12 @@ import {isCoinId, isValidNumber} from '../utils.js';
 export default function EstimateCoinBuy(apiInstance) {
     return estimateCoinBuy;
     /**
-     * Get nonce for new transaction: last transaction number + 1
      * @param {Object} params
-     * @param {string|number} [params.coinToBuy] - ID or symbol of the coin to buy
+     * @param {string|number} params.coinToBuy - ID or symbol of the coin to buy
      * @param {string|number} params.valueToBuy
-     * @param {string|number} [params.coinToSell] - ID or symbol of the coin to sell
+     * @param {string|number} params.coinToSell - ID or symbol of the coin to sell
      * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate from pool, bancor or optimal
-     * @param {Array<number>} [params.route]
+     * @param {Array<number>} [params.route] - intermediate coins IDs for pool swaps
      * @param {string|number} [params.gasCoin]
      * @param {string|number} [params.coinCommission] - gasCoin alias
      * @param {AxiosRequestConfig} [axiosOptions]

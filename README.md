@@ -15,29 +15,37 @@ Please note that this SDK is under active development and is subject to change.
 
 It is complemented by the following packages:
 - [minterjs-wallet](https://github.com/MinterTeam/minterjs-wallet) take care of BIP39 mnemonic phrase, private key and address
-- [minterjs-tx](https://github.com/MinterTeam/minterjs-tx) create, manipulate and sign transactions
 - [minterjs-util](https://github.com/MinterTeam/minterjs-util) utility functions
 
 Contents:
 - [Install](#install)
 - [Usage](#usage)
-  - [SDK instance](#sdk-instance)
+  - [SDK API instance](#sdk-instance)
     - [postTx](#posttx)
     - [postSignedTx](#postsignedtx)
     - [getNonce](#getnonce)
+    - [ensureNonce](#ensurenonce)
     - [getMinGasPrice](#getmingasprice)
     - [getCoinInfo](#getcoininfo)
-    - [estimateCoinSell](#estimatecoinsell)
-    - [estimateCoinBuy](#estimatecoinbuy)
-    - [estimateTxCommission](#estimatetxcommission)
+    - [getCoinId](#getcoinid)
     - [replaceCoinSymbol](#replacecoinsymbol)
     - [replaceCoinSymbolByPath](#replacecoinsymbolbypath)
+    - [estimateCoinBuy](#estimatecoinbuy)
+    - [estimateCoinSell](#estimatecoinsell)
+    - [estimateCoinSellAll](#estimatecoinsellall)
+    - [estimateTxCommission](#estimatetxcommission)
   - [Tx params constructors](#tx-params)
     - [Send](#send)
     - [Multisend](#multisend)
+    - [Buy](#buy)
     - [Sell](#sell)
     - [Sell all](#sell-all)
-    - [Buy](#buy)
+    - [Buy from pool](#buy-from-swap-pool)
+    - [Sell to pool](#sell-to-swap-pool)
+    - [Sell all to pool](#sell-all-to-swap-pool)
+    - [Create pool](#create-pool)
+    - [Add liquidity to pool](#add-liquidity-to-pool)
+    - [Remove liquidity from pool](#remove-liquidity-from-pool)
     - [Create coin](#create-coin)
     - [Recreate coin](#recreate-coin)
     - [Create token](#create-token)
@@ -55,7 +63,8 @@ Contents:
     - [Set candidate on](#set-candidate-on)
     - [Set candidate off](#set-candidate-off)
     - [Set halt block](#set-halt-block)
-    - [Price vote](#price-vote)
+    - [Vote for commission price](#vote-for-commission-price)
+    - [Vote for network update](#vote-for-network-update)
     - [Redeem check](#redeem-check)
     - [Create multisig](#create-multisig)
     - [Edit multisig](#edit-multisig)
@@ -158,8 +167,9 @@ const txParams = {
 
 // coin symbols in txParams will be replaced automatically with coin ids
 minter.postTx(newTxParams, {
-          privateKey: '0x5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da'
-        })
+    // seedPhrase can be used to sign transaction instead of privateKey
+    seedPhrase: 'air model item valley auction bullet crisp always erosion paper orient fog',
+})
     .then((txHash) => {
       // WARNINGs for minter-node api users
       // #1
@@ -205,11 +215,13 @@ const minterNode = new Minter({chainId: 2, apiType: 'node', baseURL: 'https://no
 - [ensureNonce](#ensurenonce)
 - [getMinGasPrice](#getmingasprice)
 - [getCoinInfo](#getcoininfo)
-- [estimateCoinSell](#estimatecoinsell)
-- [estimateCoinBuy](#estimatecoinbuy)
-- [estimateTxCommission](#estimatetxcommission)
+- [getCoinId](#getcoinid)
 - [replaceCoinSymbol](#replacecoinsymbol)
 - [replaceCoinSymbolByPath](#replacecoinsymbolbypath)
+- [estimateCoinBuy](#estimatecoinbuy)
+- [estimateCoinSell](#estimatecoinsell)
+- [estimateCoinSellAll](#estimatecoinsellall)
+- [estimateTxCommission](#estimatetxcommission)
 
 
 ### .postTx()
@@ -239,7 +251,7 @@ Returns promise that resolves with:
  * @property {Object|Buffer|TxData} data
  * @property {string} [payload]
  * @property {number} [signatureType=1]
- * @property {number} [signatureData] - can be signed automatically if `privateKey` passed
+ * @property {number} [signatureData] - can be signed automatically if `privateKey` or `seedPhrase` passed
  */
 
 /**
@@ -248,13 +260,14 @@ Returns promise that resolves with:
 * @param {number} [txOptions.gasRetryLimit=2] - number of retries, if request was failed because of low gas
 * @param {number} [txOptions.nonceRetryLimit=0] - number of retries, if request was failed because of invalid nonce
 * @param {number} [txOptions.mempoolRetryLimit=0] - number of retries, if request was failed with error "Tx from address already exists in mempool"
+* @param {string|Buffer} [txOptions.seedPhrase] - alternative to txOptions.privateKey
 * @param {string|Buffer} [txOptions.privateKey] - to sign tx or get nonce or to make proof for redeemCheck tx
 * @param {string} [txOptions.address] - to get nonce (useful for multisignatures) or to make proof for redeemCheck tx
 * @param {ByteArray} [txOptions.password] - to make proof for RedeemCheckTxData
 * @param {AxiosRequestConfig} [axiosOptions]
 * @return {Promise<NodeTransaction|{hash: string}>}
 */
-minter.postTx(txParams, {privateKey: '...', gasRetryLimit: 2, mempoolRetryLimit: 0})
+minter.postTx(txParams, {seedPhrase: '...', gasRetryLimit: 2, mempoolRetryLimit: 0})
     .then((tx) => {
         console.log(tx.hash);
         // 'Mt...'
@@ -299,19 +312,20 @@ minter.getNonce('Mx...')
 
 
 ### .ensureNonce()
-Ensure nonce for the tx params.
+Ensure nonce for the tx params. Address for which to get nonce should be provided, instead of address can be accepted `seedPhrase` or `privateKey` from which address will be derived. 
 
 ```js
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
  * @param {Object} txOptions
+ * @param {string} [txOptions.seedPhrase]
  * @param {ByteArray} [txOptions.privateKey]
  * @param {string} [txOptions.address]
  * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<number>}
  */
-minter.ensureNonce(txParams, {privateKey: '...'})
+minter.ensureNonce(txParams, {seedPhrase: '...'})
     .then((nonce) => {
         console.log(nonce);
         // 123
@@ -336,7 +350,7 @@ Get coin info by coin ID or symbol.
 
 ```js
 /**
- * @param {string|number} coin
+ * @param {string|number} coin - coind ID or symbol 
  * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<CoinInfo>}
  */
@@ -347,62 +361,26 @@ minter.getCoinInfo(coin)
 ```
 
 
-### .estimateCoinSell()
-Estimate how much coins you will get for selling some other coins.
+### .getCoinId()
+Get coin ID by coin symbol or array of symbols. Uses `getCoinInfo()` under the hood.
 
 ```js
-// by coin symbol
-minter.estimateCoinSell({
-    coinToSell: 'BIP',
-    valueToSell: 10,
-    coinToBuy: 'MYCOIN',
-})
-    .then((result) => {
-        console.log(result.will_get, result.commission);
-        // 123, 0.1
+/**
+ * @param {string|Array<string>} symbol - coin symbol or array of symbols
+ * @param {number} [chainId]
+ * @param {AxiosRequestConfig} [axiosOptions]
+ * @return {Promise<number|Array<number>>}
+ */
+minter.getCoinId('MNT')
+    .then((symbol) => {
+        console.log(symbol);
+        // 0
     });
 
-// or by coin id
-minter.estimateCoinSell({
-    coinIdToSell: 0,
-    valueToSell: 10,
-    coinIdToBuy: 123,
-})
-```
-
-### .estimateCoinBuy()
-Estimate how much coins you will pay for buying some other coins.
-
-```js
-// by coin symbol
-minter.estimateCoinBuy({
-    coinToBuy: 'MYCOIN',
-    valueToBuy: 10,
-    coinToSell: 'BIP',
-})
-    .then((result) => {
-        console.log(result.will_pay, result.commission);
-        // 123, 0.1
-    });
-// or by coin id
-
-minter.estimateCoinBuy({
-    coinIdToSell: 0,
-    valueToSell: 10,
-    coinIdToBuy: 123,
-})
-```
-
-### .estimateTxCommission()
-Estimate transaction fee. Useful for transactions with `gasCoin` different from base coin BIP (or MNT).  
-Accept string with raw signed tx or TxParams object.  
-Resolves with object containing commission value.
-
-```js
-minter.estimateTxCommission('0xf8920101028a4d4e540000000000000001aae98a4d4e...')
-    .then((feeData) => {
-        console.log(feeData.commission);
-        // 0.1
+minter.getCoinId(['MNT', 'LASHIN'])
+    .then((symbols) => {
+          console.log(symbols);
+          // [0, 123]
     });
 ```
 
@@ -475,11 +453,199 @@ minter.replaceCoinSymbolByPath(params, ['gasCoin', 'foo.bar.coin'])
 ```
 
 
+### .estimateCoinBuy()
+Estimate how much coins you will pay for buying some other coins.
+
+```js
+/**
+ * @param {Object} params
+ * @param {string|number} params.coinToBuy - ID or symbol of the coin to buy
+ * @param {string|number} params.valueToBuy
+ * @param {string|number} params.coinToSell - ID or symbol of the coin to sell
+ * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate from pool, bancor or optimal
+ * @param {Array<number>} [params.route] - intermediate coins IDs for pool swaps
+ * @param {string|number} [params.gasCoin]
+ * @param {string|number} [params.coinCommission] - gasCoin alias
+ * @param {AxiosRequestConfig} [axiosOptions]
+ * @return {Promise<EstimateBuyResult>}
+ */
+
+/**
+ * @typedef {Object} EstimateBuyResult
+ * @property {number|string} will_pay - amount of coinToSell
+ * @property {number|string} commission - amount of coinToSell to pay fee
+ * @property {"pool"|"bancor"} swap_from
+ */
+
+minter.estimateCoinBuy({
+    coinToBuy: 'MYCOIN',
+    valueToBuy: 10,
+    coinToSell: 'BIP',
+})
+    .then((result) => {
+        console.log(result.will_pay, result.commission, result.swap_from);
+        // 123, 0.1, 'pool'
+    });
+```
+
+
+### .estimateCoinSell()
+Estimate how much coins you will get for selling some other coins.
+
+```js
+/**
+ * @param {Object} params
+ * @param {string|number} params.coinToSell - ID or symbol of the coin to sell
+ * @param {string|number} params.valueToSell
+ * @param {string|number} params.coinToBuy - ID or symbol of the coin to buy
+ * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate pool swap
+ * @param {Array<string|number>} [params.route] - intermediate coins IDs for pool swaps
+ * @param {string|number} [params.gasCoin]
+ * @param {string|number} [params.coinCommission] - gasCoin alias
+ * @param {AxiosRequestConfig} [axiosOptions]
+ * @return {Promise<EstimateSellResult>}
+ */
+
+/**
+ * @typedef {Object} EstimateSellResult
+ * @property {number|string} will_get - amount of coinToBuy
+ * @property {number|string} commission - amount of coinToSell to pay fee
+ * @property {"pool"|"bancor"} swap_from
+ */
+
+minter.estimateCoinSell({
+    coinToSell: 'BIP',
+    valueToSell: 10,
+    coinToBuy: 'MYCOIN',
+})
+    .then((result) => {
+        console.log(result.will_get, result.commission, result.swap_from);
+        // 123, 0.1, 'pool'
+    });
+```
+
+### .estimateCoinSellAll()
+Estimate how much coins you will get for selling other coins by SellAll transaction.
+
+```js
+/**
+ * @param {Object} params
+ * @param {string|number} params.coinToSell - ID or symbol of the coin to sell
+ * @param {string|number} params.valueToSell
+ * @param {string|number} params.coinToBuy - ID or symbol of the coin to buy
+ * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate pool swap
+ * @param {Array<string|number>} [params.route] - intermediate coins IDs for pool swaps
+ * @param {AxiosRequestConfig} [axiosOptions]
+ * @return {Promise<EstimateSellAllResult>}
+ */
+
+/**
+ * @typedef {Object} EstimateSellAllResult
+ * @property {number|string} will_get - amount of coinToBuy
+ * @property {"pool"|"bancor"} swap_from
+ */
+
+minter.estimateCoinSellAll({
+    coinToSell: 'BIP',
+    valueToSell: 10,
+    coinToBuy: 'MYCOIN',
+})
+    .then((result) => {
+        console.log(result.will_get, result.swap_from);
+        // 123, 'pool'
+    });
+```
+
+
+### .estimateTxCommission()
+Estimate transaction fee. This method can operate in two modes: 
+- 1. `direct: true` make one direct request to the `estimate_tx_commission/{tx}` API.   
+Pros: fewer requests, more accuracy. Cons: provide less data (only `commission` field)
+- 2. `direct: false` makes several requests for blockchain data and calculates fee relying on this data.
+Pros: return more data (`commission`, `baseCoinCommission`, `priceCoinCommission`, `commissionPriceData`), some request can be cached so calculating fee when users types payload can be done dynamically without extra request for each payload character. Cons: make more request for single estimate, can be less accurate in some edge cases and when caching is used.
+     
+First argument `txParams` can be a `TxParams` object or raw signed tx hex string.  
+Second options argument accepts `direct` field, `true` by default .
+Resolves with object containing commission.
+
+See also [Minter commissions docs](https://www.minter.network/docs#commissions)
+
+```js
+/**
+ * @param {TxParams|string} txParams
+ * @param {Object} [options]
+ * @param {boolean} [options.direct]
+ * @param {AxiosRequestConfig} [axiosOptions]
+ * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
+ */
+
+// direct with raw tx string
+minter.estimateTxCommission('0xf8920101028a4d4e540000000000000001aae98a4d4e...')
+    .then((feeData) => {
+        console.log(feeData);
+        // { commission: 0.1 }
+    });
+
+// direct with tx params
+minter.estimateTxCommission({
+    type: TX_TYPE.SEND,
+    data: {to: 'Mx...', value: 10, coin: 'BIP'},
+    gasCoin: 'BIP',
+})
+    .then((feeData) => {
+        console.log(feeData);
+        // { commission: 0.1 }
+    });
+
+minter.estimateTxCommission(
+    {
+        type: TX_TYPE.SEND,
+        data: {to: 'Mx...', value: 10, coin: 'BIP'},
+        gasCoin: 'BIP',
+    }, {direct: false,}
+)
+    .then((feeData) => {
+        console.log(feeData);
+        // { commission: 0.1, baseCoinCommission: 0.1, priceCoinCommission: 0.1, commissionPriceData: {coin: {id: 0, symbol: 'BIP'}, /*...*/} }
+    });
+```
+
+
+
 ## Tx params
 
-Tx params object to pass it to `postTx` or `prepareSignedTx` methods to post transaction to the blockchain
+Tx params object to pass it to `postTx` or `prepareSignedTx` methods to post transaction to the blockchain.
+
+nonce - unique number for each address, used to prevent transaction reply, starts from 1
+chainId - id of the network (1 - mainnet, 2 - testnet)
+gasPrice - fee multiplier, should be equal or greater than current mempool min gas price.
+gasCoin - coin to pay fee
+type - type of transaction (see below)
+data - data of transaction (depends on transaction type)
+payload (arbitrary bytes) - arbitrary user-defined bytes
+serviceData - reserved field
+signatureType - 1 - single signed, 2 - multi signed
+signatureData - digital signature of transaction
+
+```js
+/**
+ * @typedef {Object} TxParams
+ * @property {number} [nonce]
+ * @property {number} [chainId=1]
+ * @property {number} [gasPrice=1]
+ * @property {number|string} [gasCoin='0']
+ * @property {string|Buffer|TX_TYPE} type
+ * @property {Buffer|TxData|Object} data
+ * @property {string} [payload]
+ * @property {number} [signatureType]
+ * @property {ByteArray|{multisig: ByteArray, signatures: Array<ByteArray>}} [signatureData]
+ */
+```
+
+## Transaction types
 
 ### Send
+[Tx docs](https://www.minter.network/docs#send-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -491,10 +657,11 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 ### Multisend
+[Tx docs](https://www.minter.network/docs#multisend-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -515,43 +682,12 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
-```
-
-
-### Sell
-```js
-const txParams = {
-    type: TX_TYPE.SELL,
-    data: {
-        coinToSell: 0,
-        coinToBuy: 123,
-        valueToSell: 10,
-        minimumValueToBuy: 0, // optional, by default 0
-    },
-};
-
-minter.postTx(txParams, {privateKey: '...'});
-```
-
-
-### Sell all
-```js
-import {TX_TYPE} from "minter-js-sdk";
-const txParams = {
-    type: TX_TYPE.SELL_ALL,
-    data: {
-        coinToSell: 0, // coin id
-        coinToBuy: 123, // coin id
-        minimumValueToBuy: 0, // optional, by default 0
-    },
-};
-
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Buy
+[Tx docs](https://www.minter.network/docs#buy-coin-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = new {
@@ -564,13 +700,15 @@ const txParams = new {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
-### Sell from swap pool
+
+### Sell
+[Tx docs](https://www.minter.network/docs#sell-coin-transaction)
 ```js
 const txParams = {
-    type: TX_TYPE.SELL_SWAP_POOL,
+    type: TX_TYPE.SELL,
     data: {
         coinToSell: 0,
         coinToBuy: 123,
@@ -579,15 +717,16 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
-### Sell all from swap pool
+### Sell all
+[Tx docs](https://www.minter.network/docs#sell-all-coin-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    type: TX_TYPE.SELL_ALL_SWAP_POOL,
+    type: TX_TYPE.SELL_ALL,
     data: {
         coinToSell: 0, // coin id
         coinToBuy: 123, // coin id
@@ -595,10 +734,76 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
+```
+
+### Buy from swap pool
+[Tx docs](https://www.minter.network/docs#buy-from-swap-pool-transaction)
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = new {
+    type: TX_TYPE.BUY,
+    data: {
+        coins: [0, 123, 15], // route of coin IDs from spent to received
+        valueToBuy: 10,
+        maximumValueToSell: 1234 // optional, by default 10^15
+    },
+};
+
+minter.postTx(txParams, {seedPhrase: '...'});
+```
+
+### Sell to swap pool
+[Tx docs](https://www.minter.network/docs#sell-from-swap-pool-transaction)
+```js
+const txParams = {
+    type: TX_TYPE.SELL_SWAP_POOL,
+    data: {
+        coins: [0, 123, 15], // route of coin IDs from spent to received
+        valueToSell: 10,
+        minimumValueToBuy: 0, // optional, by default 0
+    },
+};
+
+minter.postTx(txParams, {seedPhrase: '...'});
+```
+
+
+### Sell all to swap pool
+[Tx docs](https://www.minter.network/docs#sell-all-from-swap-pool-transaction)
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.SELL_ALL_SWAP_POOL,
+    data: {
+        coins: [0, 123, 15], // route of coin IDs from spent to received
+        minimumValueToBuy: 0, // optional, by default 0
+    },
+};
+
+minter.postTx(txParams, {seedPhrase: '...'});
+```
+
+
+### Create pool
+[Tx docs](https://www.minter.network/docs#create-swap-pool-transaction)
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = new {
+    type: TX_TYPE.CREATE_SWAP_POOL,
+    data: {
+      coin0: 12,
+      coin1: 34,
+      volume0: 123,
+      volume1: 456,
+    },
+};
+
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 ### Add liquidity to pool
+[Tx docs](https://www.minter.network/docs#add-liquidity-to-swap-pool-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = new {
@@ -611,10 +816,11 @@ const txParams = new {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 ### Remove liquidity from pool
+[Tx docs](https://www.minter.network/docs#remove-liquidity-from-swap-pool-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = new {
@@ -628,11 +834,12 @@ const txParams = new {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Create coin
+[Tx docs](https://www.minter.network/docs#create-coin-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -647,10 +854,11 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 ### Recreate coin
+[Tx docs](https://www.minter.network/docs#recreate-coin-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -665,11 +873,12 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Create token
+[Tx docs](https://www.minter.network/docs#create-token-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -684,10 +893,11 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 ### Recreate token
+[Tx docs](https://www.minter.network/docs#recreate-token-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -702,26 +912,28 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
-### Edit coin owner
+### Edit ticker owner
+[Tx docs](https://www.minter.network/docs#edit-coin-owner-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    type: TX_TYPE.EDIT_COIN_OWNER,
+    type: TX_TYPE.EDIT_TICKER_OWNER,
     data: {
         symbol: 'MYCOIN',
         newOwner: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Mint token
+[Tx docs](https://www.minter.network/docs#mint-token-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -732,10 +944,11 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 ### Burn token
+[Tx docs](https://www.minter.network/docs#burn-token-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -746,11 +959,12 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
-### Declare Candidacy
+### Declare candidacy
+[Tx docs](https://www.minter.network/docs#declare-candidacy-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -764,10 +978,11 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
-### Edit Candidate
+### Edit candidate
+[Tx docs](https://www.minter.network/docs#edit-candidate-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -780,10 +995,11 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
-### Edit Candidate Public Key
+### Edit candidate public Key
+[Tx docs](https://www.minter.network/docs#edit-candidate-public-key-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -794,10 +1010,11 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
-### Edit Candidate Commission
+### Edit candidate commission
+[Tx docs](https://www.minter.network/docs#edit-candidate-commission-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -808,11 +1025,12 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Delegate
+[Tx docs](https://www.minter.network/docs#delegate-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -824,11 +1042,12 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Unbond
+[Tx docs](https://www.minter.network/docs#unbond-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -840,11 +1059,13 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Move stake
+Disabled for now
+[Tx docs](https://www.minter.network/docs#move-stake-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -857,11 +1078,12 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Set candidate on
+[Tx docs](https://www.minter.network/docs#set-candidate-online-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -871,11 +1093,12 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Set candidate off
+[Tx docs](https://www.minter.network/docs#set-candidate-offline-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -885,11 +1108,13 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Set halt block
+[Tx docs](https://www.minter.network/docs#set-halt-block-transaction)
+Vote for halt block
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -900,10 +1125,86 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
+```
+
+### Vote for commission price
+[Tx docs](https://www.minter.network/docs#vote-for-commission-price-transaction)
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.VOTE_COMMISSION,
+    data: {
+        publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+        height: 1234,
+        coin: 0, // coin id
+        payloadByte: '12',
+        send: '12',
+        buyBancor: '12',
+        sellBancor: '12',
+        sellAllBancor: '12',
+        buyPoolBase: '12',
+        sellPoolBase: '12',
+        sellAllPoolBase: '12',
+        buyPoolDelta: '12',
+        sellPoolDelta: '12',
+        sellAllPoolDelta: '12',
+        createTicker3: '12',
+        createTicker4: '12',
+        createTicker5: '12',
+        createTicker6: '12',
+        createTicker7to10: '12',
+        createCoin: '12',
+        createToken: '12',
+        recreateCoin: '12',
+        recreateToken: '12',
+        declareCandidacy: '12',
+        delegate: '12',
+        unbond: '12',
+        redeemCheck: '12',
+        setCandidateOn: '12',
+        setCandidateOff: '12',
+        createMultisig: '12',
+        multisendBase: '12',
+        multisendDelta: '12',
+        editCandidate: '12',
+        setHaltBlock: '12',
+        editTickerOwner: '12',
+        editMultisig: '12',
+        editCandidatePublicKey: '12',
+        addLiquidity: '12',
+        removeLiquidity: '12',
+        editCandidateCommission: '12',
+        burnToken: '12',
+        mintToken: '12',
+        voteCommission: '12',
+        voteUpdate: '12',
+        createSwapPool: '12',
+    },
+};
+
+minter.postTx(txParams, {seedPhrase: '...'});
+```
+
+### Vote for network update
+[Tx docs](https://www.minter.network/docs#vote-for-network-update-transaction)
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.VOTE_UPDATE,
+    data: {
+        version: 'v2.1',
+        publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+        height: 1234,
+    },
+};
+
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 ### Price vote
+Disabled
+[Tx docs](https://www.minter.network/docs#price-vote-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -913,11 +1214,14 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Redeem check
+[Checks docs](https://www.minter.network/docs#minter-check)  
+[Tx docs](https://www.minter.network/docs#redeem-check-transaction)  
+See also how to [issue check](#issuecheck)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
@@ -927,14 +1231,15 @@ const txParams = {
     },
 };
 
-// password and privateKey will be used to generate check's proof
-minter.postTx(txParams, {privateKey: '...', password: 'pass'});
+// password and seedPhrase will be used to generate check's proof
+minter.postTx(txParams, {seedPhrase: '...', password: 'pass'});
 // also combination of password and address can be used to generate proof
-minter.postTx(txParams, {privateKey: '...', address: '...', password: 'pass'});
+minter.postTx(txParams, {seedPhrase: '...', address: '...', password: 'pass'});
 ```
 
 ### Create multisig
-[Multisig docs](https://docs.minter.network/#multisignatures)
+[Multisig docs](https://www.minter.network/docs#multisignatures)  
+[Tx docs](https://www.minter.network/docs#create-multisig-address)
 
 Addresses count must not be greater than 32.  
 Weights count must be equal to addresses count.  
@@ -950,11 +1255,12 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ### Edit multisig
+[Tx docs](https://www.minter.network/docs#edit-multisig-transaction)
 Send it from the multisig address
 
 ```js
@@ -968,39 +1274,40 @@ const txParams = {
     },
 };
 
-minter.postTx(txParams, {privateKey: '...'});
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 
 ## Transaction
-### Prepare Transaction
+### Prepare transaction
 Prepare `Tx` object from txParams, used under the hood of PostTx, accepts arguments:
  - `txParams` object, 
- - `options.privateKey` - optional, can be passed to txData constructor for redeem check transaction and can be used to sign transaction with single signature.
+ - `options.seedPhrase` - optional, can be passed to txData constructor for redeem check transaction and can be used to sign transaction with single signature.
+ - `options.privateKey` - optional, can be used instead of `seedPhrase` directly
 ```js
 import {prepareTx} from 'minter-js-sdk';
-const tx = prepareTx(txParams, {privateKey});
+const tx = prepareTx(txParams, {seedPhrase: '...'});
 console.log('signed tx', tx.serialize().toString('hex'));
 
 // get actual nonce first
 minter.getNonce('Mx...')
     .then((nonce) => {
-        const tx = prepareTx({...txParams, nonce}, {privateKey});
+        const tx = prepareTx({...txParams, nonce}, {seedPhrase: '...'});
         console.log('signed tx', tx.serialize().toString('hex'));
     });
 ```
 
-### Prepare Single Signed Transaction
+### Prepare single signed transaction
 `prepareSignedTx` is an alias for `prepareTx` but with `signatureType: 1`. So it doesn't support multisignatures.
 ```js
 import {prepareSignedTx, prepareTx} from 'minter-js-sdk';
 
-let tx = prepareSignedTx(txParams, {privateKey});
+let tx = prepareSignedTx(txParams, {seedPhrase: '...'});
 // is the same as
-tx = prepareTx({...txParams, signatureType: 1}, {privateKey})
+tx = prepareTx({...txParams, signatureType: 1}, {seedPhrase: '...'})
 ```
 
-### Make Signature
+### Make signature
 Make signature buffer for `Tx` with `privateKey`. Useful to create signatures for transactions with multiple signatures.
 ```js
 import {makeSignature} from 'minter-js-sdk';
@@ -1008,7 +1315,7 @@ import {makeSignature} from 'minter-js-sdk';
 makeSignature(tx, privateKey);
 ```
 
-### Multi Signatures
+### Multi signatures
 Usually you should collect signatures from other multisig participants, which can make it with `makeSignature`.  
 Then you should construct `signatureData` for `TxParams` object and pass such `TxParams` to `postTx` or `prepareTx`
 ```js
@@ -1043,7 +1350,7 @@ minter.postTx({
 })
 ```
 
-### Decode Transaction
+### Decode transaction
 Decode RLP serialized tx into params object
 
 Params:
@@ -1074,14 +1381,15 @@ decodeTx('0xf87e818102018a42414e414e415445535402a3e28a42414e414e41544553548a067d
 
 ## Minter Check
 
-[Minter Check](https://minter-go-node.readthedocs.io/en/dev/checks.html) is like an ordinary bank check. Each user of network can issue check with any amount of coins and pass it to another person. Receiver will be able to cash a check from arbitrary account. 
+[Minter Check](https://www.minter.network/docs#minter-check) is like an ordinary bank check. Each user of network can issue check with any amount of coins and pass it to another person. Receiver will be able to cash a check from arbitrary account. 
 
 ### `issueCheck()`
 
 Checks are issued offline and do not exist in blockchain before “cashing”.
 
 Params:
-- `privateKey` - private key of the issuer to sign check. Type: string
+- `seedPhrase`- seed phrase of the issuer to sign check. Type: string
+- `privateKey` - private key of the issuer to sign check. Type: string, Buffer
 - `password` - password to protect check. Type: string
 - `nonce` - unique string to allow issue identical checks. Type: string
 - `chainId` - network type to prevent using same check between networks. Type: number. Default: `1`
@@ -1094,7 +1402,7 @@ Params:
 // Since issuing checks is offline, you can use it standalone without instantiating SDK
 import {issueCheck} from "minter-js-sdk";
 const check = issueCheck({
-    privateKey: '0x2919c43d5c712cae66f869a524d9523999998d51157dc40ac4d8d80a7602ce02',
+    seedPhrase: 'air model item valley ...',
     password: 'pass',
     nonce: '1',
     chainId: 1,
@@ -1176,6 +1484,7 @@ Params:
 `options` - object with extra options
 `options.decodeCheck` - boolean, adds `checkData` field next to `check` field for redeemCheck tx data
 `options.privateKey` - links with `password` and without `proof` require privateKey to generate valid `proof`
+`options.seedPhrase` - alternative to `options.privateKey`
 
 
 ```js
@@ -1220,6 +1529,7 @@ decodeLink(LINK_CHECK, {decodeCheck: true})
 
 
 ## Minter Wallet
+Get private key from seed phrase and address from private key
 Use [minterjs-wallet](https://github.com/MinterTeam/minterjs-wallet)
 
 

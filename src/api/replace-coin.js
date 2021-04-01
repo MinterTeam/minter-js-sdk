@@ -24,7 +24,7 @@ export function ReplaceCoinSymbol(apiInstance) {
 
 /**
  *
- * @param apiInstance
+ * @param {MinterApiInstance} apiInstance
  * @return {function(Object, Array<string>, number=, AxiosRequestConfig=): Promise<Object>}
  * @constructor
  */
@@ -67,8 +67,8 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
 }
 
 /**
- * @param apiInstance
- * @return {function(symbol: string|Array<string>, chainId: number=, axiosOptions: AxiosRequestConfig=): Promise<Object>}
+ * @param {MinterApiInstance} apiInstance
+ * @return {function(symbol: string|Array<string>, chainId: number=, axiosOptions: AxiosRequestConfig=): Promise<number>}
  */
 export function GetCoinId(apiInstance) {
     return getCoinId;
@@ -77,7 +77,7 @@ export function GetCoinId(apiInstance) {
      * @param {string|Array<string>} symbol
      * @param {number} [chainId]
      * @param {AxiosRequestConfig} [axiosOptions]
-     * @return {Promise<Object>}
+     * @return {Promise<number|Array<number>>}
      */
     function getCoinId(symbol, chainId = apiInstance.defaults.chainId, axiosOptions) {
         if (Array.isArray(symbol)) {
@@ -90,6 +90,14 @@ export function GetCoinId(apiInstance) {
     }
 }
 
+/**
+ * @param {string} symbol
+ * @param {number} [chainId]
+ * @param {MinterApiInstance} apiInstance
+ * @param {AxiosRequestConfig} [axiosOptions]
+ * @return {Promise<number>}
+ * @private
+ */
 function _getCoinId(symbol, chainId, apiInstance, axiosOptions) {
     if (isCoinId(symbol)) {
         return Promise.resolve(symbol);
