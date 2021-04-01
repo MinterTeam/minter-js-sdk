@@ -14,7 +14,7 @@ Please note that this SDK is under active development and is subject to change.
 **NOTE:** since 0.34.0 SDK supports only v2 versions of node and gate APIs
 
 It is complemented by the following packages:
-- [minterjs-wallet](https://github.com/MinterTeam/minterjs-wallet) take care of BIP39 mnemonic phrase, private key and address
+- [minterjs-wallet](https://github.com/MinterTeam/minterjs-wallet) take care of BIP39 mnemonic phrase, private key, and address
 - [minterjs-util](https://github.com/MinterTeam/minterjs-util) utility functions
 
 Contents:
@@ -1530,7 +1530,8 @@ decodeLink(LINK_CHECK, {decodeCheck: true})
 
 ## Minter Wallet
 Get private key from seed phrase and address from private key
-Use [minterjs-wallet](https://github.com/MinterTeam/minterjs-wallet)
+
+Use [minterjs-wallet](https://github.com/MinterTeam/minterjs-wallet) package
 
 
 # License
