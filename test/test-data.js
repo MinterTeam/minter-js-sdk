@@ -1,6 +1,7 @@
 import {prepareSignedTx, prepareTx, decodeTx, decodeLink} from '~/src';
 import {VALID_CHECK} from '~/test/check.test.js';
 
+// exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone
 const PRIVATE_KEY = '0x5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da';
 
 const testData = {
@@ -350,6 +351,290 @@ const testData = {
             },
             result: '0xf8a5822b6701018014b844f842a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a48e637573746f6d206d6573736167658001b845f8431ca0234ca815eb34d27a13a6aa55aabe60af485d932f2042189fcf81bf5e61c4ec77a02f1e24392b66feb555a25de8953e8d6a3d34e95fc6db8a021af98f466010fe21',
             link: 'https://bip.to/tx/-FsUuET4QqD54DaDmin3-6LVOUvUie2pJ8y5WsyZ5QbmiOSIgIKzo6D54DaDmin3-6LVOUvUie2pJ8y5WsyZ5QbmiOSIgIKzpI5jdXN0b20gbWVzc2FnZYIrZwGA',
+        },
+        // 0x15 ADD_LIQUIDITY
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x15,
+                data: {
+                    coin0: 12,
+                    coin1: 21,
+                    volume0: 123456,
+                    maximumVolume1: 500,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf877822b670101801598d70c158a1a24902bee1421000000891b1ae4d6e2ef5000008e637573746f6d206d6573736167658001b844f8421ca0b41161eab00b8aabd137acc4da4ace7f62f7caa55876dcee5f8729113ccc71939ff46aacd7ff88aa8997c44301f3e0094c30edf9fb181fe1c6410c9266192cee',
+            link: 'https://bip.to/tx/7hWY1wwVihokkCvuFCEAAACJGxrk1uLvUAAAjmN1c3RvbSBtZXNzYWdlgitnAYA',
+        },
+        // 0x16 REMOVE_LIQUIDITY
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x16,
+                data: {
+                    coin0: 12,
+                    coin1: 21,
+                    liquidity: 123456,
+                    minimumVolume0: 0,
+                    minimumVolume1: 0,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf870822b670101801690cf0c158a1a24902bee142100000080808e637573746f6d206d6573736167658001b845f8431ca0a5b370216f61f96d4514dd84a6f76ff1bc0cea9caa8b503c8ee34034b677fdbca0277730569e4869c92793c5b87f744f79efa891ede129854935b69cce19b124c2',
+            link: 'https://bip.to/tx/5haQzwwVihokkCvuFCEAAACAgI5jdXN0b20gbWVzc2FnZYIrZwGA',
+        },
+        // 0x17 SELL_SWAP_POOL
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x17,
+                data: {
+                    coins: [0, 12, 53],
+                    valueToSell: 10,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf86f822b67010180178fcec3800c35888ac7230489e80000808e637573746f6d206d6573736167658001b845f8431ba0fe9e177021ce5ba3420d09dddbe06bf16a668e463af92dad2a6f986651cef644a06ab1666618965944d019176fbaf6d54c42fa39ddd543dc063ef2b491f4ad77c8',
+            link: 'https://bip.to/tx/5RePzsOADDWIiscjBInoAACAjmN1c3RvbSBtZXNzYWdlgitnAYA',
+        },
+        // 0x18 BUY_SWAP_POOL
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x18,
+                data: {
+                    coins: [0, 12, 53],
+                    valueToBuy: 10,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf87d822b67010180189ddcc3800c35888ac7230489e800008e314dc6448d9338c15b0a000000008e637573746f6d206d6573736167658001b845f8431ba0952012ae23fd66e6b1c504a5a5f4ce31d242f8d2d2bf29c64bbaff41fef15528a0164cbb2eabe3112585ea09b26af7ffcd40b8348f6bc69d5f74de48593bcfef49',
+            link: 'https://bip.to/tx/8xid3MOADDWIiscjBInoAACOMU3GRI2TOMFbCgAAAACOY3VzdG9tIG1lc3NhZ2WCK2cBgA',
+        },
+        // 0x19 SELL_ALL_SWAP_POOL
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x19,
+                data: {
+                    coins: [0, 12, 53],
+                },
+                payload: 'custom message',
+            },
+            result: '0xf866822b670101801986c5c3800c35808e637573746f6d206d6573736167658001b845f8431ba040bd12a228ce40350ad1e9bfbec02ea011707fafd86f372364fc79859ef3ce62a04732b811d3aa4af9f5b80bff5469b6ac28ad3c94e76da00797fa0230e6721f3f',
+            link: 'https://bip.to/tx/3BmGxcOADDWAjmN1c3RvbSBtZXNzYWdlgitnAYA',
+        },
+        // 0x1a EDIT_CANDIDATE_COMMISSION
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x1a,
+                data: {
+                    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+                    commission: '15',
+                },
+                payload: 'custom message',
+            },
+            result: '0xf883822b670101801aa3e2a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a30f8e637573746f6d206d6573736167658001b845f8431ba020c43a56bf377cfa8d2f030d08043985d00d92e0859808ebc95efd9ecd960d5aa03fe083a2a4f5ebe5e3760e7d0093e407bd880cdddd4b8791f8b71f62061a7c94',
+            link: 'https://bip.to/tx/-Dkao-Kg-eA2g5op9_ui1TlL1IntqSfMuVrMmeUG5ojkiICCs6MPjmN1c3RvbSBtZXNzYWdlgitnAYA',
+        },
+        // 0x1b MOVE_STAKE
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x1b,
+                data: {
+                    from: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+                    to: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a4',
+                    coin: 0,
+                    stake: 100,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf8b0822b670101801bb84ff84da0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a48089056bc75e2d631000008e637573746f6d206d6573736167658001b845f8431ba0c115e390323f5b5e5945728d904c4f90c88aa19db2951886865b1508206e299ba072879e6cca100bac1ebd68becfd72a52dda2a72b7936d026d907e7502dd399cf',
+            link: 'https://bip.to/tx/-GYbuE_4TaD54DaDmin3-6LVOUvUie2pJ8y5WsyZ5QbmiOSIgIKzo6D54DaDmin3-6LVOUvUie2pJ8y5WsyZ5QbmiOSIgIKzpICJBWvHXi1jEAAAjmN1c3RvbSBtZXNzYWdlgitnAYA',
+        },
+        // 0x1c MINT_TOKEN
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 2,
+                gasCoin: 0,
+                type: 0x1c,
+                data: {
+                    value: 10,
+                    coin: 0,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf86a822b670102801c8bca80888ac7230489e800008e637573746f6d206d6573736167658001b844f8421ca09c3bc33b412b10f75c9765e12078d85ae45da3c38cf3cf9bb045e139954022a89fc799daf8369ab1e71bca79ea0272abbec4000e685779aabec8f886f5528937',
+            link: 'https://bip.to/tx/4RyLyoCIiscjBInoAACOY3VzdG9tIG1lc3NhZ2WCK2cCgA',
+        },
+        // 0x1d BURN_TOKEN
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 2,
+                gasCoin: 0,
+                type: 0x1d,
+                data: {
+                    value: 10,
+                    coin: 0,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf86b822b670102801d8bca80888ac7230489e800008e637573746f6d206d6573736167658001b845f8431ba00cc2c9dd98314a8ad128bd367d0ec4a20ccf06ce58c1c2b24eab1014d857c8eda0359faea083a59de1b26198c5269aa8d7321c7ed6258bd7f2e017185c9a297cbf',
+            link: 'https://bip.to/tx/4R2LyoCIiscjBInoAACOY3VzdG9tIG1lc3NhZ2WCK2cCgA',
+        },
+        // 0x1e CREATE_TOKEN
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x1e,
+                data: {
+                    name: 'My Coin',
+                    symbol: 'MYCOIN',
+                    initialAmount: 5,
+                    mintable: false,
+                    burnable: true,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf88e822b670101801eaeed874d7920436f696e8a4d59434f494e00000000884563918244f400008e314dc6448d9338c15b0a0000000080018e637573746f6d206d6573736167658001b845f8431ca0d8725dde0993ec91be865eb915ca2e0a11fc80d629d9b5d65b072d8a8730d0f4a026166ebf9418a0c189ebcca6b461d220bec7ec5508ecf63c95ad7b6b232f493e',
+            link: 'https://bip.to/tx/-EQeru2HTXkgQ29pbopNWUNPSU4AAAAAiEVjkYJE9AAAjjFNxkSNkzjBWwoAAAAAgAGOY3VzdG9tIG1lc3NhZ2WCK2cBgA',
+        },
+        // 0x1f RECREATE_TOKEN
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x1f,
+                data: {
+                    name: 'My Coin',
+                    symbol: 'MYCOIN',
+                    initialAmount: 5,
+                    mintable: false,
+                    burnable: true,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf88e822b670101801faeed874d7920436f696e8a4d59434f494e00000000884563918244f400008e314dc6448d9338c15b0a0000000080018e637573746f6d206d6573736167658001b845f8431ba0858baa534d66875c6619c2b2a282871afe5c48db48bb95f88f46b75bf77534dfa00fc786aef53462f211d27c535a002d14d3dbfff9723ca1690f2e80a3bdc4ec0c',
+            link: 'https://bip.to/tx/-EQfru2HTXkgQ29pbopNWUNPSU4AAAAAiEVjkYJE9AAAjjFNxkSNkzjBWwoAAAAAgAGOY3VzdG9tIG1lc3NhZ2WCK2cBgA',
+        },
+        // 0x20 VOTE_COMMISSION
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x20,
+                data: {
+                    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+                    height: '123456789',
+                    coin: '0',
+                    payloadByte: '12',
+                    send: '12',
+                    buyBancor: '12',
+                    sellBancor: '12',
+                    sellAllBancor: '12',
+                    buyPoolBase: '12',
+                    sellPoolBase: '12',
+                    sellAllPoolBase: '12',
+                    buyPoolDelta: '12',
+                    sellPoolDelta: '12',
+                    sellAllPoolDelta: '12',
+                    createTicker3: '12',
+                    createTicker4: '12',
+                    createTicker5: '12',
+                    createTicker6: '12',
+                    createTicker7to10: '12',
+                    createCoin: '12',
+                    createToken: '12',
+                    recreateCoin: '12',
+                    recreateToken: '12',
+                    declareCandidacy: '12',
+                    delegate: '12',
+                    unbond: '12',
+                    redeemCheck: '12',
+                    setCandidateOn: '12',
+                    setCandidateOff: '12',
+                    createMultisig: '12',
+                    multisendBase: '12',
+                    multisendDelta: '12',
+                    editCandidate: '12',
+                    setHaltBlock: '12',
+                    editTickerOwner: '12',
+                    editMultisig: '12',
+                    // priceVote: '12',
+                    editCandidatePublicKey: '12',
+                    addLiquidity: '12',
+                    removeLiquidity: '12',
+                    editCandidateCommission: '12',
+                    // moveStake: '12',
+                    burnToken: '12',
+                    mintToken: '12',
+                    voteCommission: '12',
+                    voteUpdate: '12',
+                    createSwapPool: '12',
+                },
+                payload: 'custom message',
+            },
+            result: '0xf90206822b6701018020b901a4f901a1a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a384075bcd158088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b0000088a688906bd8b000008e637573746f6d206d6573736167658001b845f8431ca0afd12882100d956ff82be316c4ce4216c852a22996edb5ef36da83c71de7f423a01086df0bd0d5a972ce1cea37282698a274ca892a26aba970f88bf9972eb5d50b',
+            link: 'https://bip.to/tx/-QG8ILkBpPkBoaD54DaDmin3-6LVOUvUie2pJ8y5WsyZ5QbmiOSIgIKzo4QHW80VgIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAIimiJBr2LAAAI5jdXN0b20gbWVzc2FnZYIrZwGA',
+        },
+        // 0x21 VOTE_UPDATE
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x21,
+                data: {
+                    version: 'v0.0.1',
+                    publicKey: 'Mpf9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a3',
+                    height: 123456789,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf88e822b6701018021aeed8676302e302e31a0f9e036839a29f7fba2d5394bd489eda927ccb95acc99e506e688e4888082b3a384075bcd158e637573746f6d206d6573736167658001b845f8431ba0230d92616e42e0fa2d10804cd405201c998763818c9e13656f798dbe74a20695a01df980e931b5f3b2ee498c6598dd99a72339f4f48880f96063098ad9e46e5538',
+            link: 'https://bip.to/tx/-EQhru2GdjAuMC4xoPngNoOaKff7otU5S9SJ7aknzLlazJnlBuaI5IiAgrOjhAdbzRWOY3VzdG9tIG1lc3NhZ2WCK2cBgA',
+        },
+        // 0x22 CREATE_SWAP_POOL
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x22,
+                data: {
+                    coin0: 12,
+                    coin1: 21,
+                    volume0: 123456,
+                    volume1: 500,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf878822b670101802298d70c158a1a24902bee1421000000891b1ae4d6e2ef5000008e637573746f6d206d6573736167658001b845f8431ba0d357edd48f7554f7cc4517e4f77f7c1be0404c794f50e37544f12c9a000ad1dca007b5384c81f522e6b83390bac8a6b3b5a176878962a9abaf9a68a77c5ee0b346',
+            link: 'https://bip.to/tx/7iKY1wwVihokkCvuFCEAAACJGxrk1uLvUAAAjmN1c3RvbSBtZXNzYWdlgitnAYA',
         },
     ],
 };

@@ -130,7 +130,7 @@ const txParams = {
     payload: 'custom message',
 };
 
-minter.postTx(txParams, {privateKey: '0x5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da'})
+minter.postTx(txParams, {seedPhrase: 'exercise fantasy smooth enough ...'})
     .then((txHash) => {
         // WARNING
         // If you use minter-node api, successful response mean that Tx just get in mempool and it is not in blockchain yet. 
@@ -726,6 +726,7 @@ minter.postTx(txParams, {seedPhrase: '...'});
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
+    // `gasCoin` will be set as `coinToSell` automatically
     type: TX_TYPE.SELL_ALL,
     data: {
         coinToSell: 0, // coin id
@@ -774,6 +775,7 @@ minter.postTx(txParams, {seedPhrase: '...'});
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
+    // `gasCoin` will be set as coin to spend (`coins[0]`) automatically
     type: TX_TYPE.SELL_ALL_SWAP_POOL,
     data: {
         coins: [0, 123, 15], // route of coin IDs from spent to received

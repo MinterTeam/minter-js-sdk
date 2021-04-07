@@ -4,6 +4,7 @@
 - add `swapFrom`, `route` and `gasCoin` parameters to estimation API methods
 - add `getCoinId` API method
 - add `seedPharse` param as alternative to `privateKey`
+- fix: force `gasCoin` to be same as coin to spend for sell all txs
 - **BREAKING** reworked `estimateTxCommission`
 - **BREAKING** rename TX_TYPE `EDIT_COIN_OWNER` to `EDIT_TICKER_OWNER` and `EditCoinOwnerTxData` to `EditTickerOwnerTxData`
 - **BREAKING** add error code check when `postTx` made through gate api

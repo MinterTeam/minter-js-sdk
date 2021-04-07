@@ -2,8 +2,10 @@ import {TX_TYPE, normalizeTxType} from 'minterjs-util';
 import decorateSendTxParams from './send.js';
 import decorateSellTxParams from './convert-sell.js';
 import decorateBuyTxParams from './convert-buy.js';
-import decorateSwapPoolTxParams from './convert-pool.js';
 import decorateSellAllTxParams from './convert-sell-all.js';
+import decorateSellSwapPoolTxParams from './convert-sell-pool.js';
+import decorateBuySwapPoolTxParams from './convert-buy-pool.js';
+import decorateSellAllSwapPoolTxParams from './convert-sell-all-pool.js';
 import decorateDeclareCandidacyTxParams from './candidacy-declare.js';
 import decorateDelegateTxParams from './stake-delegate.js';
 // import decorateUnbondTxParams from './stake-unbond.js';
@@ -14,8 +16,8 @@ const noop = (x) => x;
 
 /**
  * @param {TxParams} txParams
- * @param {Object} options
- * @param {boolean} options.setGasCoinAsCoinToSpend
+ * @param {Object} [options]
+ * @param {boolean} [options.setGasCoinAsCoinToSpend]
  * @return {TxParams}
  */
 export default function decorateTxParams(txParams, {setGasCoinAsCoinToSpend} = {}) {
@@ -26,7 +28,7 @@ export default function decorateTxParams(txParams, {setGasCoinAsCoinToSpend} = {
         [TX_TYPE.MULTISEND]: noop,
         [TX_TYPE.SELL]: setGasCoinAsCoinToSpend ? decorateSellTxParams : noop,
         [TX_TYPE.BUY]: setGasCoinAsCoinToSpend ? decorateBuyTxParams : noop,
-        [TX_TYPE.SELL_ALL]: setGasCoinAsCoinToSpend ? decorateSellAllTxParams : noop,
+        [TX_TYPE.SELL_ALL]: decorateSellAllTxParams,
         [TX_TYPE.CREATE_COIN]: noop,
         [TX_TYPE.DECLARE_CANDIDACY]: setGasCoinAsCoinToSpend ? decorateDeclareCandidacyTxParams : noop,
         [TX_TYPE.EDIT_CANDIDATE]: noop,
@@ -45,9 +47,9 @@ export default function decorateTxParams(txParams, {setGasCoinAsCoinToSpend} = {
         [TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY]: noop,
         [TX_TYPE.ADD_LIQUIDITY]: noop,
         [TX_TYPE.REMOVE_LIQUIDITY]: noop,
-        [TX_TYPE.BUY_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateSwapPoolTxParams : noop,
-        [TX_TYPE.SELL_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateSwapPoolTxParams : noop,
-        [TX_TYPE.SELL_ALL_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateSwapPoolTxParams : noop,
+        [TX_TYPE.BUY_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateBuySwapPoolTxParams : noop,
+        [TX_TYPE.SELL_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateSellSwapPoolTxParams : noop,
+        [TX_TYPE.SELL_ALL_SWAP_POOL]: decorateSellAllSwapPoolTxParams,
         [TX_TYPE.EDIT_CANDIDATE_COMMISSION]: noop,
         [TX_TYPE.MOVE_STAKE]: noop,
         [TX_TYPE.MINT_TOKEN]: noop,
