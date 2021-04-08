@@ -36,7 +36,7 @@ Contents:
     - [estimateTxCommission](#estimatetxcommission)
   - [Tx params constructors](#tx-params)
     - [Send](#send)
-    - [Multi-send](#multi-send)
+    - [Multisend](#multisend)
     - [Buy](#buy)
     - [Sell](#sell)
     - [Sell all](#sell-all)
@@ -138,7 +138,7 @@ minter.postTx(txParams, {privateKey: '0x5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de
         // You can use gate api instead, which returns successful response only after tx has appeared on the blockchain
         // WARNING #2 
         // If tx has been included in the block, it may still have failed status
-        // Double-check that tx.code is `0` to ensure its success
+        // Verify that tx.code is `0` to ensure its success
         alert(`Tx created: ${txHash}`);
     }).catch((error) => {
         const errorMessage = error.response.data.error.message
@@ -177,7 +177,7 @@ minter.postTx(newTxParams, {
       // You have to wait for it to be included in the upcoming block
       // #2 
       // If tx has been included in the block, it may still have failed status
-      // Double-check that tx.code is `0` to ensure its success
+      // Verify that tx.code is `0` to ensure its success
       // Gate api users not affected:
       // Gate will return successful response only after tx has appeared on the blockchain
       // Gate also returns tx data in the response, so SDK will check tx.code automatically and reject promise for non-zero codes
@@ -525,7 +525,7 @@ minter.estimateCoinSell({
 ```
 
 ### .estimateCoinSellAll()
-Estimate how many coins you will get for selling all units of some other coin that you have on your balance.
+Estimate how many coins you will get for selling some other coins by SellAll transaction.
 
 ```js
 /**
@@ -660,7 +660,7 @@ const txParams = {
 minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
-### Multi-send
+### Multisend
 [Tx docs](https://www.minter.network/docs#multisend-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
