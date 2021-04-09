@@ -1,4 +1,4 @@
-## WIP 
+## 0.38.0 - 2021.04.09
 - add v2 pool, token, vote, and other tx data
 - add `estimateCoinSellAll` API method
 - add `swapFrom`, `route` and `gasCoin` parameters to estimation API methods

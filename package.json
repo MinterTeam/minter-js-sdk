@@ -1,6 +1,6 @@
 {
   "name": "minter-js-sdk",
-  "version": "0.38.0-alpha.34",
+  "version": "0.38.0",
   "description": "JS SDK for Minter Blockchain",
   "main": "dist/cjs/index.js",
   "module": "src/index.js",
@@ -65,8 +65,8 @@
     "ethereumjs-util": "^7.0.9",
     "ethjs-util": "^0.1.6",
     "lodash-es": "^4.17.21",
-    "minterjs-tx": "^10.0.0-alpha.9",
-    "minterjs-util": "^0.21.0-aplha.12",
+    "minterjs-tx": "^10.0.0",
+    "minterjs-util": "^0.21.0",
     "minterjs-wallet": "^6.1.0",
     "qs": "^6.10.1",
     "rlp": "^2.2.6",
