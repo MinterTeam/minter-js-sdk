@@ -1,5 +1,6 @@
 ## 0.38.0 - 2021.04.09
-- add v2 pool, token, vote, and other tx data
+- add minter v2 pool, token, vote, and other tx data
+- `postTx` now support coin symbols in `txParams` without using `replaceCoinSymbol`
 - add `estimateCoinSellAll` API method
 - add `swapFrom`, `route` and `gasCoin` parameters to estimation API methods
 - add `getCoinId` API method
@@ -14,7 +15,7 @@
 - **DEPRECATED** `coinIdToSell` and `coinIdToBuy` params in estimate sell/buy API methods, use `coinToSell` and `coinToBuy` instead
 - **DEPRECATED** `getCoinInfoById` API method, use `getCoinInfo` instead
 
-## 0.37.0 - 2020-12-30 
+## 0.37.0 - 2020-12-30
 - **BREAKING** don't autofill `gasCoin` with coin to spent, use base coin (BIP) by default everywhere
 
 ## 0.36.0 - 2020-12-22
@@ -22,7 +23,7 @@
 
 ## 0.35.6
 - Improve Uint validation message
-- Fix: allow `nonce` and `gasPrice` to be omitted in the Minter Link 
+- Fix: allow `nonce` and `gasPrice` to be omitted in the Minter Link
 
 ## 0.35.5
 - Improve Check error message
@@ -40,7 +41,7 @@
 - Add: 'getCoinInfoById' api method
 
 ## 0.35.0
-- Add: `ReplaceCoinSymbolByPath` now accept `chainId` param and can get base coin id without network request  
+- Add: `ReplaceCoinSymbolByPath` now accept `chainId` param and can get base coin id without network request
 - Update: `ReplaceCoinSymbol` uses `txParams.chainId` to get base coin id without network request
 - **BREAKING** `ReplaceCoinSymbol` now exported as named not default export
 - **BREAKING** file src/api/replace-coin-symbol.js renamed
@@ -86,13 +87,13 @@ Drop deprecations
 - Add: `address` option for RedeemCheckTxData to make proof for address. Use it as field in the second argument `options`.
 - Add: `address` option to `decodeLink`
 - Add: `{address, password}` to the options for `prepareTx`, `prepareSignedTx`, and `postTx` to pass it to the RedeemCheckTxData
-- **Deprecate**: `privateKey` string without prefix for RedeemCheckTxData. Now it should be `0x` prefixed. 
+- **Deprecate**: `privateKey` string without prefix for RedeemCheckTxData. Now it should be `0x` prefixed.
 
 ## 0.30.3 - 2020-03-13
 - Fix: restore support of decoding old style links for `decodeLink`
 
 ## 0.30.2 - 2020-03-12
-- Fix: link decoding 
+- Fix: link decoding
 
 ## 0.30.1 - 2020-03-10
 - Add: asserts to `prepareTx`
@@ -107,7 +108,7 @@ Support of minter-go-node v1.1 aka Texas
 - Add: `prepareTx`, it can be used for multiSignature txs
 - Add: `makeSignature`
 - **BREAKING** Change: `prepareLink` and `decodeLink` now supports [new link format](https://github.com/MinterTeam/minter-link-protocol/pull/6) with base64url encoding
-- **BREAKING** Change: rename `issueCheck` argument `passPhrase` to `password` 
+- **BREAKING** Change: rename `issueCheck` argument `passPhrase` to `password`
 - **BREAKING** Change: rename create coin params: coinName -> name, coinSymbol -> symbol, crr -> constantReserveRatio
 - enable multisig tests
 - Add: create-multisig weights and addresses validation
@@ -126,13 +127,13 @@ decodeLink('https://bip.to/tx...', 'f812...');
 decodeLink('https://bip.to/tx...', {privateKey: 'f812...'});
 ```
 - Add: `decodeTx` method to decode RLP serialized tx
-- Add: `decodeTx` and `decodeLink` methods now has `decodeCheck` param, it adds `checkData` field next to `check` field for redeemCheck tx data 
+- Add: `decodeTx` and `decodeLink` methods now has `decodeCheck` param, it adds `checkData` field next to `check` field for redeemCheck tx data
 
 ## 0.28.0 - 2020-02-03
 - **BREAKING** Fix: `decodeCheck`, `decodeLink` and `bufferToInteger` now returns string values for numbers. It will fix precision loss for big numbers.
 
 ## 0.27.4 - 2020-01-31
-- Fix: decodeLink for candidate-set-on/off transactions 
+- Fix: decodeLink for candidate-set-on/off transactions
 
 ## 0.27.3 - 2020-01-30
 - Fix: candidate-set-on/off tx data constructors
@@ -173,7 +174,7 @@ decodeLink('https://bip.to/tx...', {privateKey: 'f812...'});
 - Add: `prepareLink` and `decodeLink` methods to work with [Minter Link Protocol](https://github.com/MinterTeam/minter-link-protocol)
 - Add: `RedeemCheckTxParams` now accepts direct `proof` param, as alternative to generation it from password
 - Add: `prepareSignedTx` now accepts `payload` param as alias for `message`
-- **BREAKING** Remove: stop reexporting `minterjs-wallet` methods, use it directly 
+- **BREAKING** Remove: stop reexporting `minterjs-wallet` methods, use it directly
 
 ## 0.22.0 - 2019-11-12
 - **BREAKING** tx params which must be Minter prefixed, 0x prefixed or Buffer now will throw on arbitrary string passed
@@ -196,7 +197,7 @@ decodeLink('https://bip.to/tx...', {privateKey: 'f812...'});
 - regenerate check with dueBlock increased by 1 if lock not equal 65 bytes length, it is workaround for https://github.com/MinterTeam/minter-go-node/issues/264
 
 ## 0.20.0 - 2019-08-21
-- **BREAKING** need to specify full path in baseURL, e.g. add `/api/v1/` for gate's baseURL 
+- **BREAKING** need to specify full path in baseURL, e.g. add `/api/v1/` for gate's baseURL
 
 ## 0.19.1 - 2019-08-15
 - update deps
@@ -245,7 +246,7 @@ decodeLink('https://bip.to/tx...', {privateKey: 'f812...'});
 
 # 0.14.0 - 2019-03-19
 - **BREAKING** Changed: connection with [explorer api](https://github.com/MinterTeam/minter-php-explorer-api) removed in favor of [gate api](https://github.com/MinterTeam/explorer-gate)
-- **BREAKING** Removed: `apiType` and `baseURL` options no more have default values  
+- **BREAKING** Removed: `apiType` and `baseURL` options no more have default values
 - Removed: adapter to reject errors with 200 code, now all api errors should have 400+ code
 
 # 0.13.0 - 2019-02-28
@@ -313,7 +314,7 @@ decodeLink('https://bip.to/tx...', {privateKey: 'f812...'});
 - **BREAKING** refactor file structure
 - **BREAKING** move `postTx` into one of api methods, change Promise resolve data to simple tx hash
 
-Instead of `(new PostTx(apiParams))(txParams).then()` use: 
+Instead of `(new PostTx(apiParams))(txParams).then()` use:
 ```js
 import Minter from 'minter-js-sdk';
 const minterSDK = new Minter(apiParams);
@@ -324,11 +325,11 @@ minterSDK.postTx(txParams).then();
 - Add option `apiType` for `PostTx` to work with explorer API
 
 ## 0.4.0 - 2018-10-15
-- **BREAKING** update `postTx` to support network with MultiSig transactions 
+- **BREAKING** update `postTx` to support network with MultiSig transactions
 - update dependencies
 
 ## 0.3.0 - 2018-09-14
-- **BREAKING** rename `SendTx` -> `PostTx`, `SendCoinsTxParams` -> `SendTxParams`, `SellCoinsTxParams` -> `SellTxParams`, `SellAllCoinsTxParams` -> `SellAllTxParams`, `BuyCoinsTxParams` -> `BuyTxParams` 
+- **BREAKING** rename `SendTx` -> `PostTx`, `SendCoinsTxParams` -> `SendTxParams`, `SellCoinsTxParams` -> `SellTxParams`, `SellAllCoinsTxParams` -> `SellAllTxParams`, `BuyCoinsTxParams` -> `BuyTxParams`
 
 ## 0.2.2 - 2018-08-11
 - **BREAKING** rename TxParams constructors
@@ -337,7 +338,7 @@ minterSDK.postTx(txParams).then();
 - remove `nodeUrl` from `redeemTx` params
 
 ## 0.2.0 - 2018-08-10
-- **BREAKING** refactor to explicit use `sendTx()`. Get it from `SendTx` constructor with specified API urls, instead of passing url to each tx call 
+- **BREAKING** refactor to explicit use `sendTx()`. Get it from `SendTx` constructor with specified API urls, instead of passing url to each tx call
 
 ## 0.1.3 - 2018-08-09
 - fix `sellAllCoins` method
