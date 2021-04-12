@@ -45,12 +45,15 @@ export default function PostTx(apiInstance) {
             privateKeyPromise = Promise.resolve(undefined);
         }
 
-        // @TODO should axiosOptions be passed here?
-        return Promise.all([
-            ensureNonce(apiInstance, txParams, txOptions),
-            replaceCoinSymbol(txParams),
-            privateKeyPromise,
-        ])
+        return privateKeyPromise
+            .then((privateKey) => {
+                // @TODO should axiosOptions be passed here?
+                return Promise.all([
+                    ensureNonce(apiInstance, txParams, {...txOptions, privateKey}),
+                    replaceCoinSymbol(txParams),
+                    Promise.resolve(privateKey),
+                ]);
+            })
             .then(([newNonce, newTxParams, privateKey]) => _postTxHandleErrors(apiInstance, {...newTxParams, nonce: newNonce}, {gasRetryLimit, nonceRetryLimit, mempoolRetryLimit, ...txOptions, privateKey, axiosOptions}));
     };
 }
@@ -120,7 +123,7 @@ function _postTxHandleErrors(apiInstance, txParams, options, axiosOptions) {
  * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<number>}
  */
-function ensureNonce(apiInstance, txParams, {privateKey, address} = {}, axiosOptions) {
+function ensureNonce(apiInstance, txParams, {privateKey, address, seedPhrase} = {}, axiosOptions) {
     const nonce = txParams.nonce;
     if (!nonce && !address && !privateKey) {
         throw new Error('No nonce is given and no address or privateKey to retrieve it from API');

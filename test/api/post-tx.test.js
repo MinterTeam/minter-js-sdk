@@ -40,6 +40,7 @@ const API_TYPE_LIST = [
     {
         ...minterNode,
         postTx: makePostTx(minterNode),
+        seedPhrase: ENV_DATA.mnemonic2,
         privateKey: ENV_DATA.privateKey2,
         address: ENV_DATA.address2,
         customCoin: 'TESTCOIN03',
@@ -53,6 +54,7 @@ const API_TYPE_LIST = [
     {
         ...minterGate,
         postTx: makePostTx(minterGate),
+        seedPhrase: ENV_DATA.mnemonic,
         privateKey: ENV_DATA.privateKey,
         address: ENV_DATA.address,
         customCoin: ENV_DATA.customCoin,
@@ -156,6 +158,21 @@ describe('PostTx: send', () => {
         expect.assertions(2);
         const txParams = txParamsData(apiType);
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+            .then(({hash: txHash}) => {
+                console.log(txHash);
+                expect(txHash).toHaveLength(66);
+                expect(txHash.substr(0, 2)).toEqual('Mt');
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
+            });
+    }, 30000);
+
+    test.each(API_TYPE_LIST)('should work with seedPhrase %s', (apiType) => {
+        expect.assertions(2);
+        const txParams = txParamsData(apiType);
+        return apiType.postTx(txParams, {seedPhrase: apiType.seedPhrase})
             .then(({hash: txHash}) => {
                 console.log(txHash);
                 expect(txHash).toHaveLength(66);

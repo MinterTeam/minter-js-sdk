@@ -1,3 +1,6 @@
+## 0.38.1 - 2021.04.12
+- fix usage of seedPhrase instead of privateKey
+
 ## 0.38.0 - 2021.04.09
 - add minter v2 pool, token, vote, and other tx data
 - `postTx` now support coin symbols in `txParams` without using `replaceCoinSymbol`
