@@ -1,3 +1,6 @@
+## 0.38.2 - 2021.04.13
+- fix VoteCommission tx data
+
 ## 0.38.1 - 2021.04.12
 - fix usage of seedPhrase instead of privateKey
 
