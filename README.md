@@ -690,7 +690,7 @@ minter.postTx(txParams, {seedPhrase: '...'});
 [Tx docs](https://www.minter.network/docs#buy-coin-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
-const txParams = new {
+const txParams = {
     type: TX_TYPE.BUY,
     data: {
         coinToSell: 0, // coin id
@@ -742,7 +742,7 @@ minter.postTx(txParams, {seedPhrase: '...'});
 [Tx docs](https://www.minter.network/docs#buy-from-swap-pool-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
-const txParams = new {
+const txParams = {
     type: TX_TYPE.BUY,
     data: {
         coins: [0, 123, 15], // route of coin IDs from spent to received
@@ -791,7 +791,7 @@ minter.postTx(txParams, {seedPhrase: '...'});
 [Tx docs](https://www.minter.network/docs#create-swap-pool-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
-const txParams = new {
+const txParams = {
     type: TX_TYPE.CREATE_SWAP_POOL,
     data: {
       coin0: 12,
@@ -808,7 +808,7 @@ minter.postTx(txParams, {seedPhrase: '...'});
 [Tx docs](https://www.minter.network/docs#add-liquidity-to-swap-pool-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
-const txParams = new {
+const txParams = {
     type: TX_TYPE.ADD_LIQUIDITY,
     data: {
       coin0: 12,
@@ -825,12 +825,12 @@ minter.postTx(txParams, {seedPhrase: '...'});
 [Tx docs](https://www.minter.network/docs#remove-liquidity-from-swap-pool-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
-const txParams = new {
+const txParams = {
     type: TX_TYPE.REMOVE_LIQUIDITY,
     data: {
       coin0: 12,
       coin1: 34,
-      liquidity: 123,
+      liquidity: 123, // amount of LP tokens
       minimumVolume0: 0,
       minimumVolume1: 0,
     },
