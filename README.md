@@ -743,7 +743,7 @@ minter.postTx(txParams, {seedPhrase: '...'});
 ```js
 import {TX_TYPE} from "minter-js-sdk";
 const txParams = {
-    type: TX_TYPE.BUY,
+    type: TX_TYPE.BUY_SWAP_POOL,
     data: {
         coins: [0, 123, 15], // route of coin IDs from spent to received
         valueToBuy: 10,
