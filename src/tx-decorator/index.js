@@ -6,6 +6,8 @@ import decorateSellAllTxParams from './convert-sell-all.js';
 import decorateSellSwapPoolTxParams from './convert-sell-pool.js';
 import decorateBuySwapPoolTxParams from './convert-buy-pool.js';
 import decorateSellAllSwapPoolTxParams from './convert-sell-all-pool.js';
+import decorateCreateSwapPoolTxParams from './pool-create.js';
+import decorateAddLiquidityTxParams from './pool-add-liquidity.js';
 import decorateDeclareCandidacyTxParams from './candidacy-declare.js';
 import decorateDelegateTxParams from './stake-delegate.js';
 // import decorateUnbondTxParams from './stake-unbond.js';
@@ -45,7 +47,7 @@ export default function decorateTxParams(txParams, {setGasCoinAsCoinToSpend} = {
         [TX_TYPE.EDIT_MULTISIG]: noop,
         [TX_TYPE.PRICE_VOTE]: noop,
         [TX_TYPE.EDIT_CANDIDATE_PUBLIC_KEY]: noop,
-        [TX_TYPE.ADD_LIQUIDITY]: noop,
+        [TX_TYPE.ADD_LIQUIDITY]: setGasCoinAsCoinToSpend ? decorateAddLiquidityTxParams : noop,
         [TX_TYPE.REMOVE_LIQUIDITY]: noop,
         [TX_TYPE.BUY_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateBuySwapPoolTxParams : noop,
         [TX_TYPE.SELL_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateSellSwapPoolTxParams : noop,
@@ -58,7 +60,7 @@ export default function decorateTxParams(txParams, {setGasCoinAsCoinToSpend} = {
         [TX_TYPE.RECREATE_TOKEN]: noop,
         [TX_TYPE.VOTE_COMMISSION]: noop,
         [TX_TYPE.VOTE_UPDATE]: noop,
-        [TX_TYPE.CREATE_SWAP_POOL]: noop,
+        [TX_TYPE.CREATE_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateCreateSwapPoolTxParams : noop,
     };
 
     return TX_PARAMS_DECORATOR[txType](txParams);

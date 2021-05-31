@@ -1,3 +1,6 @@
+## 0.38.3 - 2021.05.31
+- add `CreateSwapPool`, `AddLiquidity` tx decorators
+
 ## 0.38.2 - 2021.04.13
 - fix VoteCommission tx data
 

@@ -181,6 +181,7 @@ function getBaseCoinAmountFromPool(priceCoinAmount, pool) {
     // amount of price coin in pool
     const priceCoinAmountPip = new Big(convertToPip(priceCoinAmount));
 
+    // @see https://github.com/MinterTeam/minter-go-node/blob/6e44d5691c9df1a9c725d0f52c5921e8523c7f18/coreV2/state/swap/swap.go#L642
     // reserveBase - (reservePrice * reserveBase) / (priceCoinAmount * 0.998 + reservePrice)
     let result = reserveBase.minus(reservePrice.times(reserveBase).div(priceCoinAmountPip.times(0.998).plus(reservePrice)));
 
