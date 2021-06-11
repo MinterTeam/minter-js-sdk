@@ -1,7 +1,7 @@
 import {prepareSignedTx, prepareTx, decodeTx, decodeLink} from '~/src';
 import {VALID_CHECK} from '~/test/check.test.js';
 
-// exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone
+const SEED_PHRASE = 'exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone';
 const PRIVATE_KEY = '0x5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da';
 
 const testData = {
@@ -644,6 +644,7 @@ testData.txList.forEach((item) => {
         item.options = {};
     }
     item.options.privateKey = PRIVATE_KEY;
+    item.options.seedPhrase = SEED_PHRASE;
 });
 
 const fullTestData = JSON.parse(JSON.stringify(testData));

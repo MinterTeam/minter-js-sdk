@@ -12,7 +12,7 @@ import {isValidNumber, isCoinId} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function({coinIdToSell?: (number|string), coinToSell?: string, valueToSell?: (string|number), coinIdToBuy?: (number|string), coinToBuy?: string, swapFrom?: ESTIMATE_SWAP_TYPE, route?: Array<string|number>, gasCoin?: (string|number), coinCommission?: (string|number)}, axiosOptions: AxiosRequestConfig=): Promise<EstimateSellResult>}
+ * @return {function({coinToSell: string, valueToSell: (string|number), coinToBuy: string, swapFrom?: ESTIMATE_SWAP_TYPE, route?: Array<string|number>, gasCoin?: (string|number), coinCommission?: (string|number)}, axiosOptions: AxiosRequestConfig=): Promise<EstimateSellResult>}
  */
 export default function EstimateCoinSell(apiInstance) {
     return estimateCoinSell;

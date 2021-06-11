@@ -11,15 +11,30 @@ describe('should work', () => {
         return [item];
     });
 
-    test.each(txListTable)('prepareSignedTx: %s', (item) => {
-        const tx = prepareSignedTx(item.params, item.options);
+    test.each(txListTable)('prepareSignedTx with privateKey: %s', (item) => {
+        console.log(item.options);
+        const tx = prepareSignedTx(item.params, {privateKey: item.options.privateKey, password: item.options.password});
 
         expect(tx.serializeToString())
             .toEqual(item.result);
     });
 
-    test.each(txListTable)('prepareTx: %s', (item) => {
-        const tx = prepareTx({...item.params, signatureType: 1}, item.options);
+    test.each(txListTable)('prepareTx with privateKey: %s', (item) => {
+        const tx = prepareTx({...item.params, signatureType: 1}, {privateKey: item.options.privateKey, password: item.options.password});
+
+        expect(tx.serializeToString())
+            .toEqual(item.result);
+    });
+
+    test.each(txListTable)('prepareSignedTx with seedPhrase: %s', (item) => {
+        const tx = prepareSignedTx(item.params, {seedPhrase: item.options.seedPhrase, password: item.options.password});
+
+        expect(tx.serializeToString())
+            .toEqual(item.result);
+    });
+
+    test.each(txListTable)('prepareTx with seedPhrase: %s', (item) => {
+        const tx = prepareTx({...item.params, signatureType: 1}, {seedPhrase: item.options.seedPhrase, password: item.options.password});
 
         expect(tx.serializeToString())
             .toEqual(item.result);
