@@ -124,20 +124,46 @@ function getTxParamsPathList(txParams) {
     pathList.push('gasCoin');
 
     const txType = normalizeTxType(txParams.type);
-    if (txType === TX_TYPE.SEND || txType === TX_TYPE.DECLARE_CANDIDACY || txType === TX_TYPE.DELEGATE || txType === TX_TYPE.UNBOND || txType === TX_TYPE.MOVE_STAKE || txType === TX_TYPE.MINT_TOKEN || txType === TX_TYPE.BURN_TOKEN || txType === TX_TYPE.VOTE_COMMISSION) {
-        pathList.push('data.coin');
-    } else if (txType === TX_TYPE.SELL || txType === TX_TYPE.SELL_ALL || txType === TX_TYPE.BUY) {
-        pathList.push('data.coinToSell', 'data.coinToBuy');
-    } else if (txType === TX_TYPE.CREATE_SWAP_POOL || txType === TX_TYPE.ADD_LIQUIDITY || txType === TX_TYPE.REMOVE_LIQUIDITY) {
-        pathList.push('data.coin0', 'data.coin1');
-    } else if (txType === TX_TYPE.MULTISEND) {
-        txParams.data.list.forEach((item, index) => {
-            pathList.push(`data.list[${index}].coin`);
-        });
-    } else if (txType === TX_TYPE.BUY_SWAP_POOL || txType === TX_TYPE.SELL_SWAP_POOL || txType === TX_TYPE.SELL_ALL_SWAP_POOL) {
-        txParams.data.coins.forEach((item, index) => {
-            pathList.push(`data.coins[${index}]`);
-        });
+    switch (txType) {
+        case TX_TYPE.SEND:
+        case TX_TYPE.DECLARE_CANDIDACY:
+        case TX_TYPE.DELEGATE:
+        case TX_TYPE.UNBOND:
+        case TX_TYPE.MOVE_STAKE:
+        case TX_TYPE.MINT_TOKEN:
+        case TX_TYPE.BURN_TOKEN:
+        case TX_TYPE.VOTE_COMMISSION: {
+            pathList.push('data.coin');
+            break;
+        }
+        case TX_TYPE.SELL:
+        case TX_TYPE.SELL_ALL:
+        case TX_TYPE.BUY: {
+            pathList.push('data.coinToSell', 'data.coinToBuy');
+            break;
+        }
+        case TX_TYPE.CREATE_SWAP_POOL:
+        case TX_TYPE.ADD_LIQUIDITY:
+        case TX_TYPE.REMOVE_LIQUIDITY: {
+            pathList.push('data.coin0', 'data.coin1');
+            break;
+        }
+        case TX_TYPE.MULTISEND: {
+            txParams.data.list.forEach((item, index) => {
+                pathList.push(`data.list[${index}].coin`);
+            });
+            break;
+        }
+        case TX_TYPE.BUY_SWAP_POOL:
+        case TX_TYPE.SELL_SWAP_POOL:
+        case TX_TYPE.SELL_ALL_SWAP_POOL: {
+            txParams.data.coins.forEach((item, index) => {
+                pathList.push(`data.coins[${index}]`);
+            });
+            break;
+        }
+        // No default
+        default:
     }
 
     return pathList;

@@ -77,7 +77,7 @@ class Check {
 
     hash() {
         // don't hash last 4 fields (lock and signature)
-        return rlphash(this.raw.slice(0, this.raw.length - 4));
+        return rlphash(this.raw.slice(0, -4));
     }
 
     sign(privateKey, password) {
@@ -96,7 +96,7 @@ class Check {
         this.lock = `0x${lockWithRecovery.toString('hex')}`;
 
         // don't hash last 3 signature fields
-        const messageHashWithLock = rlphash(this.raw.slice(0, this.raw.length - 3));
+        const messageHashWithLock = rlphash(this.raw.slice(0, -3));
         const sig = ecsign(messageHashWithLock, privateKey);
         Object.assign(this, sig);
     }

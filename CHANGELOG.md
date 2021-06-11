@@ -1,3 +1,6 @@
+## WIP
+- **BREAKING** add fields to VoteCommission tx data
+
 ## 0.38.3 - 2021.05.31
 - add `CreateSwapPool`, `AddLiquidity` tx decorators
 
