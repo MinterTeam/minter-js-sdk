@@ -49,6 +49,9 @@ describe('VoteCommissionTxData', () => {
         voteCommission: '12',
         voteUpdate: '12',
         createSwapPool: '12',
+        failedTx: '12',
+        addLimitOrder: '12',
+        removeLimitOrder: '12',
     };
     const txData = new VoteCommissionTxData(txParamsData).serialize();
 

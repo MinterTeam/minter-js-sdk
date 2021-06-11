@@ -2,7 +2,7 @@
 
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   // parserOptions: {
   //   sourceType: 'module'
   // },
@@ -28,7 +28,7 @@ module.exports = {
   },
   // // add your custom rules here
   rules: {
-    'indent': ['error', 4],
+    'indent': ['error', 4, {SwitchCase: 1}],
     // allow paren-less arrow functions
     'arrow-parens': 0,
     // allow braces around function body
@@ -91,11 +91,15 @@ module.exports = {
         'unicorn/no-array-for-each': 0,
         'unicorn/prefer-optional-catch-binding': 0,
         'unicorn/prefer-ternary': 0,
+        // incorrectly treat `Big` as `Number`
+        'unicorn/require-number-to-fixed-digits-argument': 0,
+        // not supported yet
+        'unicorn/numeric-separators-style': 0,
         'unicorn/prevent-abbreviations': ['error', {
           replacements: {
             'params': false,
           },
-          whitelist: {
+          allowList: {
             'resData': true,
             'txParams': true,
             'txProps': true,
@@ -118,6 +122,8 @@ module.exports = {
       rules: {
         'no-unused-vars': 0,
         'import/extensions': 0,
+        // allow `expect` inside `then`
+        'jest/no-conditional-expect': 0,
       }
     },
   ]

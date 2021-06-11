@@ -131,6 +131,7 @@ function ensureNonce(apiInstance, txParams, {privateKey, address, seedPhrase} = 
     if (nonce) {
         return Promise.resolve(nonce);
     }
+    // @TODO seedPhrase not used
     if (privateKey) {
         const privateKeyBuffer = bufferFromBytes(privateKey);
         address = privateToAddressString(privateKeyBuffer);

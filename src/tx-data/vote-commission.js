@@ -51,6 +51,9 @@ import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint, va
  * @param {number|string} voteCommission
  * @param {number|string} voteUpdate
  * @param {number|string} createSwapPool
+ * @param {number|string} failedTx
+ * @param {number|string} addLimitOrder
+ * @param {number|string} removeLimitOrder
  * @constructor
  */
 export default function VoteCommissionTxData({
@@ -101,6 +104,9 @@ export default function VoteCommissionTxData({
     voteCommission,
     voteUpdate,
     createSwapPool,
+    failedTx,
+    addLimitOrder,
+    removeLimitOrder,
 }) {
     validatePublicKey(publicKey, 'publicKey');
     validateUint(height, 'height');
@@ -149,6 +155,9 @@ export default function VoteCommissionTxData({
     validateAmount(voteCommission, 'voteCommission');
     validateAmount(voteUpdate, 'voteUpdate');
     validateAmount(createSwapPool, 'createSwapPool');
+    validateAmount(createSwapPool, 'failedTx');
+    validateAmount(createSwapPool, 'addLimitOrder');
+    validateAmount(createSwapPool, 'removeLimitOrder');
 
     this.publicKey = publicKey;
     this.height = height;
@@ -197,6 +206,9 @@ export default function VoteCommissionTxData({
     this.voteCommission = voteCommission;
     this.voteUpdate = voteUpdate;
     this.createSwapPool = createSwapPool;
+    this.failedTx = failedTx;
+    this.addLimitOrder = addLimitOrder;
+    this.removeLimitOrder = removeLimitOrder;
 
     this.txData = new TxDataVoteCommission({
         publicKey: toBuffer(publicKey),
@@ -246,6 +258,9 @@ export default function VoteCommissionTxData({
         voteCommission: `0x${convertToPip(voteCommission, 'hex')}`,
         voteUpdate: `0x${convertToPip(voteUpdate, 'hex')}`,
         createSwapPool: `0x${convertToPip(createSwapPool, 'hex')}`,
+        failedTx: `0x${convertToPip(failedTx, 'hex')}`,
+        addLimitOrder: `0x${convertToPip(addLimitOrder, 'hex')}`,
+        removeLimitOrder: `0x${convertToPip(removeLimitOrder, 'hex')}`,
     });
 
     proxyNestedTxData(this);
@@ -299,9 +314,12 @@ export default function VoteCommissionTxData({
  * @param {Buffer|string|number} voteCommission
  * @param {Buffer|string|number} voteUpdate
  * @param {Buffer|string|number} createSwapPool
+ * @param {Buffer|string|number} failedTx
+ * @param {Buffer|string|number} addLimitOrder
+ * @param {Buffer|string|number} removeLimitOrder
  * @return {VoteCommissionTxData}
  */
-VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, height, coin, payloadByte, send, buyBancor, sellBancor, sellAllBancor, buyPoolBase, buyPoolDelta, sellPoolBase, sellPoolDelta, sellAllPoolBase, sellAllPoolDelta, createTicker3, createTicker4, createTicker5, createTicker6, createTicker7to10, createCoin, createToken, recreateCoin, recreateToken, declareCandidacy, delegate, unbond, redeemCheck, setCandidateOn, setCandidateOff, createMultisig, multisendBase, multisendDelta, editCandidate, setHaltBlock, editTickerOwner, editMultisig, priceVote, editCandidatePublicKey, addLiquidity, removeLiquidity, editCandidateCommission, moveStake, burnToken, mintToken, voteCommission, voteUpdate, createSwapPool}) {
+VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, height, coin, payloadByte, send, buyBancor, sellBancor, sellAllBancor, buyPoolBase, buyPoolDelta, sellPoolBase, sellPoolDelta, sellAllPoolBase, sellAllPoolDelta, createTicker3, createTicker4, createTicker5, createTicker6, createTicker7to10, createCoin, createToken, recreateCoin, recreateToken, declareCandidacy, delegate, unbond, redeemCheck, setCandidateOn, setCandidateOff, createMultisig, multisendBase, multisendDelta, editCandidate, setHaltBlock, editTickerOwner, editMultisig, priceVote, editCandidatePublicKey, addLiquidity, removeLiquidity, editCandidateCommission, moveStake, burnToken, mintToken, voteCommission, voteUpdate, createSwapPool, failedTx, addLimitOrder, removeLimitOrder}) {
     return new VoteCommissionTxData({
         publicKey: publicToString(publicKey),
         height: bufferToInteger(toBuffer(height)),
@@ -350,6 +368,9 @@ VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, he
         voteCommission: convertFromPip(bufferToInteger(toBuffer(voteCommission))),
         voteUpdate: convertFromPip(bufferToInteger(toBuffer(voteUpdate))),
         createSwapPool: convertFromPip(bufferToInteger(toBuffer(createSwapPool))),
+        failedTx: convertFromPip(bufferToInteger(toBuffer(failedTx))),
+        addLimitOrder: convertFromPip(bufferToInteger(toBuffer(addLimitOrder))),
+        removeLimitOrder: convertFromPip(bufferToInteger(toBuffer(removeLimitOrder))),
     });
 };
 
