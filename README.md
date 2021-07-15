@@ -245,7 +245,7 @@ Returns promise that resolves with:
  * @typedef {Object} TxParams
  * @property {number} [nonce] - can be omitted, will be received by `getNonce`
  * @property {number} [chainId=1] - 1 = mainnet, 2 = testnet
- * @property {number} [gasPrice=1] - can be updated automatically on retry if gasRetryLimit > 1
+ * @property {number} [gasPrice=1] - can be updated automatically on retry if gasRetryLimit > 0
  * @property {string} [gasCoin='BIP']
  * @property {string|TX_TYPE|Buffer} type
  * @property {Object|Buffer|TxData} data
