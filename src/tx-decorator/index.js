@@ -61,6 +61,8 @@ export default function decorateTxParams(txParams, {setGasCoinAsCoinToSpend} = {
         [TX_TYPE.VOTE_COMMISSION]: noop,
         [TX_TYPE.VOTE_UPDATE]: noop,
         [TX_TYPE.CREATE_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateCreateSwapPoolTxParams : noop,
+        [TX_TYPE.ADD_LIMIT_ORDER]: noop,
+        [TX_TYPE.REMOVE_LIMIT_ORDER]: noop,
     };
 
     return TX_PARAMS_DECORATOR[txType](txParams);

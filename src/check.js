@@ -19,7 +19,7 @@ class Check {
         const fields = [
             {
                 name: 'nonce',
-                length: 32,
+                length: 16,
                 allowLess: true,
             }, {
                 name: 'chainId',

@@ -1,4 +1,6 @@
 ## WIP
+- add `AddLimitOrder` and `RemoveLimitOrder` tx data
+- update `nonce` field lenght for checks
 - **BREAKING** add fields to VoteCommission tx data
 
 ## 0.38.3 - 2021.05.31

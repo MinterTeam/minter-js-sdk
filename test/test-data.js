@@ -639,6 +639,39 @@ const testData = {
             result: '0xf878822b670101802298d70c158a1a24902bee1421000000891b1ae4d6e2ef5000008e637573746f6d206d6573736167658001b845f8431ba0d357edd48f7554f7cc4517e4f77f7c1be0404c794f50e37544f12c9a000ad1dca007b5384c81f522e6b83390bac8a6b3b5a176878962a9abaf9a68a77c5ee0b346',
             link: 'https://bip.to/tx/7iKY1wwVihokkCvuFCEAAACJGxrk1uLvUAAAjmN1c3RvbSBtZXNzYWdlgitnAYA',
         },
+        // 0x23 ADD_LIMIT_ORDER
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x23,
+                data: {
+                    coinToSell: 0,
+                    coinToBuy: 5,
+                    valueToSell: 10,
+                    valueToBuy: 10,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf875822b670101802395d480888ac7230489e8000005888ac7230489e800008e637573746f6d206d6573736167658001b845f8431ca0e07b5d227381c9ac85341e9dd2cddf7351a3eafce7ad3b88fbaf9c073297bf86a02d040d2278a94614de1c7597c4bc2e417464acb67fb8adb9cf192580c1953045',
+            link: 'https://bip.to/tx/6yOV1ICIiscjBInoAAAFiIrHIwSJ6AAAjmN1c3RvbSBtZXNzYWdlgitnAYA',
+        },
+        // 0x24 REMOVE_LIMIT_ORDER
+        {
+            params: {
+                nonce: 11111,
+                gasPrice: 1,
+                gasCoin: 0,
+                type: 0x24,
+                data: {
+                    id: 123456789,
+                },
+                payload: 'custom message',
+            },
+            result: '0xf866822b670101802486c584075bcd158e637573746f6d206d6573736167658001b845f8431ba0ea23e9638e5a11771b19fa2b9aebf2ac7e36a5682a2d32cc05b5360c82b6c330a0611808dcab4e39525916c58fa5f57fd63b2e444e5997ae90ff38f7d3f154a9b4',
+            link: 'https://bip.to/tx/3CSGxYQHW80VjmN1c3RvbSBtZXNzYWdlgitnAYA',
+        },
     ],
 };
 

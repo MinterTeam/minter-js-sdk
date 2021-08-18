@@ -33,6 +33,8 @@ import RecreateTokenTxData from './token-recreate.js';
 import VoteCommissionTxData from './vote-commission.js';
 import VoteUpdateTxData from './vote-update.js';
 import CreatePoolTxData from './pool-create.js';
+import AddLimitOrderTxData from './add-limit-order.js';
+import RemoveLimitOrderTxData from './remove-limit-order.js';
 import {decodeCheck} from '../check.js';
 
 
@@ -71,11 +73,13 @@ const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.VOTE_COMMISSION]: VoteCommissionTxData,
     [TX_TYPE.VOTE_UPDATE]: VoteUpdateTxData,
     [TX_TYPE.CREATE_SWAP_POOL]: CreatePoolTxData,
+    [TX_TYPE.ADD_LIMIT_ORDER]: AddLimitOrderTxData,
+    [TX_TYPE.REMOVE_LIMIT_ORDER]: RemoveLimitOrderTxData,
 };
 
 /**
  * @param {TX_TYPE|number|string|Buffer|Uint8Array} txType
- * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditTickerOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddLiquidityTxData|RemoveLiquidityTxData|BuyPoolTxData|SellPoolTxData|SellAllPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData|VoteCommissionTxData|VoteUpdateTxData|CreatePoolTxData}
+ * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditTickerOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddLiquidityTxData|RemoveLiquidityTxData|BuyPoolTxData|SellPoolTxData|SellAllPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData|VoteCommissionTxData|VoteUpdateTxData|CreatePoolTxData|AddLimitOrderTxData|RemoveLimitOrderTxData}
  */
 export default function getTxData(txType) {
     txType = normalizeTxType(txType);

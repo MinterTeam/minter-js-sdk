@@ -54,6 +54,8 @@ import RecreateTokenTxData from './tx-data/token-recreate.js';
 import VoteCommissionTxData from './tx-data/vote-commission.js';
 import VoteUpdateTxData from './tx-data/vote-update.js';
 import CreatePoolTxData from './tx-data/pool-create.js';
+import AddLimitOrderTxData from './tx-data/add-limit-order.js';
+import RemoveLimitOrderTxData from './tx-data/remove-limit-order.js';
 
 export default Minter;
 export {
@@ -127,6 +129,9 @@ export {
     BuyPoolTxData,
     SellPoolTxData,
     SellAllPoolTxData,
+    // - limit order
+    AddLimitOrderTxData,
+    RemoveLimitOrderTxData,
     // - token
     CreateTokenTxData,
     RecreateTokenTxData,

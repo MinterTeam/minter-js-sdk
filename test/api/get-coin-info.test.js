@@ -60,4 +60,3 @@ describe('GetCoinInfo by ID', () => {
             });
     }, 30000);
 });
-

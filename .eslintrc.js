@@ -48,7 +48,7 @@ module.exports = {
     'no-else-return': 0,
     'no-unused-vars': ['warn', { 'vars': 'all', 'args': 'after-used', 'ignoreRestSiblings': false }],
     'no-use-before-define' : 0,
-    'no-multiple-empty-lines': 0,
+    'no-multiple-empty-lines': ["error", { "max": 3, "maxEOF": 1 }],
     // allow single line imports
     'object-curly-newline': 0,
     'prefer-arrow-callback': 0,
@@ -68,6 +68,8 @@ module.exports = {
       asyncArrow: 'always'
     }],
     'import/extensions': ['error', 'always', {ignorePackages: true} ],
+    // named exports are not bad
+    'import/prefer-default-export': 0,
   },
   overrides: [
     {
@@ -91,7 +93,12 @@ module.exports = {
         'unicorn/no-array-for-each': 0,
         'unicorn/prefer-optional-catch-binding': 0,
         'unicorn/prefer-ternary': 0,
+        // waiting `node:` to be backported to node@14
+        // @see https://stackoverflow.com/questions/67263317/how-to-fix-eslint-error-when-using-the-node-protocol-when-importing-node-js-bui
+        // @see https://github.com/import-js/eslint-plugin-import/issues/2031
+        'unicorn/prefer-node-protocol': 0,
         // incorrectly treat `Big` as `Number`
+        // @see https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1463
         'unicorn/require-number-to-fixed-digits-argument': 0,
         // not supported yet
         'unicorn/numeric-separators-style': 0,
@@ -122,6 +129,8 @@ module.exports = {
       rules: {
         'no-unused-vars': 0,
         'import/extensions': 0,
+        // 'jest-expect-message' allow multiple arguments
+        'jest/valid-expect': 0,
         // allow `expect` inside `then`
         'jest/no-conditional-expect': 0,
       }

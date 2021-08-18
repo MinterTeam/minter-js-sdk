@@ -185,7 +185,7 @@ function getBaseCoinAmountFromPool(priceCoinAmount, pool) {
     // reserveBase - (reservePrice * reserveBase) / (priceCoinAmount * 0.998 + reservePrice)
     let result = reserveBase.minus(reservePrice.times(reserveBase).div(priceCoinAmountPip.times(0.998).plus(reservePrice)));
 
-    // received amount from pool rounds down, spent amount to poll rounds up
+    // received amount from pool rounds down, spent amount to pool rounds up
     // round down
     result = result.round(undefined, 0);
 
