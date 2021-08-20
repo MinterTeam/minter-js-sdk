@@ -136,6 +136,7 @@ function getTxParamsPathList(txParams) {
             pathList.push('data.coin');
             break;
         }
+        case TX_TYPE.ADD_LIMIT_ORDER:
         case TX_TYPE.SELL:
         case TX_TYPE.SELL_ALL:
         case TX_TYPE.BUY: {
