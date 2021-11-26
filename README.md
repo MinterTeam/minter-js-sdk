@@ -43,6 +43,8 @@ Contents:
     - [Buy from pool](#buy-from-swap-pool)
     - [Sell to pool](#sell-to-swap-pool)
     - [Sell all to pool](#sell-all-to-swap-pool)
+    - [Add limit order](#add-limit-order)
+    - [Remove limit order](#remove-limit-order)
     - [Create pool](#create-pool)
     - [Add liquidity to pool](#add-liquidity-to-pool)
     - [Remove liquidity from pool](#remove-liquidity-from-pool)
@@ -786,6 +788,38 @@ const txParams = {
 minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
+### Add limit order
+[Tx docs](https://www.minter.network/docs#add-limit-order-transaction)
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    // `gasCoin` will be set as `coinToSell` automatically
+    type: TX_TYPE.ADD_LIMIT_ORDER,
+    data: {
+        coinToSell: 0, // coin id
+        coinToBuy: 5, // coin id
+        valueToSell: 10,
+        valueToBuy: 10,
+    },
+};
+
+minter.postTx(txParams, {seedPhrase: '...'});
+```
+
+### Remove limit order
+[Tx docs](https://www.minter.network/docs#remove-limit-order-transaction)
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.REMOVE_LIMIT_ORDER,
+    data: {
+        id: 123, // order id
+    },
+};
+
+minter.postTx(txParams, {seedPhrase: '...'});
+```
+
 
 ### Create pool
 [Tx docs](https://www.minter.network/docs#create-swap-pool-transaction)
@@ -1182,6 +1216,9 @@ const txParams = {
         voteCommission: '12',
         voteUpdate: '12',
         createSwapPool: '12',
+        failedTx: '12',
+        addLimitOrder: '12',
+        removeLimitOrder: '12',
     },
 };
 
