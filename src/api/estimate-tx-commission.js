@@ -26,10 +26,10 @@ export default function EstimateTxCommission(apiInstance) {
      * @param {TxParams|string} txParams
      * @param {Object} [options]
      * @param {boolean} [options.direct = true]
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
      */
-    function estimateTxCommission(txParams, {direct = true} = {}, axiosOptions) {
+    function estimateTxCommission(txParams, {direct = true} = {}, axiosOptions = undefined) {
         let paramsPromise;
         if (typeof txParams === 'object') {
             paramsPromise = getCoinId(txParams.gasCoin || 0, txParams.chainId, axiosOptions)
@@ -56,7 +56,7 @@ export default function EstimateTxCommission(apiInstance) {
 
     /**
      * @param {string|TxParams} txParams
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<{commission: number|string}>}
      */
     function estimateFeeDirect(txParams, axiosOptions) {
@@ -86,7 +86,7 @@ export default function EstimateTxCommission(apiInstance) {
 
     /**
      * @param {TxParams} txParams
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<{commission: number|string, baseCoinCommission: number|string, priceCoinCommission: number|string, commissionPriceData: CommissionPriceData}>}
      */
     async function estimateFeeCalculate(txParams, axiosOptions) {
@@ -130,7 +130,7 @@ export default function EstimateTxCommission(apiInstance) {
     /**
      * @param {number|string} coinIdOrSymbol
      * @param {number|string} baseCoinAmount
-     * @param {AxiosRequestConfig} axiosOptions
+     * @param {import('axios').AxiosRequestConfig} axiosOptions
      * @return {Promise<{amount: string, baseCoinAmount: string}>}
      */
     function getEstimation(coinIdOrSymbol, baseCoinAmount, axiosOptions) {

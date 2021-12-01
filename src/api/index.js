@@ -14,7 +14,7 @@ import {API_TYPE_NODE} from '../variables.js';
  * @param {string} [options.apiType]
  * @param {number} [options.chainId]
  * @param {string} [options.baseURL]
- * @param {...AxiosRequestConfig} [options.*]
+ * @param {...import('axios').AxiosRequestConfig} [options.*]
  * @return {MinterApiInstance}
  */
 export default function MinterApi(options = {}) {

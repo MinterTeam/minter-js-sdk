@@ -1,3 +1,1 @@
-import decorateUnbondTxParams from './candidacy-declare.js';
-
-export default decorateUnbondTxParams;
+export {default} from './candidacy-declare.js';

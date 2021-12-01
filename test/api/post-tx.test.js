@@ -1028,7 +1028,7 @@ describe('validator', () => {
 describe('PostTx: redeem check', () => {
     const password = '123';
 
-    function getRandomCheck(apiType, gasCoin = 0, dueBlock) {
+    function getRandomCheck(apiType, gasCoin = 0, dueBlock = undefined) {
         return issueCheck({
             privateKey: apiType.privateKey,
             chainId: 2,

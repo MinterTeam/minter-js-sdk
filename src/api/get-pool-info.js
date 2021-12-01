@@ -9,7 +9,7 @@ export default function GetPoolInfo(apiInstance) {
      * Get nonce for new transaction: last transaction number + 1
      * @param {number|string} coin0 - first coin id
      * @param {number|string} coin1 - second coin id
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<PoolInfo>}
      */
     function getPoolInfo(coin0, coin1, axiosOptions) {

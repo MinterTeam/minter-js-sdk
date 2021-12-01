@@ -21,7 +21,7 @@ export default function EstimateCoinSellAll(apiInstance) {
      * @param {string|number} params.coinToBuy - ID or symbol of the coin to buy
      * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate pool swap
      * @param {Array<string|number>} [params.route] - intermediate coins IDs for pool swaps
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<EstimateSellAllResult>}
      */
     function estimateCoinSellAll(params, axiosOptions) {

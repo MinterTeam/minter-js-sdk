@@ -6,7 +6,7 @@
 export default function PostSignedTx(apiInstance) {
     /**
      * @param {string|Buffer} signedTx
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<NodeTransaction|{hash: string}>}
      */
     return function postSignedTx(signedTx, axiosOptions) {

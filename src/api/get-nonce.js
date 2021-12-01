@@ -9,7 +9,7 @@ export default function GetNonce(apiInstance) {
     /**
      * Get nonce for new transaction: last transaction number + 1
      * @param {string} address
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<number>}
      */
     return function getNonce(address, axiosOptions) {

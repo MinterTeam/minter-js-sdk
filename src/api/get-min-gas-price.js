@@ -6,7 +6,7 @@
 export default function GetMinGasPrice(apiInstance) {
     /**
      * Get current minimal gas price
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<number>}
      */
     return function getMinGasPrice(axiosOptions) {

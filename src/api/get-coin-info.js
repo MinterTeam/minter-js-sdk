@@ -9,7 +9,7 @@ export default function GetCoinInfo(apiInstance) {
     /**
      * Get nonce for new transaction: last transaction number + 1
      * @param {string|number} coin
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<CoinInfo>}
      */
     function getCoinInfo(coin, axiosOptions) {

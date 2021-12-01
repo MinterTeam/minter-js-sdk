@@ -1,3 +1,1 @@
-import SetCandidateOffTxData from './candidate-set-on.js';
-
-export default SetCandidateOffTxData;
+export {default} from './candidate-set-on.js';

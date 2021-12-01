@@ -1,3 +1,1 @@
-import decorateBuyTxParams from './convert-sell.js';
-
-export default decorateBuyTxParams;
+export {default} from './convert-sell.js';

@@ -1,3 +1,1 @@
-import decorateDelegateTxParams from './candidacy-declare.js';
-
-export default decorateDelegateTxParams;
+export {default} from './candidacy-declare.js';

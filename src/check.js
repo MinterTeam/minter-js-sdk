@@ -115,7 +115,7 @@ class Check {
  * @param {boolean} [isReturnObject]
  * @return {string|Check}
  */
-export default function issueCheck({seedPhrase, privateKey, password, nonce, chainId = 1, coin, value, gasCoin = 0, dueBlock = 999999999} = {}, isReturnObject) {
+export default function issueCheck({seedPhrase, privateKey, password, nonce, chainId = 1, coin, value, gasCoin = 0, dueBlock = 999999999} = {}, isReturnObject = false) {
     validateUint(dueBlock, 'dueBlock');
     validateUint(coin, 'coin');
     validateUint(gasCoin, 'gasCoin');

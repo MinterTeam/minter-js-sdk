@@ -70,6 +70,8 @@ module.exports = {
     'import/extensions': ['error', 'always', {ignorePackages: true} ],
     // named exports are not bad
     'import/prefer-default-export': 0,
+    // allow `export {default} from '...'`
+    'no-restricted-exports': 0,
   },
   overrides: [
     {

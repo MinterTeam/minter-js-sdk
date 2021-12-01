@@ -25,7 +25,7 @@ export default function EstimateCoinSell(apiInstance) {
      * @param {Array<string|number>} [params.route] - intermediate coins IDs for pool swaps
      * @param {string|number} [params.gasCoin]
      * @param {string|number} [params.coinCommission] - gasCoin alias
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<EstimateSellResult>}
      */
     function estimateCoinSell(params, axiosOptions) {

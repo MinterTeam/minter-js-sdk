@@ -24,10 +24,10 @@ export default function PostTx(apiInstance) {
     /**
      * @param {TxParams} txParams
      * @param {PostTxOptions} options
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<string>}
      */
-    return function postTx(txParams, {gasRetryLimit = 2, nonceRetryLimit = 0, mempoolRetryLimit = 0, ...txOptions} = {}, axiosOptions) {
+    return function postTx(txParams, {gasRetryLimit = 2, nonceRetryLimit = 0, mempoolRetryLimit = 0, ...txOptions} = {}, axiosOptions = undefined) {
         if (!txOptions.privateKey && txParams.privateKey) {
             txOptions.privateKey = txParams.privateKey;
             // eslint-disable-next-line no-console
@@ -62,7 +62,7 @@ export default function PostTx(apiInstance) {
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
  * @param {TxOptions} [options]
- * @param {AxiosRequestConfig} [axiosOptions]
+ * @param {import('axios').AxiosRequestConfig} [axiosOptions]
  * @return {Promise<NodeTransaction|{hash: string}>}
  */
 function _postTx(apiInstance, txParams, options, axiosOptions) {
@@ -83,7 +83,7 @@ function _postTx(apiInstance, txParams, options, axiosOptions) {
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
  * @param {PostTxOptions} options
- * @param {AxiosRequestConfig} [axiosOptions]
+ * @param {import('axios').AxiosRequestConfig} [axiosOptions]
  * @return {Promise<string>}
  */
 function _postTxHandleErrors(apiInstance, txParams, options, axiosOptions) {
@@ -120,10 +120,10 @@ function _postTxHandleErrors(apiInstance, txParams, options, axiosOptions) {
  * @param {Object} txOptions
  * @param {ByteArray} [txOptions.privateKey]
  * @param {string} [txOptions.address]
- * @param {AxiosRequestConfig} [axiosOptions]
+ * @param {import('axios').AxiosRequestConfig} [axiosOptions]
  * @return {Promise<number>}
  */
-function ensureNonce(apiInstance, txParams, {privateKey, address, seedPhrase} = {}, axiosOptions) {
+function ensureNonce(apiInstance, txParams, {privateKey, address, seedPhrase} = {}, axiosOptions = undefined) {
     const nonce = txParams.nonce;
     if (!nonce && !address && !privateKey) {
         throw new Error('No nonce is given and no address or privateKey to retrieve it from API');
@@ -149,7 +149,7 @@ export function EnsureNonce(apiInstance) {
      * @param {Object} txOptions
      * @param {ByteArray} [txOptions.privateKey]
      * @param {string} [txOptions.address]
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<number>}
      */
     return function apiEnsureNonce() {

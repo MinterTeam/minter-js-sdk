@@ -12,7 +12,7 @@ export function ReplaceCoinSymbol(apiInstance) {
     const replaceCoinSymbolByPath = ReplaceCoinSymbolByPath(apiInstance);
     /**
      * @param {TxParams} txParams
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<TxParams>}
      */
     return function replaceCoinSymbol(txParams, axiosOptions) {
@@ -34,10 +34,10 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
      * @param {Object} txParams
      * @param {Array<string>} pathList
      * @param {number} [chainId]
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<Object>}
      */
-    function replaceCoinSymbolByPath(txParams, pathList, chainId = apiInstance.defaults.chainId, axiosOptions) {
+    function replaceCoinSymbolByPath(txParams, pathList, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
         let promiseList = {};
         pathList.forEach((path) => fillPath(path));
 
@@ -76,10 +76,10 @@ export function GetCoinId(apiInstance) {
     /**
      * @param {string|Array<string>} symbol
      * @param {number} [chainId]
-     * @param {AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<number|Array<number>>}
      */
-    function getCoinId(symbol, chainId = apiInstance.defaults.chainId, axiosOptions) {
+    function getCoinId(symbol, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
         if (Array.isArray(symbol)) {
             const symbolList = symbol;
             const promiseList = symbolList.map((symbolValue) => _getCoinId(symbolValue, chainId, apiInstance, axiosOptions));
@@ -94,7 +94,7 @@ export function GetCoinId(apiInstance) {
  * @param {string} symbol
  * @param {number} [chainId]
  * @param {MinterApiInstance} apiInstance
- * @param {AxiosRequestConfig} [axiosOptions]
+ * @param {import('axios').AxiosRequestConfig} [axiosOptions]
  * @return {Promise<number>}
  * @private
  */
