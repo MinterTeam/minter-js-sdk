@@ -1,6 +1,10 @@
+## 0.40.0 - 2021.12.14
+- add `AddLimitOrder` gasCoin decorator
+- **BREAKING** rename some internal files
+
 ## 0.39.0 - 2021.12.01
 - add `AddLimitOrder` and `RemoveLimitOrder` tx data
-- update `nonce` field lenght for checks
+- update `nonce` field length for checks
 - **BREAKING** add fields to VoteCommission tx data
 
 ## 0.38.3 - 2021.05.31

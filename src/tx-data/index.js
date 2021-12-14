@@ -33,8 +33,8 @@ import RecreateTokenTxData from './token-recreate.js';
 import VoteCommissionTxData from './vote-commission.js';
 import VoteUpdateTxData from './vote-update.js';
 import CreatePoolTxData from './pool-create.js';
-import AddLimitOrderTxData from './add-limit-order.js';
-import RemoveLimitOrderTxData from './remove-limit-order.js';
+import AddLimitOrderTxData from './limit-order-add.js';
+import RemoveLimitOrderTxData from './limit-order-remove.js';
 import {decodeCheck} from '../check.js';
 
 

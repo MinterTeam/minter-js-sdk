@@ -8,6 +8,7 @@ import decorateBuySwapPoolTxParams from './convert-buy-pool.js';
 import decorateSellAllSwapPoolTxParams from './convert-sell-all-pool.js';
 import decorateCreateSwapPoolTxParams from './pool-create.js';
 import decorateAddLiquidityTxParams from './pool-add-liquidity.js';
+import decorateAddLimitOrderTxParams from './limit-order-add.js';
 import decorateDeclareCandidacyTxParams from './candidacy-declare.js';
 import decorateDelegateTxParams from './stake-delegate.js';
 // import decorateUnbondTxParams from './stake-unbond.js';
@@ -61,7 +62,7 @@ export default function decorateTxParams(txParams, {setGasCoinAsCoinToSpend} = {
         [TX_TYPE.VOTE_COMMISSION]: noop,
         [TX_TYPE.VOTE_UPDATE]: noop,
         [TX_TYPE.CREATE_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateCreateSwapPoolTxParams : noop,
-        [TX_TYPE.ADD_LIMIT_ORDER]: noop,
+        [TX_TYPE.ADD_LIMIT_ORDER]: setGasCoinAsCoinToSpend ? decorateAddLimitOrderTxParams : noop,
         [TX_TYPE.REMOVE_LIMIT_ORDER]: noop,
     };
 
