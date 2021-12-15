@@ -64,7 +64,7 @@ export function ensureCustomCoin({coinSymbol, privateKey} = {}) {
     return ensureCoinPromiseList[coinSymbol];
 }
 
-const MAX_VALIDATOR_COUNT = 192;
+const MAX_VALIDATOR_COUNT = 100;
 // -2 to declare two our new validators
 const LAST_VALIDATOR_NUMBER = MAX_VALIDATOR_COUNT - 2;
 

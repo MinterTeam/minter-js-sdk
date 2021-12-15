@@ -25,6 +25,8 @@ export default {
             ],
         }),
         commonjs({
+            // required to include bip39 wordlists
+            ignoreTryCatch: false,
             // namedExports: {
             //     'node_modules/ethereumjs-util/dist/index.js': [ 'stripHexPrefix', 'padToEven' ],
             // },

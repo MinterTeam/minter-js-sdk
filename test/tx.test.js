@@ -12,7 +12,6 @@ describe('should work', () => {
     });
 
     test.each(txListTable)('prepareSignedTx with privateKey: %s', (item) => {
-        console.log(item.options);
         const tx = prepareSignedTx(item.params, {privateKey: item.options.privateKey, password: item.options.password});
 
         expect(tx.serializeToString())
