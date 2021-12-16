@@ -1,4 +1,4 @@
-## 0.40.0 - 2021.12.16
+## 0.40.1 - 2021.12.16
 - fix `CreatePoolTxData` to be independent of coins order
 
 ## 0.40.0 - 2021.12.14
