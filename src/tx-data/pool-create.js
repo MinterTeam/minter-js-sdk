@@ -15,6 +15,12 @@ export default function CreatePoolTxData({coin0, coin1, volume0, volume1}) {
     validateAmount(volume0, 'volume0');
     validateAmount(volume1, 'volume1');
 
+    // swap values to sort by id ascending (make tx hash independent of coin order)
+    if (Number(coin0) > Number(coin1)) {
+        [coin0, coin1] = [coin1, coin0];
+        [volume0, volume1] = [volume1, volume0];
+    }
+
     this.coin0 = coin0;
     this.coin1 = coin1;
     this.volume0 = volume0;

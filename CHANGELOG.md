@@ -1,3 +1,6 @@
+## 0.40.0 - 2021.12.16
+- fix `CreatePoolTxData` to be independent of coins order
+
 ## 0.40.0 - 2021.12.14
 - add `AddLimitOrder` gasCoin decorator
 - **BREAKING** rename some internal files

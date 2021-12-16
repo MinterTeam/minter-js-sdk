@@ -11,8 +11,19 @@ describe('CreatePoolTxData', () => {
 
     test('.fromRlp', () => {
         const params = CreatePoolTxData.fromRlp(txData).fields;
-        delete params.maximumVolume1;
         expect(params)
             .toEqual(txParamsData);
+    });
+
+    test('independent of coins order', () => {
+        const reversedTxData = new CreatePoolTxData({
+            coin0: txParamsData.coin1,
+            coin1: txParamsData.coin0,
+            volume0: txParamsData.volume1,
+            volume1: txParamsData.volume0,
+        }).serialize();
+
+        expect(txData)
+            .toEqual(reversedTxData);
     });
 });
