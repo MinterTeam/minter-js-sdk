@@ -1,8 +1,12 @@
+## 0.40.2 - 2021.12.16
+- fix `estimateCoinSellAll`: restore valueToSell param
+
 ## 0.40.1 - 2021.12.16
 - fix `CreatePoolTxData` to be independent of coins order
 
 ## 0.40.0 - 2021.12.14
 - add `AddLimitOrder` gasCoin decorator
+- **BREAKING** released [df1acf0](https://github.com/MinterTeam/minter-js-sdk/commit/df1acf077a0bec51675dacb93668a7f8aa0cb1c4): make `estimateCoinSellAll` actually use sell-all api route 
 - **BREAKING** rename some internal files
 
 ## 0.39.0 - 2021.12.01

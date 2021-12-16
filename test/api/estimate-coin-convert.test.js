@@ -130,15 +130,14 @@ describe('EstimateCoinSell', () => {
     });
 });
 
-// @TODO implement sell_all in gate
-describe.skip('EstimateCoinSellAll', () => {
+describe('EstimateCoinSellAll', () => {
     describe('symbol', () => {
         test('should work gate', () => {
             expect.assertions(1);
 
             return minterGate.estimateCoinSellAll({
                 coinToSell: 'MNT',
-                valueToSell: 1,
+                valueToSell: 100000,
                 coinToBuy: ENV_DATA.customCoin,
             })
                 .then((estimateResult) => {
@@ -153,7 +152,7 @@ describe.skip('EstimateCoinSellAll', () => {
             expect.assertions(1);
             return minterGate.estimateCoinSellAll({
                 coinToSell: 'MNT',
-                valueToSell: 1,
+                valueToSell: 100000,
                 coinToBuy: 'MNT',
             })
                 .catch((error) => {
@@ -167,7 +166,7 @@ describe.skip('EstimateCoinSellAll', () => {
 
             return minterNode.estimateCoinSellAll({
                 coinToSell: 'MNT',
-                valueToSell: 1,
+                valueToSell: 100000,
                 coinToBuy: ENV_DATA.customCoin,
             })
                 .then((estimateResult) => {
@@ -182,7 +181,7 @@ describe.skip('EstimateCoinSellAll', () => {
             expect.assertions(1);
             return minterNode.estimateCoinSellAll({
                 coinToSell: 'MNT',
-                valueToSell: 1,
+                valueToSell: 100000,
                 coinToBuy: 'MNT',
             })
                 .catch((error) => {
@@ -197,7 +196,7 @@ describe.skip('EstimateCoinSellAll', () => {
 
             return minterGate.estimateCoinSellAll({
                 coinToSell: 0,
-                valueToSell: 1,
+                valueToSell: 100000,
                 coinToBuy: 1,
             })
                 .then((estimateResult) => {
@@ -212,7 +211,7 @@ describe.skip('EstimateCoinSellAll', () => {
             expect.assertions(1);
             return minterGate.estimateCoinSellAll({
                 coinToSell: 0,
-                valueToSell: 1,
+                valueToSell: 100000,
                 coinToBuy: 0,
             })
                 .catch((error) => {
@@ -226,7 +225,7 @@ describe.skip('EstimateCoinSellAll', () => {
 
             return minterNode.estimateCoinSellAll({
                 coinToSell: 0,
-                valueToSell: 1,
+                valueToSell: 100000,
                 coinToBuy: 1,
             })
                 .then((estimateResult) => {
@@ -241,7 +240,7 @@ describe.skip('EstimateCoinSellAll', () => {
             expect.assertions(1);
             return minterNode.estimateCoinSellAll({
                 coinToSell: 0,
-                valueToSell: 1,
+                valueToSell: 100000,
                 coinToBuy: 0,
             })
                 .catch((error) => {

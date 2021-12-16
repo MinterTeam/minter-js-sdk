@@ -7,7 +7,7 @@ import {isValidNumber, isCoinId} from '../utils.js';
  * @typedef {Object} EstimateSellResult
  * @property {number|string} will_get - amount of coinToBuy
  * @property {number|string} commission - amount of coinToSell to pay fee
- * @property {"pool"|"bancor"} swap_from
+ * @property {"pool"|"bancor"} [swap_from]
  */
 
 /**
