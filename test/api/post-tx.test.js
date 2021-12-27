@@ -60,6 +60,7 @@ function getRandomCoin() {
 }
 
 const NOT_EXISTENT_COIN = '4294967295';
+const NOT_EXISTENT_TICKER = 'X294967295';
 
 const API_TYPE_LIST = [
     {
@@ -493,7 +494,7 @@ describe('coin', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = txParamsData(apiType, {symbol: NOT_EXISTENT_COIN});
+            const txParams = txParamsData(apiType, {symbol: NOT_EXISTENT_TICKER});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     try {
@@ -536,7 +537,7 @@ describe('coin', () => {
 
         test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
             expect.assertions(1);
-            const txParams = txParamsData(apiType, {symbol: NOT_EXISTENT_COIN});
+            const txParams = txParamsData(apiType, {symbol: NOT_EXISTENT_TICKER});
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .catch((error) => {
                     try {

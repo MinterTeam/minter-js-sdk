@@ -109,6 +109,8 @@ module.exports = {
             'params': false,
           },
           allowList: {
+            'fn': true,
+            'otherArgs': true,
             'resData': true,
             'txParams': true,
             'txProps': true,

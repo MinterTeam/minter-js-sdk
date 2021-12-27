@@ -8,22 +8,38 @@ import {walletFromMnemonic, walletFromMnemonicAsync} from 'minterjs-wallet';
 
 Big.RM = 2;
 
+const BASE_COIN = {
+    '0x01': 'BIP',
+    '0x02': 'MNT',
+};
+
+/**
+ * @param {number|string} chainId
+ * @return {string}
+ */
+function normalizeChainId(chainId) {
+    if (typeof chainId === 'string' || typeof chainId === 'number') {
+        chainId = integerToHexString(chainId);
+    }
+
+    return chainId;
+}
+
 /**
  * @param {number|string} chainId
  * @param {string} coinSymbol
  * @return {boolean}
  */
 export function isBaseCoinSymbol(chainId, coinSymbol) {
-    if (typeof chainId === 'string' || typeof chainId === 'number') {
-        chainId = integerToHexString(chainId);
-    }
-    if (chainId === '0x01' && coinSymbol === 'BIP') {
-        return true;
-    }
-    if (chainId === '0x02' && coinSymbol === 'MNT') {
-        return true;
-    }
-    return false;
+    return BASE_COIN[normalizeChainId(chainId)] === coinSymbol;
+}
+
+/**
+ * @param {number|string} chainId
+ * @return {string|undefined}
+ */
+export function getBaseCoinSymbol(chainId) {
+    return BASE_COIN[normalizeChainId(chainId)];
 }
 
 /**
@@ -45,31 +61,10 @@ export function isCoinId(coinIdOrSymbol) {
  * @return {boolean}
  */
 export function isCoinSymbol(coin) {
-    if (isCoinId(coin)) {
-        return false;
-    }
     if (typeof coin !== 'string') {
         return false;
     }
-
-    if (/^LP-[0-9]+$/.test(coin)) {
-        return true;
-    }
-
-    const [ticker, versionId] = coin.split('-');
-
-    try {
-        validateTicker(ticker);
-    } catch (error) {
-        return false;
-    }
-
-    // check version is number
-    if (versionId && !isCoinId(versionId)) {
-        return false;
-    }
-
-    return true;
+    return !isCoinId(coin);
 }
 
 /**
@@ -294,7 +289,7 @@ export function validateUintArray(origValue, fieldName) {
 export function validateTicker(value, fieldName) {
     validateNotEmpty(value, fieldName);
 
-    if (typeof value === 'string' && !(/^[A-Z0-9]{3,10}$/.test(value))) {
+    if (typeof value === 'string' && !(/^[A-Z][A-Z0-9]{2,9}$/.test(value))) {
         throw new Error(`Field \`${fieldName}\` is invalid coin symbol string`);
     }
 }

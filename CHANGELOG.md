@@ -1,3 +1,7 @@
+## 0.41.0 - 2021.12.27
+- add `ReplaceCoinId`, `ReplaceCoinIdByPath`, `GetCoinSymbol` API methods
+- **BREAKING** remove deprecated `getCoinInfoById` API method, use `getCoinInfo` instead
+
 ## 0.40.2 - 2021.12.16
 - fix `estimateCoinSellAll`: restore valueToSell param
 

@@ -2,7 +2,7 @@ import _get from 'lodash-es/get.js';
 import _set from 'lodash-es/set.js';
 import {TX_TYPE, normalizeTxType} from 'minterjs-util';
 import GetCoinInfo from './get-coin-info.js';
-import {isBaseCoinSymbol, isCoinId, isCoinSymbol} from '../utils.js';
+import {getBaseCoinSymbol, isBaseCoinSymbol, isCoinId, isCoinSymbol} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
@@ -29,6 +29,7 @@ export function ReplaceCoinSymbol(apiInstance) {
  * @constructor
  */
 export function ReplaceCoinSymbolByPath(apiInstance) {
+    const replaceParamsByPath = ReplaceParamsByPath(apiInstance);
     return replaceCoinSymbolByPath;
     /**
      * @param {Object} txParams
@@ -38,6 +39,35 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
      * @return {Promise<Object>}
      */
     function replaceCoinSymbolByPath(txParams, pathList, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
+        return replaceParamsByPath(txParams, pathList, replacer, chainId, axiosOptions);
+
+        // eslint-disable-next-line no-shadow, unicorn/consistent-function-scoping
+        function replacer(symbolValue, chainId, apiInstance, axiosOptions) {
+            if (isCoinSymbol(symbolValue)) {
+                return _getCoinId(symbolValue, chainId, apiInstance, axiosOptions);
+            } else {
+                return Promise.resolve(symbolValue);
+            }
+        }
+    }
+}
+
+/**
+ * @param {MinterApiInstance} apiInstance
+ * @return {function(txParams: Object, pathList: Array<string>, replacer: function, chainId: number=, AxiosRequestConfig=): Promise<Object>}
+ * @constructor
+ */
+export function ReplaceParamsByPath(apiInstance) {
+    return replaceParamsByPath;
+    /**
+     * @param {Object} txParams
+     * @param {Array<string>} pathList
+     * @param {function(inputValue: any, number=, AxiosRequestConfig=): Promise} replacer
+     * @param {number} [chainId]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
+     * @return {Promise<Object>}
+     */
+    function replaceParamsByPath(txParams, pathList, replacer, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
         let promiseList = {};
         pathList.forEach((path) => fillPath(path));
 
@@ -49,19 +79,17 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
          * @param {string} path
          */
         function fillPath(path) {
-            const symbolValue = _get(txParams, path);
-            if (isCoinSymbol(symbolValue)) {
-                // coinInfo promise may be used by multiple patchers
-                if (!promiseList[symbolValue]) {
-                    promiseList[symbolValue] = _getCoinId(symbolValue, chainId, apiInstance, axiosOptions);
-                }
-                // append txParams patcher
-                promiseList[symbolValue] = promiseList[symbolValue]
-                    .then((coinId) => {
-                        _set(txParams, path, coinId);
-                        return coinId;
-                    });
+            const inputValue = _get(txParams, path);
+            // coinInfo promise may be used by multiple patchers
+            if (!promiseList[inputValue]) {
+                promiseList[inputValue] = replacer(inputValue, chainId, apiInstance, axiosOptions);
             }
+            // append txParams patcher
+            promiseList[inputValue] = promiseList[inputValue]
+                .then((outputValue) => {
+                    _set(txParams, path, outputValue);
+                    return outputValue;
+                });
         }
     }
 }
@@ -80,13 +108,24 @@ export function GetCoinId(apiInstance) {
      * @return {Promise<number|Array<number>>}
      */
     function getCoinId(symbol, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
-        if (Array.isArray(symbol)) {
-            const symbolList = symbol;
-            const promiseList = symbolList.map((symbolValue) => _getCoinId(symbolValue, chainId, apiInstance, axiosOptions));
-            return Promise.all(promiseList);
-        } else {
-            return _getCoinId(symbol, chainId, apiInstance, axiosOptions);
-        }
+        return processArrayByPromise(_getCoinId, symbol, chainId, apiInstance, axiosOptions);
+    }
+}
+
+/**
+ * @template T
+ * @param {function(value, ...otherArgs): Promise<T>} fn
+ * @param {*|Array<*>} value
+ * @param {...Object} otherArgs
+ * @return {Promise<T|Array<T>>}
+ */
+function processArrayByPromise(fn, value, ...otherArgs) {
+    if (Array.isArray(value)) {
+        const valueList = value;
+        const promiseList = valueList.map((valueItem) => fn(valueItem, ...otherArgs));
+        return Promise.all(promiseList);
+    } else {
+        return fn(value, ...otherArgs);
     }
 }
 
@@ -112,6 +151,97 @@ function _getCoinId(symbol, chainId, apiInstance, axiosOptions) {
         }
     } else {
         return Promise.reject(new Error('Invalid coin symbol'));
+    }
+}
+
+/**
+ * @param {MinterApiInstance} apiInstance
+ * @return {function(TxParams): (Promise<TxParams>)}
+ */
+export function ReplaceCoinId(apiInstance) {
+    const replaceCoinIdByPath = ReplaceCoinIdByPath(apiInstance);
+    /**
+     * @param {TxParams} txParams
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
+     * @return {Promise<TxParams>}
+     */
+    return function replaceCoinId(txParams, axiosOptions) {
+        const pathList = getTxParamsPathList(txParams);
+
+        return replaceCoinIdByPath(txParams, pathList, txParams.chainId, axiosOptions);
+    };
+}
+
+/**
+ *
+ * @param {MinterApiInstance} apiInstance
+ * @return {function(Object, Array<string>, number=, AxiosRequestConfig=): Promise<Object>}
+ * @constructor
+ */
+export function ReplaceCoinIdByPath(apiInstance) {
+    const replaceParamsByPath = ReplaceParamsByPath(apiInstance);
+    return replaceCoinIdByPath;
+    /**
+     * @param {Object} txParams
+     * @param {Array<string>} pathList
+     * @param {number} [chainId]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
+     * @return {Promise<Object>}
+     */
+    function replaceCoinIdByPath(txParams, pathList, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
+        return replaceParamsByPath(txParams, pathList, replacer, chainId, axiosOptions);
+
+        // eslint-disable-next-line no-shadow, unicorn/consistent-function-scoping
+        function replacer(idValue, chainId, apiInstance, axiosOptions) {
+            if (isCoinId(idValue)) {
+                return _getCoinSymbol(idValue, chainId, apiInstance, axiosOptions);
+            } else {
+                return Promise.resolve(idValue);
+            }
+        }
+    }
+}
+
+/**
+ * @param {MinterApiInstance} apiInstance
+ * @return {function(id: number|string|Array<number|string>, chainId: number=, axiosOptions: AxiosRequestConfig=): Promise<number>}
+ */
+export function GetCoinSymbol(apiInstance) {
+    return getCoinSymbol;
+
+    /**
+     * @param {number|string|Array<number|string>} id
+     * @param {number} [chainId]
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
+     * @return {Promise<string|Array<string>>}
+     */
+    function getCoinSymbol(id, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
+        return processArrayByPromise(_getCoinSymbol, id, chainId, apiInstance, axiosOptions);
+    }
+}
+
+/**
+ * @param {number|string} id
+ * @param {number} [chainId]
+ * @param {MinterApiInstance} apiInstance
+ * @param {import('axios').AxiosRequestConfig} [axiosOptions]
+ * @return {Promise<string>}
+ * @private
+ */
+function _getCoinSymbol(id, chainId, apiInstance, axiosOptions) {
+    if (isCoinSymbol(id)) {
+        return Promise.resolve(id);
+    }
+    if (isCoinId(id)) {
+        if (Number.parseInt(id, 10) === 0 && chainId) {
+            return Promise.resolve(getBaseCoinSymbol(chainId));
+        } else {
+            const getCoinInfo = GetCoinInfo(apiInstance);
+            return getCoinInfo(id, axiosOptions)
+                .then((coinInfo) => coinInfo.symbol);
+        }
+    } else {
+        return Promise.reject(new Error('Invalid coin id'));
     }
 }
 

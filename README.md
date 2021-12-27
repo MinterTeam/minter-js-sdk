@@ -28,8 +28,11 @@ Contents:
     - [getMinGasPrice](#getmingasprice)
     - [getCoinInfo](#getcoininfo)
     - [getCoinId](#getcoinid)
+    - [getCoinSymbol](#getcoinsymbol)
     - [replaceCoinSymbol](#replacecoinsymbol)
+    - [replaceCoinId](#replacecoinid)
     - [replaceCoinSymbolByPath](#replacecoinsymbolbypath)
+    - [replaceCoinIdByPath](#replacecoinidbypath)
     - [estimateCoinBuy](#estimatecoinbuy)
     - [estimateCoinSell](#estimatecoinsell)
     - [estimateCoinSellAll](#estimatecoinsellall)
@@ -218,8 +221,11 @@ const minterNode = new Minter({chainId: 2, apiType: 'node', baseURL: 'https://no
 - [getMinGasPrice](#getmingasprice)
 - [getCoinInfo](#getcoininfo)
 - [getCoinId](#getcoinid)
+- [getCoinSymbol](#getcoinsymbol)
 - [replaceCoinSymbol](#replacecoinsymbol)
+- [replaceCoinId](#replacecoinid)
 - [replaceCoinSymbolByPath](#replacecoinsymbolbypath)
+- [replaceCoinIdByPath](#replacecoinidbypath)
 - [estimateCoinBuy](#estimatecoinbuy)
 - [estimateCoinSell](#estimatecoinsell)
 - [estimateCoinSellAll](#estimatecoinsellall)
@@ -374,21 +380,45 @@ Get coin ID by coin symbol or array of symbols. Uses `getCoinInfo()` under the h
  * @return {Promise<number|Array<number>>}
  */
 minter.getCoinId('MNT')
-    .then((symbol) => {
-        console.log(symbol);
+    .then((id) => {
+        console.log(id);
         // 0
     });
 
-minter.getCoinId(['MNT', 'LASHIN'])
-    .then((symbols) => {
-          console.log(symbols);
+minter.getCoinId(['MNT', 'MYCOIN'])
+    .then((ids) => {
+          console.log(ids);
           // [0, 123]
     });
 ```
 
 
+### .getCoinSymbol()
+Get coin symbol by coin ID or array of IDs. Uses `getCoinInfo()` under the hood.
+
+```js
+/**
+ * @param {number|string|Array<number|string>} id - coin ID or array of IDs
+ * @param {number} [chainId]
+ * @param {AxiosRequestConfig} [axiosOptions]
+ * @return {Promise<string|Array<string>>}
+ */
+minter.getCoinSymbol(0)
+    .then((symbol) => {
+        console.log(symbol);
+        // 0
+    });
+
+minter.getCoinSymbol(['0', '123'])
+    .then((symbols) => {
+          console.log(symbols);
+          // ['MNT', 'MYCOIN']
+    });
+```
+
+
 ### .replaceCoinSymbol()
-Replace coin symbols with coin IDs in txParams object.
+Replace coin symbols with coin IDs in txParams object. Mutates original object.
 
 ```js
 /**
@@ -416,6 +446,40 @@ minter.replaceCoinSymbol(txParams)
         //         coin: 0,
         //     },
         //     gasCoin: 1234,
+        // }
+    });
+```
+
+
+### .replaceCoinId()
+Replace coin IDs with coin symbols in txParams object. Mutates original object.
+
+```js
+/**
+ * @param {TxParams} txParams
+ * @param {AxiosRequestConfig} [axiosOptions]
+ * @return {Promise<TxParams>}
+ */
+const txParams = {
+    type: 1,
+    data: {
+        to: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+        value: 10,
+        coin: 0,
+    },
+    gasCoin: 123,
+};
+minter.replaceCoinId(txParams)
+    .then((newTxParams) => {
+        console.log(newTxParams);
+        // {
+        //     type: 1,
+        //     data: {
+        //         to: 'Mx7633980c000139dd3bd24a3f54e06474fa941e16',
+        //         value: 10,
+        //         coin: 'BIP',
+        //     },
+        //     gasCoin: 'MYCOIN',
         // }
     });
 ```
@@ -450,6 +514,40 @@ minter.replaceCoinSymbolByPath(params, ['gasCoin', 'foo.bar.coin'])
         //         },
         //     },
         //     gasCoin: 1234,
+        // }
+    });
+```
+
+
+### .replaceCoinIdByPath()
+Replace coin IDs with coin symbols in arbitrary object by path list.
+
+```js
+const params = {
+    foo: {
+        bar: {
+            coin: 0,
+        },
+    },
+    gasCoin: 1234,
+};
+/**
+ * @param {Object} params
+ * @param {Array<string>} pathList
+ * @param {number} [chainId]
+ * @param {AxiosRequestConfig} [axiosOptions]
+ * @return {Promise<TxParams>}
+ */
+minter.replaceCoinIdByPath(params, ['gasCoin', 'foo.bar.coin'])
+    .then((newParams) => {
+        console.log(newParams);
+        // {
+        //     foo: {
+        //         bar: {
+        //             coin: 'BIP',
+        //         },
+        //     },
+        //     gasCoin: 'MYCOIN',
         // }
     });
 ```
@@ -537,6 +635,7 @@ Estimate how many coins you will get for selling some other coins by SellAll tra
  * @param {string|number} params.coinToBuy - ID or symbol of the coin to buy
  * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate pool swap
  * @param {Array<string|number>} [params.route] - IDs of intermediate coins for pool swaps
+ * @param {string|number} [params.gasPrice]
  * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<EstimateSellAllResult>}
  */

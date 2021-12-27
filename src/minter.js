@@ -1,7 +1,6 @@
 import MinterApi from './api/index.js';
 import GetNonce from './api/get-nonce.js';
 import GetCoinInfo from './api/get-coin-info.js';
-import GetCoinInfoById from './api/get-coin-info-by-id.js';
 import GetMinGasPrice from './api/get-min-gas-price.js';
 import PostTx, {EnsureNonce} from './api/post-tx.js';
 import PostSignedTx from './api/post-signed-tx.js';
@@ -9,7 +8,7 @@ import EstimateCoinSell from './api/estimate-coin-sell.js';
 import EstimateCoinSellAll from './api/estimate-coin-sell-all.js';
 import EstimateCoinBuy from './api/estimate-coin-buy.js';
 import EstimateTxCommission from './api/estimate-tx-commission.js';
-import {ReplaceCoinSymbol, ReplaceCoinSymbolByPath, GetCoinId} from './api/replace-coin.js';
+import {ReplaceCoinSymbol, ReplaceCoinSymbolByPath, GetCoinId, ReplaceCoinId, ReplaceCoinIdByPath, GetCoinSymbol} from './api/replace-coin.js';
 import GetCommissionPrice from './api/get-commission-price.js';
 import GetPoolInfo from './api/get-pool-info.js';
 
@@ -31,7 +30,6 @@ export default function Minter(options) {
     this.ensureNonce = EnsureNonce(apiInstance);
 
     this.getCoinInfo = GetCoinInfo(apiInstance);
-    this.getCoinInfoById = GetCoinInfoById(apiInstance);
 
     this.getMinGasPrice = GetMinGasPrice(apiInstance);
 
@@ -41,8 +39,11 @@ export default function Minter(options) {
     this.estimateTxCommission = EstimateTxCommission(apiInstance);
 
     this.replaceCoinSymbol = ReplaceCoinSymbol(apiInstance);
+    this.replaceCoinId = ReplaceCoinId(apiInstance);
     this.replaceCoinSymbolByPath = ReplaceCoinSymbolByPath(apiInstance);
+    this.replaceCoinIdByPath = ReplaceCoinIdByPath(apiInstance);
     this.getCoinId = GetCoinId(apiInstance);
+    this.getCoinSymbol = GetCoinSymbol(apiInstance);
 
     this.getPoolInfo = GetPoolInfo(apiInstance);
 

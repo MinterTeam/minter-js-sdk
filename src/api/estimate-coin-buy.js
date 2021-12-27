@@ -22,7 +22,7 @@ export default function EstimateCoinBuy(apiInstance) {
      * @param {string|number} params.valueToBuy
      * @param {string|number} params.coinToSell - ID or symbol of the coin to sell
      * @param {ESTIMATE_SWAP_TYPE} [params.swapFrom] - estimate from pool, bancor or optimal
-     * @param {Array<number>} [params.route] - intermediate coins IDs for pool swaps
+     * @param {Array<string|number>} [params.route] - IDs of intermediate coins for pool swaps
      * @param {string|number} [params.gasCoin]
      * @param {string|number} [params.coinCommission] - gasCoin alias
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
