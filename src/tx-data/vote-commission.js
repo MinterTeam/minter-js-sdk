@@ -45,7 +45,6 @@ import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint, va
  * @param {number|string} addLiquidity
  * @param {number|string} removeLiquidity
  * @param {number|string} editCandidateCommission
- * @param {number|string} [moveStake]
  * @param {number|string} burnToken
  * @param {number|string} mintToken
  * @param {number|string} voteCommission
@@ -54,6 +53,9 @@ import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint, va
  * @param {number|string} failedTx
  * @param {number|string} addLimitOrder
  * @param {number|string} removeLimitOrder
+ * @param {number|string} moveStake
+ * @param {number|string} lockStake
+ * @param {number|string} lock
  * @constructor
  */
 export default function VoteCommissionTxData({
@@ -98,7 +100,6 @@ export default function VoteCommissionTxData({
     addLiquidity,
     removeLiquidity,
     editCandidateCommission,
-    // moveStake,
     burnToken,
     mintToken,
     voteCommission,
@@ -107,6 +108,9 @@ export default function VoteCommissionTxData({
     failedTx,
     addLimitOrder,
     removeLimitOrder,
+    moveStake,
+    lockStake,
+    lock,
 }) {
     validatePublicKey(publicKey, 'publicKey');
     validateUint(height, 'height');
@@ -149,15 +153,17 @@ export default function VoteCommissionTxData({
     validateAmount(addLiquidity, 'addLiquidity');
     validateAmount(removeLiquidity, 'removeLiquidity');
     validateAmount(editCandidateCommission, 'editCandidateCommission');
-    // validateAmount(moveStake, 'moveStake');
     validateAmount(burnToken, 'burnToken');
     validateAmount(mintToken, 'mintToken');
     validateAmount(voteCommission, 'voteCommission');
     validateAmount(voteUpdate, 'voteUpdate');
     validateAmount(createSwapPool, 'createSwapPool');
-    validateAmount(createSwapPool, 'failedTx');
-    validateAmount(createSwapPool, 'addLimitOrder');
-    validateAmount(createSwapPool, 'removeLimitOrder');
+    validateAmount(failedTx, 'failedTx');
+    validateAmount(addLimitOrder, 'addLimitOrder');
+    validateAmount(removeLimitOrder, 'removeLimitOrder');
+    validateAmount(moveStake, 'moveStake');
+    validateAmount(lockStake, 'lockStake');
+    validateAmount(lock, 'lock');
 
     this.publicKey = publicKey;
     this.height = height;
@@ -200,7 +206,6 @@ export default function VoteCommissionTxData({
     this.addLiquidity = addLiquidity;
     this.removeLiquidity = removeLiquidity;
     this.editCandidateCommission = editCandidateCommission;
-    // this.moveStake = moveStake;
     this.burnToken = burnToken;
     this.mintToken = mintToken;
     this.voteCommission = voteCommission;
@@ -209,6 +214,9 @@ export default function VoteCommissionTxData({
     this.failedTx = failedTx;
     this.addLimitOrder = addLimitOrder;
     this.removeLimitOrder = removeLimitOrder;
+    this.moveStake = moveStake;
+    this.lockStake = lockStake;
+    this.lock = lock;
 
     this.txData = new TxDataVoteCommission({
         publicKey: toBuffer(publicKey),
@@ -252,7 +260,6 @@ export default function VoteCommissionTxData({
         addLiquidity: `0x${convertToPip(addLiquidity, 'hex')}`,
         removeLiquidity: `0x${convertToPip(removeLiquidity, 'hex')}`,
         editCandidateCommission: `0x${convertToPip(editCandidateCommission, 'hex')}`,
-        // moveStake: `0x${convertToPip(moveStake, 'hex')}`,
         burnToken: `0x${convertToPip(burnToken, 'hex')}`,
         mintToken: `0x${convertToPip(mintToken, 'hex')}`,
         voteCommission: `0x${convertToPip(voteCommission, 'hex')}`,
@@ -261,6 +268,9 @@ export default function VoteCommissionTxData({
         failedTx: `0x${convertToPip(failedTx, 'hex')}`,
         addLimitOrder: `0x${convertToPip(addLimitOrder, 'hex')}`,
         removeLimitOrder: `0x${convertToPip(removeLimitOrder, 'hex')}`,
+        moveStake: `0x${convertToPip(moveStake, 'hex')}`,
+        lockStake: `0x${convertToPip(lockStake, 'hex')}`,
+        lock: `0x${convertToPip(lock, 'hex')}`,
     });
 
     proxyNestedTxData(this);
@@ -308,7 +318,6 @@ export default function VoteCommissionTxData({
  * @param {Buffer|string|number} addLiquidity
  * @param {Buffer|string|number} removeLiquidity
  * @param {Buffer|string|number} editCandidateCommission
- * @param {Buffer|string|number} [moveStake]
  * @param {Buffer|string|number} burnToken
  * @param {Buffer|string|number} mintToken
  * @param {Buffer|string|number} voteCommission
@@ -317,9 +326,12 @@ export default function VoteCommissionTxData({
  * @param {Buffer|string|number} failedTx
  * @param {Buffer|string|number} addLimitOrder
  * @param {Buffer|string|number} removeLimitOrder
+ * @param {Buffer|string|number} moveStake
+ * @param {Buffer|string|number} lockStake
+ * @param {Buffer|string|number} lock
  * @return {VoteCommissionTxData}
  */
-VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, height, coin, payloadByte, send, buyBancor, sellBancor, sellAllBancor, buyPoolBase, buyPoolDelta, sellPoolBase, sellPoolDelta, sellAllPoolBase, sellAllPoolDelta, createTicker3, createTicker4, createTicker5, createTicker6, createTicker7to10, createCoin, createToken, recreateCoin, recreateToken, declareCandidacy, delegate, unbond, redeemCheck, setCandidateOn, setCandidateOff, createMultisig, multisendBase, multisendDelta, editCandidate, setHaltBlock, editTickerOwner, editMultisig, priceVote, editCandidatePublicKey, addLiquidity, removeLiquidity, editCandidateCommission, moveStake, burnToken, mintToken, voteCommission, voteUpdate, createSwapPool, failedTx, addLimitOrder, removeLimitOrder}) {
+VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, height, coin, payloadByte, send, buyBancor, sellBancor, sellAllBancor, buyPoolBase, buyPoolDelta, sellPoolBase, sellPoolDelta, sellAllPoolBase, sellAllPoolDelta, createTicker3, createTicker4, createTicker5, createTicker6, createTicker7to10, createCoin, createToken, recreateCoin, recreateToken, declareCandidacy, delegate, unbond, redeemCheck, setCandidateOn, setCandidateOff, createMultisig, multisendBase, multisendDelta, editCandidate, setHaltBlock, editTickerOwner, editMultisig, priceVote, editCandidatePublicKey, addLiquidity, removeLiquidity, editCandidateCommission, burnToken, mintToken, voteCommission, voteUpdate, createSwapPool, failedTx, addLimitOrder, removeLimitOrder, moveStake, lockStake, lock}) {
     return new VoteCommissionTxData({
         publicKey: publicToString(publicKey),
         height: bufferToInteger(toBuffer(height)),
@@ -362,7 +374,6 @@ VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, he
         addLiquidity: convertFromPip(bufferToInteger(toBuffer(addLiquidity))),
         removeLiquidity: convertFromPip(bufferToInteger(toBuffer(removeLiquidity))),
         editCandidateCommission: convertFromPip(bufferToInteger(toBuffer(editCandidateCommission))),
-        // moveStake: convertFromPip(bufferToInteger(toBuffer(moveStake))),
         burnToken: convertFromPip(bufferToInteger(toBuffer(burnToken))),
         mintToken: convertFromPip(bufferToInteger(toBuffer(mintToken))),
         voteCommission: convertFromPip(bufferToInteger(toBuffer(voteCommission))),
@@ -371,6 +382,9 @@ VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, he
         failedTx: convertFromPip(bufferToInteger(toBuffer(failedTx))),
         addLimitOrder: convertFromPip(bufferToInteger(toBuffer(addLimitOrder))),
         removeLimitOrder: convertFromPip(bufferToInteger(toBuffer(removeLimitOrder))),
+        moveStake: convertFromPip(bufferToInteger(toBuffer(moveStake))),
+        lockStake: convertFromPip(bufferToInteger(toBuffer(lockStake))),
+        lock: convertFromPip(bufferToInteger(toBuffer(lock))),
     });
 };
 

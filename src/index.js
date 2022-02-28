@@ -55,3 +55,5 @@ export {default as VoteUpdateTxData} from './tx-data/vote-update.js';
 export {default as CreatePoolTxData} from './tx-data/pool-create.js';
 export {default as AddLimitOrderTxData} from './tx-data/limit-order-add.js';
 export {default as RemoveLimitOrderTxData} from './tx-data/limit-order-remove.js';
+export {default as LockStakeTxData} from './tx-data/stake-lock.js';
+export {default as LockTxData} from './tx-data/lock.js';

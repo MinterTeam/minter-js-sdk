@@ -65,12 +65,14 @@ Contents:
     - [Delegate](#delegate)
     - [Unbond](#unbond)
     - [Move stake](#move-stake)
+    - [Lock stake](#lock-stake)
     - [Set candidate on](#set-candidate-on)
     - [Set candidate off](#set-candidate-off)
     - [Set halt block](#set-halt-block)
     - [Vote for commission price](#vote-for-commission-price)
     - [Vote for network update](#vote-for-network-update)
     - [Redeem check](#redeem-check)
+    - [Lock](#lock)
     - [Create multisig](#create-multisig)
     - [Edit multisig](#edit-multisig)
   - [Transaction](#transaction)
@@ -660,10 +662,10 @@ minter.estimateCoinSellAll({
 
 ### .estimateTxCommission()
 Estimate transaction fee. This method can operate in two modes: 
-- 1. `direct: true` makes one direct request to the `estimate_tx_commission/{tx}` API.   
+- 1. `direct: true` (default mode) makes one direct request to the `estimate_tx_commission/{tx}` API.   
 Pros: fewer requests, more accuracy. Cons: provides less data (only `commission` field).
-- 2. `direct: false` makes several requests for blockchain data and calculates the fee relying on that data.
-Pros: returns more data (`commission`, `baseCoinCommission`, `priceCoinCommission`, `commissionPriceData`), some requests can be cached so that when users input payload, the fee could be calculated dynamically without extra requests for each payload character. Cons: makes more requests for a single estimate, can be less accurate in some edge cases and when caching is used.
+- 2. `direct: false` makes several requests for blockchain data and approximately calculates the fee relying on that data, but don't take limit orders into account.
+Pros: returns more data (`commission`, `baseCoinCommission`, `priceCoinCommission`, `commissionPriceData`), some requests can be cached so that when users input payload, the fee could be calculated dynamically without extra requests for each payload character. Cons: less accurate because don't consider limit orders and when caching is used, makes more requests for a single estimate.
      
 First argument `txParams` can be a `TxParams` object or raw signed tx hex string.  
 Second options argument accepts `direct` field, `true` by default.
@@ -1199,7 +1201,6 @@ minter.postTx(txParams, {seedPhrase: '...'});
 
 
 ### Move stake
-Disabled for now
 [Tx docs](https://www.minter.network/docs#move-stake-transaction)
 ```js
 import {TX_TYPE} from "minter-js-sdk";
@@ -1211,6 +1212,19 @@ const txParams = {
         coin: 0, // coin id
         stake: 100,
     },
+};
+
+minter.postTx(txParams, {seedPhrase: '...'});
+```
+
+### Lock stake
+[Tx docs](https://www.minter.network/docs#lock-stake-transaction)
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.LOCK_STAKE,
+    /* data is empty, so not required */
+    data: {},
 };
 
 minter.postTx(txParams, {seedPhrase: '...'});
@@ -1318,6 +1332,9 @@ const txParams = {
         failedTx: '12',
         addLimitOrder: '12',
         removeLimitOrder: '12',
+        moveStake: '12',
+        lockStake: '12',
+        lock: '12',
     },
 };
 
@@ -1373,6 +1390,23 @@ const txParams = {
 minter.postTx(txParams, {seedPhrase: '...', password: 'pass'});
 // combination of password and address can also be used for proof generation
 minter.postTx(txParams, {seedPhrase: '...', address: '...', password: 'pass'});
+```
+
+### Lock
+[Tx docs](https://www.minter.network/docs#lock-transaction)
+Lock coins for certain period
+```js
+import {TX_TYPE} from "minter-js-sdk";
+const txParams = {
+    type: TX_TYPE.LOCK,
+    data: {
+        dueBlock: 123,
+        value: 10,
+        coin: 0, // coin id
+    },
+};
+
+minter.postTx(txParams, {seedPhrase: '...'});
 ```
 
 ### Create multisig

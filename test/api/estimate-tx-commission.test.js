@@ -33,13 +33,19 @@ describe('EstimateTxCommission', () => {
         payload: 'custom message',
     }, extraParams);
 
+    function getDifferencePercent(a, b) {
+        return Math.abs(1 - a / b) * 100;
+    }
+
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
         const txParams = txParamsData(apiType);
         return Promise.all([apiType.estimateTxCommission(txParams, {direct: false}), apiType.estimateTxCommission(txParams, {direct: true})])
             .then(([feeCalculated, feeDirect]) => {
                 expect(Number(feeCalculated.commission)).toBeGreaterThan(0);
-                expect(feeCalculated.commission).toEqual(feeDirect.commission);
+                // limit orders not considered so make approx comparison
+                const diffPercent = getDifferencePercent(feeCalculated.commission, feeDirect.commission);
+                expect(diffPercent).toBeLessThanOrEqual(1);
             })
             .catch((error) => {
                 logError(error);
@@ -53,7 +59,9 @@ describe('EstimateTxCommission', () => {
         return Promise.all([apiType.estimateTxCommission(txParams, {direct: false}), apiType.estimateTxCommission(txParams, {direct: true})])
             .then(([feeCalculated, feeDirect]) => {
                 expect(Number(feeCalculated.commission)).toBeGreaterThan(0);
-                expect(feeCalculated.commission).toEqual(feeDirect.commission);
+                // limit orders not considered so make approx comparison
+                const diffPercent = getDifferencePercent(feeCalculated.commission, feeDirect.commission);
+                expect(diffPercent).toBeLessThanOrEqual(1);
             })
             .catch((error) => {
                 logError(error);

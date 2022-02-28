@@ -25,8 +25,10 @@ import {
     DelegateTxData,
     UnbondTxData,
     MoveStakeTxData,
-    // - check
+    LockStakeTxData,
+    // - misc
     RedeemCheckTxData,
+    LockTxData,
     // - multisig
     CreateMultisigTxData,
     EditMultisigTxData,
@@ -92,6 +94,14 @@ const API_TYPE_LIST = [
         },
     },
 ];
+
+function checkApiTypeFieldPersistence(fieldName, errorText) {
+    const notFoundList = API_TYPE_LIST.filter((item) => !item[fieldName]);
+    const notFound = notFoundList.map((item) => item.toString()).join(', ');
+    if (notFound) {
+        throw new Error(`${errorText} for: ${notFound}`);
+    }
+}
 
 function makePostTx(minterApi) {
     return function postTxDecorated(txParams, options) {
@@ -185,7 +195,7 @@ describe('PostTx: send', () => {
         const txParams = txParamsData(apiType);
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
-                console.log(txHash);
+                console.log(`send ${apiType}:`, txHash);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -200,7 +210,7 @@ describe('PostTx: send', () => {
         const txParams = txParamsData(apiType);
         return apiType.postTx(txParams, {seedPhrase: apiType.seedPhrase})
             .then(({hash: txHash}) => {
-                console.log(txHash);
+                // console.log(txHash);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -308,7 +318,7 @@ describe('PostTx: multisend', () => {
         const txParams = getTxParams(apiType);
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
-                console.log(txHash);
+                console.log(`multisend ${apiType}:`, txHash);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -334,7 +344,7 @@ describe('PostTx: multisend', () => {
         };
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
-                console.log(txHash);
+                console.log(`multisend 100 items ${apiType}:`, txHash);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -626,7 +636,7 @@ describe('validator', () => {
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .then(({hash: txHash}) => {
                     apiType.newCandidatePublicKey = newCandidatePublicKey;
-                    console.log(txHash);
+                    console.log(`declare ${apiType}:`, txHash);
                     expect(txHash).toHaveLength(66);
                     expect(txHash.substr(0, 2)).toEqual('Mt');
                 })
@@ -655,11 +665,7 @@ describe('validator', () => {
 
     describe('depend on declare', () => {
         beforeAll(() => {
-            const notDeclaredList = API_TYPE_LIST.filter((item) => !item.newCandidatePublicKey);
-            const notDeclared = notDeclaredList.map((item) => item.toString()).join(', ');
-            if (notDeclared) {
-                throw new Error(`Candidate was not declared for: ${notDeclared}`);
-            }
+            checkApiTypeFieldPersistence('newCandidatePublicKey', 'Candidate was not declared');
         });
 
         describe('PostTx: edit candidate', () => {
@@ -681,7 +687,7 @@ describe('validator', () => {
                 const txParams = txParamsData(apiType);
                 return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                     .then(({hash: txHash}) => {
-                        console.log(txHash);
+                        console.log(`edit candidate ${apiType}:`, txHash);
                         expect(txHash).toHaveLength(66);
                         expect(txHash.substr(0, 2)).toEqual('Mt');
                     })
@@ -753,6 +759,7 @@ describe('validator', () => {
         });
 
 
+        // can't unbond, because delegated stake is not recalculated yet
         describe.skip('PostTx: unbond', () => {
             const txParamsData = (apiType, data) => ({
                 chainId: 2,
@@ -784,7 +791,54 @@ describe('validator', () => {
             }, 30000);
 
             test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
-                // expect.assertions(1);
+                expect.assertions(1);
+                const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .catch((error) => {
+                        try {
+                            // Candidate with such public key not found
+                            expect(error.response.data.error.code).toBe('403');
+                        } catch (jestError) {
+                            logError(error);
+                            throw jestError;
+                        }
+                    });
+            }, 70000);
+        });
+
+        // can't move, because delegated stake is not recalculated yet
+        describe.skip('PostTx: move stake', () => {
+            const txParamsData = (apiType, data) => ({
+                chainId: 2,
+                type: TX_TYPE.MOVE_STAKE,
+                data: new MoveStakeTxData(Object.assign({
+                    from: apiType.newCandidatePublicKey,
+                    to: apiType.newCandidatePublicKey,
+                    coin: 0,
+                    stake: 10,
+                }, data)),
+                gasCoin: 0,
+                payload: 'custom message',
+            });
+
+
+            test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+                expect.assertions(2);
+                const txParams = txParamsData(apiType);
+                return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                    .then(({hash: txHash}) => {
+                        // console.log(txHash);
+                        expect(txHash).toHaveLength(66);
+                        expect(txHash.substr(0, 2)).toEqual('Mt');
+                    })
+                    .catch((error) => {
+                        logError(error);
+                        throw error;
+                    });
+            }, 30000);
+
+            test.each(API_TYPE_LIST)('should fail %s', (apiType) => {
+                expect.assertions(1);
                 const txParams = txParamsData(apiType, {stake: COIN_MAX_AMOUNT});
                 return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                     .catch((error) => {
@@ -908,7 +962,7 @@ describe('validator', () => {
                 const txParams = txParamsData(apiType);
                 return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                     .then(({hash: txHash}) => {
-                        console.log(txHash);
+                        // console.log(txHash);
                         expect(txHash).toHaveLength(66);
                         expect(txHash.substr(0, 2)).toEqual('Mt');
                     })
@@ -951,7 +1005,7 @@ describe('validator', () => {
                 const txParams = txParamsData(apiType);
                 return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                     .then(({hash: txHash}) => {
-                        console.log(txHash);
+                        // console.log(txHash);
                         expect(txHash).toHaveLength(66);
                         expect(txHash.substr(0, 2)).toEqual('Mt');
                     })
@@ -997,7 +1051,7 @@ describe('validator', () => {
                 const txParams = txParamsData(apiType);
                 return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                     .then(({hash: txHash}) => {
-                        console.log(txHash);
+                        console.log(`edit candidate public key ${apiType}:`, txHash);
                         expect(txHash).toHaveLength(66);
                         expect(txHash.substr(0, 2)).toEqual('Mt');
                     })
@@ -1070,7 +1124,7 @@ describe('PostTx: redeem check', () => {
         const txParams = txParamsData(apiType, {}, apiType.customCoinId);
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
             .then(({hash: txHash}) => {
-                console.log(txHash);
+                // console.log(txHash);
                 expect(txHash).toHaveLength(66);
                 expect(txHash.substr(0, 2)).toEqual('Mt');
             })
@@ -1118,12 +1172,11 @@ describe('multisig', () => {
             return apiType.postTx(txParams, {privateKey: apiType.privateKey})
                 .then((tx) => {
                     const {hash: txHash} = tx;
-                    console.log(txHash);
+                    console.log(`create multisig ${apiType}:`, txHash);
                     if (tx.tags?.['tx.created_multisig']) {
                         apiType.multisigAddress = tx.tags['tx.created_multisig'];
-                    } else {
-                        apiType.multisigTxHash = txHash;
                     }
+                    apiType.multisigTxHash = txHash;
                     expect(txHash).toHaveLength(66);
                     expect(txHash.substr(0, 2)).toEqual('Mt');
 
@@ -1152,26 +1205,32 @@ describe('multisig', () => {
         }, 70000);
     });
 
-    describe('fill multisig', () => {
+    describe('top-up multisig with coins', () => {
+        beforeAll(() => {
+            checkApiTypeFieldPersistence('multisigTxHash', 'Multisig was not created');
+        });
+
         const txParamsData = (apiType, data) => ({
             chainId: 2,
             type: TX_TYPE.SEND,
             data: Object.assign({
                 to: '',
                 coin: 0,
-                value: 1000,
+                value: 100000,
             }, data),
             gasCoin: 0,
         });
 
-        test.each(API_TYPE_LIST)('should fill %s', (apiType) => {
+        test.each(API_TYPE_LIST)('should top-up %s', (apiType) => {
+            expect.assertions(1);
             return getMultisigAddress(apiType)
                 .then((multisigAddress) => {
                     const txParams = txParamsData(apiType, {to: multisigAddress});
                     return apiType.postTx(txParams, {privateKey: apiType.privateKey});
                 })
                 .then(({hash: txHash}) => {
-                    console.log(txHash);
+                    console.log(`top-up multisig ${apiType}:`, txHash);
+                    expect(txHash).toHaveLength(66);
                 });
         }, 30000);
     });
@@ -1179,6 +1238,10 @@ describe('multisig', () => {
     // @TODO should not retry nonce
     // @TODO should not retry gasPrice
     describe('PostTx: send multisig', () => {
+        beforeAll(() => {
+            checkApiTypeFieldPersistence('multisigTxHash', 'Multisig was not created');
+        });
+
         const txParamsData = (apiType, data) => ({
             chainId: 2,
             type: TX_TYPE.SEND,
@@ -1214,7 +1277,7 @@ describe('multisig', () => {
                 .catch((error) => {
                     try {
                         // Coin not exists
-                        expect(error.response.data.error.code).toBe('102');
+                        expect(error.response.data.error?.code).toBe('102');
                     } catch (jestError) {
                         logError(error);
                         throw jestError;
@@ -1274,11 +1337,13 @@ describe('multisig', () => {
         let multisigAddressPromise;
         if (apiType.multisigAddress) {
             multisigAddressPromise = Promise.resolve(apiType.multisigAddress);
-        } else {
+        } else if (apiType.multisigTxHash) {
             multisigAddressPromise = apiType.apiInstance.get(`transaction/${apiType.multisigTxHash}`)
                 .then((response) => {
                     return response.data.tags['tx.created_multisig'];
                 });
+        } else {
+            throw new Error('No multisigAddress nor multisigTxHash found');
         }
 
         return multisigAddressPromise
@@ -1309,4 +1374,81 @@ describe('multisig', () => {
                 });
             });
     }
+});
+
+describe('PostTx: lock stake', () => {
+    const txParamsData = (apiType, data) => ({
+        chainId: 2,
+        type: TX_TYPE.LOCK_STAKE,
+        data: new LockStakeTxData(Object.assign({
+        }, data)),
+        gasCoin: 0,
+        payload: 'custom message',
+    });
+
+
+    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+        expect.assertions(2);
+        const txParams = txParamsData(apiType);
+        return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+            .then(({hash: txHash}) => {
+                // console.log(txHash);
+                expect(txHash).toHaveLength(66);
+                expect(txHash.substr(0, 2)).toEqual('Mt');
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
+            });
+    }, 30000);
+});
+
+describe('PostTx: lock', () => {
+    const txParamsData = (apiType, data) => ({
+        chainId: 2,
+        type: TX_TYPE.LOCK,
+        data: new LockTxData(Object.assign({
+            dueBlock: 123456789,
+            value: 10,
+            coin: 0,
+        }, data)),
+        gasCoin: 0,
+        payload: 'custom message',
+    });
+
+    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
+        expect.assertions(2);
+        const txParams = txParamsData(apiType);
+        return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+            .then(({hash: txHash}) => {
+                // console.log(txHash);
+                expect(txHash).toHaveLength(66);
+                expect(txHash.substr(0, 2)).toEqual('Mt');
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
+            });
+    }, 30000);
+
+    describe('wait', () => {
+        // beforeAll(async () => {
+        //     await wait(6000);
+        // }, 30000);
+
+        test.each(API_TYPE_LIST)('should fail %s', async (apiType) => {
+            expect.assertions(1);
+            const txParams = txParamsData(apiType, {value: COIN_MAX_AMOUNT, coin: NOT_EXISTENT_COIN});
+            return apiType.postTx(txParams, {privateKey: apiType.privateKey})
+                .catch((error) => {
+                    try {
+                        // Coin not exists
+                        expect(error.response.data.error.code).toBe('102');
+                    } catch (jestError) {
+                        logError(error);
+                        throw jestError;
+                    }
+                });
+        }, 70000);
+    });
 });

@@ -35,6 +35,8 @@ import VoteUpdateTxData from './vote-update.js';
 import CreatePoolTxData from './pool-create.js';
 import AddLimitOrderTxData from './limit-order-add.js';
 import RemoveLimitOrderTxData from './limit-order-remove.js';
+import LockStakeTxData from './stake-lock.js';
+import LockTxData from './lock.js';
 import {decodeCheck} from '../check.js';
 
 
@@ -75,11 +77,13 @@ const TX_DATA_CONSTRUCTOR = {
     [TX_TYPE.CREATE_SWAP_POOL]: CreatePoolTxData,
     [TX_TYPE.ADD_LIMIT_ORDER]: AddLimitOrderTxData,
     [TX_TYPE.REMOVE_LIMIT_ORDER]: RemoveLimitOrderTxData,
+    [TX_TYPE.LOCK_STAKE]: LockStakeTxData,
+    [TX_TYPE.LOCK]: LockTxData,
 };
 
 /**
  * @param {TX_TYPE|number|string|Buffer|Uint8Array} txType
- * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditTickerOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddLiquidityTxData|RemoveLiquidityTxData|BuyPoolTxData|SellPoolTxData|SellAllPoolTxData|EditCandidateCommissionTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData|VoteCommissionTxData|VoteUpdateTxData|CreatePoolTxData|AddLimitOrderTxData|RemoveLimitOrderTxData}
+ * @return {SendTxData|MultisendTxData|SellTxData|SellAllTxData|BuyTxData|CreateCoinTxData|DeclareCandidacyTxData|EditCandidateTxData|SetCandidateOnTxData|SetCandidateOffTxData|DelegateTxData|UnbondTxData|RedeemCheckTxData|CreateMultisigTxData|SetHaltBlockTxData|RecreateCoinTxData|EditTickerOwnerTxData|EditMultisigTxData|PriceVoteTxData|EditCandidatePublicKeyTxData|AddLiquidityTxData|RemoveLiquidityTxData|BuyPoolTxData|SellPoolTxData|SellAllPoolTxData|EditCandidateCommissionTxData|MoveStakeTxData|MintTokenTxData|BurnTokenTxData|CreateTokenTxData|RecreateTokenTxData|VoteCommissionTxData|VoteUpdateTxData|CreatePoolTxData|AddLimitOrderTxData|RemoveLimitOrderTxData|LockStakeTxData|LockTxData}
  */
 export default function getTxData(txType) {
     txType = normalizeTxType(txType);
@@ -95,7 +99,7 @@ export default function getTxData(txType) {
  */
 export function ensureBufferData(txData, txType, options) {
     // serialize, if it TxData
-    if (typeof txData.serialize === 'function') {
+    if (txData && typeof txData.serialize === 'function') {
         txData = txData.serialize();
     }
     // make buffer from object

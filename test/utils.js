@@ -43,7 +43,9 @@ export function ensureCustomCoin({coinSymbol, privateKey} = {}) {
 
     ensureCoinPromiseList[coinSymbol] = minterGate.postTx(txParams, {privateKey})
         .catch((error) => {
-            logError(error);
+            if (error.response?.data?.error?.message !== 'Coin already exists') {
+                logError(error);
+            }
             return minterGate.replaceCoinSymbol({
                 chainId: 2,
                 type: TX_TYPE.SELL,

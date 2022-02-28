@@ -12,8 +12,10 @@ import decorateAddLimitOrderTxParams from './limit-order-add.js';
 import decorateDeclareCandidacyTxParams from './candidacy-declare.js';
 import decorateDelegateTxParams from './stake-delegate.js';
 // import decorateUnbondTxParams from './stake-unbond.js';
+import decorateMoveStakeTxParams from './stake-move.js';
 import decorateBurnTokenTxParams from './token-burn.js';
 import decorateRedeemCheckTxParams from './redeem-check.js';
+import decorateLockTxParams from './lock.js';
 
 const noop = (x) => x;
 
@@ -54,7 +56,7 @@ export default function decorateTxParams(txParams, {setGasCoinAsCoinToSpend} = {
         [TX_TYPE.SELL_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateSellSwapPoolTxParams : noop,
         [TX_TYPE.SELL_ALL_SWAP_POOL]: decorateSellAllSwapPoolTxParams,
         [TX_TYPE.EDIT_CANDIDATE_COMMISSION]: noop,
-        [TX_TYPE.MOVE_STAKE]: noop,
+        [TX_TYPE.MOVE_STAKE]: setGasCoinAsCoinToSpend ? decorateMoveStakeTxParams : noop,
         [TX_TYPE.MINT_TOKEN]: noop,
         [TX_TYPE.BURN_TOKEN]: setGasCoinAsCoinToSpend ? decorateBurnTokenTxParams : noop,
         [TX_TYPE.CREATE_TOKEN]: noop,
@@ -64,6 +66,8 @@ export default function decorateTxParams(txParams, {setGasCoinAsCoinToSpend} = {
         [TX_TYPE.CREATE_SWAP_POOL]: setGasCoinAsCoinToSpend ? decorateCreateSwapPoolTxParams : noop,
         [TX_TYPE.ADD_LIMIT_ORDER]: setGasCoinAsCoinToSpend ? decorateAddLimitOrderTxParams : noop,
         [TX_TYPE.REMOVE_LIMIT_ORDER]: noop,
+        [TX_TYPE.LOCK_STAKE]: noop,
+        [TX_TYPE.LOCK]: setGasCoinAsCoinToSpend ? decorateLockTxParams : noop,
     };
 
     return TX_PARAMS_DECORATOR[txType](txParams);

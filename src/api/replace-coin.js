@@ -262,6 +262,7 @@ function getTxParamsPathList(txParams) {
         case TX_TYPE.MOVE_STAKE:
         case TX_TYPE.MINT_TOKEN:
         case TX_TYPE.BURN_TOKEN:
+        case TX_TYPE.LOCK:
         case TX_TYPE.VOTE_COMMISSION: {
             pathList.push('data.coin');
             break;

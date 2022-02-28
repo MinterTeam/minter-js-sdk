@@ -17,7 +17,7 @@ const TESTNET_MENMONIC = 'exercise fantasy smooth enough arrive steak demise don
 const TESTNET_MENMONIC_2 = 'balance exist engage bargain slab genuine urge tooth critic slab admit coyote';
 const QA_MNEMONIC = 'puzzle feed enlist rack cliff divert exist bind swamp kiwi casino pull';
 const QA_MNEMONIC_2 = 'air model item valley auction bullet crisp always erosion paper orient fog';
-// const CHILI_MNEMONIC = 'echo figure script juice spell trigger climb south special school biology motor';
+const NEXT_MNEMONIC = 'toss disease race hour social anger oblige squeeze grant novel gown reveal';
 // const CHILI_MNEMONIC_2 = 'measure enhance jealous amateur object cash reflect blood lab dawn oxygen garage';
 
 const ENV_SETTINGS = {
