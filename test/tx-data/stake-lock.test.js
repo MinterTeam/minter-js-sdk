@@ -10,4 +10,9 @@ describe('LockStakeTxData', () => {
         expect(params)
             .toEqual(txParamsData);
     });
+
+    test('work without arguments', () => {
+        expect(new LockStakeTxData(txParamsData).serialize())
+            .toEqual(new LockStakeTxData().serialize());
+    });
 });

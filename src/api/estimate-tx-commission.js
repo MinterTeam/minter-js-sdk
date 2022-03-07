@@ -12,7 +12,7 @@ Big.RM = 2;
 /**
  *
  * @param {MinterApiInstance} apiInstance
- * @return {function((TxParams|string), {direct?: boolean}=, AxiosRequestConfig=): (Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>)}
+ * @return {function((TxParams|string), {loose?: boolean}=, AxiosRequestConfig=): (Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>)}
  */
 export default function EstimateTxCommission(apiInstance) {
     const getCommissionPrice = GetCommissionPrice(apiInstance);
@@ -25,11 +25,20 @@ export default function EstimateTxCommission(apiInstance) {
     /**
      * @param {TxParams|string} txParams
      * @param {Object} [options]
-     * @param {boolean} [options.direct = true]
+     * @param {boolean} [options.loose = false]
+     * @param {boolean} [options.direct]
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
      */
-    function estimateTxCommission(txParams, {direct = true} = {}, axiosOptions = undefined) {
+    function estimateTxCommission(txParams, {loose = false, direct} = {}, axiosOptions = undefined) {
+        if (typeof direct !== 'undefined') {
+            // eslint-disable-next-line no-console
+            console.warn('`direct` option in `estimateTxCommission` is deprecated, use `loose` option instead');
+            if (!loose && direct === false) {
+                loose = true;
+            }
+        }
+
         let paramsPromise;
         if (typeof txParams === 'object') {
             paramsPromise = getCoinId(txParams.gasCoin || 0, txParams.chainId, axiosOptions)
@@ -46,7 +55,7 @@ export default function EstimateTxCommission(apiInstance) {
 
         return paramsPromise
             .then((updatedTxParams) => {
-                if (direct) {
+                if (!loose) {
                     return estimateFeeDirect(updatedTxParams, axiosOptions);
                 } else {
                     return estimateFeeCalculate(updatedTxParams, axiosOptions);
@@ -182,8 +191,8 @@ function getBaseCoinAmountFromPool(priceCoinAmount, pool) {
     const priceCoinAmountPip = new Big(convertToPip(priceCoinAmount));
 
     // @see https://github.com/MinterTeam/minter-go-node/blob/6e44d5691c9df1a9c725d0f52c5921e8523c7f18/coreV2/state/swap/swap.go#L642
-    // reserveBase - (reservePrice * reserveBase) / (priceCoinAmount * 0.998 + reservePrice)
-    let result = reserveBase.minus(reservePrice.times(reserveBase).div(priceCoinAmountPip.times(0.998).plus(reservePrice)));
+    // reserveBase - (reservePrice * reserveBase) / (priceCoinAmount * 0.997 + reservePrice)
+    let result = reserveBase.minus(reservePrice.times(reserveBase).div(priceCoinAmountPip.times(0.997).plus(reservePrice)));
 
     // received amount from pool rounds down, spent amount to pool rounds up
     // round down

@@ -2,6 +2,7 @@
 - add `Lock` and `LockStake` tx data
 - restore support of `MoveStake` tx data
 - **BREAKING** add fields to VoteCommission tx data
+- **DEPRECATE** `direct` option in `estimateTxCommission`, use `loose` option with reversed value instead
 
 ## 0.41.0 - 2021.12.27
 - add `ReplaceCoinId`, `ReplaceCoinIdByPath`, `GetCoinSymbol` API methods

@@ -662,13 +662,13 @@ minter.estimateCoinSellAll({
 
 ### .estimateTxCommission()
 Estimate transaction fee. This method can operate in two modes: 
-- 1. `direct: true` (default mode) makes one direct request to the `estimate_tx_commission/{tx}` API.   
+- 1. `loose: false` (default mode) makes one direct request to the `estimate_tx_commission/{tx}` API.   
 Pros: fewer requests, more accuracy. Cons: provides less data (only `commission` field).
-- 2. `direct: false` makes several requests for blockchain data and approximately calculates the fee relying on that data, but don't take limit orders into account.
+- 2. `loose: true` makes several requests for blockchain data and approximately calculates the fee relying on that data, but don't take limit orders into account.
 Pros: returns more data (`commission`, `baseCoinCommission`, `priceCoinCommission`, `commissionPriceData`), some requests can be cached so that when users input payload, the fee could be calculated dynamically without extra requests for each payload character. Cons: less accurate because don't consider limit orders and when caching is used, makes more requests for a single estimate.
      
 First argument `txParams` can be a `TxParams` object or raw signed tx hex string.  
-Second options argument accepts `direct` field, `true` by default.
+Second options argument accepts `loose` field, `false` by default.
 Resolves with object containing fee.
 
 See also [Minter commissions docs](https://www.minter.network/docs#commissions)
@@ -677,19 +677,19 @@ See also [Minter commissions docs](https://www.minter.network/docs#commissions)
 /**
  * @param {TxParams|string} txParams
  * @param {Object} [options]
- * @param {boolean} [options.direct]
+ * @param {boolean} [options.loose]
  * @param {AxiosRequestConfig} [axiosOptions]
  * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
  */
 
-// direct with raw tx string
+// direct from raw tx string
 minter.estimateTxCommission('0xf8920101028a4d4e540000000000000001aae98a4d4e...')
     .then((feeData) => {
         console.log(feeData);
         // { commission: 0.1 }
     });
 
-// direct with tx params
+// direct from tx params
 minter.estimateTxCommission({
     type: TX_TYPE.SEND,
     data: {to: 'Mx...', value: 10, coin: 'BIP'},
@@ -700,12 +700,13 @@ minter.estimateTxCommission({
         // { commission: 0.1 }
     });
 
+// calculated from tx params
 minter.estimateTxCommission(
     {
         type: TX_TYPE.SEND,
         data: {to: 'Mx...', value: 10, coin: 'BIP'},
         gasCoin: 'BIP',
-    }, {direct: false,}
+    }, {loose: true}
 )
     .then((feeData) => {
         console.log(feeData);

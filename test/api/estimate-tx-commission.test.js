@@ -11,13 +11,13 @@ const API_TYPE_LIST = [
             return 'node';
         },
     },
-    // {
-    //     ...minterGate,
-    //     address: ENV_DATA.address,
-    //     toString() {
-    //         return 'gate';
-    //     },
-    // },
+    {
+        ...minterGate,
+        address: ENV_DATA.address,
+        toString() {
+            return 'gate';
+        },
+    },
 ];
 
 describe('EstimateTxCommission', () => {
@@ -40,7 +40,7 @@ describe('EstimateTxCommission', () => {
     test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(2);
         const txParams = txParamsData(apiType);
-        return Promise.all([apiType.estimateTxCommission(txParams, {direct: false}), apiType.estimateTxCommission(txParams, {direct: true})])
+        return Promise.all([apiType.estimateTxCommission(txParams, {loose: true}), apiType.estimateTxCommission(txParams, {loose: false})])
             .then(([feeCalculated, feeDirect]) => {
                 expect(Number(feeCalculated.commission)).toBeGreaterThan(0);
                 // limit orders not considered so make approx comparison
@@ -56,7 +56,7 @@ describe('EstimateTxCommission', () => {
     test.each(API_TYPE_LIST)('should work with gasCoin symbol %s', (apiType) => {
         expect.assertions(2);
         const txParams = txParamsData(apiType, {gasCoin: 'MNT'});
-        return Promise.all([apiType.estimateTxCommission(txParams, {direct: false}), apiType.estimateTxCommission(txParams, {direct: true})])
+        return Promise.all([apiType.estimateTxCommission(txParams, {loose: true}), apiType.estimateTxCommission(txParams, {loose: false})])
             .then(([feeCalculated, feeDirect]) => {
                 expect(Number(feeCalculated.commission)).toBeGreaterThan(0);
                 // limit orders not considered so make approx comparison
@@ -80,6 +80,20 @@ describe('EstimateTxCommission', () => {
             })
             .catch((error) => {
                 logError(error);
+            });
+    }, 30000);
+
+    test.each(API_TYPE_LIST)('should work deprecated `direct` option %s', (apiType) => {
+        expect.assertions(2);
+        const txParams = txParamsData(apiType);
+        return Promise.all([apiType.estimateTxCommission(txParams, {loose: true}), apiType.estimateTxCommission(txParams, {direct: false})])
+            .then(([feeLoose, feeIndirect]) => {
+                expect(Number(feeLoose.commission)).toBeGreaterThan(0);
+                expect(feeLoose).toEqual(feeIndirect);
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
             });
     }, 30000);
 });
