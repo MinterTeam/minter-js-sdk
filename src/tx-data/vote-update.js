@@ -1,17 +1,20 @@
 import {TxDataVoteUpdate} from 'minterjs-tx';
-import {toBuffer, publicToString} from 'minterjs-util';
-import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint, validatePublicKey} from '../utils.js';
+import {toBuffer} from 'minterjs-util';
+import {dataToInteger, dataToPublicKey, integerToHexString, proxyNestedTxData, validateUint, validatePublicKey} from '../utils.js';
 
 
 /**
  * @param {string} version
  * @param {string} publicKey
  * @param {number|string} height
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function VoteUpdateTxData({version, publicKey, height}) {
-    validatePublicKey(publicKey, 'publicKey');
-    validateUint(height, 'height');
+export default function VoteUpdateTxData({version, publicKey, height}, options = {}) {
+    if (!options.disableValidation) {
+        validatePublicKey(publicKey, 'publicKey');
+        validateUint(height, 'height');
+    }
 
     this.version = version;
     this.publicKey = publicKey;
@@ -30,14 +33,15 @@ export default function VoteUpdateTxData({version, publicKey, height}) {
  * @param {Buffer|string} version
  * @param {Buffer|string} publicKey
  * @param {Buffer|string|number} height
+ * @param {TxOptions} [options]§
  * @return {VoteUpdateTxData}
  */
-VoteUpdateTxData.fromBufferFields = function fromBufferFields({version, publicKey, height}) {
+VoteUpdateTxData.fromBufferFields = function fromBufferFields({version, publicKey, height}, options = {}) {
     return new VoteUpdateTxData({
         version: toBuffer(version).toString('utf-8'),
-        publicKey: publicToString(publicKey),
-        height: bufferToInteger(toBuffer(height)),
-    });
+        publicKey: dataToPublicKey(publicKey),
+        height: dataToInteger(height),
+    }, options);
 };
 
 /**

@@ -1,5 +1,5 @@
 import {BuyPoolTxData} from '~/src';
-import {clearData} from '~/test/utils';
+import {clearData} from '~/test/test-utils.js';
 
 describe('BuyPoolTxData', () => {
     const txParamsData = {

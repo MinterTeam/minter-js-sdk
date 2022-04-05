@@ -54,7 +54,7 @@ import {
     makeSignature,
 } from '~/src';
 import {ENV_DATA, minterGate, minterNode} from './variables';
-import {ensureCustomCoin, getValidatorMinStake, logError, wait} from '~/test/utils.js';
+import {ensureCustomCoin, getValidatorMinStake, logError, wait} from '~/test/test-utils.js';
 
 function getRandomCoin() {
     const digits = Math.random().toString().substring(2, 9 + 2);
@@ -988,7 +988,8 @@ describe('validator', () => {
             }, 70000);
         });
 
-        describe('PostTx: price vote', () => {
+        // price vote is disabled in the blockchain since v2
+        describe.skip('PostTx: price vote', () => {
             const txParamsData = (apiType, data) => ({
                 chainId: 2,
                 type: TX_TYPE.PRICE_VOTE,
@@ -999,7 +1000,6 @@ describe('validator', () => {
                 payload: 'custom message',
             });
 
-            // price vote is disabled in the blockchain since v2
             test.skip.each(API_TYPE_LIST)('should work %s', async (apiType) => {
                 expect.assertions(2);
                 const txParams = txParamsData(apiType);

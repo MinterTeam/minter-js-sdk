@@ -1,15 +1,18 @@
 import {TxDataSellAllSwapPool} from 'minterjs-tx';
-import {convertToPip, convertFromPip, toBuffer} from 'minterjs-util';
-import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateUintArray} from '../utils.js';
+import {convertToPip} from 'minterjs-util';
+import {proxyNestedTxData, bufferToInteger, integerToHexString, dataPipToAmount, validateAmount, validateUintArray} from '../utils.js';
 
 /**
  * @param {Array<number|string>} coins - list of coin id
  * @param {number|string} [minimumValueToBuy=0]
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function SellAllPoolTxData({coins, minimumValueToBuy = 0}) {
-    validateUintArray(coins, 'coins');
-    validateAmount(minimumValueToBuy, 'minimumValueToBuy');
+export default function SellAllPoolTxData({coins, minimumValueToBuy = 0}, options = {}) {
+    if (!options.disableValidation) {
+        validateUintArray(coins, 'coins');
+        validateAmount(minimumValueToBuy, 'minimumValueToBuy');
+    }
 
     this.coins = coins;
     this.minimumValueToBuy = minimumValueToBuy;
@@ -25,13 +28,14 @@ export default function SellAllPoolTxData({coins, minimumValueToBuy = 0}) {
 /**
  * @param {Array<Buffer>} coins
  * @param {Buffer|string} minimumValueToBuy
+ * @param {TxOptions} [options]
  * @return {SellAllPoolTxData}
  */
-SellAllPoolTxData.fromBufferFields = function fromBufferFields({coins, minimumValueToBuy}) {
+SellAllPoolTxData.fromBufferFields = function fromBufferFields({coins, minimumValueToBuy}, options = {}) {
     return new SellAllPoolTxData({
         coins: coins.map((item) => bufferToInteger(item)),
-        minimumValueToBuy: convertFromPip(bufferToInteger(toBuffer(minimumValueToBuy))),
-    });
+        minimumValueToBuy: dataPipToAmount(minimumValueToBuy),
+    }, options);
 };
 
 /**

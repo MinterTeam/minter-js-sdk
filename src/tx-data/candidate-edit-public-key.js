@@ -1,15 +1,18 @@
 import {TxDataEditCandidatePublicKey} from 'minterjs-tx';
-import {publicToString, toBuffer} from 'minterjs-util';
-import {proxyNestedTxData, validatePublicKey} from '../utils.js';
+import {toBuffer} from 'minterjs-util';
+import {dataToPublicKey, proxyNestedTxData, validatePublicKey} from '../utils.js';
 
 /**
  * @param {string} publicKey
  * @param {string} newPublicKey
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function EditCandidatePublicKeyTxData({publicKey, newPublicKey}) {
-    validatePublicKey(publicKey, 'publicKey');
-    validatePublicKey(newPublicKey, 'newPublicKey');
+export default function EditCandidatePublicKeyTxData({publicKey, newPublicKey}, options = {}) {
+    if (!options.disableValidation) {
+        validatePublicKey(publicKey, 'publicKey');
+        validatePublicKey(newPublicKey, 'newPublicKey');
+    }
 
     this.publicKey = publicKey;
     this.newPublicKey = newPublicKey;
@@ -25,13 +28,14 @@ export default function EditCandidatePublicKeyTxData({publicKey, newPublicKey}) 
 /**
  * @param {Buffer|string} publicKey
  * @param {Buffer|string} newPublicKey
+ * @param {TxOptions} [options]
  * @return {EditCandidatePublicKeyTxData}
  */
-EditCandidatePublicKeyTxData.fromBufferFields = function fromBufferFields({publicKey, newPublicKey}) {
+EditCandidatePublicKeyTxData.fromBufferFields = function fromBufferFields({publicKey, newPublicKey}, options = {}) {
     return new EditCandidatePublicKeyTxData({
-        publicKey: publicToString(publicKey),
-        newPublicKey: publicToString(newPublicKey),
-    });
+        publicKey: dataToPublicKey(publicKey),
+        newPublicKey: dataToPublicKey(newPublicKey),
+    }, options);
 };
 
 /**

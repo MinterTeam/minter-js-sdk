@@ -14,7 +14,9 @@ import {proxyNestedTxData, validateCheck} from '../utils.js';
  * @constructor
  */
 export default function RedeemCheckTxData({check, proof}, options = {}) {
-    validateCheck(check, 'check');
+    if (!options.disableValidation) {
+        validateCheck(check, 'check');
+    }
 
     // eslint-disable-next-line prefer-rest-params
     if (!options.password && arguments[0].password) {
@@ -51,13 +53,14 @@ export default function RedeemCheckTxData({check, proof}, options = {}) {
  *
  * @param {Buffer|string} check
  * @param {Buffer|string} proof
+ * @param {TxOptions} [options]
  * @return {RedeemCheckTxData}
  */
-RedeemCheckTxData.fromBufferFields = function fromBufferFields({check, proof}) {
+RedeemCheckTxData.fromBufferFields = function fromBufferFields({check, proof}, options = {}) {
     return new RedeemCheckTxData({
         check,
         proof,
-    });
+    }, options);
 };
 
 /**

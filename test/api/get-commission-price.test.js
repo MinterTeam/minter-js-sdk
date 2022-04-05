@@ -1,6 +1,6 @@
 import {FeePrice, TX_TYPE} from 'minterjs-util';
-import {ENV_DATA, minterGate, minterNode} from './variables';
-import {ensureCustomCoin, logError} from '~/test/utils.js';
+import {minterGate, minterNode} from './variables.js';
+import {logError} from '~/test/test-utils.js';
 
 const API_TYPE_LIST = [
     {

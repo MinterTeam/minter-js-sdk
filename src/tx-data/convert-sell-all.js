@@ -1,19 +1,22 @@
 import {TxDataSellAll} from 'minterjs-tx';
 // import TxDataSellAll from 'minterjs-tx/src/tx-data/sell-all.js';
-import {convertFromPip, convertToPip, toBuffer} from 'minterjs-util';
-import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateUint} from '../utils.js';
+import {convertToPip} from 'minterjs-util';
+import {proxyNestedTxData, dataToInteger, dataPipToAmount, integerToHexString, validateAmount, validateUint} from '../utils.js';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 
 /**
  * @param {number|string} coinToSell - coin id
  * @param {number|string} coinToBuy - coin id
  * @param {number|string} [minimumValueToBuy=0]
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function SellAllTxData({coinToSell, coinToBuy, minimumValueToBuy = 0}) {
-    validateUint(coinToSell, 'coinToSell');
-    validateUint(coinToBuy, 'coinToBuy');
-    validateAmount(minimumValueToBuy, 'minimumValueToBuy');
+export default function SellAllTxData({coinToSell, coinToBuy, minimumValueToBuy = 0}, options = {}) {
+    if (!options.disableValidation) {
+        validateUint(coinToSell, 'coinToSell');
+        validateUint(coinToBuy, 'coinToBuy');
+        validateAmount(minimumValueToBuy, 'minimumValueToBuy');
+    }
 
     this.coinToSell = coinToSell;
     this.coinToBuy = coinToBuy;
@@ -32,14 +35,15 @@ export default function SellAllTxData({coinToSell, coinToBuy, minimumValueToBuy 
  * @param {Buffer|string} coinToSell
  * @param {Buffer|string} coinToBuy
  * @param {Buffer|string} minimumValueToBuy
+ * @param {TxOptions} [options]
  * @return {SellAllTxData}
  */
-SellAllTxData.fromBufferFields = function fromBufferFields({coinToSell, coinToBuy, minimumValueToBuy}) {
+SellAllTxData.fromBufferFields = function fromBufferFields({coinToSell, coinToBuy, minimumValueToBuy}, options = {}) {
     return new SellAllTxData({
-        coinToSell: bufferToInteger(toBuffer(coinToSell)),
-        coinToBuy: bufferToInteger(toBuffer(coinToBuy)),
-        minimumValueToBuy: convertFromPip(bufferToInteger(toBuffer(minimumValueToBuy))),
-    });
+        coinToSell: dataToInteger(coinToSell),
+        coinToBuy: dataToInteger(coinToBuy),
+        minimumValueToBuy: dataPipToAmount(minimumValueToBuy),
+    }, options);
 };
 
 /**

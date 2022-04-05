@@ -1,15 +1,16 @@
 import {TxDataPriceVote} from 'minterjs-tx';
-import {toBuffer} from 'minterjs-util';
-import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint} from '../utils.js';
+import {dataToInteger, integerToHexString, proxyNestedTxData, validateUint} from '../utils.js';
 
 
 /**
- *
  * @param {number|string} price
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function PriceVoteTxData({price}) {
-    validateUint(price, 'price');
+export default function PriceVoteTxData({price}, options = {}) {
+    if (!options.disableValidation) {
+        validateUint(price, 'price');
+    }
 
     this.price = price;
 
@@ -22,12 +23,13 @@ export default function PriceVoteTxData({price}) {
 
 /**
  * @param {Buffer|string|number} price
+ * @param {TxOptions} [options]
  * @return {PriceVoteTxData}
  */
-PriceVoteTxData.fromBufferFields = function fromBufferFields({price}) {
+PriceVoteTxData.fromBufferFields = function fromBufferFields({price}, options = {}) {
     return new PriceVoteTxData({
-        price: bufferToInteger(toBuffer(price)),
-    });
+        price: dataToInteger(price),
+    }, options);
 };
 
 /**

@@ -1,21 +1,24 @@
 import {TxDataEditCandidate} from 'minterjs-tx';
 // import TxDataEditCandidate from 'minterjs-tx/src/tx-data/edit-candidate.js';
-import {addressToString, publicToString, toBuffer} from 'minterjs-util';
+import {toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
-import {proxyNestedTxData, validateAddress, validatePublicKey} from '../utils.js';
+import {dataToAddress, dataToPublicKey, proxyNestedTxData, validateAddress, validatePublicKey} from '../utils.js';
 
 /**
  * @param {string} publicKey
  * @param {string} rewardAddress
  * @param {string} ownerAddress
  * @param {string} controlAddress
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function EditCandidateTxData({publicKey, rewardAddress, ownerAddress, controlAddress}) {
-    validatePublicKey(publicKey, 'publicKey');
-    validateAddress(rewardAddress, 'rewardAddress');
-    validateAddress(ownerAddress, 'ownerAddress');
-    validateAddress(controlAddress, 'controlAddress');
+export default function EditCandidateTxData({publicKey, rewardAddress, ownerAddress, controlAddress}, options = {}) {
+    if (!options.disableValidation) {
+        validatePublicKey(publicKey, 'publicKey');
+        validateAddress(rewardAddress, 'rewardAddress');
+        validateAddress(ownerAddress, 'ownerAddress');
+        validateAddress(controlAddress, 'controlAddress');
+    }
 
     this.publicKey = publicKey;
     this.rewardAddress = rewardAddress;
@@ -37,15 +40,16 @@ export default function EditCandidateTxData({publicKey, rewardAddress, ownerAddr
  * @param {Buffer|string} rewardAddress
  * @param {Buffer|string} ownerAddress
  * @param {Buffer|string} controlAddress
+ * @param {TxOptions} [options]
  * @return {EditCandidateTxData}
  */
-EditCandidateTxData.fromBufferFields = function fromBufferFields({publicKey, rewardAddress, ownerAddress, controlAddress}) {
+EditCandidateTxData.fromBufferFields = function fromBufferFields({publicKey, rewardAddress, ownerAddress, controlAddress}, options = {}) {
     return new EditCandidateTxData({
-        publicKey: publicToString(publicKey),
-        rewardAddress: addressToString(rewardAddress),
-        ownerAddress: addressToString(ownerAddress),
-        controlAddress: addressToString(controlAddress),
-    });
+        publicKey: dataToPublicKey(publicKey),
+        rewardAddress: dataToAddress(rewardAddress),
+        ownerAddress: dataToAddress(ownerAddress),
+        controlAddress: dataToAddress(controlAddress),
+    }, options);
 };
 
 /**

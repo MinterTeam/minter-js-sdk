@@ -1,9 +1,9 @@
 import {TxDataDeclareCandidacy} from 'minterjs-tx';
 // import TxDataDeclareCandidacy from 'minterjs-tx/src/tx-data/declare-candidacy.js';
-import {addressToString, convertFromPip, convertToPip, publicToString, toBuffer} from 'minterjs-util';
+import {convertToPip, toBuffer} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter';
 // import {toBuffer} from 'minterjs-util/src/prefix';
-import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAddress, validateAmount, validateUint, validatePublicKey} from '../utils.js';
+import {proxyNestedTxData, dataToInteger, dataPipToAmount, dataToAddress, dataToPublicKey, integerToHexString, validateAddress, validateAmount, validateUint, validatePublicKey} from '../utils.js';
 
 /**
  * @param {string} address
@@ -11,14 +11,17 @@ import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAddress,
  * @param {number|string} commission
  * @param {number|string} coin - coin id
  * @param {number|string} stake
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function DeclareCandidacyTxData({address, publicKey, commission, coin, stake}) {
-    validateAddress(address, 'address');
-    validatePublicKey(publicKey, 'publicKey');
-    validateUint(commission, 'commission');
-    validateUint(coin, 'coin');
-    validateAmount(stake, 'stake');
+export default function DeclareCandidacyTxData({address, publicKey, commission, coin, stake}, options = {}) {
+    if (!options.disableValidation) {
+        validateAddress(address, 'address');
+        validatePublicKey(publicKey, 'publicKey');
+        validateUint(commission, 'commission');
+        validateUint(coin, 'coin');
+        validateAmount(stake, 'stake');
+    }
 
     this.address = address;
     this.publicKey = publicKey;
@@ -43,16 +46,17 @@ export default function DeclareCandidacyTxData({address, publicKey, commission, 
  * @param {Buffer|string} commission
  * @param {Buffer|string} coin
  * @param {Buffer|string} stake
+ * @param {TxOptions} [options]
  * @return {DeclareCandidacyTxData}
  */
-DeclareCandidacyTxData.fromBufferFields = function fromBufferFields({address, publicKey, commission, coin, stake}) {
+DeclareCandidacyTxData.fromBufferFields = function fromBufferFields({address, publicKey, commission, coin, stake}, options = {}) {
     return new DeclareCandidacyTxData({
-        address: addressToString(address),
-        publicKey: publicToString(publicKey),
-        commission: bufferToInteger(toBuffer(commission)),
-        coin: bufferToInteger(toBuffer(coin)),
-        stake: convertFromPip(bufferToInteger(toBuffer(stake))),
-    });
+        address: dataToAddress(address),
+        publicKey: dataToPublicKey(publicKey),
+        commission: dataToInteger(commission),
+        coin: dataToInteger(coin),
+        stake: dataPipToAmount(stake),
+    }, options);
 };
 
 /**

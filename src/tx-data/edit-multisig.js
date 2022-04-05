@@ -6,11 +6,14 @@ import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAddress,
  * @param {Array} addresses
  * @param {Array} weights
  * @param {number|string} threshold
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function EditMultisigTxData({addresses, weights, threshold}) {
-    validateUintArray(weights, 'weights');
-    validateUint(threshold);
+export default function EditMultisigTxData({addresses, weights, threshold}, options = {}) {
+    if (!options.disableValidation) {
+        validateUintArray(weights, 'weights');
+        validateUint(threshold);
+    }
 
     this.addresses = addresses;
     this.weights = weights;
@@ -72,10 +75,12 @@ export default function EditMultisigTxData({addresses, weights, threshold}) {
  * @param {Array<Buffer>} addresses
  * @param {Array<Buffer>} weights
  * @param {Buffer|string} threshold
+ * @param {TxOptions} [options]
  * @return {EditMultisigTxData}
  */
-EditMultisigTxData.fromBufferFields = function fromBufferFields({addresses, weights, threshold}) {
+EditMultisigTxData.fromBufferFields = function fromBufferFields({addresses, weights, threshold}, options = {}) {
     return new EditMultisigTxData({
+        // @TODO replace with dataToXXX methods?
         addresses: addresses.map((item) => addressToString(item)),
         weights: weights.map((item) => bufferToInteger(item)),
         threshold: bufferToInteger(threshold),

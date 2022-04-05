@@ -1,15 +1,18 @@
 import {TxDataSetCandidateOn} from 'minterjs-tx';
 // import TxDataSetCandidateOn from 'minterjs-tx/src/tx-data/set-candidate-on.js';
-import {publicToString, toBuffer} from 'minterjs-util';
+import {toBuffer} from 'minterjs-util';
 // import {toBuffer} from 'minterjs-util/src/prefix.js';
-import {proxyNestedTxData, validatePublicKey} from '../utils.js';
+import {dataToPublicKey, proxyNestedTxData, validatePublicKey} from '../utils.js';
 
 /**
  * @param {string} publicKey
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function SetCandidateOnTxData({publicKey}) {
-    validatePublicKey(publicKey, 'publicKey');
+export default function SetCandidateOnTxData({publicKey}, options = {}) {
+    if (!options.disableValidation) {
+        validatePublicKey(publicKey, 'publicKey');
+    }
 
     this.publicKey = publicKey;
 
@@ -22,12 +25,13 @@ export default function SetCandidateOnTxData({publicKey}) {
 
 /**
  * @param {Buffer|string} publicKey
+ * @param {TxOptions} [options]
  * @return {SetCandidateOnTxData}
  */
-SetCandidateOnTxData.fromBufferFields = function fromBufferFields({publicKey}) {
+SetCandidateOnTxData.fromBufferFields = function fromBufferFields({publicKey}, options = {}) {
     return new SetCandidateOnTxData({
-        publicKey: publicToString(publicKey),
-    });
+        publicKey: dataToPublicKey(publicKey),
+    }, options);
 };
 
 /**

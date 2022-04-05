@@ -4,7 +4,7 @@ import {proxyNestedTxData} from '../utils.js';
 /**
  * @constructor
  */
-export default function LockStakeTxData() {
+export default function LockStakeTxData(/* {}, options */) {
     this.txData = new TxDataLockStake({});
 
     proxyNestedTxData(this);

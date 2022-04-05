@@ -1,17 +1,20 @@
 import {TxDataSellSwapPool} from 'minterjs-tx';
-import {convertToPip, convertFromPip, toBuffer} from 'minterjs-util';
-import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateUintArray} from '../utils.js';
+import {convertToPip} from 'minterjs-util';
+import {proxyNestedTxData, bufferToInteger, integerToHexString, dataPipToAmount, validateAmount, validateUintArray} from '../utils.js';
 
 /**
  * @param {Array<number|string>} coins - list of coin id
  * @param {number|string} valueToSell
  * @param {number|string} [minimumValueToBuy=0]
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function SellPoolTxData({coins, valueToSell, minimumValueToBuy = 0}) {
-    validateUintArray(coins, 'coins');
-    validateAmount(valueToSell, 'valueToSell');
-    validateAmount(minimumValueToBuy, 'minimumValueToBuy');
+export default function SellPoolTxData({coins, valueToSell, minimumValueToBuy = 0}, options = {}) {
+    if (!options.disableValidation) {
+        validateUintArray(coins, 'coins');
+        validateAmount(valueToSell, 'valueToSell');
+        validateAmount(minimumValueToBuy, 'minimumValueToBuy');
+    }
 
     this.coins = coins;
     this.valueToSell = valueToSell;
@@ -30,18 +33,22 @@ export default function SellPoolTxData({coins, valueToSell, minimumValueToBuy = 
  * @param {Array<Buffer>} coins
  * @param {Buffer|string} valueToSell
  * @param {Buffer|string} minimumValueToBuy
+ * @param {TxOptions} [options]
  * @return {SellPoolTxData}
  */
-SellPoolTxData.fromBufferFields = function fromBufferFields({coins, valueToSell, minimumValueToBuy}) {
+SellPoolTxData.fromBufferFields = function fromBufferFields({coins, valueToSell, minimumValueToBuy}, options = {}) {
+    // @TODO should validation be done here?
+    /*
     if (!valueToSell && valueToSell !== 0) {
         throw new Error('Invalid valueToSell');
     }
+     */
 
     return new SellPoolTxData({
         coins: coins.map((item) => bufferToInteger(item)),
-        valueToSell: convertFromPip(bufferToInteger(toBuffer(valueToSell))),
-        minimumValueToBuy: convertFromPip(bufferToInteger(toBuffer(minimumValueToBuy))),
-    });
+        valueToSell: dataPipToAmount(valueToSell),
+        minimumValueToBuy: dataPipToAmount(minimumValueToBuy),
+    }, options);
 };
 
 /**

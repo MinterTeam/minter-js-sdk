@@ -1,9 +1,11 @@
 import Big from 'big.js';
 import {convertFromPip, convertToPip, FeePrice, TX_TYPE} from 'minterjs-util';
+import {TxData} from 'minterjs-tx';
 import GetCommissionPrice from './get-commission-price.js';
 import GetPoolInfo from './get-pool-info.js';
 import {GetCoinId} from './replace-coin.js';
 import EstimateCoinBuy from './estimate-coin-buy.js';
+import getTxData from '../tx-data/index.js';
 import {prepareTx} from '../tx.js';
 import {isCoinId, validateUint} from '../utils.js';
 
@@ -76,14 +78,21 @@ export default function EstimateTxCommission(apiInstance) {
         if (typeof txParams === 'string') {
             tx = txParams;
         } else {
+            const defaultBufferData = new TxData({}, txParams.type, {forceDefaultValues: true});
+            const defaultData = getTxData(txParams.type).fromBufferFields(defaultBufferData, {disableValidation: true});
+            let mergedData = {};
+            defaultBufferData._fields.forEach((key) => {
+                if (typeof txParams.data?.[key] !== 'undefined') {
+                    mergedData[key] = txParams.data[key];
+                } else {
+                    mergedData[key] = defaultData[key];
+                }
+            });
             txParams = {
-                chainId: 0,
-                nonce: 0,
-                gasPrice: 1,
-                signatureType: 1,
                 ...txParams,
+                data: mergedData,
             };
-            tx = prepareTx(txParams).serializeToString();
+            tx = prepareTx(txParams, {disableValidation: true, disableDecorationParams: true}).serializeToString();
         }
 
         return apiInstance.get(`estimate_tx_commission/${tx}`, axiosOptions)

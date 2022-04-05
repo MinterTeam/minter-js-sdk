@@ -1,6 +1,6 @@
 import {TxDataVoteCommission} from 'minterjs-tx';
-import {toBuffer, publicToString, convertToPip, convertFromPip} from 'minterjs-util';
-import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint, validatePublicKey, validateAmount} from '../utils.js';
+import {toBuffer, convertToPip} from 'minterjs-util';
+import {dataToInteger, dataPipToAmount, dataToPublicKey, integerToHexString, proxyNestedTxData, validateUint, validatePublicKey, validateAmount} from '../utils.js';
 
 
 /**
@@ -56,6 +56,7 @@ import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint, va
  * @param {number|string} moveStake
  * @param {number|string} lockStake
  * @param {number|string} lock
+ * @param {TxOptions} [options]
  * @constructor
  */
 export default function VoteCommissionTxData({
@@ -111,59 +112,61 @@ export default function VoteCommissionTxData({
     moveStake,
     lockStake,
     lock,
-}) {
-    validatePublicKey(publicKey, 'publicKey');
-    validateUint(height, 'height');
-    validateUint(coin, 'coin');
-    validateAmount(payloadByte, 'payloadByte');
-    validateAmount(send, 'send');
-    validateAmount(buyBancor, 'buyBancor');
-    validateAmount(sellBancor, 'sellBancor');
-    validateAmount(sellAllBancor, 'sellAllBancor');
-    validateAmount(buyPoolBase, 'buyPoolBase');
-    validateAmount(buyPoolDelta, 'buyPoolDelta');
-    validateAmount(sellPoolBase, 'sellPoolBase');
-    validateAmount(sellPoolDelta, 'sellPoolDelta');
-    validateAmount(sellAllPoolBase, 'sellAllPoolBase');
-    validateAmount(sellAllPoolDelta, 'sellAllPoolDelta');
-    validateAmount(createTicker3, 'createTicker3');
-    validateAmount(createTicker4, 'createTicker4');
-    validateAmount(createTicker5, 'createTicker5');
-    validateAmount(createTicker6, 'createTicker6');
-    validateAmount(createTicker7to10, 'createTicker7to10');
-    validateAmount(createCoin, 'createCoin');
-    validateAmount(createToken, 'createToken');
-    validateAmount(recreateCoin, 'recreateCoin');
-    validateAmount(recreateToken, 'recreateToken');
-    validateAmount(declareCandidacy, 'declareCandidacy');
-    validateAmount(delegate, 'delegate');
-    validateAmount(unbond, 'unbond');
-    validateAmount(redeemCheck, 'redeemCheck');
-    validateAmount(setCandidateOn, 'setCandidateOn');
-    validateAmount(setCandidateOff, 'setCandidateOff');
-    validateAmount(createMultisig, 'createMultisig');
-    validateAmount(multisendBase, 'multisendBase');
-    validateAmount(multisendDelta, 'multisendDelta');
-    validateAmount(editCandidate, 'editCandidate');
-    validateAmount(setHaltBlock, 'setHaltBlock');
-    validateAmount(editTickerOwner, 'editTickerOwner');
-    validateAmount(editMultisig, 'editMultisig');
-    // validateAmount(priceVote, 'priceVote');
-    validateAmount(editCandidatePublicKey, 'editCandidatePublicKey');
-    validateAmount(addLiquidity, 'addLiquidity');
-    validateAmount(removeLiquidity, 'removeLiquidity');
-    validateAmount(editCandidateCommission, 'editCandidateCommission');
-    validateAmount(burnToken, 'burnToken');
-    validateAmount(mintToken, 'mintToken');
-    validateAmount(voteCommission, 'voteCommission');
-    validateAmount(voteUpdate, 'voteUpdate');
-    validateAmount(createSwapPool, 'createSwapPool');
-    validateAmount(failedTx, 'failedTx');
-    validateAmount(addLimitOrder, 'addLimitOrder');
-    validateAmount(removeLimitOrder, 'removeLimitOrder');
-    validateAmount(moveStake, 'moveStake');
-    validateAmount(lockStake, 'lockStake');
-    validateAmount(lock, 'lock');
+}, options = {}) {
+    if (!options.disableValidation) {
+        validatePublicKey(publicKey, 'publicKey');
+        validateUint(height, 'height');
+        validateUint(coin, 'coin');
+        validateAmount(payloadByte, 'payloadByte');
+        validateAmount(send, 'send');
+        validateAmount(buyBancor, 'buyBancor');
+        validateAmount(sellBancor, 'sellBancor');
+        validateAmount(sellAllBancor, 'sellAllBancor');
+        validateAmount(buyPoolBase, 'buyPoolBase');
+        validateAmount(buyPoolDelta, 'buyPoolDelta');
+        validateAmount(sellPoolBase, 'sellPoolBase');
+        validateAmount(sellPoolDelta, 'sellPoolDelta');
+        validateAmount(sellAllPoolBase, 'sellAllPoolBase');
+        validateAmount(sellAllPoolDelta, 'sellAllPoolDelta');
+        validateAmount(createTicker3, 'createTicker3');
+        validateAmount(createTicker4, 'createTicker4');
+        validateAmount(createTicker5, 'createTicker5');
+        validateAmount(createTicker6, 'createTicker6');
+        validateAmount(createTicker7to10, 'createTicker7to10');
+        validateAmount(createCoin, 'createCoin');
+        validateAmount(createToken, 'createToken');
+        validateAmount(recreateCoin, 'recreateCoin');
+        validateAmount(recreateToken, 'recreateToken');
+        validateAmount(declareCandidacy, 'declareCandidacy');
+        validateAmount(delegate, 'delegate');
+        validateAmount(unbond, 'unbond');
+        validateAmount(redeemCheck, 'redeemCheck');
+        validateAmount(setCandidateOn, 'setCandidateOn');
+        validateAmount(setCandidateOff, 'setCandidateOff');
+        validateAmount(createMultisig, 'createMultisig');
+        validateAmount(multisendBase, 'multisendBase');
+        validateAmount(multisendDelta, 'multisendDelta');
+        validateAmount(editCandidate, 'editCandidate');
+        validateAmount(setHaltBlock, 'setHaltBlock');
+        validateAmount(editTickerOwner, 'editTickerOwner');
+        validateAmount(editMultisig, 'editMultisig');
+        // validateAmount(priceVote, 'priceVote');
+        validateAmount(editCandidatePublicKey, 'editCandidatePublicKey');
+        validateAmount(addLiquidity, 'addLiquidity');
+        validateAmount(removeLiquidity, 'removeLiquidity');
+        validateAmount(editCandidateCommission, 'editCandidateCommission');
+        validateAmount(burnToken, 'burnToken');
+        validateAmount(mintToken, 'mintToken');
+        validateAmount(voteCommission, 'voteCommission');
+        validateAmount(voteUpdate, 'voteUpdate');
+        validateAmount(createSwapPool, 'createSwapPool');
+        validateAmount(failedTx, 'failedTx');
+        validateAmount(addLimitOrder, 'addLimitOrder');
+        validateAmount(removeLimitOrder, 'removeLimitOrder');
+        validateAmount(moveStake, 'moveStake');
+        validateAmount(lockStake, 'lockStake');
+        validateAmount(lock, 'lock');
+    }
 
     this.publicKey = publicKey;
     this.height = height;
@@ -329,63 +332,64 @@ export default function VoteCommissionTxData({
  * @param {Buffer|string|number} moveStake
  * @param {Buffer|string|number} lockStake
  * @param {Buffer|string|number} lock
+ * @param {TxOptions} [options]
  * @return {VoteCommissionTxData}
  */
-VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, height, coin, payloadByte, send, buyBancor, sellBancor, sellAllBancor, buyPoolBase, buyPoolDelta, sellPoolBase, sellPoolDelta, sellAllPoolBase, sellAllPoolDelta, createTicker3, createTicker4, createTicker5, createTicker6, createTicker7to10, createCoin, createToken, recreateCoin, recreateToken, declareCandidacy, delegate, unbond, redeemCheck, setCandidateOn, setCandidateOff, createMultisig, multisendBase, multisendDelta, editCandidate, setHaltBlock, editTickerOwner, editMultisig, priceVote, editCandidatePublicKey, addLiquidity, removeLiquidity, editCandidateCommission, burnToken, mintToken, voteCommission, voteUpdate, createSwapPool, failedTx, addLimitOrder, removeLimitOrder, moveStake, lockStake, lock}) {
+VoteCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, height, coin, payloadByte, send, buyBancor, sellBancor, sellAllBancor, buyPoolBase, buyPoolDelta, sellPoolBase, sellPoolDelta, sellAllPoolBase, sellAllPoolDelta, createTicker3, createTicker4, createTicker5, createTicker6, createTicker7to10, createCoin, createToken, recreateCoin, recreateToken, declareCandidacy, delegate, unbond, redeemCheck, setCandidateOn, setCandidateOff, createMultisig, multisendBase, multisendDelta, editCandidate, setHaltBlock, editTickerOwner, editMultisig, priceVote, editCandidatePublicKey, addLiquidity, removeLiquidity, editCandidateCommission, burnToken, mintToken, voteCommission, voteUpdate, createSwapPool, failedTx, addLimitOrder, removeLimitOrder, moveStake, lockStake, lock}, options = {}) {
     return new VoteCommissionTxData({
-        publicKey: publicToString(publicKey),
-        height: bufferToInteger(toBuffer(height)),
-        coin: bufferToInteger(toBuffer(coin)),
-        payloadByte: convertFromPip(bufferToInteger(toBuffer(payloadByte))),
-        send: convertFromPip(bufferToInteger(toBuffer(send))),
-        buyBancor: convertFromPip(bufferToInteger(toBuffer(buyBancor))),
-        sellBancor: convertFromPip(bufferToInteger(toBuffer(sellBancor))),
-        sellAllBancor: convertFromPip(bufferToInteger(toBuffer(sellAllBancor))),
-        buyPoolBase: convertFromPip(bufferToInteger(toBuffer(buyPoolBase))),
-        buyPoolDelta: convertFromPip(bufferToInteger(toBuffer(buyPoolDelta))),
-        sellPoolBase: convertFromPip(bufferToInteger(toBuffer(sellPoolBase))),
-        sellPoolDelta: convertFromPip(bufferToInteger(toBuffer(sellPoolDelta))),
-        sellAllPoolBase: convertFromPip(bufferToInteger(toBuffer(sellAllPoolBase))),
-        sellAllPoolDelta: convertFromPip(bufferToInteger(toBuffer(sellAllPoolDelta))),
-        createTicker3: convertFromPip(bufferToInteger(toBuffer(createTicker3))),
-        createTicker4: convertFromPip(bufferToInteger(toBuffer(createTicker4))),
-        createTicker5: convertFromPip(bufferToInteger(toBuffer(createTicker5))),
-        createTicker6: convertFromPip(bufferToInteger(toBuffer(createTicker6))),
-        createTicker7to10: convertFromPip(bufferToInteger(toBuffer(createTicker7to10))),
-        createCoin: convertFromPip(bufferToInteger(toBuffer(createCoin))),
-        createToken: convertFromPip(bufferToInteger(toBuffer(createToken))),
-        recreateCoin: convertFromPip(bufferToInteger(toBuffer(recreateCoin))),
-        recreateToken: convertFromPip(bufferToInteger(toBuffer(recreateToken))),
-        declareCandidacy: convertFromPip(bufferToInteger(toBuffer(declareCandidacy))),
-        delegate: convertFromPip(bufferToInteger(toBuffer(delegate))),
-        unbond: convertFromPip(bufferToInteger(toBuffer(unbond))),
-        redeemCheck: convertFromPip(bufferToInteger(toBuffer(redeemCheck))),
-        setCandidateOn: convertFromPip(bufferToInteger(toBuffer(setCandidateOn))),
-        setCandidateOff: convertFromPip(bufferToInteger(toBuffer(setCandidateOff))),
-        createMultisig: convertFromPip(bufferToInteger(toBuffer(createMultisig))),
-        multisendBase: convertFromPip(bufferToInteger(toBuffer(multisendBase))),
-        multisendDelta: convertFromPip(bufferToInteger(toBuffer(multisendDelta))),
-        editCandidate: convertFromPip(bufferToInteger(toBuffer(editCandidate))),
-        setHaltBlock: convertFromPip(bufferToInteger(toBuffer(setHaltBlock))),
-        editTickerOwner: convertFromPip(bufferToInteger(toBuffer(editTickerOwner))),
-        editMultisig: convertFromPip(bufferToInteger(toBuffer(editMultisig))),
-        // priceVote: convertFromPip(bufferToInteger(toBuffer(priceVote))),
-        editCandidatePublicKey: convertFromPip(bufferToInteger(toBuffer(editCandidatePublicKey))),
-        addLiquidity: convertFromPip(bufferToInteger(toBuffer(addLiquidity))),
-        removeLiquidity: convertFromPip(bufferToInteger(toBuffer(removeLiquidity))),
-        editCandidateCommission: convertFromPip(bufferToInteger(toBuffer(editCandidateCommission))),
-        burnToken: convertFromPip(bufferToInteger(toBuffer(burnToken))),
-        mintToken: convertFromPip(bufferToInteger(toBuffer(mintToken))),
-        voteCommission: convertFromPip(bufferToInteger(toBuffer(voteCommission))),
-        voteUpdate: convertFromPip(bufferToInteger(toBuffer(voteUpdate))),
-        createSwapPool: convertFromPip(bufferToInteger(toBuffer(createSwapPool))),
-        failedTx: convertFromPip(bufferToInteger(toBuffer(failedTx))),
-        addLimitOrder: convertFromPip(bufferToInteger(toBuffer(addLimitOrder))),
-        removeLimitOrder: convertFromPip(bufferToInteger(toBuffer(removeLimitOrder))),
-        moveStake: convertFromPip(bufferToInteger(toBuffer(moveStake))),
-        lockStake: convertFromPip(bufferToInteger(toBuffer(lockStake))),
-        lock: convertFromPip(bufferToInteger(toBuffer(lock))),
-    });
+        publicKey: dataToPublicKey(publicKey),
+        height: dataToInteger(height),
+        coin: dataToInteger(coin),
+        payloadByte: dataPipToAmount(payloadByte),
+        send: dataPipToAmount(send),
+        buyBancor: dataPipToAmount(buyBancor),
+        sellBancor: dataPipToAmount(sellBancor),
+        sellAllBancor: dataPipToAmount(sellAllBancor),
+        buyPoolBase: dataPipToAmount(buyPoolBase),
+        buyPoolDelta: dataPipToAmount(buyPoolDelta),
+        sellPoolBase: dataPipToAmount(sellPoolBase),
+        sellPoolDelta: dataPipToAmount(sellPoolDelta),
+        sellAllPoolBase: dataPipToAmount(sellAllPoolBase),
+        sellAllPoolDelta: dataPipToAmount(sellAllPoolDelta),
+        createTicker3: dataPipToAmount(createTicker3),
+        createTicker4: dataPipToAmount(createTicker4),
+        createTicker5: dataPipToAmount(createTicker5),
+        createTicker6: dataPipToAmount(createTicker6),
+        createTicker7to10: dataPipToAmount(createTicker7to10),
+        createCoin: dataPipToAmount(createCoin),
+        createToken: dataPipToAmount(createToken),
+        recreateCoin: dataPipToAmount(recreateCoin),
+        recreateToken: dataPipToAmount(recreateToken),
+        declareCandidacy: dataPipToAmount(declareCandidacy),
+        delegate: dataPipToAmount(delegate),
+        unbond: dataPipToAmount(unbond),
+        redeemCheck: dataPipToAmount(redeemCheck),
+        setCandidateOn: dataPipToAmount(setCandidateOn),
+        setCandidateOff: dataPipToAmount(setCandidateOff),
+        createMultisig: dataPipToAmount(createMultisig),
+        multisendBase: dataPipToAmount(multisendBase),
+        multisendDelta: dataPipToAmount(multisendDelta),
+        editCandidate: dataPipToAmount(editCandidate),
+        setHaltBlock: dataPipToAmount(setHaltBlock),
+        editTickerOwner: dataPipToAmount(editTickerOwner),
+        editMultisig: dataPipToAmount(editMultisig),
+        // priceVote: dataPipToAmount(priceVote),
+        editCandidatePublicKey: dataPipToAmount(editCandidatePublicKey),
+        addLiquidity: dataPipToAmount(addLiquidity),
+        removeLiquidity: dataPipToAmount(removeLiquidity),
+        editCandidateCommission: dataPipToAmount(editCandidateCommission),
+        burnToken: dataPipToAmount(burnToken),
+        mintToken: dataPipToAmount(mintToken),
+        voteCommission: dataPipToAmount(voteCommission),
+        voteUpdate: dataPipToAmount(voteUpdate),
+        createSwapPool: dataPipToAmount(createSwapPool),
+        failedTx: dataPipToAmount(failedTx),
+        addLimitOrder: dataPipToAmount(addLimitOrder),
+        removeLimitOrder: dataPipToAmount(removeLimitOrder),
+        moveStake: dataPipToAmount(moveStake),
+        lockStake: dataPipToAmount(lockStake),
+        lock: dataPipToAmount(lock),
+    }, options);
 };
 
 /**

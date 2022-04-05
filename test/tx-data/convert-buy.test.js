@@ -1,5 +1,5 @@
 import {BuyTxData} from '~/src';
-import {clearData} from '~/test/utils';
+import {clearData} from '~/test/test-utils.js';
 
 describe('BuyTxData', () => {
     const txParamsData = {

@@ -1,6 +1,6 @@
 import {TxDataCreateToken} from 'minterjs-tx';
-import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY} from 'minterjs-util';
-import {proxyNestedTxData, bufferToInteger, validateAmount, validateTicker, validateMaxSupply, validateBoolean, bufferToBoolean} from '../utils.js';
+import {convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY} from 'minterjs-util';
+import {dataPipToAmount, proxyNestedTxData, validateAmount, validateTicker, validateMaxSupply, validateBoolean, bufferToBoolean} from '../utils.js';
 
 /**
  * @param {string} [name]
@@ -9,14 +9,17 @@ import {proxyNestedTxData, bufferToInteger, validateAmount, validateTicker, vali
  * @param {number|string} [maxSupply]
  * @param {boolean} mintable
  * @param {boolean} burnable
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function CreateTokenTxData({name = '', symbol, initialAmount, maxSupply = COIN_MAX_MAX_SUPPLY, mintable, burnable}) {
-    validateTicker(symbol, 'symbol');
-    validateAmount(initialAmount, 'initialAmount');
-    validateMaxSupply(maxSupply, initialAmount);
-    validateBoolean(mintable, 'mintable');
-    validateBoolean(burnable, 'burnable');
+export default function CreateTokenTxData({name = '', symbol, initialAmount, maxSupply = COIN_MAX_MAX_SUPPLY, mintable, burnable}, options = {}) {
+    if (!options.disableValidation) {
+        validateTicker(symbol, 'symbol');
+        validateAmount(initialAmount, 'initialAmount');
+        validateMaxSupply(maxSupply, initialAmount);
+        validateBoolean(mintable, 'mintable');
+        validateBoolean(burnable, 'burnable');
+    }
 
     this.name = name;
     this.symbol = symbol;
@@ -45,17 +48,18 @@ export default function CreateTokenTxData({name = '', symbol, initialAmount, max
  * @param {Buffer|string|number} maxSupply
  * @param {Buffer|string} mintable
  * @param {Buffer|string} burnable
+ * @param {TxOptions} [options]
  * @return {CreateTokenTxData}
  */
-CreateTokenTxData.fromBufferFields = function fromBufferFields({name, symbol, initialAmount, maxSupply, mintable, burnable}) {
+CreateTokenTxData.fromBufferFields = function fromBufferFields({name, symbol, initialAmount, maxSupply, mintable, burnable}, options = {}) {
     return new CreateTokenTxData({
         name: toBuffer(name).toString('utf-8'),
         symbol: bufferToCoin(toBuffer(symbol)),
-        initialAmount: convertFromPip(bufferToInteger(toBuffer(initialAmount))),
-        maxSupply: convertFromPip(bufferToInteger(toBuffer(maxSupply))),
+        initialAmount: dataPipToAmount(initialAmount),
+        maxSupply: dataPipToAmount(maxSupply),
         mintable: bufferToBoolean(toBuffer(mintable)),
         burnable: bufferToBoolean(toBuffer(burnable)),
-    });
+    }, options);
 };
 
 /**

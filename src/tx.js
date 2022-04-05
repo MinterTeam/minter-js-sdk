@@ -29,6 +29,8 @@ import {decodeTxData, ensureBufferData} from './tx-data/index.js';
  * @property {ByteArray} [privateKey] - alternative to seedPhrase
  * @property {ByteArray} [address] - to get nonce (useful for multisignatures) or to make proof for redeemCheck tx
  * @property {ByteArray} [password] - to make proof for RedeemCheckTxData
+ * @property {boolean} [disableValidation] - to disable validation of Tx or TxData constructors
+ * @property {boolean} [disableDecorationParams] - to disable TxParams decoration (in `prepareTx`)
  */
 
 /**
@@ -67,31 +69,35 @@ export function prepareTx(txParams = {}, options = {}) {
         type: normalizeTxType(txParams.type || txParams.txType),
         payload: txParams.payload || txParams.message,
     };
-    txParams = decorateTxParams(txParams);
+    if (!options.disableDecorationParams) {
+        txParams = decorateTxParams(txParams);
+    }
     const {nonce, chainId = 1, gasPrice = 1, gasCoin = 0, type: txType, signatureType, signatureData} = txParams;
     let {payload, data: txData} = txParams;
 
-    validateUint(nonce, 'nonce');
-    validateUint(chainId, 'chainId');
-    validateUint(gasPrice, 'gasPrice');
-    validateUint(gasCoin, 'gasCoin');
-    if (!txType && typeof txType !== 'number') {
-        throw new Error('Falsy tx type specified, tx can\'t be prepared');
-    }
-    if (!signatureType && typeof signatureType !== 'number') {
-        throw new Error('Falsy signatureType specified, tx can\'t be prepared');
+    if (!options.disableValidation) {
+        validateUint(nonce, 'nonce');
+        validateUint(chainId, 'chainId');
+        validateUint(gasPrice, 'gasPrice');
+        validateUint(gasCoin, 'gasCoin');
+        if (!txType && typeof txType !== 'number') {
+            throw new Error('Falsy tx type specified, tx can\'t be prepared');
+        }
+        if (!signatureType && typeof signatureType !== 'number') {
+            throw new Error('Falsy signatureType specified, tx can\'t be prepared');
+        }
     }
 
     txData = ensureBufferData(txData, txType, options);
 
     const txProps = {
-        nonce: integerToHexString(nonce),
+        nonce: integerToHexString(nonce || 0),
         chainId: integerToHexString(chainId),
         gasPrice: integerToHexString(gasPrice),
         gasCoin: integerToHexString(gasCoin),
         type: txType,
         data: txData,
-        signatureType: integerToHexString(signatureType),
+        signatureType: integerToHexString(signatureType || 0),
         signatureData: ensureBufferSignature(signatureData, signatureType),
     };
 

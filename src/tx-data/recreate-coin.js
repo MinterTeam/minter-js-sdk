@@ -1,6 +1,6 @@
 import {TxDataRecreateCoin} from 'minterjs-tx';
-import {convertFromPip, convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY} from 'minterjs-util';
-import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateTicker, validateMaxSupply} from '../utils.js';
+import {convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY} from 'minterjs-util';
+import {proxyNestedTxData, dataToInteger, dataPipToAmount, integerToHexString, validateAmount, validateTicker, validateMaxSupply} from '../utils.js';
 
 /**
  * @param {string} [name]
@@ -9,13 +9,16 @@ import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, 
  * @param {number|string} initialReserve
  * @param {number|string} constantReserveRatio
  * @param {number|string} [maxSupply]
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function RecreateCoinTxData({name = '', symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply = COIN_MAX_MAX_SUPPLY}) {
-    validateTicker(symbol, 'symbol');
-    validateAmount(initialAmount, 'initialAmount');
-    validateAmount(initialReserve, 'initialReserve');
-    validateMaxSupply(maxSupply, initialAmount);
+export default function RecreateCoinTxData({name = '', symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply = COIN_MAX_MAX_SUPPLY}, options = {}) {
+    if (!options.disableValidation) {
+        validateTicker(symbol, 'symbol');
+        validateAmount(initialAmount, 'initialAmount');
+        validateAmount(initialReserve, 'initialReserve');
+        validateMaxSupply(maxSupply, initialAmount);
+    }
 
     this.name = name;
     this.symbol = symbol;
@@ -44,17 +47,18 @@ export default function RecreateCoinTxData({name = '', symbol, initialAmount, in
  * @param {Buffer|string|number} initialReserve
  * @param {Buffer|string|number} constantReserveRatio
  * @param {number|string|number} maxSupply
+ * @param {TxOptions} [options]
  * @return {RecreateCoinTxData}
  */
-RecreateCoinTxData.fromBufferFields = function fromBufferFields({name, symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply}) {
+RecreateCoinTxData.fromBufferFields = function fromBufferFields({name, symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply}, options = {}) {
     return new RecreateCoinTxData({
         name: toBuffer(name).toString('utf-8'),
         symbol: bufferToCoin(toBuffer(symbol)),
-        initialAmount: convertFromPip(bufferToInteger(toBuffer(initialAmount))),
-        initialReserve: convertFromPip(bufferToInteger(toBuffer(initialReserve))),
-        constantReserveRatio: bufferToInteger(toBuffer(constantReserveRatio)),
-        maxSupply: convertFromPip(bufferToInteger(toBuffer(maxSupply))),
-    });
+        initialAmount: dataPipToAmount(initialAmount),
+        initialReserve: dataPipToAmount(initialReserve),
+        constantReserveRatio: dataToInteger(constantReserveRatio),
+        maxSupply: dataPipToAmount(maxSupply),
+    }, options);
 };
 
 /**

@@ -37,8 +37,7 @@ class Link {
             name: 'gasCoin',
             length: 4,
             allowLess: true,
-            allowNonBinaryArray: true,
-            default: [],
+            storeNullAsArray: true,
         }];
 
         /**
@@ -76,9 +75,9 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
     const {nonce, gasPrice, gasCoin, type, txType, data, txData, password} = txParams;
 
     const txProps = {
-        nonce: nonce || nonce === 0 ? integerToHexString(nonce) : [],
-        gasPrice: gasPrice || gasPrice === 0 ? integerToHexString(gasPrice) : [],
-        gasCoin: gasCoin || gasCoin === 0 ? integerToHexString(gasCoin) : [],
+        nonce: nonce || nonce === 0 ? integerToHexString(nonce) : undefined,
+        gasPrice: gasPrice || gasPrice === 0 ? integerToHexString(gasPrice) : undefined,
+        gasCoin: gasCoin || gasCoin === 0 ? integerToHexString(gasCoin) : undefined,
         type: type || txType,
         data: ensureBufferData(data || txData, type || txType),
     };

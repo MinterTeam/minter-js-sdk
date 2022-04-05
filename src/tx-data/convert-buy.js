@@ -1,6 +1,6 @@
 import {TxDataBuy} from 'minterjs-tx';
-import {convertFromPip, convertToPip, toBuffer, COIN_MAX_AMOUNT} from 'minterjs-util';
-import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateUint} from '../utils.js';
+import {convertToPip, COIN_MAX_AMOUNT} from 'minterjs-util';
+import {proxyNestedTxData, dataToInteger, dataPipToAmount, integerToHexString, validateAmount, validateUint} from '../utils.js';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
 
 /**
@@ -8,13 +8,16 @@ import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, 
  * @param {number|string} coinToBuy - coin id
  * @param {number|string} valueToBuy
  * @param {number|string} [maximumValueToSell]
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function BuyTxData({coinToSell, coinToBuy, valueToBuy, maximumValueToSell = COIN_MAX_AMOUNT}) {
-    validateUint(coinToSell, 'coinToSell');
-    validateUint(coinToBuy, 'coinToBuy');
-    validateAmount(valueToBuy, 'valueToBuy');
-    validateAmount(maximumValueToSell, 'maximumValueToSell');
+export default function BuyTxData({coinToSell, coinToBuy, valueToBuy, maximumValueToSell = COIN_MAX_AMOUNT}, options = {}) {
+    if (!options.disableValidation) {
+        validateUint(coinToSell, 'coinToSell');
+        validateUint(coinToBuy, 'coinToBuy');
+        validateAmount(valueToBuy, 'valueToBuy');
+        validateAmount(maximumValueToSell, 'maximumValueToSell');
+    }
 
     this.coinToSell = coinToSell;
     this.coinToBuy = coinToBuy;
@@ -36,15 +39,16 @@ export default function BuyTxData({coinToSell, coinToBuy, valueToBuy, maximumVal
  * @param {Buffer|string} valueToBuy
  * @param {Buffer|string} coinToBuy
  * @param {Buffer|string} maximumValueToSell
+ * @param {TxOptions} [options]
  * @return {BuyTxData}
  */
-BuyTxData.fromBufferFields = function fromBufferFields({coinToSell, valueToBuy, coinToBuy, maximumValueToSell}) {
+BuyTxData.fromBufferFields = function fromBufferFields({coinToSell, valueToBuy, coinToBuy, maximumValueToSell}, options = {}) {
     return new BuyTxData({
-        coinToSell: bufferToInteger(toBuffer(coinToSell)),
-        coinToBuy: bufferToInteger(toBuffer(coinToBuy)),
-        valueToBuy: convertFromPip(bufferToInteger(toBuffer(valueToBuy))),
-        maximumValueToSell: convertFromPip(bufferToInteger(toBuffer(maximumValueToSell))),
-    });
+        coinToSell: dataToInteger(coinToSell),
+        coinToBuy: dataToInteger(coinToBuy),
+        valueToBuy: dataPipToAmount(valueToBuy),
+        maximumValueToSell: dataPipToAmount(maximumValueToSell),
+    }, options);
 };
 
 /**

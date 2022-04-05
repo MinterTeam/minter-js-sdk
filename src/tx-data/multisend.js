@@ -8,21 +8,24 @@ import {proxyNestedTxData, integerToHexString, validateAddress, validateAmount, 
 
 /**
  * @param {Array} list
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function MultisendTxData({list}) {
-    if (!Array.isArray(list)) {
-        throw new TypeError('Field `list` is not an array');
-    }
-    list.forEach((item, index) => {
-        try {
-            validateAddress(item.to, `list[${index}].to`);
-            validateUint(item.coin, `list[${index}].coin`);
-            validateAmount(item.value, `list[${index}].value`);
-        } catch (error) {
-            throw new Error(`Field \`list\` contains invalid item at index ${index}. ${error.message}`);
+export default function MultisendTxData({list}, options = {}) {
+    if (!options.disableValidation) {
+        if (!Array.isArray(list)) {
+            throw new TypeError('Field `list` is not an array');
         }
-    });
+        list.forEach((item, index) => {
+            try {
+                validateAddress(item.to, `list[${index}].to`);
+                validateUint(item.coin, `list[${index}].coin`);
+                validateAmount(item.value, `list[${index}].value`);
+            } catch (error) {
+                throw new Error(`Field \`list\` contains invalid item at index ${index}. ${error.message}`);
+            }
+        });
+    }
 
     this.list = list;
 
@@ -42,12 +45,13 @@ export default function MultisendTxData({list}) {
 
 /**
  * @param {Array<Buffer>} list
+ * @param {TxOptions} [options]
  * @return {MultisendTxData}
  */
-MultisendTxData.fromBufferFields = function fromBufferFields({list}) {
+MultisendTxData.fromBufferFields = function fromBufferFields({list}, options = {}) {
     return new MultisendTxData({
         list: list.map((item) => SendTxData.fromRlp(item)),
-    });
+    }, options);
 };
 
 /**

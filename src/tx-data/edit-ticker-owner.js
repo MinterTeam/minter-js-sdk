@@ -1,15 +1,18 @@
 import {TxDataEditTickerOwner} from 'minterjs-tx';
-import {toBuffer, coinToBuffer, bufferToCoin, addressToString} from 'minterjs-util';
-import {proxyNestedTxData, validateAddress, validateTicker} from '../utils.js';
+import {toBuffer, coinToBuffer, bufferToCoin} from 'minterjs-util';
+import {dataToAddress, proxyNestedTxData, validateAddress, validateTicker} from '../utils.js';
 
 /**
  * @param {string} symbol
  * @param {string} newOwner
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function EditTickerOwnerTxData({symbol, newOwner}) {
-    validateTicker(symbol, 'symbol');
-    validateAddress(newOwner, 'newOwner');
+export default function EditTickerOwnerTxData({symbol, newOwner}, options = {}) {
+    if (!options.disableValidation) {
+        validateTicker(symbol, 'symbol');
+        validateAddress(newOwner, 'newOwner');
+    }
 
     this.symbol = symbol;
     this.newOwner = newOwner;
@@ -26,13 +29,14 @@ export default function EditTickerOwnerTxData({symbol, newOwner}) {
  *
  * @param {Buffer|string} symbol
  * @param {Buffer|string} newOwner
+ * @param {TxOptions} [options]
  * @return {EditTickerOwnerTxData}
  */
-EditTickerOwnerTxData.fromBufferFields = function fromBufferFields({symbol, newOwner}) {
+EditTickerOwnerTxData.fromBufferFields = function fromBufferFields({symbol, newOwner}, options = {}) {
     return new EditTickerOwnerTxData({
         symbol: bufferToCoin(toBuffer(symbol)),
-        newOwner: addressToString(newOwner),
-    });
+        newOwner: dataToAddress(newOwner),
+    }, options);
 };
 
 /**

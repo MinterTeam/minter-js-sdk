@@ -1,15 +1,16 @@
 import {TxDataRemoveLimitOrder} from 'minterjs-tx';
-import {toBuffer} from 'minterjs-util';
-import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint} from '../utils.js';
+import {dataToInteger, integerToHexString, proxyNestedTxData, validateUint} from '../utils.js';
 
 
 /**
- *
  * @param {number|string} id
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function RemoveLimitOrderTxData({id}) {
-    validateUint(id, 'height');
+export default function RemoveLimitOrderTxData({id}, options = {}) {
+    if (!options.disableValidation) {
+        validateUint(id, 'height');
+    }
 
     this.id = id;
 
@@ -22,12 +23,13 @@ export default function RemoveLimitOrderTxData({id}) {
 
 /**
  * @param {Buffer|string|number} id
+ * @param {TxOptions} [options]
  * @return {RemoveLimitOrderTxData}
  */
-RemoveLimitOrderTxData.fromBufferFields = function fromBufferFields({id}) {
+RemoveLimitOrderTxData.fromBufferFields = function fromBufferFields({id}, options = {}) {
     return new RemoveLimitOrderTxData({
-        id: bufferToInteger(toBuffer(id)),
-    });
+        id: dataToInteger(id),
+    }, options);
 };
 
 /**

@@ -1,17 +1,20 @@
 import {TxDataBurnToken} from 'minterjs-tx';
-import {convertToPip, convertFromPip, toBuffer} from 'minterjs-util';
-import {bufferToInteger, integerToHexString, proxyNestedTxData, validateUint, validateAmount} from '../utils.js';
+import {convertToPip} from 'minterjs-util';
+import {dataToInteger, dataPipToAmount, integerToHexString, proxyNestedTxData, validateUint, validateAmount} from '../utils.js';
 
 
 /**
  *
  * @param {number|string} value
  * @param {number|string} coin - coin id
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function BurnTokenTxData({value = 0, coin}) {
-    validateUint(coin, 'coin');
-    validateAmount(value, 'value');
+export default function BurnTokenTxData({value = 0, coin}, options = {}) {
+    if (!options.disableValidation) {
+        validateUint(coin, 'coin');
+        validateAmount(value, 'value');
+    }
 
     this.value = value;
     this.coin = coin;
@@ -27,13 +30,14 @@ export default function BurnTokenTxData({value = 0, coin}) {
 /**
  * @param {Buffer|string|number} value
  * @param {Buffer|string|number} coin
+ * @param {TxOptions} [options]
  * @return {BurnTokenTxData}
  */
-BurnTokenTxData.fromBufferFields = function fromBufferFields({value, coin}) {
+BurnTokenTxData.fromBufferFields = function fromBufferFields({value, coin}, options = {}) {
     return new BurnTokenTxData({
-        coin: bufferToInteger(toBuffer(coin)),
-        value: convertFromPip(bufferToInteger(toBuffer(value))),
-    });
+        coin: dataToInteger(coin),
+        value: dataPipToAmount(value),
+    }, options);
 };
 
 /**

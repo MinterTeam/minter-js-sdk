@@ -1,19 +1,22 @@
 import {TxDataCreateSwapPool} from 'minterjs-tx';
-import {convertFromPip, convertToPip, toBuffer} from 'minterjs-util';
-import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateUint} from '../utils.js';
+import {convertToPip} from 'minterjs-util';
+import {proxyNestedTxData, dataToInteger, dataPipToAmount, integerToHexString, validateAmount, validateUint} from '../utils.js';
 
 /**
  * @param {number|string} coin0 - coin id
  * @param {number|string} coin1 - coin id
  * @param {number|string} volume0
  * @param {number|string} volume1
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function CreatePoolTxData({coin0, coin1, volume0, volume1}) {
-    validateUint(coin0, 'coin0');
-    validateUint(coin1, 'coin1');
-    validateAmount(volume0, 'volume0');
-    validateAmount(volume1, 'volume1');
+export default function CreatePoolTxData({coin0, coin1, volume0, volume1}, options = {}) {
+    if (!options.disableValidation) {
+        validateUint(coin0, 'coin0');
+        validateUint(coin1, 'coin1');
+        validateAmount(volume0, 'volume0');
+        validateAmount(volume1, 'volume1');
+    }
 
     // swap values to sort by id ascending (make tx hash independent of coin order)
     if (Number(coin0) > Number(coin1)) {
@@ -41,15 +44,16 @@ export default function CreatePoolTxData({coin0, coin1, volume0, volume1}) {
  * @param {Buffer|string} volume0
  * @param {Buffer|string} coin1
  * @param {Buffer|string} volume1
+ * @param {TxOptions} [options]
  * @return {CreatePoolTxData}
  */
-CreatePoolTxData.fromBufferFields = function fromBufferFields({coin0, volume0, coin1, volume1}) {
+CreatePoolTxData.fromBufferFields = function fromBufferFields({coin0, volume0, coin1, volume1}, options = {}) {
     return new CreatePoolTxData({
-        coin0: bufferToInteger(toBuffer(coin0)),
-        coin1: bufferToInteger(toBuffer(coin1)),
-        volume0: convertFromPip(bufferToInteger(toBuffer(volume0))),
-        volume1: convertFromPip(bufferToInteger(toBuffer(volume1))),
-    });
+        coin0: dataToInteger(coin0),
+        coin1: dataToInteger(coin1),
+        volume0: dataPipToAmount(volume0),
+        volume1: dataPipToAmount(volume1),
+    }, options);
 };
 
 /**

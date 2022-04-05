@@ -1,8 +1,11 @@
-import {TX_TYPE} from 'minterjs-util';
+import {TX_TYPE, txTypeList} from 'minterjs-util';
 import {ENV_DATA, minterGate, minterNode} from './variables';
 import {testData} from '~/test/test-data.js';
-import {logError} from '~/test/utils.js';
+import {logError} from '~/test/test-utils.js';
 
+/**
+ * @type {Array<Minter>}
+ */
 const API_TYPE_LIST = [
     {
         ...minterNode,
@@ -19,6 +22,15 @@ const API_TYPE_LIST = [
         },
     },
 ];
+
+const typeList = txTypeList
+    .filter((typeItem) => !typeItem.isDisabled)
+    .map((typeItem) => {
+        return {
+            ...typeItem,
+            toString: () => `${typeItem.hex} ${typeItem.key}`,
+        };
+    });
 
 describe('EstimateTxCommission', () => {
     const txParamsData = (apiType, extraParams) => Object.assign({
@@ -69,9 +81,33 @@ describe('EstimateTxCommission', () => {
             });
     }, 30000);
 
-    test.each(API_TYPE_LIST)('tx string with direct %s', (apiType) => {
+    test.each(API_TYPE_LIST)('empty SendData equal to not empty %s', (apiType) => {
+        expect.assertions(1);
+        const txParams = txParamsData(apiType);
+        return Promise.all([
+            apiType.estimateTxCommission({...txParams, data: {}}, {loose: false}),
+            apiType.estimateTxCommission(txParams, {loose: false}),
+        ])
+            .then(([feeWithoutData, fee]) => {
+                expect(feeWithoutData.commission).toEqual(fee.commission);
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
+            });
+    }, 30000);
+
+    describe.each(API_TYPE_LIST)('direct with empty: %s', (apiType) => {
+        test.each(typeList)('works empty %s', ({hex: txType}) => {
+            return testDirectEstimationWithEmptyData(apiType, txType);
+        });
+    });
+
+    test.each(API_TYPE_LIST)('tx string with direct %s', async (apiType) => {
         expect.assertions(1);
 
+        // const testData = await import('~/test/test-data.js');
+        // @TODO try dynamic import, because test-data evaluate too much TxData constructors
         const rawTx = testData.txList[0].result;
 
         return apiType.estimateTxCommission(rawTx)
@@ -96,4 +132,21 @@ describe('EstimateTxCommission', () => {
                 throw error;
             });
     }, 30000);
+
+    function testDirectEstimationWithEmptyData(apiType, txType) {
+        expect.assertions(1);
+        const txParams = txParamsData(apiType);
+        return apiType.estimateTxCommission({
+            ...txParams,
+            data: {},
+            type: txType,
+        }, {loose: false})
+            .then((feeData) => {
+                expect(Number(feeData.commission)).toBeGreaterThan(0);
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
+            });
+    }
 });

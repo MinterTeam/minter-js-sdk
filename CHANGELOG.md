@@ -1,6 +1,9 @@
 ## WIP
 - add `Lock` and `LockStake` tx data
 - restore support of `MoveStake` tx data
+- add `disableValidation` option to tx data constructors
+- add `disableDecorationParams` and `disableValidation` options to `prepareTx`
+- fix `estimateTxCommission` to work with empty data params in `loose: false` mode
 - **BREAKING** add fields to VoteCommission tx data
 - **DEPRECATE** `direct` option in `estimateTxCommission`, use `loose` option with reversed value instead
 

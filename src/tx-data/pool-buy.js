@@ -1,17 +1,20 @@
 import {TxDataBuySwapPool} from 'minterjs-tx';
-import {convertFromPip, convertToPip, toBuffer, COIN_MAX_AMOUNT} from 'minterjs-util';
-import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateUintArray} from '../utils.js';
+import {convertToPip, COIN_MAX_AMOUNT} from 'minterjs-util';
+import {proxyNestedTxData, bufferToInteger, integerToHexString, dataPipToAmount, validateAmount, validateUintArray} from '../utils.js';
 
 /**
  * @param {Array<number|string>} coins - list of coin id
  * @param {number|string} valueToBuy
  * @param {number|string} [maximumValueToSell]
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function BuyPoolTxData({coins, valueToBuy, maximumValueToSell = COIN_MAX_AMOUNT}) {
-    validateUintArray(coins, 'coins');
-    validateAmount(valueToBuy, 'valueToBuy');
-    validateAmount(maximumValueToSell, 'maximumValueToSell');
+export default function BuyPoolTxData({coins, valueToBuy, maximumValueToSell = COIN_MAX_AMOUNT}, options = {}) {
+    if (!options.disableValidation) {
+        validateUintArray(coins, 'coins');
+        validateAmount(valueToBuy, 'valueToBuy');
+        validateAmount(maximumValueToSell, 'maximumValueToSell');
+    }
 
     this.coins = coins;
     this.valueToBuy = valueToBuy;
@@ -30,14 +33,15 @@ export default function BuyPoolTxData({coins, valueToBuy, maximumValueToSell = C
  * @param {Array<Buffer>} coins
  * @param {Buffer|string} valueToBuy
  * @param {Buffer|string} maximumValueToSell
+ * @param {TxOptions} [options]
  * @return {BuyPoolTxData}
  */
-BuyPoolTxData.fromBufferFields = function fromBufferFields({coins, valueToBuy, maximumValueToSell}) {
+BuyPoolTxData.fromBufferFields = function fromBufferFields({coins, valueToBuy, maximumValueToSell}, options = {}) {
     return new BuyPoolTxData({
         coins: coins.map((item) => bufferToInteger(item)),
-        valueToBuy: convertFromPip(bufferToInteger(toBuffer(valueToBuy))),
-        maximumValueToSell: convertFromPip(bufferToInteger(toBuffer(maximumValueToSell))),
-    });
+        valueToBuy: dataPipToAmount(valueToBuy),
+        maximumValueToSell: dataPipToAmount(maximumValueToSell),
+    }, options);
 };
 
 /**

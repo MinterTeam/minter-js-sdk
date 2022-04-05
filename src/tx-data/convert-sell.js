@@ -1,22 +1,25 @@
 import {TxDataSell} from 'minterjs-tx';
 // import TxDataSell from 'minterjs-tx/src/tx-data/sell.js';
 // import {TX_TYPE} from 'minterjs-tx/src/tx-types.js';
-import {convertToPip, convertFromPip, toBuffer} from 'minterjs-util';
+import {convertToPip} from 'minterjs-util';
 // import {convertToPip} from 'minterjs-util/src/converter.js';
-import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAmount, validateUint} from '../utils.js';
+import {proxyNestedTxData, dataToInteger, dataPipToAmount, integerToHexString, validateAmount, validateUint} from '../utils.js';
 
 /**
  * @param {number|string} coinToSell - coin id
  * @param {number|string} coinToBuy - coin id
  * @param {number|string} valueToSell
  * @param {number|string} [minimumValueToBuy=0]
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function SellTxData({coinToSell, coinToBuy, valueToSell, minimumValueToBuy = 0}) {
-    validateUint(coinToSell, 'coinToSell');
-    validateUint(coinToBuy, 'coinToBuy');
-    validateAmount(valueToSell, 'valueToSell');
-    validateAmount(minimumValueToBuy, 'minimumValueToBuy');
+export default function SellTxData({coinToSell, coinToBuy, valueToSell, minimumValueToBuy = 0}, options = {}) {
+    if (!options.disableValidation) {
+        validateUint(coinToSell, 'coinToSell');
+        validateUint(coinToBuy, 'coinToBuy');
+        validateAmount(valueToSell, 'valueToSell');
+        validateAmount(minimumValueToBuy, 'minimumValueToBuy');
+    }
 
     this.coinToSell = coinToSell;
     this.coinToBuy = coinToBuy;
@@ -38,19 +41,16 @@ export default function SellTxData({coinToSell, coinToBuy, valueToSell, minimumV
  * @param {Buffer|string} valueToSell
  * @param {Buffer|string} coinToBuy
  * @param {Buffer|string} minimumValueToBuy
+ * @param {TxOptions} [options]
  * @return {SellTxData}
  */
-SellTxData.fromBufferFields = function fromBufferFields({coinToSell, valueToSell, coinToBuy, minimumValueToBuy}) {
-    if (!valueToSell && valueToSell !== 0) {
-        throw new Error('Invalid valueToSell');
-    }
-
+SellTxData.fromBufferFields = function fromBufferFields({coinToSell, valueToSell, coinToBuy, minimumValueToBuy}, options = {}) {
     return new SellTxData({
-        coinToSell: bufferToInteger(toBuffer(coinToSell)),
-        coinToBuy: bufferToInteger(toBuffer(coinToBuy)),
-        valueToSell: convertFromPip(bufferToInteger(toBuffer(valueToSell))),
-        minimumValueToBuy: convertFromPip(bufferToInteger(toBuffer(minimumValueToBuy))),
-    });
+        coinToSell: dataToInteger(coinToSell),
+        coinToBuy: dataToInteger(coinToBuy),
+        valueToSell: dataPipToAmount(valueToSell),
+        minimumValueToBuy: dataPipToAmount(minimumValueToBuy),
+    }, options);
 };
 
 /**

@@ -1,15 +1,18 @@
 import {TxDataEditCandidateCommission} from 'minterjs-tx';
-import {publicToString, toBuffer} from 'minterjs-util';
-import {bufferToInteger, integerToHexString, proxyNestedTxData, validatePublicKey, validateUint} from '../utils.js';
+import {toBuffer} from 'minterjs-util';
+import {dataToInteger, dataToPublicKey, integerToHexString, proxyNestedTxData, validatePublicKey, validateUint} from '../utils.js';
 
 /**
  * @param {string} publicKey
  * @param {number|string} commission
+ * @param {TxOptions} [options]
  * @constructor
  */
-export default function EditCandidateCommissionTxData({publicKey, commission}) {
-    validatePublicKey(publicKey, 'publicKey');
-    validateUint(commission, 'commission');
+export default function EditCandidateCommissionTxData({publicKey, commission}, options = {}) {
+    if (!options.disableValidation) {
+        validatePublicKey(publicKey, 'publicKey');
+        validateUint(commission, 'commission');
+    }
 
     this.publicKey = publicKey;
     this.commission = commission;
@@ -25,13 +28,14 @@ export default function EditCandidateCommissionTxData({publicKey, commission}) {
 /**
  * @param {Buffer|string} publicKey
  * @param {Buffer|string} commission
+ * @param {TxOptions} [options]
  * @return {EditCandidateCommissionTxData}
  */
-EditCandidateCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, commission}) {
+EditCandidateCommissionTxData.fromBufferFields = function fromBufferFields({publicKey, commission}, options = {}) {
     return new EditCandidateCommissionTxData({
-        publicKey: publicToString(publicKey),
-        commission: bufferToInteger(toBuffer(commission)),
-    });
+        publicKey: dataToPublicKey(publicKey),
+        commission: dataToInteger(commission),
+    }, options);
 };
 
 /**

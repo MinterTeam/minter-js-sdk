@@ -3,7 +3,7 @@
 import Big from 'big.js';
 import BN from 'bn.js';
 import {padToEven, isHexPrefixed} from 'ethjs-util';
-import {isValidAddress, isValidPublicKeyString, isValidCheck, numberToBig, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
+import {isValidAddress, isValidPublicKeyString, isValidCheck, numberToBig, addressToString, publicToString, toBuffer, convertFromPip, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
 import {walletFromMnemonic, walletFromMnemonicAsync} from 'minterjs-wallet';
 
 Big.RM = 2;
@@ -149,6 +149,58 @@ export function bufferToBoolean(buf) {
 
     // eslint-disable-next-line unicorn/no-null
     return null;
+}
+
+/**
+ * @typedef {Buffer|Array|string|number|null|undefined|BN} BufferCapable
+ */
+
+/**
+ * @param {BufferCapable} value
+ * @returns {string}
+ */
+export function dataToInteger(value) {
+    return bufferToInteger(toBuffer(value));
+}
+
+/**
+ * @param {BufferCapable} value
+ * @returns {string}
+ */
+export function dataPipToAmount(value) {
+    return convertFromPip(bufferToInteger(toBuffer(value)));
+}
+
+/**
+ * @param {BufferCapable} value
+ * @returns {string}
+ */
+export function dataToAddress(value) {
+    // use zero address
+    // if (!value || value?.length === 0) {
+    //     value = Buffer.alloc(20, 0);
+    // }
+    return addressToString(value);
+}
+
+/**
+ * @param {BufferCapable} value
+ * @returns {string}
+ */
+export function dataToPublicKey(value) {
+    // use zero address
+    // if (!value || value?.length === 0) {
+    //     value = Buffer.alloc(32, 0);
+    // }
+    return publicToString(value);
+}
+
+/**
+ * @param {BufferCapable} value
+ * @returns {boolean|null}
+ */
+export function dataToBoolean(value) {
+    return bufferToBoolean(toBuffer(value));
 }
 
 /**
