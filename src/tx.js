@@ -103,7 +103,7 @@ export function prepareTx(txParams = {}, options = {}) {
 
     if (payload) {
         if (typeof payload === 'string') {
-            payload = Buffer.from(payload, 'utf-8');
+            payload = Buffer.from(payload, 'utf8');
         }
         txProps.payload = payload;
     }
@@ -146,7 +146,7 @@ export function decodeTx(txRlp, {decodeCheck} = {}) {
         gasCoin: bufferToInteger(tx.gasCoin),
         type: txType,
         data: txData,
-        payload: tx.payload.toString('utf-8'),
+        payload: tx.payload.toString('utf8'),
         signatureType: tx.signatureType.length > 0 ? bufferToInteger(tx.signatureType) : undefined,
         signatureData: tx.signatureData.length > 0 ? `0x${tx.signatureData.toString('hex')}` : '',
     };

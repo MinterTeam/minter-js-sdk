@@ -1,5 +1,7 @@
 module.exports = {
-    testRunner: 'jest-circus/runner',
+    // testEnvironment: 'jsdom',
+    // @see https://github.com/facebook/jest/issues/12586#issuecomment-1073298261
+    testEnvironment: '<rootDir>/jest-env-jsdom-custom.js',
     moduleNameMapper: {
         '~\/src$': '<rootDir>/dist/index.js',
         // '~\/src\/(.*)$': '<rootDir>/src/$1',

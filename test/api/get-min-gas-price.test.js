@@ -1,5 +1,5 @@
-import {minterGate, minterNode} from './variables';
 import {logError} from '~/test/test-utils.js';
+import {minterGate, minterNode} from './variables';
 
 
 describe('GetMinGasPrice', () => {

@@ -1,5 +1,5 @@
-import {ENV_DATA, minterGate, minterNode} from './variables';
 import {ensureCustomCoin, logError} from '~/test/test-utils.js';
+import {ENV_DATA, minterGate, minterNode} from './variables';
 
 beforeAll(async () => {
     await ensureCustomCoin();
@@ -33,7 +33,7 @@ describe('EstimateCoinSell', () => {
                 coinToBuy: 'MNT',
             })
                 .catch((error) => {
-                    logError(error);
+                    // logError(error);
                     expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 30000);
@@ -156,7 +156,7 @@ describe('EstimateCoinSellAll', () => {
                 coinToBuy: 'MNT',
             })
                 .catch((error) => {
-                    logError(error);
+                    // logError(error);
                     expect(error.response.data.error.message.length).toBeGreaterThan(0);
                 });
         }, 30000);

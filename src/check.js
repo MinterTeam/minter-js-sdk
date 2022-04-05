@@ -84,7 +84,7 @@ class Check {
         const messageHash = this.hash(false);
 
         if (typeof password === 'string') {
-            password = Buffer.from(password, 'utf-8');
+            password = Buffer.from(password, 'utf8');
         }
 
         const passwordBuffer = sha256(password);
@@ -132,7 +132,7 @@ export default function issueCheck({seedPhrase, privateKey, password, nonce, cha
     privateKey = ethToBuffer(privateKey);
 
     let check = new Check({
-        nonce: Buffer.from(nonce.toString(), 'utf-8'),
+        nonce: Buffer.from(nonce.toString(), 'utf8'),
         chainId: integerToHexString(chainId),
         coin: integerToHexString(coin),
         value: `0x${convertToPip(value, 'hex')}`,
@@ -148,7 +148,7 @@ export default function issueCheck({seedPhrase, privateKey, password, nonce, cha
 export function decodeCheck(rawCheck) {
     const check = new Check(rawCheck);
     return {
-        nonce: check.nonce.toString('utf-8'),
+        nonce: check.nonce.toString('utf8'),
         chainId: bufferToInteger(check.chainId),
         coin: bufferToInteger(check.coin),
         value: convertFromPip(bufferToInteger(check.value)),

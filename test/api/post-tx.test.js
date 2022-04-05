@@ -53,8 +53,8 @@ import {
     prepareSignedTx,
     makeSignature,
 } from '~/src';
-import {ENV_DATA, minterGate, minterNode} from './variables';
 import {ensureCustomCoin, getValidatorMinStake, logError, wait} from '~/test/test-utils.js';
+import {ENV_DATA, minterGate, minterNode} from './variables';
 
 function getRandomCoin() {
     const digits = Math.random().toString().substring(2, 9 + 2);

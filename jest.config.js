@@ -1,6 +1,5 @@
 module.exports = {
     bail: true,
-    testRunner: 'jest-circus/runner',
     moduleNameMapper: {
         '~(.*)$': '<rootDir>/$1',
     },

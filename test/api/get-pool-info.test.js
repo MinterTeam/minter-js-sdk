@@ -1,5 +1,5 @@
-import {minterGate, minterNode} from './variables.js';
 import {logError} from '~/test/test-utils.js';
+import {minterGate, minterNode} from './variables.js';
 
 const API_TYPE_LIST = [
     {

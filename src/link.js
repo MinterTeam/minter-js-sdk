@@ -86,7 +86,7 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
     let payload = txParams.message || txParams.payload;
     if (payload) {
         if (typeof payload === 'string') {
-            payload = Buffer.from(payload, 'utf-8');
+            payload = Buffer.from(payload, 'utf8');
         }
         txProps.payload = payload;
     }
@@ -143,7 +143,7 @@ export function decodeLink(url, {address, seedPhrase, privateKey, decodeCheck} =
         gasCoin: Array.isArray(tx.gasCoin) ? undefined : bufferToInteger(tx.gasCoin),
         type: txType,
         data: txData,
-        payload: tx.payload.toString('utf-8'),
+        payload: tx.payload.toString('utf8'),
     };
 }
 

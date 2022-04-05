@@ -1,5 +1,5 @@
-import {ENV_DATA, minterGate, minterNode} from './variables';
 import {logError} from '~/test/test-utils.js';
+import {ENV_DATA, minterGate, minterNode} from './variables';
 
 
 describe('GetNonce', () => {

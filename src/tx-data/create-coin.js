@@ -31,7 +31,7 @@ export default function CreateCoinTxData({name = '', symbol, initialAmount, init
     this.maxSupply = maxSupply;
 
     this.txData = new TxDataCreateCoin({
-        name: Buffer.from(name.toString(), 'utf-8'),
+        name: Buffer.from(name.toString(), 'utf8'),
         symbol: coinToBuffer(symbol),
         initialAmount: `0x${convertToPip(initialAmount, 'hex')}`,
         initialReserve: `0x${convertToPip(initialReserve, 'hex')}`,
@@ -55,7 +55,7 @@ export default function CreateCoinTxData({name = '', symbol, initialAmount, init
  */
 CreateCoinTxData.fromBufferFields = function fromBufferFields({name, symbol, initialAmount, initialReserve, constantReserveRatio, maxSupply}, options = {}) {
     return new CreateCoinTxData({
-        name: toBuffer(name).toString('utf-8'),
+        name: toBuffer(name).toString('utf8'),
         symbol: bufferToCoin(toBuffer(symbol)),
         initialAmount: dataPipToAmount(initialAmount),
         initialReserve: dataPipToAmount(initialReserve),

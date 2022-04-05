@@ -109,7 +109,7 @@ export default function EstimateTxCommission(apiInstance) {
      */
     async function estimateFeeCalculate(txParams, axiosOptions) {
         if (!txParams || typeof txParams !== 'object') {
-            return Promise.reject(new TypeError('Invalid txParams'));
+            throw new TypeError('Invalid txParams');
         }
 
         const commissionPriceData = await getCommissionPrice(axiosOptions);

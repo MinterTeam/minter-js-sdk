@@ -1,5 +1,5 @@
-import {ENV_DATA, minterGate, minterNode} from './variables';
 import {ensureCustomCoin, logError} from '~/test/test-utils.js';
+import {ENV_DATA, minterGate, minterNode} from './variables';
 
 beforeAll(async () => {
     await ensureCustomCoin();

@@ -1,7 +1,7 @@
 import {TX_TYPE, txTypeList} from 'minterjs-util';
-import {ENV_DATA, minterGate, minterNode} from './variables';
 import {testData} from '~/test/test-data.js';
 import {logError} from '~/test/test-utils.js';
+import {ENV_DATA, minterGate, minterNode} from './variables';
 
 /**
  * @type {Array<Minter>}

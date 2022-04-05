@@ -21,7 +21,7 @@ export default function VoteUpdateTxData({version, publicKey, height}, options =
     this.height = height;
 
     this.txData = new TxDataVoteUpdate({
-        version: Buffer.from(version.toString(), 'utf-8'),
+        version: Buffer.from(version.toString(), 'utf8'),
         publicKey: toBuffer(publicKey),
         height: integerToHexString(height),
     });
@@ -38,7 +38,7 @@ export default function VoteUpdateTxData({version, publicKey, height}, options =
  */
 VoteUpdateTxData.fromBufferFields = function fromBufferFields({version, publicKey, height}, options = {}) {
     return new VoteUpdateTxData({
-        version: toBuffer(version).toString('utf-8'),
+        version: toBuffer(version).toString('utf8'),
         publicKey: dataToPublicKey(publicKey),
         height: dataToInteger(height),
     }, options);

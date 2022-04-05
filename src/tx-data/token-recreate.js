@@ -29,7 +29,7 @@ export default function RecreateTokenTxData({name = '', symbol, initialAmount, m
     this.burnable = burnable;
 
     this.txData = new TxDataRecreateToken({
-        name: Buffer.from(name.toString(), 'utf-8'),
+        name: Buffer.from(name.toString(), 'utf8'),
         symbol: coinToBuffer(symbol),
         initialAmount: `0x${convertToPip(initialAmount, 'hex')}`,
         maxSupply: `0x${convertToPip(maxSupply, 'hex')}`,
@@ -53,7 +53,7 @@ export default function RecreateTokenTxData({name = '', symbol, initialAmount, m
  */
 RecreateTokenTxData.fromBufferFields = function fromBufferFields({name, symbol, initialAmount, maxSupply, mintable, burnable}, options = {}) {
     return new RecreateTokenTxData({
-        name: toBuffer(name).toString('utf-8'),
+        name: toBuffer(name).toString('utf8'),
         symbol: bufferToCoin(toBuffer(symbol)),
         initialAmount: dataPipToAmount(initialAmount),
         maxSupply: dataPipToAmount(maxSupply),
