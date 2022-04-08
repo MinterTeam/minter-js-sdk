@@ -6,7 +6,7 @@ import {getBaseCoinSymbol, isBaseCoinSymbol, isCoinId, isCoinSymbol} from '../ut
 
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function(TxParams): (Promise<TxParams>)}
+ * @return {function(TxParams, AxiosRequestConfig): (Promise<TxParams>)}
  */
 export function ReplaceCoinSymbol(apiInstance) {
     const replaceCoinSymbolByPath = ReplaceCoinSymbolByPath(apiInstance);
@@ -293,7 +293,7 @@ function getTxParamsPathList(txParams) {
             break;
         }
         case TX_TYPE.MULTISEND: {
-            txParams.data.list.forEach((item, index) => {
+            txParams.data.list?.forEach((item, index) => {
                 pathList.push(`data.list[${index}].coin`);
             });
             break;
@@ -301,7 +301,7 @@ function getTxParamsPathList(txParams) {
         case TX_TYPE.BUY_SWAP_POOL:
         case TX_TYPE.SELL_SWAP_POOL:
         case TX_TYPE.SELL_ALL_SWAP_POOL: {
-            txParams.data.coins.forEach((item, index) => {
+            txParams.data.coins?.forEach((item, index) => {
                 pathList.push(`data.coins[${index}]`);
             });
             break;

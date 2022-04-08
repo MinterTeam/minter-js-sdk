@@ -3,7 +3,7 @@ import {convertFromPip, convertToPip, FeePrice, TX_TYPE} from 'minterjs-util';
 import {TxData} from 'minterjs-tx';
 import GetCommissionPrice from './get-commission-price.js';
 import GetPoolInfo from './get-pool-info.js';
-import {GetCoinId} from './replace-coin.js';
+import {GetCoinId, ReplaceCoinSymbol} from './replace-coin.js';
 import EstimateCoinBuy from './estimate-coin-buy.js';
 import getTxData from '../tx-data/index.js';
 import {prepareTx} from '../tx.js';
@@ -19,6 +19,7 @@ export default function EstimateTxCommission(apiInstance) {
     const getCommissionPrice = GetCommissionPrice(apiInstance);
     const getPoolInfo = GetPoolInfo(apiInstance);
     const getCoinId = GetCoinId(apiInstance);
+    const replaceCoinSymbol = ReplaceCoinSymbol(apiInstance);
     const estimateCoinBuy = EstimateCoinBuy(apiInstance);
 
     return estimateTxCommission;
@@ -42,14 +43,19 @@ export default function EstimateTxCommission(apiInstance) {
 
         let paramsPromise;
         if (typeof txParams === 'object') {
-            paramsPromise = getCoinId(txParams.gasCoin || 0, txParams.chainId, axiosOptions)
-                .then((coinId) => {
-                    validateUint(coinId, 'gasCoin');
-                    return {
-                        ...txParams,
-                        gasCoin: coinId,
-                    };
-                });
+            if (loose) {
+                paramsPromise = getCoinId(txParams.gasCoin || 0, txParams.chainId, axiosOptions)
+                    .then((coinId) => {
+                        validateUint(coinId, 'gasCoin');
+                        return {
+                            ...txParams,
+                            gasCoin: coinId,
+                        };
+                    });
+            } else {
+                // @TODO some fields of tx data can dropped, because they don't affect fee, it will reduce coin id requests and make estimation requests more cacheable
+                paramsPromise = replaceCoinSymbol(txParams, axiosOptions);
+            }
         } else {
             paramsPromise = Promise.resolve(txParams);
         }

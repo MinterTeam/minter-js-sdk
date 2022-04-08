@@ -33,13 +33,14 @@ const typeList = txTypeList
     });
 
 describe('EstimateTxCommission', () => {
-    const txParamsData = (apiType, extraParams) => Object.assign({
+    const txParamsData = (apiType, extraParams, extraData) => Object.assign({
         chainId: 2,
         type: TX_TYPE.SEND,
         data: {
             to: apiType.address,
             value: 10,
             coin: 0,
+            ...extraData,
         },
         gasCoin: 0,
         payload: 'custom message',
@@ -96,6 +97,36 @@ describe('EstimateTxCommission', () => {
                 throw error;
             });
     }, 30000);
+
+    describe('works with coin symbols', () => {
+        const getTxParamsWithCoinSymbols = (apiType) => txParamsData(apiType, {gasCoin: 'MNT'}, {coin: 'MNT'});
+
+        test.each(API_TYPE_LIST)('direct %s', (apiType) => {
+            expect.assertions(1);
+            const txParams = getTxParamsWithCoinSymbols(apiType);
+            return apiType.estimateTxCommission(txParams, {loose: false})
+                .then((feeData) => {
+                    expect(Number(feeData.commission)).toBeGreaterThan(0);
+                })
+                .catch((error) => {
+                    logError(error);
+                    throw error;
+                });
+        }, 30000);
+
+        test.each(API_TYPE_LIST)('loose %s', (apiType) => {
+            expect.assertions(1);
+            const txParams = getTxParamsWithCoinSymbols(apiType);
+            return apiType.estimateTxCommission(txParams, {loose: true})
+                .then((feeData) => {
+                    expect(Number(feeData.commission)).toBeGreaterThan(0);
+                })
+                .catch((error) => {
+                    logError(error);
+                    throw error;
+                });
+        }, 30000);
+    });
 
     describe.each(API_TYPE_LIST)('direct with empty: %s', (apiType) => {
         test.each(typeList)('works empty %s', ({hex: txType}) => {
