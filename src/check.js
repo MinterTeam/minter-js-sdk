@@ -89,7 +89,7 @@ class Check {
 
         const passwordBuffer = sha256(password);
         const lock = secp256k1.ecdsaSign(messageHash, passwordBuffer);
-        /** @type Buffer */
+        /** @type {Buffer} */
         const lockWithRecovery = Buffer.alloc(65);
         lockWithRecovery.set(lock.signature, 0);
         lockWithRecovery[64] = lock.recid;
@@ -103,15 +103,16 @@ class Check {
 }
 
 /**
- * @param {string} [seedPhrase]
- * @param {string|Buffer} [privateKey] - hex or Buffer
- * @param {string} password - utf8
- * @param {string} nonce
- * @param {number} [chainId=1]
- * @param {number|string} coin
- * @param {number|string} value
- * @param {number|string} gasCoin
- * @param {number} [dueBlock=999999999]
+ * @param {object} params
+ * @param {string} [params.seedPhrase]
+ * @param {string|Buffer} [params.privateKey] - hex or Buffer
+ * @param {string} params.password - utf8
+ * @param {string} params.nonce
+ * @param {number} [params.chainId=1]
+ * @param {number|string} params.coin
+ * @param {number|string} params.value
+ * @param {number|string} params.gasCoin
+ * @param {number} [params.dueBlock=999999999]
  * @param {boolean} [isReturnObject]
  * @return {string|Check}
  */
@@ -145,6 +146,9 @@ export default function issueCheck({seedPhrase, privateKey, password, nonce, cha
 }
 
 
+/**
+ * @param {string} rawCheck
+ */
 export function decodeCheck(rawCheck) {
     const check = new Check(rawCheck);
     return {

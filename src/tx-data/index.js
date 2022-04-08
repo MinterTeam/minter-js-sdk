@@ -92,7 +92,7 @@ export default function getTxData(txType) {
 }
 
 /**
- * @param {Buffer|TxData|Object} txData
+ * @param {Buffer|TxData|object} txData
  * @param {TX_TYPE} txType
  * @param {TxOptions} [options] - options for RedeemCheckTxData
  * @return {Buffer}

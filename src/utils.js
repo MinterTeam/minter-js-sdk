@@ -80,6 +80,9 @@ export function isNumericInteger(num) {
     }
 }
 
+/**
+ * @param {any} value
+ */
 export function isValidNumber(value) {
     const invalid = (typeof value !== 'number' && typeof value !== 'string') || (typeof value === 'string' && value.length === 0);
     return !invalid;
@@ -225,6 +228,9 @@ export function bufferFromBytes(bytes) {
     return bytes;
 }
 
+/**
+ * @param {object} obj
+ */
 export function proxyNestedTxData(obj) {
     addTxDataFields(obj);
 
@@ -234,6 +240,9 @@ export function proxyNestedTxData(obj) {
     obj.serializeToString = obj.txData.serializeToString;
 }
 
+/**
+ * @param {object} txData
+ */
 export function addTxDataFields(txData) {
     Object.defineProperty(txData, 'fields', {
         get() {
@@ -252,6 +261,10 @@ export function addTxDataFields(txData) {
     });
 }
 
+/**
+ * @param {string} value
+ * @param {string} fieldName
+ */
 export function validateAddress(value, fieldName) {
     validateNotEmpty(value, fieldName);
 
@@ -260,6 +273,10 @@ export function validateAddress(value, fieldName) {
     }
 }
 
+/**
+ * @param {string} value
+ * @param {string} fieldName
+ */
 export function validatePublicKey(value, fieldName) {
     validateNotEmpty(value, fieldName);
 
@@ -268,6 +285,10 @@ export function validatePublicKey(value, fieldName) {
     }
 }
 
+/**
+ * @param {string} value
+ * @param {string} fieldName
+ */
 export function validateCheck(value, fieldName) {
     validateNotEmpty(value, fieldName);
 
@@ -276,6 +297,10 @@ export function validateCheck(value, fieldName) {
     }
 }
 
+/**
+ * @param {number|string} value
+ * @param {string} fieldName
+ */
 export function validateAmount(value, fieldName) {
     validateNotEmpty(value, fieldName);
 
@@ -307,6 +332,10 @@ export function validateMaxSupply(maxSupply, initialAmount) {
     }
 }
 
+/**
+ * @param {number|string} origValue
+ * @param {string} fieldName
+ */
 export function validateUint(origValue, fieldName) {
     validateNotEmpty(origValue, fieldName);
 
@@ -324,6 +353,10 @@ export function validateUint(origValue, fieldName) {
     }
 }
 
+/**
+ * @param {number|string} origValue
+ * @param {string} fieldName
+ */
 export function validateUintArray(origValue, fieldName) {
     if (!Array.isArray(origValue)) {
         throw new TypeError(`Field \`${fieldName}\` is not an array`);
@@ -338,6 +371,10 @@ export function validateUintArray(origValue, fieldName) {
     });
 }
 
+/**
+ * @param {string} value
+ * @param {string} fieldName
+ */
 export function validateTicker(value, fieldName) {
     validateNotEmpty(value, fieldName);
 
@@ -346,6 +383,10 @@ export function validateTicker(value, fieldName) {
     }
 }
 
+/**
+ * @param {any} value
+ * @param {string} fieldName
+ */
 function validateNotEmpty(value, fieldName) {
     if (typeof value === 'undefined') {
         throw new TypeError(`Field \`${fieldName}\` is undefined`);
@@ -361,6 +402,10 @@ function validateNotEmpty(value, fieldName) {
     }
 }
 
+/**
+ * @param {boolean} value
+ * @param {string} fieldName
+ */
 export function validateBoolean(value, fieldName) {
     if (typeof value !== 'boolean') {
         throw new TypeError(`Field \`${fieldName}\` should be boolean, ${typeof value} given`);

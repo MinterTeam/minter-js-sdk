@@ -3,12 +3,13 @@ import {convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY}
 import {proxyNestedTxData, dataToInteger, dataPipToAmount, integerToHexString, validateAmount, validateTicker, validateMaxSupply} from '../utils.js';
 
 /**
- * @param {string} [name]
- * @param {string} symbol
- * @param {number|string} initialAmount
- * @param {number|string} initialReserve
- * @param {number|string} constantReserveRatio
- * @param {number|string} [maxSupply]
+ * @param {object} txData
+ * @param {string} [txData.name]
+ * @param {string} txData.symbol
+ * @param {number|string} txData.initialAmount
+ * @param {number|string} txData.initialReserve
+ * @param {number|string} txData.constantReserveRatio
+ * @param {number|string} [txData.maxSupply]
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -40,13 +41,13 @@ export default function RecreateCoinTxData({name = '', symbol, initialAmount, in
 }
 
 /**
- *
- * @param {Buffer|string} name
- * @param {Buffer|string} symbol
- * @param {Buffer|string|number} initialAmount
- * @param {Buffer|string|number} initialReserve
- * @param {Buffer|string|number} constantReserveRatio
- * @param {number|string|number} maxSupply
+ * @param {object} txData
+ * @param {Buffer|string} txData.name
+ * @param {Buffer|string} txData.symbol
+ * @param {Buffer|string|number} txData.initialAmount
+ * @param {Buffer|string|number} txData.initialReserve
+ * @param {Buffer|string|number} txData.constantReserveRatio
+ * @param {number|string|number} txData.maxSupply
  * @param {TxOptions} [options]
  * @return {RecreateCoinTxData}
  */

@@ -12,7 +12,6 @@ import {isCoinId, validateUint} from '../utils.js';
 Big.RM = 2;
 
 /**
- *
  * @param {MinterApiInstance} apiInstance
  * @return {function((TxParams|string), {loose?: boolean}=, AxiosRequestConfig=): (Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>)}
  */
@@ -26,7 +25,7 @@ export default function EstimateTxCommission(apiInstance) {
 
     /**
      * @param {TxParams|string} txParams
-     * @param {Object} [options]
+     * @param {object} [options]
      * @param {boolean} [options.loose = false]
      * @param {boolean} [options.direct]
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]

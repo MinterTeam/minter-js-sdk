@@ -3,8 +3,9 @@ import {convertToPip} from 'minterjs-util';
 import {proxyNestedTxData, bufferToInteger, integerToHexString, dataPipToAmount, validateAmount, validateUintArray} from '../utils.js';
 
 /**
- * @param {Array<number|string>} coins - list of coin id
- * @param {number|string} [minimumValueToBuy=0]
+ * @param {object} txData
+ * @param {Array<number|string>} txData.coins - list of coin id
+ * @param {number|string} [txData.minimumValueToBuy=0]
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -26,8 +27,9 @@ export default function SellAllPoolTxData({coins, minimumValueToBuy = 0}, option
 }
 
 /**
- * @param {Array<Buffer>} coins
- * @param {Buffer|string} minimumValueToBuy
+ * @param {object} txData
+ * @param {Array<Buffer>} txData.coins
+ * @param {Buffer|string} txData.minimumValueToBuy
  * @param {TxOptions} [options]
  * @return {SellAllPoolTxData}
  */

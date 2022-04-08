@@ -6,11 +6,12 @@ import {convertToPip, toBuffer} from 'minterjs-util';
 import {proxyNestedTxData, dataToInteger, dataPipToAmount, dataToAddress, dataToPublicKey, integerToHexString, validateAddress, validateAmount, validateUint, validatePublicKey} from '../utils.js';
 
 /**
- * @param {string} address
- * @param {string} publicKey
- * @param {number|string} commission
- * @param {number|string} coin - coin id
- * @param {number|string} stake
+ * @param {object} txData
+ * @param {string} txData.address
+ * @param {string} txData.publicKey
+ * @param {number|string} txData.commission
+ * @param {number|string} txData.coin - coin id
+ * @param {number|string} txData.stake
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -41,11 +42,12 @@ export default function DeclareCandidacyTxData({address, publicKey, commission, 
 }
 
 /**
- * @param {Buffer|string} address
- * @param {Buffer|string} publicKey
- * @param {Buffer|string} commission
- * @param {Buffer|string} coin
- * @param {Buffer|string} stake
+ * @param {object} txData
+ * @param {Buffer|string} txData.address
+ * @param {Buffer|string} txData.publicKey
+ * @param {Buffer|string} txData.commission
+ * @param {Buffer|string} txData.coin
+ * @param {Buffer|string} txData.stake
  * @param {TxOptions} [options]
  * @return {DeclareCandidacyTxData}
  */

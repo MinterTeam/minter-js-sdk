@@ -4,7 +4,7 @@ import {convertFromPip, convertToPip} from 'minterjs-util';
 import {isValidNumber, isCoinId} from '../utils.js';
 
 /**
- * @typedef {Object} EstimateSellResult
+ * @typedef {object} EstimateSellResult
  * @property {number|string} will_get - amount of coinToBuy
  * @property {number|string} commission - amount of coinToSell to pay fee
  * @property {"pool"|"bancor"} [swap_from]
@@ -12,12 +12,12 @@ import {isValidNumber, isCoinId} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function({coinToSell: string, valueToSell: (string|number), coinToBuy: string, swapFrom?: ESTIMATE_SWAP_TYPE, route?: Array<string|number>, gasCoin?: (string|number), coinCommission?: (string|number)}, axiosOptions: AxiosRequestConfig=): Promise<EstimateSellResult>}
+ * @return {function({coinToSell: string, valueToSell: (string|number), coinToBuy: string, swapFrom?: ESTIMATE_SWAP_TYPE, route?: Array<string|number>, gasCoin?: (string|number), coinCommission?: (string|number)}, axiosOptions: AxiosRequestConfig=):  Promise<EstimateSellResult>}
  */
 export default function EstimateCoinSell(apiInstance) {
     return estimateCoinSell;
     /**
-     * @param {Object} params
+     * @param {object} params
      * @param {string|number} params.coinToSell - ID or symbol of the coin to sell
      * @param {string|number} params.valueToSell
      * @param {string|number} params.coinToBuy - ID or symbol of the coin to buy

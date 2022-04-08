@@ -13,7 +13,7 @@ import GetCommissionPrice from './api/get-commission-price.js';
 import GetPoolInfo from './api/get-pool-info.js';
 
 /**
- * @param {Object} [options]
+ * @param {object} [options]
  * @param {string} [options.apiType]
  * @param {string} [options.chainId]
  * @param {string} [options.baseURL]

@@ -3,10 +3,11 @@ import {convertToPip} from 'minterjs-util';
 import {proxyNestedTxData, dataToInteger, dataPipToAmount, integerToHexString, validateAmount, validateUint} from '../utils.js';
 
 /**
- * @param {number|string} coin0 - coin id
- * @param {number|string} coin1 - coin id
- * @param {number|string} volume0
- * @param {number|string} volume1
+ * @param {object} txData
+ * @param {number|string} txData.coin0 - coin id
+ * @param {number|string} txData.coin1 - coin id
+ * @param {number|string} txData.volume0
+ * @param {number|string} txData.volume1
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -40,10 +41,11 @@ export default function CreatePoolTxData({coin0, coin1, volume0, volume1}, optio
 }
 
 /**
- * @param {Buffer|string} coin0
- * @param {Buffer|string} volume0
- * @param {Buffer|string} coin1
- * @param {Buffer|string} volume1
+ * @param {object} txData
+ * @param {Buffer|string} txData.coin0
+ * @param {Buffer|string} txData.volume0
+ * @param {Buffer|string} txData.coin1
+ * @param {Buffer|string} txData.volume1
  * @param {TxOptions} [options]
  * @return {CreatePoolTxData}
  */

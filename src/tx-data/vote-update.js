@@ -4,9 +4,10 @@ import {dataToInteger, dataToPublicKey, integerToHexString, proxyNestedTxData, v
 
 
 /**
- * @param {string} version
- * @param {string} publicKey
- * @param {number|string} height
+ * @param {object} txData
+ * @param {string} txData.version
+ * @param {string} txData.publicKey
+ * @param {number|string} txData.height
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -30,10 +31,11 @@ export default function VoteUpdateTxData({version, publicKey, height}, options =
 }
 
 /**
- * @param {Buffer|string} version
- * @param {Buffer|string} publicKey
- * @param {Buffer|string|number} height
- * @param {TxOptions} [options]§
+ * @param {object} txTata
+ * @param {Buffer|string} txTata.version
+ * @param {Buffer|string} txTata.publicKey
+ * @param {Buffer|string|number} txTata.height
+ * @param {TxOptions} [options]
  * @return {VoteUpdateTxData}
  */
 VoteUpdateTxData.fromBufferFields = function fromBufferFields({version, publicKey, height}, options = {}) {

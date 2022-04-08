@@ -8,15 +8,15 @@ import decorateTxParams from './tx-decorator/index.js';
 import {decodeTxData, ensureBufferData} from './tx-data/index.js';
 
 /**
- * @typedef {Object} TxParams
+ * @typedef {object} TxParams
  * @property {number} [nonce]
  * @property {number} [chainId=1]
  * @property {number} [gasPrice=1]
  * @property {number|string} [gasCoin='0']
  * @property {string|Buffer|TX_TYPE} type
  * @property {string|Buffer|TX_TYPE} [txType] - deprecated
- * @property {Buffer|TxData|Object} data
- * @property {Buffer|TxData|Object} [txData] - deprecated
+ * @property {Buffer|TxData|object} data
+ * @property {Buffer|TxData|object} [txData] - deprecated
  * @property {string} [payload]
  * @property {string} [message] - deprecated
  * @property {number} [signatureType]
@@ -24,7 +24,7 @@ import {decodeTxData, ensureBufferData} from './tx-data/index.js';
  */
 
 /**
- * @typedef {Object} TxOptions
+ * @typedef {object} TxOptions
  * @property {string} [seedPhrase] - to sign tx or get nonce or to make proof for redeemCheck tx
  * @property {ByteArray} [privateKey] - alternative to seedPhrase
  * @property {ByteArray} [address] - to get nonce (useful for multisignatures) or to make proof for redeemCheck tx
@@ -34,7 +34,7 @@ import {decodeTxData, ensureBufferData} from './tx-data/index.js';
  */
 
 /**
- * @typedef {Buffer, Uint8Array, string} ByteArray
+ * @typedef {Buffer|Uint8Array|string} ByteArray
  */
 
 
@@ -153,7 +153,7 @@ export function decodeTx(txRlp, {decodeCheck} = {}) {
 }
 
 /**
- * @param {Buffer|TxMultisignature|Object} signatureData
+ * @param {Buffer|TxMultisignature|object} signatureData
  * @param {number} signatureType
  * @return {Buffer}
  */

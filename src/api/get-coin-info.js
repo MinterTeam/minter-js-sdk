@@ -30,7 +30,7 @@ export default function GetCoinInfo(apiInstance) {
 }
 
 /**
- * @typedef {Object} CoinInfo
+ * @typedef {object} CoinInfo
  * @property {number|string} id
  * @property {string} name
  * @property {string} symbol

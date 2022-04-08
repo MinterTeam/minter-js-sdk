@@ -3,9 +3,10 @@ import {addressToString, toBuffer} from 'minterjs-util';
 import {proxyNestedTxData, bufferToInteger, integerToHexString, validateAddress, validateUint, validateUintArray} from '../utils.js';
 
 /**
- * @param {Array} addresses
- * @param {Array} weights
- * @param {number|string} threshold
+ * @param {object} txData
+ * @param {Array} txData.addresses
+ * @param {Array} txData.weights
+ * @param {number|string} txData.threshold
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -71,10 +72,10 @@ export default function EditMultisigTxData({addresses, weights, threshold}, opti
 }
 
 /**
- *
- * @param {Array<Buffer>} addresses
- * @param {Array<Buffer>} weights
- * @param {Buffer|string} threshold
+ * @param {object} txData
+ * @param {Array<Buffer>} txData.addresses
+ * @param {Array<Buffer>} txData.weights
+ * @param {Buffer|string} txData.threshold
  * @param {TxOptions} [options]
  * @return {EditMultisigTxData}
  */
@@ -84,7 +85,7 @@ EditMultisigTxData.fromBufferFields = function fromBufferFields({addresses, weig
         addresses: addresses.map((item) => addressToString(item)),
         weights: weights.map((item) => bufferToInteger(item)),
         threshold: bufferToInteger(threshold),
-    });
+    }, options);
 };
 
 /**

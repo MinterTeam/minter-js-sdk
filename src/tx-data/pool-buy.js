@@ -3,9 +3,10 @@ import {convertToPip, COIN_MAX_AMOUNT} from 'minterjs-util';
 import {proxyNestedTxData, bufferToInteger, integerToHexString, dataPipToAmount, validateAmount, validateUintArray} from '../utils.js';
 
 /**
- * @param {Array<number|string>} coins - list of coin id
- * @param {number|string} valueToBuy
- * @param {number|string} [maximumValueToSell]
+ * @param {object} txData
+ * @param {Array<number|string>} txData.coins - list of coin id
+ * @param {number|string} txData.valueToBuy
+ * @param {number|string} [txData.maximumValueToSell]
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -30,9 +31,10 @@ export default function BuyPoolTxData({coins, valueToBuy, maximumValueToSell = C
 }
 
 /**
- * @param {Array<Buffer>} coins
- * @param {Buffer|string} valueToBuy
- * @param {Buffer|string} maximumValueToSell
+ * @param {object} txData
+ * @param {Array<Buffer>} txData.coins
+ * @param {Buffer|string} txData.valueToBuy
+ * @param {Buffer|string} txData.maximumValueToSell
  * @param {TxOptions} [options]
  * @return {BuyPoolTxData}
  */

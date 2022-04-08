@@ -8,8 +8,7 @@ import {bufferFromBytes, getPrivateKeyFromSeedPhraseAsync, toInteger, wait} from
 
 /**
  * @typedef {TxOptions & PostTxOptionsExtra} PostTxOptions
- *
- * @typedef {Object} PostTxOptionsExtra
+ * @typedef {object} PostTxOptionsExtra
  * @property {number} [gasRetryLimit=2] - max number of autofix retries after gas error
  * @property {number} [nonceRetryLimit=0] - max number of autofix retries after nonce error
  * @preserve {number} [mempoolRetryLimit=0] - max number of retries after "already exists in mempool" error
@@ -117,9 +116,10 @@ function _postTxHandleErrors(apiInstance, txParams, options, axiosOptions) {
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {TxParams} txParams
- * @param {Object} txOptions
+ * @param {object} txOptions
  * @param {ByteArray} [txOptions.privateKey]
  * @param {string} [txOptions.address]
+ * @param {string} [txOptions.seedPhrase]
  * @param {import('axios').AxiosRequestConfig} [axiosOptions]
  * @return {Promise<number>}
  */
@@ -144,9 +144,10 @@ function ensureNonce(apiInstance, txParams, {privateKey, address, seedPhrase} = 
  * @param {MinterApiInstance} apiInstance
  */
 export function EnsureNonce(apiInstance) {
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * @param {TxParams} txParams
-     * @param {Object} txOptions
+     * @param {object} txOptions
      * @param {ByteArray} [txOptions.privateKey]
      * @param {string} [txOptions.address]
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
@@ -162,7 +163,7 @@ export function EnsureNonce(apiInstance) {
 /**
  * Get tx_result data from error
  * @param error
- * @return {Object|undefined}
+ * @return {object|undefined}
  */
 // function getTxResult(error) {
 //     error = error.response?.data?.error;
@@ -172,7 +173,7 @@ export function EnsureNonce(apiInstance) {
 
 /**
  * Check if error caused by too low gas
- * @param error
+ * @param {AxiosError} error
  * @return {boolean}
  */
 function isGasError(error) {
@@ -181,7 +182,7 @@ function isGasError(error) {
 
 /**
  * Check if error caused by: "Tx from address already exists in mempool"
- * @param error
+ * @param {AxiosError} error
  * @return {boolean}
  */
 function isMempoolError(error) {
@@ -190,7 +191,7 @@ function isMempoolError(error) {
 
 /**
  * Check if error caused by nonce
- * @param error
+ * @param {AxiosError} error
  * @return {boolean}
  */
 function isNonceError(error) {
@@ -199,7 +200,7 @@ function isNonceError(error) {
 
 /**
  * Retrieve required min gas value from error message
- * @param error
+ * @param {AxiosError} error
  * @return {number}
  */
 function getMinGasFromError(error) {
@@ -208,7 +209,7 @@ function getMinGasFromError(error) {
 
 /**
  * Retrieve required min gas value from error message
- * @param error
+ * @param {AxiosError} error
  * @return {number}
  */
 function getNonceFromError(error) {

@@ -43,5 +43,5 @@ export default function PostSignedTx(apiInstance) {
  * @property {number} type
  * @property {TxData} data
  * @property {string} payload
- * @property {Object} tags
+ * @property {object} tags
  */

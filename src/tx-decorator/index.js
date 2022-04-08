@@ -21,7 +21,7 @@ const noop = (x) => x;
 
 /**
  * @param {TxParams} txParams
- * @param {Object} [options]
+ * @param {object} [options]
  * @param {boolean} [options.setGasCoinAsCoinToSpend]
  * @return {TxParams}
  */

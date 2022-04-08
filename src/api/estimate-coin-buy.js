@@ -4,7 +4,7 @@ import {convertFromPip, convertToPip} from 'minterjs-util';
 import {isCoinId, isValidNumber} from '../utils.js';
 
 /**
- * @typedef {Object} EstimateBuyResult
+ * @typedef {object} EstimateBuyResult
  * @property {number|string} will_pay - amount of coinToSell
  * @property {number|string} commission - amount of coinToSell to pay fee
  * @property {"pool"|"bancor"} swap_from
@@ -17,7 +17,7 @@ import {isCoinId, isValidNumber} from '../utils.js';
 export default function EstimateCoinBuy(apiInstance) {
     return estimateCoinBuy;
     /**
-     * @param {Object} params
+     * @param {object} params
      * @param {string|number} params.coinToBuy - ID or symbol of the coin to buy
      * @param {string|number} params.valueToBuy
      * @param {string|number} params.coinToSell - ID or symbol of the coin to sell

@@ -6,10 +6,10 @@ import {dataToInteger, dataPipToAmount, dataToAddress, integerToHexString, proxy
 
 
 /**
- *
- * @param {string} to
- * @param {number|string} value
- * @param {number|string} coin - coin id
+ * @param {object} txData
+ * @param {string} txData.to
+ * @param {number|string} txData.value
+ * @param {number|string} txData.coin - coin id
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -34,9 +34,10 @@ export default function SendTxData({to, value = 0, coin}, options = {}) {
 }
 
 /**
- * @param {Buffer|string} to
- * @param {Buffer|string|number} value
- * @param {Buffer|string|number} coin
+ * @param {object} txData
+ * @param {Buffer|string} txData.to
+ * @param {Buffer|string|number} txData.value
+ * @param {Buffer|string|number} txData.coin
  * @param {TxOptions} [options]
  * @return {SendTxData}
  */

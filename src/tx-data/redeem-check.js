@@ -8,8 +8,9 @@ import {proxyNestedTxData, validateCheck} from '../utils.js';
 
 
 /**
- * @param {ByteArray} check
- * @param {ByteArray} [proof]
+ * @param {object} txData
+ * @param {ByteArray} txData.check
+ * @param {ByteArray} [txData.proof]
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -50,9 +51,9 @@ export default function RedeemCheckTxData({check, proof}, options = {}) {
 }
 
 /**
- *
- * @param {Buffer|string} check
- * @param {Buffer|string} proof
+ * @param {object} txData
+ * @param {Buffer|string} txData.check
+ * @param {Buffer|string} txData.proof
  * @param {TxOptions} [options]
  * @return {RedeemCheckTxData}
  */
@@ -72,10 +73,11 @@ RedeemCheckTxData.fromRlp = function fromRlp(data) {
 };
 
 /**
- * @param {ByteArray} password
- * @param {ByteArray} [address]
- * @param {ByteArray} [privateKey]
- * @param {string} [seedPhrase]
+ * @param {TxOptions} options
+ * @param {ByteArray} options.password
+ * @param {ByteArray} [options.address]
+ * @param {ByteArray} [options.privateKey]
+ * @param {string} [options.seedPhrase]
  * @return {ArrayBuffer|Buffer}
  */
 function getProofWithRecovery({password, address, privateKey, seedPhrase}) {

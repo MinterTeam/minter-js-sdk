@@ -3,8 +3,9 @@ import {toBuffer} from 'minterjs-util';
 import {dataToPublicKey, proxyNestedTxData, validatePublicKey} from '../utils.js';
 
 /**
- * @param {string} publicKey
- * @param {string} newPublicKey
+ * @param {object} txData
+ * @param {string} txData.publicKey
+ * @param {string} txData.newPublicKey
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -26,8 +27,9 @@ export default function EditCandidatePublicKeyTxData({publicKey, newPublicKey}, 
 }
 
 /**
- * @param {Buffer|string} publicKey
- * @param {Buffer|string} newPublicKey
+ * @param {object} txData
+ * @param {Buffer|string} txData.publicKey
+ * @param {Buffer|string} txData.newPublicKey
  * @param {TxOptions} [options]
  * @return {EditCandidatePublicKeyTxData}
  */

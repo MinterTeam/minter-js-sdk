@@ -3,8 +3,9 @@ import {toBuffer, coinToBuffer, bufferToCoin} from 'minterjs-util';
 import {dataToAddress, proxyNestedTxData, validateAddress, validateTicker} from '../utils.js';
 
 /**
- * @param {string} symbol
- * @param {string} newOwner
+ * @param {object} txData
+ * @param {string} txData.symbol
+ * @param {string} txData.newOwner
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -26,9 +27,9 @@ export default function EditTickerOwnerTxData({symbol, newOwner}, options = {}) 
 }
 
 /**
- *
- * @param {Buffer|string} symbol
- * @param {Buffer|string} newOwner
+ * @param {object} txData
+ * @param {Buffer|string} txData.symbol
+ * @param {Buffer|string} txData.newOwner
  * @param {TxOptions} [options]
  * @return {EditTickerOwnerTxData}
  */

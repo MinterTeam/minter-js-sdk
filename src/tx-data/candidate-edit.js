@@ -5,10 +5,11 @@ import {toBuffer} from 'minterjs-util';
 import {dataToAddress, dataToPublicKey, proxyNestedTxData, validateAddress, validatePublicKey} from '../utils.js';
 
 /**
- * @param {string} publicKey
- * @param {string} rewardAddress
- * @param {string} ownerAddress
- * @param {string} controlAddress
+ * @param {object} txData
+ * @param {string} txData.publicKey
+ * @param {string} txData.rewardAddress
+ * @param {string} txData.ownerAddress
+ * @param {string} txData.controlAddress
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -36,10 +37,11 @@ export default function EditCandidateTxData({publicKey, rewardAddress, ownerAddr
 }
 
 /**
- * @param {Buffer|string} publicKey
- * @param {Buffer|string} rewardAddress
- * @param {Buffer|string} ownerAddress
- * @param {Buffer|string} controlAddress
+ * @param {object} txData
+ * @param {Buffer|string} txData.publicKey
+ * @param {Buffer|string} txData.rewardAddress
+ * @param {Buffer|string} txData.ownerAddress
+ * @param {Buffer|string} txData.controlAddress
  * @param {TxOptions} [options]
  * @return {EditCandidateTxData}
  */

@@ -18,11 +18,11 @@ const API_TYPE_LIST = [
 
 
 describe('GetPoolInfo', () => {
-    test.skip.each(API_TYPE_LIST)('should work %s', (apiType) => {
+    test.each(API_TYPE_LIST)('should work %s', (apiType) => {
         expect.assertions(1);
 
         // @TODO get proper pool pair
-        return apiType.getPoolInfo(0, 1833)
+        return apiType.getPoolInfo(0, 1993)
             .then((poolInfo) => {
                 expect(Number(poolInfo.amount0)).toBeGreaterThan(0);
             })

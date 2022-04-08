@@ -3,7 +3,8 @@ import {dataToInteger, integerToHexString, proxyNestedTxData, validateUint} from
 
 
 /**
- * @param {number|string} price
+ * @param {object} txTata
+ * @param {number|string} txTata.price
  * @param {TxOptions} [options]
  * @constructor
  */

@@ -117,9 +117,10 @@ describe('buy', () => {
     });
 });
 
-// describe('create coin', () => {
-//     const txItem = findTxItem(TX_TYPE.CREATE_COIN);
-// });
+// @TODO
+describe('create coin', () => {
+    const txItem = findTxItem(TX_TYPE.CREATE_COIN);
+});
 
 describe('declare candidacy', () => {
     const txItem = findTxItem(TX_TYPE.DECLARE_CANDIDACY);
@@ -183,21 +184,22 @@ describe('unbond', () => {
     });
 });
 
-// describe('set candidate on', () => {
-//     const txItem = findTxItem(TX_TYPE.SET_CANDIDATE_ON);
-// });
+// @TODO
+describe('set candidate on', () => {
+    const txItem = findTxItem(TX_TYPE.SET_CANDIDATE_ON);
+});
 
-// describe('set candidate off', () => {
-//     const txItem = findTxItem(TX_TYPE.SET_CANDIDATE_OFF);
-// });
+describe('set candidate off', () => {
+    const txItem = findTxItem(TX_TYPE.SET_CANDIDATE_OFF);
+});
 
-// describe('create multisig', () => {
-//     const txItem = findTxItem(TX_TYPE.CREATE_MULTISIG);
-// });
+describe('create multisig', () => {
+    const txItem = findTxItem(TX_TYPE.CREATE_MULTISIG);
+});
 
-// describe('multisend', () => {
-//     const txItem = findTxItem(TX_TYPE.MULTISEND);
-// });
+describe('multisend', () => {
+    const txItem = findTxItem(TX_TYPE.MULTISEND);
+});
 
 describe('redeem check', () => {
     const txItem = findTxItem(TX_TYPE.REDEEM_CHECK);

@@ -19,7 +19,7 @@ export default function GetPoolInfo(apiInstance) {
 }
 
 /**
- * @typedef {Object} PoolInfo
+ * @typedef {object} PoolInfo
  * @property {string|number} amount0
  * @property {string|number} amount1
  * @property {string|number} liquidity

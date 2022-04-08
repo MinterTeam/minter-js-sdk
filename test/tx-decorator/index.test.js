@@ -1,3 +1,3 @@
-test('decorateTxParams', () => {
+describe('decorateTxParams', () => {
     // @TODO test only src and not test builds
 });

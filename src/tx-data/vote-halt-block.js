@@ -4,8 +4,9 @@ import {dataToInteger, dataToPublicKey, integerToHexString, proxyNestedTxData, v
 
 
 /**
- * @param {string} publicKey
- * @param {number|string} height
+ * @param {object} txData
+ * @param {string} txData.publicKey
+ * @param {number|string} txData.height
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -27,8 +28,9 @@ export default function VoteHaltBlockTxData({publicKey, height}, options = {}) {
 }
 
 /**
- * @param {Buffer|string} publicKey
- * @param {Buffer|string|number} height
+ * @param {object} txData
+ * @param {Buffer|string} txData.publicKey
+ * @param {Buffer|string|number} txData.height
  * @param {TxOptions} [options]
  * @return {VoteHaltBlockTxData}
  */

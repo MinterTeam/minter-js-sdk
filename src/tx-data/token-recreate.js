@@ -3,12 +3,13 @@ import {convertToPip, toBuffer, coinToBuffer, bufferToCoin, COIN_MAX_MAX_SUPPLY}
 import {proxyNestedTxData, dataPipToAmount, validateAmount, validateTicker, validateMaxSupply, validateBoolean, bufferToBoolean} from '../utils.js';
 
 /**
- * @param {string} [name]
- * @param {string} symbol
- * @param {number|string} initialAmount
- * @param {number|string} [maxSupply]
- * @param {boolean} mintable
- * @param {boolean} burnable
+ * @param {object} txData
+ * @param {string} [txData.name]
+ * @param {string} txData.symbol
+ * @param {number|string} txData.initialAmount
+ * @param {number|string} [txData.maxSupply]
+ * @param {boolean} txData.mintable
+ * @param {boolean} txData.burnable
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -41,13 +42,13 @@ export default function RecreateTokenTxData({name = '', symbol, initialAmount, m
 }
 
 /**
- *
- * @param {Buffer|string} name
- * @param {Buffer|string} symbol
- * @param {Buffer|string|number} initialAmount
- * @param {Buffer|string|number} maxSupply
- * @param {Buffer|string} mintable
- * @param {Buffer|string} burnable
+ * @param {object} txData
+ * @param {Buffer|string} txData.name
+ * @param {Buffer|string} txData.symbol
+ * @param {Buffer|string|number} txData.initialAmount
+ * @param {Buffer|string|number} txData.maxSupply
+ * @param {Buffer|string} txData.mintable
+ * @param {Buffer|string} txData.burnable
  * @param {TxOptions} [options]
  * @return {RecreateTokenTxData}
  */

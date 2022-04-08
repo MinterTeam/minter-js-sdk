@@ -3,14 +3,14 @@ import axios from 'axios';
 import {API_TYPE_NODE} from '../variables.js';
 
 /**
- * @typedef {Object} MinterApiInstanceType
+ * @typedef {object} MinterApiInstanceType
+ * @property {AxiosDefaults} defaults
  * @property {string} defaults.apiType
- *
  * @typedef {AxiosInstance | MinterApiInstanceType} MinterApiInstance
  */
 
 /**
- * @param {Object} [options]
+ * @param {object} [options]
  * @param {string} [options.apiType]
  * @param {number} [options.chainId]
  * @param {string} [options.baseURL]
@@ -109,6 +109,9 @@ function thenableToRejectedAdapter(config) {
 }
 */
 
+/**
+ * @param {string|any} data
+ */
 function parseData(data) {
     if (typeof data === 'string') {
         try {

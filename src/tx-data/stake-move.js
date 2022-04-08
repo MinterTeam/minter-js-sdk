@@ -5,10 +5,11 @@ import {convertToPip, toBuffer} from 'minterjs-util';
 import { proxyNestedTxData, dataToInteger, dataPipToAmount, dataToPublicKey, validateAmount, validateUint, validatePublicKey, integerToHexString} from '../utils.js';
 
 /**
- * @param {string} from
- * @param {string} to
- * @param {number|string} coin - coin id
- * @param {number|string} stake
+ * @param {object} txData
+ * @param {string} txData.from
+ * @param {string} txData.to
+ * @param {number|string} txData.coin - coin id
+ * @param {number|string} txData.stake
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -37,11 +38,11 @@ export default function MoveStakeTxData({from, to, coin, stake}, options = {}) {
 
 
 /**
- *
- * @param {Buffer|string} from
- * @param {Buffer|string} to
- * @param {Buffer|string} stake
- * @param {Buffer|string} coin
+ * @param {object} txData
+ * @param {Buffer|string} txData.from
+ * @param {Buffer|string} txData.to
+ * @param {Buffer|string} txData.stake
+ * @param {Buffer|string} txData.coin
  * @param {TxOptions} [options]
  * @return {MoveStakeTxData}
  */

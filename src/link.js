@@ -53,13 +53,13 @@ class Link {
 }
 
 /**
- * @typedef {Object} LinkParams
+ * @typedef {object} LinkParams
  * @property {number|string} [nonce]
  * @property {number|string} [gasPrice]
  * @property {number|string} [gasCoin]
  * @property {string|Buffer|TX_TYPE} type
  * @property {string|Buffer|TX_TYPE} [txType] - deprecated
- * @property {Buffer|Object|TxData} data
+ * @property {Buffer|object|TxData} data
  * @property {Buffer} [txData] - deprecated
  * @property {string} [payload]
  * @property {string} [message] - deprecated
@@ -110,10 +110,11 @@ export function prepareLink(txParams = {}, linkHost = DEFAULT_LINK_HOST) {
 
 /**
  * @param {string} url
- * @param {string} [address]
- * @param {string} [seedPhrase]
- * @param {string} [privateKey]
- * @param {boolean} [decodeCheck]
+ * @param {object} [options]
+ * @param {string} [options.address]
+ * @param {string} [options.seedPhrase]
+ * @param {string} [options.privateKey]
+ * @param {boolean} [options.decodeCheck]
  * @return {TxParams}
  */
 export function decodeLink(url, {address, seedPhrase, privateKey, decodeCheck} = {}) {
@@ -147,11 +148,17 @@ export function decodeLink(url, {address, seedPhrase, privateKey, decodeCheck} =
     };
 }
 
+/**
+ * @param {ByteArray} byteArray
+ */
 function base64urlEncode(byteArray) {
     return Buffer.from(byteArray).toString('base64').replace(/\+/g, '-').replace(/\//g, '_')
         .replace(/=/g, '');
 }
 
+/**
+ * @param {string} base64urlString
+ */
 function base64urlDecode(base64urlString) {
     const padModulus = base64urlString.length % 4;
     const padLength = padModulus ? 4 - padModulus : 0;
@@ -161,7 +168,7 @@ function base64urlDecode(base64urlString) {
 
 /**
  * toBuffer which supports UTF8 strings
- * @param value
+ * @param {ToBufferInputTypes} value
  * @return {Buffer}
  */
 function toBuffer(value) {

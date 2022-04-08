@@ -3,11 +3,12 @@ import {convertToPip} from 'minterjs-util';
 import {proxyNestedTxData, dataToInteger, dataPipToAmount, integerToHexString, validateAmount, validateUint} from '../utils.js';
 
 /**
- * @param {number|string} coin0 - coin id
- * @param {number|string} coin1 - coin id
- * @param {number|string} liquidity - volume of shares to be withdrawn from the pool
- * @param {number|string} [minimumVolume0]
- * @param {number|string} [minimumVolume1]
+ * @param {object} txData
+ * @param {number|string} txData.coin0 - coin id
+ * @param {number|string} txData.coin1 - coin id
+ * @param {number|string} txData.liquidity - volume of shares to be withdrawn from the pool
+ * @param {number|string} [txData.minimumVolume0]
+ * @param {number|string} [txData.minimumVolume1]
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -38,11 +39,12 @@ export default function RemoveLiquidityTxData({coin0, coin1, liquidity, minimumV
 }
 
 /**
- * @param {Buffer|string} coin0
- * @param {Buffer|string} coin1
- * @param {Buffer|string} liquidity
- * @param {Buffer|string} minimumVolume0
- * @param {Buffer|string} minimumVolume1
+ * @param {object} txData
+ * @param {Buffer|string} txData.coin0
+ * @param {Buffer|string} txData.coin1
+ * @param {Buffer|string} txData.liquidity
+ * @param {Buffer|string} txData.minimumVolume0
+ * @param {Buffer|string} txData.minimumVolume1
  * @param {TxOptions} [options]
  * @return {RemoveLiquidityTxData}
  */

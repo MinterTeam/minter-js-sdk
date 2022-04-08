@@ -25,22 +25,28 @@ export function ReplaceCoinSymbol(apiInstance) {
 /**
  *
  * @param {MinterApiInstance} apiInstance
- * @return {function(Object, Array<string>, number=, AxiosRequestConfig=): Promise<Object>}
+ * @return {function(object, Array<string>, number=, AxiosRequestConfig=): Promise<object>}
  * @constructor
  */
 export function ReplaceCoinSymbolByPath(apiInstance) {
     const replaceParamsByPath = ReplaceParamsByPath(apiInstance);
     return replaceCoinSymbolByPath;
     /**
-     * @param {Object} txParams
+     * @param {object} txParams
      * @param {Array<string>} pathList
      * @param {number} [chainId]
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
-     * @return {Promise<Object>}
+     * @return {Promise<object>}
      */
     function replaceCoinSymbolByPath(txParams, pathList, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
         return replaceParamsByPath(txParams, pathList, replacer, chainId, axiosOptions);
 
+        /**
+         * @param {string} symbolValue
+         * @param {number|string} chainId
+         * @param {MinterApiInstance} apiInstance
+         * @param {import('axios').AxiosRequestConfig} axiosOptions
+         */
         // eslint-disable-next-line no-shadow, unicorn/consistent-function-scoping
         function replacer(symbolValue, chainId, apiInstance, axiosOptions) {
             if (isCoinSymbol(symbolValue)) {
@@ -60,12 +66,12 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
 export function ReplaceParamsByPath(apiInstance) {
     return replaceParamsByPath;
     /**
-     * @param {Object} txParams
+     * @param {object} txParams
      * @param {Array<string>} pathList
      * @param {function(inputValue: any, number=, AxiosRequestConfig=): Promise} replacer
      * @param {number} [chainId]
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
-     * @return {Promise<Object>}
+     * @return {Promise<object>}
      */
     function replaceParamsByPath(txParams, pathList, replacer, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
         let promiseList = {};
@@ -116,7 +122,7 @@ export function GetCoinId(apiInstance) {
  * @template T
  * @param {function(value, ...otherArgs): Promise<T>} fn
  * @param {*|Array<*>} value
- * @param {...Object} otherArgs
+ * @param {...object} otherArgs
  * @return {Promise<T|Array<T>>}
  */
 function processArrayByPromise(fn, value, ...otherArgs) {
@@ -175,22 +181,28 @@ export function ReplaceCoinId(apiInstance) {
 /**
  *
  * @param {MinterApiInstance} apiInstance
- * @return {function(Object, Array<string>, number=, AxiosRequestConfig=): Promise<Object>}
+ * @return {function(object, Array<string>, number=, AxiosRequestConfig=): Promise<object>}
  * @constructor
  */
 export function ReplaceCoinIdByPath(apiInstance) {
     const replaceParamsByPath = ReplaceParamsByPath(apiInstance);
     return replaceCoinIdByPath;
     /**
-     * @param {Object} txParams
+     * @param {object} txParams
      * @param {Array<string>} pathList
      * @param {number} [chainId]
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
-     * @return {Promise<Object>}
+     * @return {Promise<object>}
      */
     function replaceCoinIdByPath(txParams, pathList, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
         return replaceParamsByPath(txParams, pathList, replacer, chainId, axiosOptions);
 
+        /**
+         * @param {number|any} idValue
+         * @param {number} [chainId]
+         * @param {MinterApiInstance} apiInstance
+         * @param {import('axios').AxiosRequestConfig} [axiosOptions]
+         */
         // eslint-disable-next-line no-shadow, unicorn/consistent-function-scoping
         function replacer(idValue, chainId, apiInstance, axiosOptions) {
             if (isCoinId(idValue)) {

@@ -5,7 +5,6 @@
 export default function GetCommissionPrice(apiInstance) {
     /**
      * Get nonce for new transaction: last transaction number + 1
-     * @param {boolean} mapData
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<CommissionPriceData>}
      */

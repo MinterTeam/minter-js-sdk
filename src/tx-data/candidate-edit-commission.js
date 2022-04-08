@@ -3,8 +3,9 @@ import {toBuffer} from 'minterjs-util';
 import {dataToInteger, dataToPublicKey, integerToHexString, proxyNestedTxData, validatePublicKey, validateUint} from '../utils.js';
 
 /**
- * @param {string} publicKey
- * @param {number|string} commission
+ * @param {object} txData
+ * @param {string} txData.publicKey
+ * @param {number|string} txData.commission
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -26,8 +27,9 @@ export default function EditCandidateCommissionTxData({publicKey, commission}, o
 }
 
 /**
- * @param {Buffer|string} publicKey
- * @param {Buffer|string} commission
+ * @param {object} txData
+ * @param {Buffer|string} txData.publicKey
+ * @param {Buffer|string} txData.commission
  * @param {TxOptions} [options]
  * @return {EditCandidateCommissionTxData}
  */

@@ -273,8 +273,7 @@ describe('PostTx handle low gasPrice', () => {
         }, 70000);
     });
 
-    // @TODO enable after MN-482 will be resolved
-    test.skip.each(API_TYPE_LIST)('should work with retries | %s', (apiType) => {
+    test.each(API_TYPE_LIST)('should work with retries | %s', (apiType) => {
         expect.assertions(2);
         const txParams = txParamsData(apiType);
         return apiType.postTx(txParams, {privateKey: apiType.privateKey})
@@ -1000,7 +999,7 @@ describe('validator', () => {
                 payload: 'custom message',
             });
 
-            test.skip.each(API_TYPE_LIST)('should work %s', async (apiType) => {
+            test.each(API_TYPE_LIST)('should work %s', async (apiType) => {
                 expect.assertions(2);
                 const txParams = txParamsData(apiType);
                 return apiType.postTx(txParams, {privateKey: apiType.privateKey})

@@ -7,7 +7,8 @@ import SendTxData from './send.js';
 import {proxyNestedTxData, integerToHexString, validateAddress, validateAmount, validateUint} from '../utils.js';
 
 /**
- * @param {Array} list
+ * @param {object} txData
+ * @param {Array} txData.list
  * @param {TxOptions} [options]
  * @constructor
  */

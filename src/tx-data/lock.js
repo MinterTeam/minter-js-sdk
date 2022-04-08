@@ -5,9 +5,10 @@ import {dataToInteger, dataPipToAmount, integerToHexString, proxyNestedTxData, v
 
 
 /**
- * @param {number|string} dueBlock
- * @param {number|string} value
- * @param {number|string} coin - coin id
+ * @param {object} txData
+ * @param {number|string} txData.dueBlock
+ * @param {number|string} txData.value
+ * @param {number|string} txData.coin - coin id
  * @param {TxOptions} [options]
  * @constructor
  */
@@ -32,9 +33,10 @@ export default function LockTxData({dueBlock = 0, value = 0, coin}, options = {}
 }
 
 /**
- * @param {Buffer|string|number} dueBlock
- * @param {Buffer|string|number} value
- * @param {Buffer|string|number} coin
+ * @param {object} txData
+ * @param {Buffer|string|number} txData.dueBlock
+ * @param {Buffer|string|number} txData.value
+ * @param {Buffer|string|number} txData.coin
  * @param {TxOptions} [options]
  * @return {LockTxData}
  */
