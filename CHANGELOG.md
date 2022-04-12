@@ -1,4 +1,4 @@
-## WIP
+## 0.42.0 - 2022.04.12
 - add `Lock` and `LockStake` tx data
 - restore support of `MoveStake` tx data
 - add `disableValidation` option to tx data constructors
