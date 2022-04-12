@@ -102,8 +102,10 @@ export default function EstimateTxCommission(apiInstance) {
 
         return apiInstance.get(`estimate_tx_commission/${tx}`, axiosOptions)
             .then((response) => {
-                response.data.commission = convertFromPip(response.data.commission);
-                return response.data;
+                return {
+                    ...response.data,
+                    commission: convertFromPip(response.data.commission),
+                };
             });
     }
 

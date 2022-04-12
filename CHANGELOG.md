@@ -1,3 +1,6 @@
+## 0.42.1 - 2022.04.13
+- fix direct `estimateTxCommission` to not mutate response
+
 ## 0.42.0 - 2022.04.12
 - add `Lock` and `LockStake` tx data
 - restore support of `MoveStake` tx data
