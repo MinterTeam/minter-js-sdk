@@ -662,53 +662,76 @@ minter.estimateCoinSellAll({
 
 
 ### .estimateTxCommission()
-Estimate transaction fee. This method can operate in two modes: 
-- 1. `loose: false` (default mode) makes one direct request to the `estimate_tx_commission/{tx}` API.   
-Pros: fewer requests, more accuracy. Cons: provides less data (only `commission` field).
-- 2. `loose: true` makes several requests for blockchain data and approximately calculates the fee relying on that data, but don't take limit orders into account.
-Pros: returns more data (`commission`, `baseCoinCommission`, `priceCoinCommission`, `commissionPriceData`), some requests can be cached so that when users input payload, the fee could be calculated dynamically without extra requests for each payload character. Cons: less accurate because don't consider limit orders and when caching is used, makes more requests for a single estimate.
-     
+Estimate transaction fee.
+
 First argument `txParams` can be a `TxParams` object or raw signed tx hex string.  
-Second options argument accepts `loose` field, `false` by default.
+Second options argument accepts `needGasCoinFee`, `needBaseCoinFee`, and `needPriceCoinFee` fields to customize estimate behaviour.
 Resolves with object containing fee.
+
+`needGasCoinFee`
+- `FEE_PRECISION_SETTING.PRECISE` (default) - make direct call to `estimate_tx_commission/{tx}` api method and return `commission` field
+- `FEE_PRECISION_SETTING.IMPRECISE` - if gasCoin same as baseCoin and baseCoinFee is defined (otherwise upgrades to `PRECISE`), then it makes several requests for blockchain data and approximately calculates the fee relying on that data, but don't take limit orders into account.  
+Pros: if used with request caching then when users input payload, the fee could be calculated dynamically without extra requests for each payload character.  
+Cons: less accurate because don't consider limit orders, makes more requests for a single estimate.
+- `FEE_PRECISION_SETTING.OMIT` - omits `commission` field
+
+
+`needBaseCoinFee`
+- `FEE_PRECISION_SETTING.IMPRECISE` - works only if priceCoinFee is defined, calculates basing on pool data, inaccurate because don't consider limit orders
+- ` FEE_PRECISION_SETTING.OMIT` (default) - omits `baseCoinComission` field
+
+`needPriceCoinFee`
+- `FEE_PRECISION_SETTING.PRECISE` - make an API call to the `price_commissions` method and returns `priceCoinCommission` and `commissionPriceData` fields
+- `FEE_PRECISION_SETTING.OMIT` (default) - omits `priceCoinCommission`
 
 See also [Minter commissions docs](https://www.minter.network/docs#commissions)
 
 ```js
 /**
  * @param {TxParams|string} txParams
- * @param {Object} [options]
- * @param {boolean} [options.loose]
+ * @param {object} [options]
+ * @param {FEE_PRECISION_SETTING} [options.needGasCoinFee]
+ * @param {FEE_PRECISION_SETTING} [options.needBaseCoinFee]
+ * @param {FEE_PRECISION_SETTING} [options.needPriceCoinFee]
  * @param {AxiosRequestConfig} [axiosOptions] - for main request (estimation)
- * @param {AxiosRequestConfig} [extraAxiosOptions] - for secondary requests (commission price data, coin IDs, andd pool info)
+ * @param {AxiosRequestConfig} [extraAxiosOptions] - for secondary requests (commission price data, coin IDs, and pool info)
  * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
  */
 
-// direct from raw tx string
+// from raw tx string: one direct api call
 minter.estimateTxCommission('0xf8920101028a4d4e540000000000000001aae98a4d4e...')
     .then((feeData) => {
         console.log(feeData);
         // { commission: 0.1 }
     });
 
-// direct from tx params
+// from tx params: one direct api call
 minter.estimateTxCommission({
     type: TX_TYPE.SEND,
     data: {to: 'Mx...', value: 10, coin: 'BIP'},
     gasCoin: 'BIP',
+}, {
+    needGasCoinFee: FEE_PRECISION_SETTING.PRECISE,
+    needBaseCoinFee: FEE_PRECISION_SETTING.OMIT,
+    needPriceCoinFee: FEE_PRECISION_SETTING.OMIT,
 })
     .then((feeData) => {
         console.log(feeData);
         // { commission: 0.1 }
     });
 
-// calculated from tx params
+// from tx params: calculated on fee price info and pool data
+// with caching enabled can save api calls when 
 minter.estimateTxCommission(
     {
         type: TX_TYPE.SEND,
         data: {to: 'Mx...', value: 10, coin: 'BIP'},
         gasCoin: 'BIP',
-    }, {loose: true}
+    }, {
+        needGasCoinFee: FEE_PRECISION_SETTING.IMPRECISE,
+        needBaseCoinFee: FEE_PRECISION_SETTING.IMPRECISE,
+        needPriceCoinFee: FEE_PRECISION_SETTING.PRECISE,
+    }
 )
     .then((feeData) => {
         console.log(feeData);

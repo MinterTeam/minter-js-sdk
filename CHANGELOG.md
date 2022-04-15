@@ -1,3 +1,6 @@
+## 0.44.0 - 2022.05.27
+- **DEPRECATE** `loose` option in `estimateTxCommission` use `needGasCoinFee`, `needBaseCoinFee`, and `needPriceCoinFee` settings instead
+
 ## 0.43.3 - 2022.04.26
 - fix `isCoinSymbol` to accept tickers with digits in any place and fix unsafe-regex in it
 

@@ -4,7 +4,6 @@ import {TxData} from 'minterjs-tx';
 import GetCommissionPrice from './get-commission-price.js';
 import GetPoolInfo from './get-pool-info.js';
 import {GetCoinId, ReplaceCoinSymbol} from './replace-coin.js';
-import EstimateCoinBuy from './estimate-coin-buy.js';
 import getTxData from '../tx-data/index.js';
 import {prepareTx} from '../tx.js';
 import {isCoinId, validateUint} from '../utils.js';
@@ -12,38 +11,68 @@ import {isCoinId, validateUint} from '../utils.js';
 Big.RM = 2;
 
 /**
+ * @enum {string}
+ */
+export const FEE_PRECISION_SETTING = {
+    // value may be precise, imprecise, or even omitted
+    AUTO: 'auto',
+    // precise value is required
+    PRECISE: 'precise',
+    // some value is required but it can be imprecise
+    IMPRECISE: 'imprecise',
+    OMIT: 'omit',
+};
+const PRECISION = FEE_PRECISION_SETTING;
+
+/**
  * @param {MinterApiInstance} apiInstance
- * @return {function((TxParams|string), {loose?: boolean}=, AxiosRequestConfig=): (Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>)}
+ * @return {function((TxParams|string), {needGasCoinFee?: FEE_PRECISION_SETTING, needBaseCoinFee?: FEE_PRECISION_SETTING, needPriceCoinFee?: FEE_PRECISION_SETTING, loose?: boolean, direct?: boolean}=, import('axios').AxiosRequestConfig=, import('axios').AxiosRequestConfig=): Promise<{commission?: (number|string), baseCoinCommission?: (number|string), priceCoinCommission?: (number|string), commissionPriceData?: CommissionPriceData}>}
  */
 export default function EstimateTxCommission(apiInstance) {
     const getCommissionPrice = GetCommissionPrice(apiInstance);
     const getPoolInfo = GetPoolInfo(apiInstance);
     const getCoinId = GetCoinId(apiInstance);
     const replaceCoinSymbol = ReplaceCoinSymbol(apiInstance);
-    const estimateCoinBuy = EstimateCoinBuy(apiInstance);
 
     return estimateTxCommission;
 
     /**
      * @param {TxParams|string} txParams
      * @param {object} [options]
-     * @param {boolean} [options.loose = false]
-     * @param {boolean} [options.direct]
-     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
-     * @param {import('axios').AxiosRequestConfig} [extraAxiosOptions] - applied to secondary requests
+     * @param {FEE_PRECISION_SETTING} [options.needGasCoinFee]
+     * @param {FEE_PRECISION_SETTING} [options.needBaseCoinFee]
+     * @param {FEE_PRECISION_SETTING} [options.needPriceCoinFee]
+     * @param {boolean} [options.loose] - DEPRECATED
+     * @param {boolean} [options.direct] - DEPRECATED
+     * @param {import('axios').AxiosRequestConfig} [axiosOptions] - for main request (estimation)
+     * @param {import('axios').AxiosRequestConfig} [extraAxiosOptions] - for secondary requests (commission price data, coin IDs, and pool info)
      * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
      */
-    function estimateTxCommission(txParams, {loose = false, direct} = {}, axiosOptions = undefined, extraAxiosOptions = undefined) {
+    function estimateTxCommission(txParams, {
+        needGasCoinFee = PRECISION.AUTO,
+        needBaseCoinFee = PRECISION.AUTO,
+        needPriceCoinFee = PRECISION.AUTO,
+        loose,
+        direct,
+    } = {}, axiosOptions = undefined, extraAxiosOptions = undefined) {
         if (typeof direct !== 'undefined') {
             // eslint-disable-next-line no-console
-            console.warn('`direct` option in `estimateTxCommission` is deprecated, use `loose` option instead');
-            if (!loose && direct === false) {
-                loose = true;
-            }
+            console.warn('`direct` option in `estimateTxCommission` is deprecated, use `needGasCoinFee`, `needBaseCoinFee`, and `needPriceCoinFee` options instead');
+            needGasCoinFee = direct ? PRECISION.PRECISE : PRECISION.IMPRECISE;
+            needBaseCoinFee = direct ? PRECISION.OMIT : PRECISION.IMPRECISE;
+            needPriceCoinFee = direct ? PRECISION.OMIT : PRECISION.PRECISE;
+        }
+        if (typeof loose !== 'undefined') {
+            // eslint-disable-next-line no-console
+            console.warn('`loose` option in `estimateTxCommission` is deprecated, use `needGasCoinFee`, `needBaseCoinFee`, and `needPriceCoinFee` options instead');
+            needGasCoinFee = !loose ? PRECISION.PRECISE : PRECISION.IMPRECISE;
+            needBaseCoinFee = !loose ? PRECISION.OMIT : PRECISION.IMPRECISE;
+            needPriceCoinFee = !loose ? PRECISION.OMIT : PRECISION.PRECISE;
         }
 
         let paramsPromise;
         if (typeof txParams === 'object') {
+            /*
             if (loose) {
                 paramsPromise = getCoinId(txParams.gasCoin || 0, txParams.chainId, extraAxiosOptions)
                     .then((coinId) => {
@@ -54,19 +83,20 @@ export default function EstimateTxCommission(apiInstance) {
                         };
                     });
             } else {
-                // @TODO some fields of tx data can dropped, because they don't affect fee, it will reduce coin id requests and make estimation requests more cacheable
-                paramsPromise = replaceCoinSymbol(txParams, extraAxiosOptions);
-            }
+            */
+            // @TODO some fields of tx data can dropped, because they don't affect fee, it will reduce coin id requests and make estimation requests more cacheable
+            paramsPromise = replaceCoinSymbol(txParams, extraAxiosOptions);
+            // }
         } else {
             paramsPromise = Promise.resolve(txParams);
         }
 
         return paramsPromise
             .then((updatedTxParams) => {
-                if (!loose) {
+                if (typeof updatedTxParams !== 'object') {
                     return estimateFeeDirect(updatedTxParams, axiosOptions, extraAxiosOptions);
                 } else {
-                    return estimateFeeCalculate(updatedTxParams, axiosOptions, extraAxiosOptions);
+                    return estimateFeeCalculate(updatedTxParams, {needGasCoinFee, needBaseCoinFee, needPriceCoinFee, axiosOptions, extraAxiosOptions});
                 }
             });
     }
@@ -111,44 +141,93 @@ export default function EstimateTxCommission(apiInstance) {
 
     /**
      * @param {TxParams} txParams
-     * @param {import('axios').AxiosRequestConfig} [axiosOptions]
-     * @param {import('axios').AxiosRequestConfig} [extraAxiosOptions] - applied to secondary requests
+     * @param {object} [options]
+     * @param {FEE_PRECISION_SETTING} [options.needGasCoinFee]
+     * @param {FEE_PRECISION_SETTING} [options.needBaseCoinFee]
+     * @param {FEE_PRECISION_SETTING} [options.needPriceCoinFee]
+     * @param {import('axios').AxiosRequestConfig} [options.axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [options.extraAxiosOptions] - applied to secondary requests
      * @return {Promise<{commission: number|string, baseCoinCommission: number|string, priceCoinCommission: number|string, commissionPriceData: CommissionPriceData}>}
      */
-    async function estimateFeeCalculate(txParams, axiosOptions, extraAxiosOptions) {
+    async function estimateFeeCalculate(txParams, {needGasCoinFee, needBaseCoinFee, needPriceCoinFee, axiosOptions, extraAxiosOptions}) {
         if (!txParams || typeof txParams !== 'object') {
             throw new TypeError('Invalid txParams');
         }
 
-        const commissionPriceData = await getCommissionPrice(extraAxiosOptions);
+        if (needPriceCoinFee === PRECISION.AUTO) {
+            needPriceCoinFee = PRECISION.OMIT;
+        }
+        if (needBaseCoinFee === PRECISION.AUTO) {
+            needBaseCoinFee = PRECISION.OMIT;
+        }
+        if (needGasCoinFee === PRECISION.AUTO) {
+            needGasCoinFee = PRECISION.PRECISE;
+        }
 
+        const commissionPriceData = needPriceCoinFee !== PRECISION.OMIT ? await getCommissionPrice(extraAxiosOptions) : undefined;
+
+        // coins may be same only if they both defined
         const sameGasAndBaseCoins = isGasCoinSameAsBaseCoin(txParams.gasCoin);
         const sameGasAndPriceCoins = isGasCoinSameAsPriceCoin(txParams.gasCoin, commissionPriceData);
         const samePriceAndBaseCoins = isPriceCoinSameAsBaseCoin(commissionPriceData);
+        const gasDependsOnBase = sameGasAndBaseCoins && needGasCoinFee === PRECISION.IMPRECISE && needBaseCoinFee === PRECISION.IMPRECISE && commissionPriceData;
+        const baseDependsOnGas = sameGasAndBaseCoins && needGasCoinFee === PRECISION.PRECISE;
 
         // priceCoin
-        const feePrice = new FeePrice(commissionPriceData);
-        const priceCoinFee = feePrice.getFeeValue(txParams.type, getFeePriceOptionsFromTxParams(txParams));
+        const priceCoinFee = (() => {
+            // OMIT
+            if (!commissionPriceData) {
+                return undefined;
+            }
+            // PRECISE
+            const feePrice = new FeePrice(commissionPriceData);
+            return feePrice.getFeeValue(txParams.type, getFeePriceOptionsFromTxParams(txParams));
+        })();
 
         // baseCoin
-        let baseCoinFee;
-        if (samePriceAndBaseCoins) {
-            baseCoinFee = priceCoinFee;
-        } else {
-            const priceCoinPool = await getPoolInfo(0, commissionPriceData.coin.id, extraAxiosOptions);
-            baseCoinFee = getBaseCoinAmountFromPool(priceCoinFee, priceCoinPool);
-        }
+        let baseCoinFee = await (async () => {
+            // PRECISE
+            if (samePriceAndBaseCoins) {
+                return priceCoinFee;
+            }
+            if (baseDependsOnGas) {
+                // depends on gasCoinFee, will be updated later
+                return undefined;
+            }
+            // OMIT
+            if (needBaseCoinFee === PRECISION.OMIT) {
+                return undefined;
+            }
+            // IMPRECISE
+            if (needBaseCoinFee === PRECISION.IMPRECISE && commissionPriceData) {
+                const priceCoinPool = await getPoolInfo(0, commissionPriceData.coin.id, extraAxiosOptions);
+                return getBaseCoinAmountFromPool(priceCoinFee, priceCoinPool);
+            }
+            if (needBaseCoinFee === PRECISION.IMPRECISE && !commissionPriceData) {
+                // @TODO maybe just force commissionPriceData
+                throw new Error('base coin fee imprecise estimation with omitted price coin is not implemented yet');
+            }
+            // @TODO precise estimation
+            throw new Error('base coin fee precise estimation not implemented yet');
+        })();
 
         // gasCoin
         let fee;
-        if (sameGasAndBaseCoins) {
-            fee = baseCoinFee;
-        } else if (sameGasAndPriceCoins) {
+        if (sameGasAndPriceCoins) {
+            // PRECISE
             // actual fee may be few pips less than priceCoinFee, assume it's not worth of extra http request
             fee = priceCoinFee;
-        } else {
-            const {amount} = await getEstimation(txParams.gasCoin, baseCoinFee, axiosOptions);
-            fee = amount;
+        } else if (gasDependsOnBase) {
+            // IMPRECISE
+            fee = baseCoinFee;
+        } else if (needGasCoinFee !== PRECISION.OMIT) {
+            // PRECISE
+            const {commission} = await estimateFeeDirect(txParams, axiosOptions);
+            fee = commission;
+        }
+
+        if (baseDependsOnGas) {
+            baseCoinFee = fee;
         }
 
 
@@ -158,28 +237,6 @@ export default function EstimateTxCommission(apiInstance) {
             priceCoinCommission: priceCoinFee,
             commissionPriceData,
         };
-    }
-
-    /**
-     * @param {number|string} coinIdOrSymbol
-     * @param {number|string} baseCoinAmount
-     * @param {import('axios').AxiosRequestConfig} axiosOptions
-     * @return {Promise<{amount: string, baseCoinAmount: string}>}
-     */
-    function getEstimation(coinIdOrSymbol, baseCoinAmount, axiosOptions) {
-        return estimateCoinBuy({
-            coinToSell: !isCoinId(coinIdOrSymbol) ? coinIdOrSymbol : undefined,
-            coinIdToSell: isCoinId(coinIdOrSymbol) ? coinIdOrSymbol : undefined,
-            valueToBuy: baseCoinAmount,
-            coinIdToBuy: 0,
-            swapFrom: 'optimal',
-        }, axiosOptions)
-            .then((result) => {
-                return {
-                    amount: result.will_pay,
-                    baseCoinAmount,
-                };
-            });
     }
 }
 

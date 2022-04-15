@@ -1,4 +1,5 @@
 import {TX_TYPE, txTypeList} from 'minterjs-util';
+import {FEE_PRECISION_SETTING} from '~/src';
 import {testData} from '~/test/test-data.js';
 import {logError} from '~/test/test-utils.js';
 import {ENV_DATA, minterGate, minterNode} from './variables';
@@ -86,8 +87,8 @@ describe('EstimateTxCommission', () => {
         expect.assertions(1);
         const txParams = txParamsData(apiType);
         return Promise.all([
-            apiType.estimateTxCommission({...txParams, data: {}}, {loose: false}),
-            apiType.estimateTxCommission(txParams, {loose: false}),
+            apiType.estimateTxCommission({...txParams, data: {}}, {}),
+            apiType.estimateTxCommission(txParams, {}),
         ])
             .then(([feeWithoutData, fee]) => {
                 expect(feeWithoutData.commission).toEqual(fee.commission);
@@ -104,7 +105,7 @@ describe('EstimateTxCommission', () => {
         test.each(API_TYPE_LIST)('direct %s', (apiType) => {
             expect.assertions(1);
             const txParams = getTxParamsWithCoinSymbols(apiType);
-            return apiType.estimateTxCommission(txParams, {loose: false})
+            return apiType.estimateTxCommission(txParams, {needGasCoinFee: FEE_PRECISION_SETTING.PRECISE})
                 .then((feeData) => {
                     expect(Number(feeData.commission)).toBeGreaterThan(0);
                 })
@@ -117,7 +118,11 @@ describe('EstimateTxCommission', () => {
         test.each(API_TYPE_LIST)('loose %s', (apiType) => {
             expect.assertions(1);
             const txParams = getTxParamsWithCoinSymbols(apiType);
-            return apiType.estimateTxCommission(txParams, {loose: true})
+            return apiType.estimateTxCommission(txParams, {
+                needGasCoinFee: FEE_PRECISION_SETTING.IMPRECISE,
+                needBaseCoinFee: FEE_PRECISION_SETTING.IMPRECISE,
+                needPriceCoinFee: FEE_PRECISION_SETTING.PRECISE,
+            })
                 .then((feeData) => {
                     expect(Number(feeData.commission)).toBeGreaterThan(0);
                 })
@@ -153,7 +158,29 @@ describe('EstimateTxCommission', () => {
     test.each(API_TYPE_LIST)('should work deprecated `direct` option %s', (apiType) => {
         expect.assertions(2);
         const txParams = txParamsData(apiType);
-        return Promise.all([apiType.estimateTxCommission(txParams, {loose: true}), apiType.estimateTxCommission(txParams, {direct: false})])
+        return Promise.all([apiType.estimateTxCommission(txParams, {
+            needGasCoinFee: FEE_PRECISION_SETTING.IMPRECISE,
+            needBaseCoinFee: FEE_PRECISION_SETTING.IMPRECISE,
+            needPriceCoinFee: FEE_PRECISION_SETTING.PRECISE,
+        }), apiType.estimateTxCommission(txParams, {direct: false})])
+            .then(([feeLoose, feeIndirect]) => {
+                expect(Number(feeLoose.commission)).toBeGreaterThan(0);
+                expect(feeLoose).toEqual(feeIndirect);
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
+            });
+    }, 30000);
+
+    test.each(API_TYPE_LIST)('should work deprecated `loose` option %s', (apiType) => {
+        expect.assertions(2);
+        const txParams = txParamsData(apiType);
+        return Promise.all([apiType.estimateTxCommission(txParams, {
+            needGasCoinFee: FEE_PRECISION_SETTING.IMPRECISE,
+            needBaseCoinFee: FEE_PRECISION_SETTING.IMPRECISE,
+            needPriceCoinFee: FEE_PRECISION_SETTING.PRECISE,
+        }), apiType.estimateTxCommission(txParams, {loose: true})])
             .then(([feeLoose, feeIndirect]) => {
                 expect(Number(feeLoose.commission)).toBeGreaterThan(0);
                 expect(feeLoose).toEqual(feeIndirect);
@@ -171,7 +198,7 @@ describe('EstimateTxCommission', () => {
             ...txParams,
             data: {},
             type: txType,
-        }, {loose: false})
+        }, {needGasCoinFee: FEE_PRECISION_SETTING.PRECISE})
             .then((feeData) => {
                 expect(Number(feeData.commission)).toBeGreaterThan(0);
             })

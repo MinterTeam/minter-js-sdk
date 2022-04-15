@@ -11,7 +11,7 @@ export {default as GetMinGasPrice} from './api/get-min-gas-price.js';
 export {default as EstimateCoinSell} from './api/estimate-coin-sell.js';
 export {default as EstimateCoinSellAll} from './api/estimate-coin-sell-all.js';
 export {default as EstimateCoinBuy} from './api/estimate-coin-buy.js';
-export {default as EstimateTxCommission} from './api/estimate-tx-commission.js';
+export {default as EstimateTxCommission, FEE_PRECISION_SETTING} from './api/estimate-tx-commission.js';
 export {ReplaceCoinSymbol, ReplaceCoinSymbolByPath, GetCoinId, ReplaceCoinId, ReplaceCoinIdByPath, GetCoinSymbol} from './api/replace-coin.js';
 export {default as issueCheck, decodeCheck, getGasCoinFromCheck} from './check.js';
 export {prepareLink, decodeLink} from './link.js';
