@@ -274,7 +274,8 @@ Returns promise that resolves with:
 * @param {string|Buffer} [txOptions.privateKey] - to sign tx or get nonce or to make proof for redeemCheck tx
 * @param {string} [txOptions.address] - to get nonce (useful for multi-signatures) or to make proof for redeemCheck tx
 * @param {ByteArray} [txOptions.password] - to make proof for RedeemCheckTxData
-* @param {AxiosRequestConfig} [axiosOptions]
+* @param {AxiosRequestConfig} [axiosOptions] - for main request (send tx hash)
+* @param {AxiosRequestConfig} [extraAxiosOptions] - for secondary requests (nonce and coin IDs)
 * @return {Promise<NodeTransaction|{hash: string}>}
 */
 minter.postTx(txParams, {seedPhrase: '...', gasRetryLimit: 2, mempoolRetryLimit: 0})
@@ -678,7 +679,8 @@ See also [Minter commissions docs](https://www.minter.network/docs#commissions)
  * @param {TxParams|string} txParams
  * @param {Object} [options]
  * @param {boolean} [options.loose]
- * @param {AxiosRequestConfig} [axiosOptions]
+ * @param {AxiosRequestConfig} [axiosOptions] - for main request (estimation)
+ * @param {AxiosRequestConfig} [extraAxiosOptions] - for secondary requests (commission price data, coin IDs, andd pool info)
  * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
  */
 

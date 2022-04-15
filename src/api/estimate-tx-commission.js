@@ -30,9 +30,10 @@ export default function EstimateTxCommission(apiInstance) {
      * @param {boolean} [options.loose = false]
      * @param {boolean} [options.direct]
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [extraAxiosOptions] - applied to secondary requests
      * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
      */
-    function estimateTxCommission(txParams, {loose = false, direct} = {}, axiosOptions = undefined) {
+    function estimateTxCommission(txParams, {loose = false, direct} = {}, axiosOptions = undefined, extraAxiosOptions = undefined) {
         if (typeof direct !== 'undefined') {
             // eslint-disable-next-line no-console
             console.warn('`direct` option in `estimateTxCommission` is deprecated, use `loose` option instead');
@@ -44,7 +45,7 @@ export default function EstimateTxCommission(apiInstance) {
         let paramsPromise;
         if (typeof txParams === 'object') {
             if (loose) {
-                paramsPromise = getCoinId(txParams.gasCoin || 0, txParams.chainId, axiosOptions)
+                paramsPromise = getCoinId(txParams.gasCoin || 0, txParams.chainId, extraAxiosOptions)
                     .then((coinId) => {
                         validateUint(coinId, 'gasCoin');
                         return {
@@ -54,7 +55,7 @@ export default function EstimateTxCommission(apiInstance) {
                     });
             } else {
                 // @TODO some fields of tx data can dropped, because they don't affect fee, it will reduce coin id requests and make estimation requests more cacheable
-                paramsPromise = replaceCoinSymbol(txParams, axiosOptions);
+                paramsPromise = replaceCoinSymbol(txParams, extraAxiosOptions);
             }
         } else {
             paramsPromise = Promise.resolve(txParams);
@@ -63,9 +64,9 @@ export default function EstimateTxCommission(apiInstance) {
         return paramsPromise
             .then((updatedTxParams) => {
                 if (!loose) {
-                    return estimateFeeDirect(updatedTxParams, axiosOptions);
+                    return estimateFeeDirect(updatedTxParams, axiosOptions, extraAxiosOptions);
                 } else {
-                    return estimateFeeCalculate(updatedTxParams, axiosOptions);
+                    return estimateFeeCalculate(updatedTxParams, axiosOptions, extraAxiosOptions);
                 }
             });
     }
@@ -103,7 +104,6 @@ export default function EstimateTxCommission(apiInstance) {
         return apiInstance.get(`estimate_tx_commission/${tx}`, axiosOptions)
             .then((response) => {
                 return {
-                    ...response.data,
                     commission: convertFromPip(response.data.commission),
                 };
             });
@@ -112,14 +112,19 @@ export default function EstimateTxCommission(apiInstance) {
     /**
      * @param {TxParams} txParams
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [extraAxiosOptions] - applied to secondary requests
      * @return {Promise<{commission: number|string, baseCoinCommission: number|string, priceCoinCommission: number|string, commissionPriceData: CommissionPriceData}>}
      */
-    async function estimateFeeCalculate(txParams, axiosOptions) {
+    async function estimateFeeCalculate(txParams, axiosOptions, extraAxiosOptions) {
         if (!txParams || typeof txParams !== 'object') {
             throw new TypeError('Invalid txParams');
         }
 
-        const commissionPriceData = await getCommissionPrice(axiosOptions);
+        const commissionPriceData = await getCommissionPrice(extraAxiosOptions);
+
+        const sameGasAndBaseCoins = isGasCoinSameAsBaseCoin(txParams.gasCoin);
+        const sameGasAndPriceCoins = isGasCoinSameAsPriceCoin(txParams.gasCoin, commissionPriceData);
+        const samePriceAndBaseCoins = isPriceCoinSameAsBaseCoin(commissionPriceData);
 
         // priceCoin
         const feePrice = new FeePrice(commissionPriceData);
@@ -127,17 +132,20 @@ export default function EstimateTxCommission(apiInstance) {
 
         // baseCoin
         let baseCoinFee;
-        if (isPriceCoinSameAsBaseCoin(commissionPriceData)) {
+        if (samePriceAndBaseCoins) {
             baseCoinFee = priceCoinFee;
         } else {
-            const priceCoinPool = await getPoolInfo(0, commissionPriceData.coin.id, axiosOptions);
+            const priceCoinPool = await getPoolInfo(0, commissionPriceData.coin.id, extraAxiosOptions);
             baseCoinFee = getBaseCoinAmountFromPool(priceCoinFee, priceCoinPool);
         }
 
         // gasCoin
         let fee;
-        if (isGasCoinSameAsBaseCoin(txParams.gasCoin)) {
+        if (sameGasAndBaseCoins) {
             fee = baseCoinFee;
+        } else if (sameGasAndPriceCoins) {
+            // actual fee may be few pips less than priceCoinFee, assume it's not worth of extra http request
+            fee = priceCoinFee;
         } else {
             const {amount} = await getEstimation(txParams.gasCoin, baseCoinFee, axiosOptions);
             fee = amount;
@@ -181,6 +189,15 @@ export default function EstimateTxCommission(apiInstance) {
  */
 function isPriceCoinSameAsBaseCoin(commissionPriceData) {
     return Number.parseInt(commissionPriceData?.coin.id, 10) === 0;
+}
+
+/**
+ * @param {number|string} gasCoinId
+ * @param {CommissionPriceData} commissionPriceData
+ * @return {boolean}
+ */
+function isGasCoinSameAsPriceCoin(gasCoinId, commissionPriceData) {
+    return Number.parseInt(gasCoinId, 10) === Number.parseInt(commissionPriceData?.coin.id, 10);
 }
 
 /**

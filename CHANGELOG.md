@@ -1,3 +1,8 @@
+## 0.43.0 - 2022.04.15
+- `postTx`: add `extraAxiosOptions` param to be passed to secondary requests (for nonce and coin ids)
+- **BREAKING** `estimateTxCommission`: `axiosOptions` param separated to two different params - (1) `axiosOptions` will be passed to main estimation request and (2) `extraAxiosOptions` to secondary requests (commission price data, coin ids, and pool info)
+- `estimateTxCommission`: don't make https request in `loose: true` mode when `gasCoin` same as `priceCoin` (priceCoinValue used directly) 
+
 ## 0.42.1 - 2022.04.13
 - fix direct `estimateTxCommission` to not mutate response
 

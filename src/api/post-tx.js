@@ -24,9 +24,10 @@ export default function PostTx(apiInstance) {
      * @param {TxParams} txParams
      * @param {PostTxOptions} options
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [extraAxiosOptions] - applied to secondary requests
      * @return {Promise<string>}
      */
-    return function postTx(txParams, {gasRetryLimit = 2, nonceRetryLimit = 0, mempoolRetryLimit = 0, ...txOptions} = {}, axiosOptions = undefined) {
+    return function postTx(txParams, {gasRetryLimit = 2, nonceRetryLimit = 0, mempoolRetryLimit = 0, ...txOptions} = {}, axiosOptions = undefined, extraAxiosOptions = undefined) {
         if (!txOptions.privateKey && txParams.privateKey) {
             txOptions.privateKey = txParams.privateKey;
             // eslint-disable-next-line no-console
@@ -46,10 +47,9 @@ export default function PostTx(apiInstance) {
 
         return privateKeyPromise
             .then((privateKey) => {
-                // @TODO should axiosOptions be passed here?
                 return Promise.all([
-                    ensureNonce(apiInstance, txParams, {...txOptions, privateKey}),
-                    replaceCoinSymbol(txParams),
+                    ensureNonce(apiInstance, txParams, {...txOptions, privateKey}, extraAxiosOptions),
+                    replaceCoinSymbol(txParams, extraAxiosOptions),
                     Promise.resolve(privateKey),
                 ]);
             })
