@@ -1,3 +1,6 @@
+## 0.43.1 - 2022.04.18
+- more strict `isCoinSymbol` (will cause invalid getCoinInfo to fail earlier)
+
 ## 0.43.0 - 2022.04.15
 - `postTx`: add `extraAxiosOptions` param to be passed to secondary requests (for nonce and coin ids)
 - **BREAKING** `estimateTxCommission`: `axiosOptions` param separated to two different params - (1) `axiosOptions` will be passed to main estimation request and (2) `extraAxiosOptions` to secondary requests (commission price data, coin ids, and pool info)

@@ -64,7 +64,10 @@ export function isCoinSymbol(coin) {
     if (typeof coin !== 'string') {
         return false;
     }
-    return !isCoinId(coin);
+    if (coin.length < 3) {
+        return false;
+    }
+    return /^[A-Z][A-Z0-9]{1,9}(-[0-9]+)?$/.test(coin);
 }
 
 /**

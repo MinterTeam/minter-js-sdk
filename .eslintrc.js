@@ -54,6 +54,7 @@ module.exports = {
     'no-underscore-dangle': 0,
     'no-else-return': 0,
     'no-unused-vars': ['warn', { 'vars': 'all', 'args': 'after-used', 'ignoreRestSiblings': false }],
+    'no-plusplus': ["error", { "allowForLoopAfterthoughts": true }],
     'no-use-before-define' : 0,
     'no-multiple-empty-lines': ["error", { "max": 3, "maxEOF": 1 }],
     // allow single line imports

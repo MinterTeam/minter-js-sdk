@@ -1,4 +1,38 @@
-import {dataToInteger, dataPipToAmount, dataToAddress, dataToPublicKey, dataToBoolean} from '~/src/utils.js';
+import {isCoinSymbol, dataToInteger, dataPipToAmount, dataToAddress, dataToPublicKey, dataToBoolean} from '~/src/utils.js';
+
+describe('isCoinSymbol', () => {
+    let validSymbols = [];
+    (['', 1, 1234567890]).forEach((version) => {
+        for (let length = 3; length <= 10; length++) {
+            const versionString = version ? `-${version}` : '';
+            const symbol = new Array(length).fill('A').join('') + versionString;
+            validSymbols.push(symbol);
+        }
+    });
+
+    test.each(validSymbols)('valid %s', (symbol) => {
+        expect(isCoinSymbol(symbol)).toEqual(true);
+    });
+
+    test('min length 3', () => {
+        expect(isCoinSymbol('LP')).toEqual(false);
+        expect(isCoinSymbol('A')).toEqual(false);
+    });
+
+    test('max basic length withut version: 10', () => {
+        expect(isCoinSymbol('A2345678901')).toEqual(false);
+        expect(isCoinSymbol('ABCDEFGHIJK')).toEqual(false);
+    });
+
+    test('no first digit', () => {
+        expect(isCoinSymbol('1ABC')).toEqual(false);
+    });
+
+    test('no letter after hyphen', () => {
+        expect(isCoinSymbol('ASD-A')).toEqual(false);
+        expect(isCoinSymbol('ASD-123A')).toEqual(false);
+    });
+});
 
 describe('dataToInteger', () => {
     test('from integer', () => {
