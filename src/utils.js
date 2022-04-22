@@ -375,6 +375,7 @@ export function validateUintArray(origValue, fieldName) {
 }
 
 /**
+ * Only validates base coin ticker. Throws on LP-* tokens and ARCHIVED-* coins with version number.
  * @param {string} value
  * @param {string} fieldName
  */
@@ -382,7 +383,7 @@ export function validateTicker(value, fieldName) {
     validateNotEmpty(value, fieldName);
 
     if (typeof value === 'string' && !(/^[A-Z][A-Z0-9]{2,9}$/.test(value))) {
-        throw new Error(`Field \`${fieldName}\` is invalid coin symbol string`);
+        throw new Error(`Field \`${fieldName}\` is invalid coin ticker string`);
     }
 }
 

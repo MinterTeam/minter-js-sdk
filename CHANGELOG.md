@@ -1,3 +1,6 @@
+## 0.43.2 - 2022.04.22
+- update deps
+
 ## 0.43.1 - 2022.04.18
 - more strict `isCoinSymbol` (will cause invalid getCoinInfo to fail earlier)
 
