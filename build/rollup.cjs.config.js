@@ -26,6 +26,7 @@ export default {
         // }),
         commonjs({
         }),
+        // fixes "Cannot use import statement outside a module"
         resolve({
             resolveOnly: ['lodash-es'],
             // modulesOnly: true,
@@ -35,11 +36,11 @@ export default {
             babelHelpers: 'runtime',
         }),
         rename({
-            include: ['**/*.js'],
+            include: ['**/*.js', '**/*.js\\?commonjs-entry'],
             map: (name) => name
                 .replace('src/', '')
                 .replace('node_modules/', 'external/')
                 .replace('../../external', '../external'),
-        })
+        }),
     ],
 };

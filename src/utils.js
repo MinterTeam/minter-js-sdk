@@ -64,10 +64,30 @@ export function isCoinSymbol(coin) {
     if (typeof coin !== 'string') {
         return false;
     }
-    if (coin.length < 3) {
+    const [ticker, version, invalidPart] = coin.split('-');
+    if (version?.length === 0) {
+        // console.debug('empty version, e.g. "ABC-"');
         return false;
     }
-    return /^[A-Z][A-Z0-9]{1,9}(-[0-9]+)?$/.test(coin);
+    if (typeof invalidPart !== 'undefined') {
+        // console.debug('invalid part found, e.g. "ABC-12-34"')
+        return false;
+    }
+    const isLP = ticker === 'LP' && version?.length > 0;
+    if (ticker.length < 3 && !isLP) {
+        // console.log('min length of a ticker');
+        return false;
+    }
+    if (!/[A-Z]/.test(ticker)) {
+        // console.debug('ticker should have at least one letter');
+        return false;
+    }
+    if (version?.length > 0 && !/^\d+$/.test(version)) {
+        // console.debug('only digits in version');
+        return false;
+    }
+    // only letters and digits in ticker
+    return /^[A-Z0-9]{1,10}$/.test(ticker);
 }
 
 /**

@@ -1,13 +1,26 @@
 import {isCoinSymbol, dataToInteger, dataPipToAmount, dataToAddress, dataToPublicKey, dataToBoolean} from '~/src/utils.js';
 
 describe('isCoinSymbol', () => {
+    let validTickers = [
+        'ABC',
+        'ABCDEFGHJK',
+        'A12',
+        '12A',
+        '1A2',
+        '123456789A',
+        'A123456789',
+        '12345A6789',
+    ];
+    for (let length = 3; length <= 10; length++) {
+        validTickers.push(new Array(length).fill('A').join(''));
+    }
     let validSymbols = [];
-    (['', 1, 1234567890]).forEach((version) => {
-        for (let length = 3; length <= 10; length++) {
+    (['', '1', '1234567890123456789012345678901234567890']).forEach((version) => {
+        validTickers.forEach((ticker) => {
             const versionString = version ? `-${version}` : '';
-            const symbol = new Array(length).fill('A').join('') + versionString;
+            const symbol = ticker + versionString;
             validSymbols.push(symbol);
-        }
+        });
     });
 
     test.each(validSymbols)('valid %s', (symbol) => {
@@ -17,20 +30,29 @@ describe('isCoinSymbol', () => {
     test('min length 3', () => {
         expect(isCoinSymbol('LP')).toEqual(false);
         expect(isCoinSymbol('A')).toEqual(false);
+        expect(isCoinSymbol('AB')).toEqual(false);
     });
 
-    test('max basic length withut version: 10', () => {
+    test('max basic length without version: 10', () => {
         expect(isCoinSymbol('A2345678901')).toEqual(false);
         expect(isCoinSymbol('ABCDEFGHIJK')).toEqual(false);
     });
 
-    test('no first digit', () => {
-        expect(isCoinSymbol('1ABC')).toEqual(false);
+    test('at least one letter', () => {
+        expect(isCoinSymbol('123')).toEqual(false);
+        expect(isCoinSymbol('1234567890')).toEqual(false);
+        expect(isCoinSymbol('123-1')).toEqual(false);
+        expect(isCoinSymbol('123-A')).toEqual(false);
     });
 
-    test('no letter after hyphen', () => {
+    test('only digits after hyphen', () => {
+        expect(isCoinSymbol('ASD-')).toEqual(false);
+        expect(isCoinSymbol('ASD--')).toEqual(false);
         expect(isCoinSymbol('ASD-A')).toEqual(false);
         expect(isCoinSymbol('ASD-123A')).toEqual(false);
+        expect(isCoinSymbol('ASD-123-1')).toEqual(false);
+        expect(isCoinSymbol('LP-')).toEqual(false);
+        expect(isCoinSymbol('LP--')).toEqual(false);
     });
 });
 

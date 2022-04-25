@@ -1,3 +1,6 @@
+## 0.43.3 - 2022.04.26
+- fix `isCoinSymbol` to accept tickers with digits in any place and fix unsafe-regex in it
+
 ## 0.43.2 - 2022.04.22
 - update deps
 
