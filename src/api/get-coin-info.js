@@ -2,9 +2,10 @@ import {isCoinId, isCoinSymbol} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function((string|number), AxiosRequestConfig=): (Promise<CoinInfo>)}
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
+ * @return {function((string|number), AxiosRequestConfig=): Promise<CoinInfo>}
  */
-export default function GetCoinInfo(apiInstance) {
+export default function GetCoinInfo(apiInstance, factoryAxiosOptions) {
     return getCoinInfo;
     /**
      * Get nonce for new transaction: last transaction number + 1
@@ -13,6 +14,10 @@ export default function GetCoinInfo(apiInstance) {
      * @return {Promise<CoinInfo>}
      */
     function getCoinInfo(coin, axiosOptions) {
+        axiosOptions = {
+            ...factoryAxiosOptions,
+            ...axiosOptions,
+        };
         let coinInfoPromise;
         if (isCoinId(coin)) {
             coinInfoPromise = apiInstance.get(`coin_info_by_id/${coin}`, axiosOptions);

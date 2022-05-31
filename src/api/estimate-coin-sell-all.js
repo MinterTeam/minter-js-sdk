@@ -11,9 +11,10 @@ import {isValidNumber, isCoinId} from '../utils.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
  * @return {function({coinToSell: string, valueToSell: (string|number), coinToBuy: string, swapFrom?: ESTIMATE_SWAP_TYPE, route?: Array<string|number>, gasPrice: (string|number)}, axiosOptions: AxiosRequestConfig=): Promise<EstimateSellAllResult>}
  */
-export default function EstimateCoinSellAll(apiInstance) {
+export default function EstimateCoinSellAll(apiInstance, factoryAxiosOptions) {
     return estimateCoinSellAll;
     /**
      * @param {object} params
@@ -60,6 +61,7 @@ export default function EstimateCoinSellAll(apiInstance) {
         };
 
         return apiInstance.get('estimate_coin_sell_all', {
+            ...factoryAxiosOptions,
             ...axiosOptions,
             params,
             paramsSerializer: (query) => qsStringify(query, {arrayFormat: 'repeat'}),

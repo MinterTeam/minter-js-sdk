@@ -1,9 +1,10 @@
 
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {Function<Promise>}
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
+ * @return {function(signedTx: string|Buffer, AxiosRequestConfig=): Promise<NodeTransaction|{hash: string}>}
  */
-export default function PostSignedTx(apiInstance) {
+export default function PostSignedTx(apiInstance, factoryAxiosOptions) {
     /**
      * @param {string|Buffer} signedTx
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
@@ -16,7 +17,10 @@ export default function PostSignedTx(apiInstance) {
 
         return apiInstance.post('send_transaction', {
             tx: signedTx,
-        }, axiosOptions)
+        }, {
+            ...factoryAxiosOptions,
+            ...axiosOptions,
+        })
             .then((response) => {
                 const resData = response.data;
 

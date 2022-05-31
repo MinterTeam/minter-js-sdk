@@ -6,10 +6,11 @@ import {getBaseCoinSymbol, isBaseCoinSymbol, isCoinId, isCoinSymbol} from '../ut
 
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function(TxParams, AxiosRequestConfig): (Promise<TxParams>)}
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
+ * @return {function(TxParams, AxiosRequestConfig=): (Promise<TxParams>)}
  */
-export function ReplaceCoinSymbol(apiInstance) {
-    const replaceCoinSymbolByPath = ReplaceCoinSymbolByPath(apiInstance);
+export function ReplaceCoinSymbol(apiInstance, factoryAxiosOptions) {
+    const replaceCoinSymbolByPath = ReplaceCoinSymbolByPath(apiInstance, factoryAxiosOptions);
     /**
      * @param {TxParams} txParams
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
@@ -25,11 +26,12 @@ export function ReplaceCoinSymbol(apiInstance) {
 /**
  *
  * @param {MinterApiInstance} apiInstance
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
  * @return {function(object, Array<string>, number=, AxiosRequestConfig=): Promise<object>}
  * @constructor
  */
-export function ReplaceCoinSymbolByPath(apiInstance) {
-    const replaceParamsByPath = ReplaceParamsByPath(apiInstance);
+export function ReplaceCoinSymbolByPath(apiInstance, factoryAxiosOptions) {
+    const replaceParamsByPath = ReplaceParamsByPath(apiInstance, factoryAxiosOptions);
     return replaceCoinSymbolByPath;
     /**
      * @param {object} txParams
@@ -59,21 +61,37 @@ export function ReplaceCoinSymbolByPath(apiInstance) {
 }
 
 /**
+ * Replace id with symbol or symbol with id
+ * Shares same interface as _getCoinSymbol or _getCoinId
+ * @typedef {Function} CoinIdSymbolReplacer
+ * @param {number|string} inputValue
+ * @param {number} [chainId]
  * @param {MinterApiInstance} apiInstance
- * @return {function(txParams: Object, pathList: Array<string>, replacer: function, chainId: number=, AxiosRequestConfig=): Promise<Object>}
+ * @param {import('axios').AxiosRequestConfig} [axiosOptions]
+ * @return {Promise<number|string>}
+ */
+
+/**
+ * @param {MinterApiInstance} apiInstance
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
+ * @return {function(txParams: Object, pathList: Array<string>, replacer: CoinIdSymbolReplacer, chainId: number=, axiosOptions: AxiosRequestConfig=): Promise<Object>}
  * @constructor
  */
-export function ReplaceParamsByPath(apiInstance) {
+export function ReplaceParamsByPath(apiInstance, factoryAxiosOptions) {
     return replaceParamsByPath;
     /**
      * @param {object} txParams
      * @param {Array<string>} pathList
-     * @param {function(inputValue: any, number=, AxiosRequestConfig=): Promise} replacer
+     * @param {CoinIdSymbolReplacer} replacer
      * @param {number} [chainId]
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<object>}
      */
     function replaceParamsByPath(txParams, pathList, replacer, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
+        axiosOptions = {
+            ...factoryAxiosOptions,
+            ...axiosOptions,
+        };
         let promiseList = {};
         pathList.forEach((path) => fillPath(path));
 
@@ -102,9 +120,10 @@ export function ReplaceParamsByPath(apiInstance) {
 
 /**
  * @param {MinterApiInstance} apiInstance
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
  * @return {function(symbol: string|Array<string>, chainId: number=, axiosOptions: AxiosRequestConfig=): Promise<number>}
  */
-export function GetCoinId(apiInstance) {
+export function GetCoinId(apiInstance, factoryAxiosOptions) {
     return getCoinId;
 
     /**
@@ -114,6 +133,10 @@ export function GetCoinId(apiInstance) {
      * @return {Promise<number|Array<number>>}
      */
     function getCoinId(symbol, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
+        axiosOptions = {
+            ...factoryAxiosOptions,
+            ...axiosOptions,
+        };
         return processArrayByPromise(_getCoinId, symbol, chainId, apiInstance, axiosOptions);
     }
 }
@@ -162,10 +185,11 @@ function _getCoinId(symbol, chainId, apiInstance, axiosOptions) {
 
 /**
  * @param {MinterApiInstance} apiInstance
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
  * @return {function(TxParams): (Promise<TxParams>)}
  */
-export function ReplaceCoinId(apiInstance) {
-    const replaceCoinIdByPath = ReplaceCoinIdByPath(apiInstance);
+export function ReplaceCoinId(apiInstance, factoryAxiosOptions) {
+    const replaceCoinIdByPath = ReplaceCoinIdByPath(apiInstance, factoryAxiosOptions);
     /**
      * @param {TxParams} txParams
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
@@ -179,13 +203,12 @@ export function ReplaceCoinId(apiInstance) {
 }
 
 /**
- *
  * @param {MinterApiInstance} apiInstance
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
  * @return {function(object, Array<string>, number=, AxiosRequestConfig=): Promise<object>}
- * @constructor
  */
-export function ReplaceCoinIdByPath(apiInstance) {
-    const replaceParamsByPath = ReplaceParamsByPath(apiInstance);
+export function ReplaceCoinIdByPath(apiInstance, factoryAxiosOptions) {
+    const replaceParamsByPath = ReplaceParamsByPath(apiInstance, factoryAxiosOptions);
     return replaceCoinIdByPath;
     /**
      * @param {object} txParams
@@ -216,9 +239,10 @@ export function ReplaceCoinIdByPath(apiInstance) {
 
 /**
  * @param {MinterApiInstance} apiInstance
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
  * @return {function(id: number|string|Array<number|string>, chainId: number=, axiosOptions: AxiosRequestConfig=): Promise<number>}
  */
-export function GetCoinSymbol(apiInstance) {
+export function GetCoinSymbol(apiInstance, factoryAxiosOptions) {
     return getCoinSymbol;
 
     /**
@@ -228,6 +252,10 @@ export function GetCoinSymbol(apiInstance) {
      * @return {Promise<string|Array<string>>}
      */
     function getCoinSymbol(id, chainId = apiInstance.defaults.chainId, axiosOptions = undefined) {
+        axiosOptions = {
+            ...factoryAxiosOptions,
+            ...axiosOptions,
+        };
         return processArrayByPromise(_getCoinSymbol, id, chainId, apiInstance, axiosOptions);
     }
 }

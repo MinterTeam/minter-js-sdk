@@ -6,6 +6,7 @@ import {API_TYPE_NODE} from '../variables.js';
  * @typedef {object} MinterApiInstanceType
  * @property {AxiosDefaults} defaults
  * @property {string} defaults.apiType
+ *
  * @typedef {AxiosInstance | MinterApiInstanceType} MinterApiInstance
  */
 

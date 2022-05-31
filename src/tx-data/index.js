@@ -1,4 +1,5 @@
 import {TX_TYPE, normalizeTxType} from 'minterjs-util';
+import {TxData as TxBufferData} from 'minterjs-tx';
 import SendTxData from './send.js';
 import MultisendTxData from './multisend.js';
 import SellTxData from './convert-sell.js';
@@ -128,4 +129,25 @@ export function decodeTxData(txType, txData, {decodeCheck: isDecodeCheck} = {}) 
     }
 
     return fields;
+}
+
+/**
+ * Fill tx data params with default values
+ * @param {TX_TYPE} txType
+ * @param {object} txData
+ * @return {object}
+ */
+export function fillDefaultData(txType, txData) {
+    const defaultBufferData = new TxBufferData({}, txType, {forceDefaultValues: true});
+    const defaultData = getTxData(txType).fromBufferFields(defaultBufferData, {disableValidation: true});
+    let mergedData = {};
+    defaultBufferData._fields.forEach((key) => {
+        if (typeof txData?.[key] !== 'undefined') {
+            mergedData[key] = txData[key];
+        } else {
+            mergedData[key] = defaultData[key];
+        }
+    });
+
+    return mergedData;
 }

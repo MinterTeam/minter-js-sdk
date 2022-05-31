@@ -16,10 +16,13 @@ import {bufferFromBytes, getPrivateKeyFromSeedPhraseAsync, toInteger, wait} from
 
 /**
  * @param {MinterApiInstance} apiInstance
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
+ * @param {import('axios').AxiosRequestConfig} [factoryExtraAxiosOptions]
  * @return {Function<Promise>}
  */
-export default function PostTx(apiInstance) {
-    const replaceCoinSymbol = new ReplaceCoinSymbol(apiInstance);
+export default function PostTx(apiInstance, factoryAxiosOptions, factoryExtraAxiosOptions) {
+    const ensureNonce = new EnsureNonce(apiInstance, factoryExtraAxiosOptions);
+    const replaceCoinSymbol = new ReplaceCoinSymbol(apiInstance, factoryExtraAxiosOptions);
     /**
      * @param {TxParams} txParams
      * @param {PostTxOptions} options
@@ -28,6 +31,10 @@ export default function PostTx(apiInstance) {
      * @return {Promise<string>}
      */
     return function postTx(txParams, {gasRetryLimit = 2, nonceRetryLimit = 0, mempoolRetryLimit = 0, ...txOptions} = {}, axiosOptions = undefined, extraAxiosOptions = undefined) {
+        axiosOptions = {
+            ...factoryAxiosOptions,
+            ...axiosOptions,
+        };
         if (!txOptions.privateKey && txParams.privateKey) {
             txOptions.privateKey = txParams.privateKey;
             // eslint-disable-next-line no-console
@@ -48,7 +55,7 @@ export default function PostTx(apiInstance) {
         return privateKeyPromise
             .then((privateKey) => {
                 return Promise.all([
-                    ensureNonce(apiInstance, txParams, {...txOptions, privateKey}, extraAxiosOptions),
+                    ensureNonce(txParams, {...txOptions, privateKey}, extraAxiosOptions),
                     replaceCoinSymbol(txParams, extraAxiosOptions),
                     Promise.resolve(privateKey),
                 ]);
@@ -113,49 +120,37 @@ function _postTxHandleErrors(apiInstance, txParams, options, axiosOptions) {
         });
 }
 
-/**
- * @param {MinterApiInstance} apiInstance
- * @param {TxParams} txParams
- * @param {object} txOptions
- * @param {ByteArray} [txOptions.privateKey]
- * @param {string} [txOptions.address]
- * @param {string} [txOptions.seedPhrase]
- * @param {import('axios').AxiosRequestConfig} [axiosOptions]
- * @return {Promise<number>}
- */
-function ensureNonce(apiInstance, txParams, {privateKey, address, seedPhrase} = {}, axiosOptions = undefined) {
-    const nonce = txParams.nonce;
-    if (!nonce && !address && !privateKey) {
-        throw new Error('No nonce is given and no address or privateKey to retrieve it from API');
-    }
-    if (nonce) {
-        return Promise.resolve(nonce);
-    }
-    // @TODO seedPhrase not used
-    if (privateKey) {
-        const privateKeyBuffer = bufferFromBytes(privateKey);
-        address = privateToAddressString(privateKeyBuffer);
-    }
-
-    return (new GetNonce(apiInstance))(address, axiosOptions);
-}
 
 /**
  * @param {MinterApiInstance} apiInstance
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
  */
-export function EnsureNonce(apiInstance) {
-    /* eslint-disable jsdoc/check-param-names */
+export function EnsureNonce(apiInstance, factoryAxiosOptions) {
+    const getNonce = new GetNonce(apiInstance, factoryAxiosOptions);
     /**
      * @param {TxParams} txParams
-     * @param {object} txOptions
+     * @param {object} [txOptions]
      * @param {ByteArray} [txOptions.privateKey]
      * @param {string} [txOptions.address]
+     * @param {string} [txOptions.seedPhrase]
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<number>}
      */
-    return function apiEnsureNonce() {
-        // eslint-disable-next-line prefer-rest-params
-        return ensureNonce(apiInstance, ...arguments);
+    return function ensureNonce(txParams, {privateKey, address, seedPhrase} = {}, axiosOptions = undefined) {
+        const nonce = txParams.nonce;
+        if (!nonce && !address && !privateKey) {
+            throw new Error('No nonce is given and no address or privateKey to retrieve it from API');
+        }
+        if (nonce) {
+            return Promise.resolve(nonce);
+        }
+        // @TODO seedPhrase not used
+        if (privateKey) {
+            const privateKeyBuffer = bufferFromBytes(privateKey);
+            address = privateToAddressString(privateKeyBuffer);
+        }
+
+        return getNonce(address, axiosOptions);
     };
 }
 

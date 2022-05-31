@@ -1,3 +1,6 @@
+## 0.45.0 - 2022.05.31
+- add axiosOptions param to api constructors
+
 ## 0.44.0 - 2022.05.27
 - **DEPRECATE** `loose` option in `estimateTxCommission` use `needGasCoinFee`, `needBaseCoinFee`, and `needPriceCoinFee` settings instead
 

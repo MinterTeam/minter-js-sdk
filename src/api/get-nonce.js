@@ -3,9 +3,10 @@ import {API_TYPE_GATE} from '../variables.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function(*): (Promise<number>)}
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
+ * @return {function(string, AxiosRequestConfig=): Promise<number>}
  */
-export default function GetNonce(apiInstance) {
+export default function GetNonce(apiInstance, factoryAxiosOptions) {
     /**
      * Get nonce for new transaction: last transaction number + 1
      * @param {string} address
@@ -17,7 +18,10 @@ export default function GetNonce(apiInstance) {
             ? `nonce/${address}`
             : `address/${address}`;
 
-        return apiInstance.get(nonceUrl, axiosOptions)
+        return apiInstance.get(nonceUrl, {
+            ...factoryAxiosOptions,
+            ...axiosOptions,
+        })
             .then((response) => {
                 const resData = response.data;
                 const nonce = apiInstance.defaults.apiType === API_TYPE_GATE ? resData.nonce : resData.transaction_count;

@@ -1,8 +1,9 @@
 /**
  * @param {MinterApiInstance} apiInstance
- * @return {function(coin0: number|string, coin1: number|string, axiosOptions: AxiosRequestConfig=): (Promise<PoolInfo>)}
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
+ * @return {function(coin0: number|string, coin1: number|string, axiosOptions: AxiosRequestConfig=): Promise<PoolInfo>}
  */
-export default function GetPoolInfo(apiInstance) {
+export default function GetPoolInfo(apiInstance, factoryAxiosOptions) {
     return getPoolInfo;
 
     /**
@@ -13,7 +14,10 @@ export default function GetPoolInfo(apiInstance) {
      * @return {Promise<PoolInfo>}
      */
     function getPoolInfo(coin0, coin1, axiosOptions) {
-        return apiInstance.get(`swap_pool/${coin0}/${coin1}`, axiosOptions)
+        return apiInstance.get(`swap_pool/${coin0}/${coin1}`, {
+            ...factoryAxiosOptions,
+            ...axiosOptions,
+        })
             .then((response) => response.data);
     }
 }

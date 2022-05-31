@@ -1,10 +1,9 @@
 import Big from 'big.js';
 import {convertFromPip, convertToPip, FeePrice, TX_TYPE} from 'minterjs-util';
-import {TxData} from 'minterjs-tx';
 import GetCommissionPrice from './get-commission-price.js';
 import GetPoolInfo from './get-pool-info.js';
 import {GetCoinId, ReplaceCoinSymbol} from './replace-coin.js';
-import getTxData from '../tx-data/index.js';
+import {fillDefaultData} from '../tx-data/index.js';
 import {prepareTx} from '../tx.js';
 import {isCoinId, validateUint} from '../utils.js';
 
@@ -26,13 +25,15 @@ const PRECISION = FEE_PRECISION_SETTING;
 
 /**
  * @param {MinterApiInstance} apiInstance
+ * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
+ * @param {import('axios').AxiosRequestConfig} [factoryExtraAxiosOptions]
  * @return {function((TxParams|string), {needGasCoinFee?: FEE_PRECISION_SETTING, needBaseCoinFee?: FEE_PRECISION_SETTING, needPriceCoinFee?: FEE_PRECISION_SETTING, loose?: boolean, direct?: boolean}=, import('axios').AxiosRequestConfig=, import('axios').AxiosRequestConfig=): Promise<{commission?: (number|string), baseCoinCommission?: (number|string), priceCoinCommission?: (number|string), commissionPriceData?: CommissionPriceData}>}
  */
-export default function EstimateTxCommission(apiInstance) {
-    const getCommissionPrice = GetCommissionPrice(apiInstance);
-    const getPoolInfo = GetPoolInfo(apiInstance);
-    const getCoinId = GetCoinId(apiInstance);
-    const replaceCoinSymbol = ReplaceCoinSymbol(apiInstance);
+export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, factoryExtraAxiosOptions) {
+    const getCommissionPrice = GetCommissionPrice(apiInstance, factoryExtraAxiosOptions);
+    const getPoolInfo = GetPoolInfo(apiInstance, factoryExtraAxiosOptions);
+    const getCoinId = GetCoinId(apiInstance, factoryExtraAxiosOptions);
+    const replaceCoinSymbol = ReplaceCoinSymbol(apiInstance, factoryExtraAxiosOptions);
 
     return estimateTxCommission;
 
@@ -55,6 +56,10 @@ export default function EstimateTxCommission(apiInstance) {
         loose,
         direct,
     } = {}, axiosOptions = undefined, extraAxiosOptions = undefined) {
+        axiosOptions = {
+            ...factoryAxiosOptions,
+            ...axiosOptions,
+        };
         if (typeof direct !== 'undefined') {
             // eslint-disable-next-line no-console
             console.warn('`direct` option in `estimateTxCommission` is deprecated, use `needGasCoinFee`, `needBaseCoinFee`, and `needPriceCoinFee` options instead');
@@ -94,7 +99,7 @@ export default function EstimateTxCommission(apiInstance) {
         return paramsPromise
             .then((updatedTxParams) => {
                 if (typeof updatedTxParams !== 'object') {
-                    return estimateFeeDirect(updatedTxParams, axiosOptions, extraAxiosOptions);
+                    return estimateFeeDirect(updatedTxParams, axiosOptions);
                 } else {
                     return estimateFeeCalculate(updatedTxParams, {needGasCoinFee, needBaseCoinFee, needPriceCoinFee, axiosOptions, extraAxiosOptions});
                 }
@@ -114,21 +119,13 @@ export default function EstimateTxCommission(apiInstance) {
         if (typeof txParams === 'string') {
             tx = txParams;
         } else {
-            const defaultBufferData = new TxData({}, txParams.type, {forceDefaultValues: true});
-            const defaultData = getTxData(txParams.type).fromBufferFields(defaultBufferData, {disableValidation: true});
-            let mergedData = {};
-            defaultBufferData._fields.forEach((key) => {
-                if (typeof txParams.data?.[key] !== 'undefined') {
-                    mergedData[key] = txParams.data[key];
-                } else {
-                    mergedData[key] = defaultData[key];
-                }
-            });
-            txParams = {
+            tx = prepareTx({
                 ...txParams,
-                data: mergedData,
-            };
-            tx = prepareTx(txParams, {disableValidation: true, disableDecorationParams: true}).serializeToString();
+                data: fillDefaultData(txParams.type, txParams.data),
+            }, {
+                disableValidation: true,
+                disableDecorationParams: true,
+            }).serializeToString();
         }
 
         return apiInstance.get(`estimate_tx_commission/${tx}`, axiosOptions)
