@@ -1,3 +1,6 @@
+## 0.45.1 - 2022.06.02
+- fix `estimateTxCommission` in imprecise mode with empty tx data
+
 ## 0.45.0 - 2022.05.31
 - add axiosOptions param to api constructors
 

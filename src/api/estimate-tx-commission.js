@@ -178,7 +178,7 @@ export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, f
             }
             // PRECISE
             const feePrice = new FeePrice(commissionPriceData);
-            return feePrice.getFeeValue(txParams.type, getFeePriceOptionsFromTxParams(txParams));
+            return feePrice.getFeeValue(txParams.type, getFeePriceOptionsFromTxParams(txParams, true));
         })();
 
         // baseCoin
@@ -290,9 +290,10 @@ function getBaseCoinAmountFromPool(priceCoinAmount, pool) {
 
 /**
  * @param {TxParams} txParams
+ * @param {boolean} [disableValidation]
  * @return FeePriceOptions
  */
-function getFeePriceOptionsFromTxParams(txParams) {
+function getFeePriceOptionsFromTxParams(txParams, disableValidation) {
     const txType = txParams.type;
     if (!txType) {
         throw new Error('Tx `type` not specified');
@@ -300,14 +301,14 @@ function getFeePriceOptionsFromTxParams(txParams) {
 
     const isTickerType = txType === TX_TYPE.CREATE_COIN || txType === TX_TYPE.CREATE_TOKEN;
     const coinSymbol = isTickerType ? txParams.data?.symbol : undefined;
-    if (isTickerType && !coinSymbol) {
+    if (isTickerType && !coinSymbol && !disableValidation) {
         throw new Error('`symbol` not specified for ticker creation tx');
     }
 
     let deltaItemCount;
     if (txType === TX_TYPE.BUY_SWAP_POOL || txType === TX_TYPE.SELL_SWAP_POOL || txType === TX_TYPE.SELL_ALL_SWAP_POOL) {
-        const coinCount = txParams.data?.coins.length;
-        if (!coinCount) {
+        const coinCount = txParams.data?.coins?.length;
+        if (!coinCount && !disableValidation) {
             throw new Error('Invalid `coins` field in swap pool tx');
         }
         // count of pools
@@ -315,8 +316,8 @@ function getFeePriceOptionsFromTxParams(txParams) {
     }
     if (txType === TX_TYPE.MULTISEND) {
         // count of recipients
-        deltaItemCount = txParams.data?.list.length;
-        if (!deltaItemCount) {
+        deltaItemCount = txParams.data?.list?.length;
+        if (!deltaItemCount && !disableValidation) {
             throw new Error('Invalid `list` field in multisend tx');
         }
     }
@@ -325,5 +326,6 @@ function getFeePriceOptionsFromTxParams(txParams) {
         payload: txParams.payload,
         coinSymbol,
         deltaItemCount,
+        fallbackOnInvalidInput: disableValidation,
     };
 }

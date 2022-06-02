@@ -133,9 +133,12 @@ describe('EstimateTxCommission', () => {
         }, 30000);
     });
 
-    describe.each(API_TYPE_LIST)('direct with empty: %s', (apiType) => {
-        test.each(typeList)('works empty %s', ({hex: txType}) => {
+    describe.each(API_TYPE_LIST)('works with empty: %s', (apiType) => {
+        test.each(typeList)('direct %s', ({hex: txType}) => {
             return testDirectEstimationWithEmptyData(apiType, txType);
+        });
+        test.each(typeList)('calculate %s', ({hex: txType}) => {
+            return testCalculateEstimationWithEmptyData(apiType, txType);
         });
     });
 
@@ -199,6 +202,26 @@ describe('EstimateTxCommission', () => {
             data: {},
             type: txType,
         }, {needGasCoinFee: FEE_PRECISION_SETTING.PRECISE})
+            .then((feeData) => {
+                expect(Number(feeData.commission)).toBeGreaterThan(0);
+            })
+            .catch((error) => {
+                logError(error);
+                throw error;
+            });
+    }
+    function testCalculateEstimationWithEmptyData(apiType, txType) {
+        expect.assertions(1);
+        const txParams = txParamsData(apiType);
+        return apiType.estimateTxCommission({
+            ...txParams,
+            data: {},
+            type: txType,
+        }, {
+            needGasCoinFee: FEE_PRECISION_SETTING.IMPRECISE,
+            needBaseCoinFee: FEE_PRECISION_SETTING.IMPRECISE,
+            needPriceCoinFee: FEE_PRECISION_SETTING.PRECISE,
+        })
             .then((feeData) => {
                 expect(Number(feeData.commission)).toBeGreaterThan(0);
             })
