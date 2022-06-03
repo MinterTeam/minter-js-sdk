@@ -8,6 +8,7 @@ jobs:
   build:
     name: Test with coverage
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'skip test')"
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node.js
