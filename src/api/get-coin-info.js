@@ -3,12 +3,13 @@ import {isCoinId, isCoinSymbol} from '../utils.js';
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
- * @return {function((string|number), AxiosRequestConfig=): Promise<CoinInfo>}
+ * @return {GetCoinInfoInstance}
  */
 export default function GetCoinInfo(apiInstance, factoryAxiosOptions) {
     return getCoinInfo;
     /**
      * Get nonce for new transaction: last transaction number + 1
+     * @typedef {Function} GetCoinInfoInstance
      * @param {string|number} coin
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<CoinInfo>}

@@ -12,11 +12,11 @@ import {isValidNumber, isCoinId} from '../utils.js';
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
- * @return {function({coinToSell: string, valueToSell: (string|number), coinToBuy: string, swapFrom?: ESTIMATE_SWAP_TYPE, route?: Array<string|number>, gasPrice: (string|number)}, axiosOptions: AxiosRequestConfig=): Promise<EstimateSellAllResult>}
+ * @return {EstimateCoinSellAllInstance}
  */
 export default function EstimateCoinSellAll(apiInstance, factoryAxiosOptions) {
-    return estimateCoinSellAll;
     /**
+     * @typedef {Function} EstimateCoinSellAllInstance
      * @param {object} params
      * @param {string|number} params.coinToSell - ID or symbol of the coin to sell
      * @param {string|number} params.valueToSell
@@ -27,7 +27,7 @@ export default function EstimateCoinSellAll(apiInstance, factoryAxiosOptions) {
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<EstimateSellAllResult>}
      */
-    function estimateCoinSellAll(params, axiosOptions) {
+    return function estimateCoinSellAll(params, axiosOptions) {
         if (params.coinIdToSell || params.coinIdToSell === 0) {
             params.coinToSell = params.coinIdToSell;
             // eslint-disable-next-line no-console
@@ -78,5 +78,5 @@ export default function EstimateCoinSellAll(apiInstance, factoryAxiosOptions) {
                     will_get: convertFromPip(resData.will_get),
                 };
             });
-    }
+    };
 }

@@ -4,11 +4,12 @@ import {API_TYPE_GATE} from '../variables.js';
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
- * @return {function(string, AxiosRequestConfig=): Promise<number>}
+ * @return {GetNonceInstance}
  */
 export default function GetNonce(apiInstance, factoryAxiosOptions) {
     /**
      * Get nonce for new transaction: last transaction number + 1
+     * @typedef {Function} GetNonceInstance
      * @param {string} address
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<number>}

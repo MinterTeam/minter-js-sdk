@@ -27,7 +27,7 @@ const PRECISION = FEE_PRECISION_SETTING;
  * @param {MinterApiInstance} apiInstance
  * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
  * @param {import('axios').AxiosRequestConfig} [factoryExtraAxiosOptions]
- * @return {function((TxParams|string), {needGasCoinFee?: FEE_PRECISION_SETTING, needBaseCoinFee?: FEE_PRECISION_SETTING, needPriceCoinFee?: FEE_PRECISION_SETTING, loose?: boolean, direct?: boolean}=, import('axios').AxiosRequestConfig=, import('axios').AxiosRequestConfig=): Promise<{commission?: (number|string), baseCoinCommission?: (number|string), priceCoinCommission?: (number|string), commissionPriceData?: CommissionPriceData}>}
+ * @return {EstimateTxCommissionInstance}
  */
 export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, factoryExtraAxiosOptions) {
     const getCommissionPrice = GetCommissionPrice(apiInstance, factoryExtraAxiosOptions);
@@ -35,9 +35,8 @@ export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, f
     const getCoinId = GetCoinId(apiInstance, factoryExtraAxiosOptions);
     const replaceCoinSymbol = ReplaceCoinSymbol(apiInstance, factoryExtraAxiosOptions);
 
-    return estimateTxCommission;
-
     /**
+     * @typedef {Function} EstimateTxCommissionInstance
      * @param {TxParams|string} txParams
      * @param {object} [options]
      * @param {FEE_PRECISION_SETTING} [options.needGasCoinFee]
@@ -49,7 +48,7 @@ export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, f
      * @param {import('axios').AxiosRequestConfig} [extraAxiosOptions] - for secondary requests (commission price data, coin IDs, and pool info)
      * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
      */
-    function estimateTxCommission(txParams, {
+    return function estimateTxCommission(txParams, {
         needGasCoinFee = PRECISION.AUTO,
         needBaseCoinFee = PRECISION.AUTO,
         needPriceCoinFee = PRECISION.AUTO,
@@ -104,7 +103,7 @@ export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, f
                     return estimateFeeCalculate(updatedTxParams, {needGasCoinFee, needBaseCoinFee, needPriceCoinFee, axiosOptions, extraAxiosOptions});
                 }
             });
-    }
+    };
 
     /**
      * @param {string|TxParams} txParams

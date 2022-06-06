@@ -18,17 +18,18 @@ import {bufferFromBytes, getPrivateKeyFromSeedPhraseAsync, toInteger, wait} from
  * @param {MinterApiInstance} apiInstance
  * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
  * @param {import('axios').AxiosRequestConfig} [factoryExtraAxiosOptions]
- * @return {Function<Promise>}
+ * @return {PostTxInstance}
  */
 export default function PostTx(apiInstance, factoryAxiosOptions, factoryExtraAxiosOptions) {
     const ensureNonce = new EnsureNonce(apiInstance, factoryExtraAxiosOptions);
     const replaceCoinSymbol = new ReplaceCoinSymbol(apiInstance, factoryExtraAxiosOptions);
     /**
+     * @typedef {Function} PostTxInstance
      * @param {TxParams} txParams
      * @param {PostTxOptions} options
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @param {import('axios').AxiosRequestConfig} [extraAxiosOptions] - applied to secondary requests
-     * @return {Promise<string>}
+     * @return {Promise<PostTxResponse>}
      */
     return function postTx(txParams, {gasRetryLimit = 2, nonceRetryLimit = 0, mempoolRetryLimit = 0, ...txOptions} = {}, axiosOptions = undefined, extraAxiosOptions = undefined) {
         axiosOptions = {
@@ -69,7 +70,7 @@ export default function PostTx(apiInstance, factoryAxiosOptions, factoryExtraAxi
  * @param {TxParams} txParams
  * @param {TxOptions} [options]
  * @param {import('axios').AxiosRequestConfig} [axiosOptions]
- * @return {Promise<NodeTransaction|{hash: string}>}
+ * @return {Promise<PostTxResponse>}
  */
 function _postTx(apiInstance, txParams, options, axiosOptions) {
     if (!txParams.chainId && apiInstance.defaults.chainId) {
@@ -90,7 +91,7 @@ function _postTx(apiInstance, txParams, options, axiosOptions) {
  * @param {TxParams} txParams
  * @param {PostTxOptions} options
  * @param {import('axios').AxiosRequestConfig} [axiosOptions]
- * @return {Promise<string>}
+ * @return {Promise<PostTxResponse>}
  */
 function _postTxHandleErrors(apiInstance, txParams, options, axiosOptions) {
     const {gasRetryLimit, nonceRetryLimit, mempoolRetryLimit, ...txOptions} = options;
@@ -124,10 +125,12 @@ function _postTxHandleErrors(apiInstance, txParams, options, axiosOptions) {
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
+ * @return {EnsureNonceInstance}
  */
 export function EnsureNonce(apiInstance, factoryAxiosOptions) {
     const getNonce = new GetNonce(apiInstance, factoryAxiosOptions);
     /**
+     * @typedef {Function} EnsureNonceInstance
      * @param {TxParams} txParams
      * @param {object} [txOptions]
      * @param {ByteArray} [txOptions.privateKey]

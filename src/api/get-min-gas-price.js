@@ -2,11 +2,12 @@
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
- * @return {function(AxiosRequestConfig=): Promise<number>}
+ * @return {GetMinGasPriceInstance}
  */
 export default function GetMinGasPrice(apiInstance, factoryAxiosOptions) {
     /**
      * Get current minimal gas price
+     * @typedef {Function} GetMinGasPriceInstance
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
      * @return {Promise<number>}
      */

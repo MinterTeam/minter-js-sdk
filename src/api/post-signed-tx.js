@@ -2,13 +2,14 @@
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
- * @return {function(signedTx: string|Buffer, AxiosRequestConfig=): Promise<NodeTransaction|{hash: string}>}
+ * @return {PostSignedTxInstance}
  */
 export default function PostSignedTx(apiInstance, factoryAxiosOptions) {
     /**
+     * @typedef {Function} PostSignedTxInstance
      * @param {string|Buffer} signedTx
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
-     * @return {Promise<NodeTransaction|{hash: string}>}
+     * @return {Promise<PostTxResponse>}
      */
     return function postSignedTx(signedTx, axiosOptions) {
         if (Buffer.isBuffer(signedTx)) {
@@ -33,6 +34,10 @@ export default function PostSignedTx(apiInstance, factoryAxiosOptions) {
             });
     };
 }
+
+/**
+ * @typedef {NodeTransaction|{hash: string}} PostTxResponse
+ */
 
 /**
  * @typedef NodeTransaction
