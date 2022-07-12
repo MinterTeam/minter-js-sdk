@@ -36,6 +36,9 @@ export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, f
     const replaceCoinSymbol = ReplaceCoinSymbol(apiInstance, factoryExtraAxiosOptions);
 
     /**
+     * @typedef {MinterFeeEstimationDirect|MinterFeeEstimationCalculate} MinterFeeEstimation
+     */
+    /**
      * @typedef {Function} EstimateTxCommissionInstance
      * @param {TxParams|string} txParams
      * @param {object} [options]
@@ -46,7 +49,7 @@ export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, f
      * @param {boolean} [options.direct] - DEPRECATED
      * @param {import('axios').AxiosRequestConfig} [axiosOptions] - for main request (estimation)
      * @param {import('axios').AxiosRequestConfig} [extraAxiosOptions] - for secondary requests (commission price data, coin IDs, and pool info)
-     * @return {Promise<{commission: (number|string), baseCoinCommission: (number|string), priceCoinCommission: (number|string), commissionPriceData: CommissionPriceData}>|Promise<{commission: (number|string)}>}
+     * @return {Promise<MinterFeeEstimation>}
      */
     return function estimateTxCommission(txParams, {
         needGasCoinFee = PRECISION.AUTO,
@@ -106,9 +109,12 @@ export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, f
     };
 
     /**
+     * @typedef {{commission: number|string}} MinterFeeEstimationDirect
+     */
+    /**
      * @param {string|TxParams} txParams
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
-     * @return {Promise<{commission: number|string}>}
+     * @return {Promise<MinterFeeEstimationDirect>}
      */
     function estimateFeeDirect(txParams, axiosOptions) {
         if (!txParams) {
@@ -136,6 +142,9 @@ export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, f
     }
 
     /**
+     * @typedef {MinterFeeEstimationDirect&{baseCoinCommission: number|string, priceCoinCommission: number|string, commissionPriceData: CommissionPriceData}} MinterFeeEstimationCalculate
+     */
+    /**
      * @param {TxParams} txParams
      * @param {object} [options]
      * @param {FEE_PRECISION_SETTING} [options.needGasCoinFee]
@@ -143,7 +152,7 @@ export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, f
      * @param {FEE_PRECISION_SETTING} [options.needPriceCoinFee]
      * @param {import('axios').AxiosRequestConfig} [options.axiosOptions]
      * @param {import('axios').AxiosRequestConfig} [options.extraAxiosOptions] - applied to secondary requests
-     * @return {Promise<{commission: number|string, baseCoinCommission: number|string, priceCoinCommission: number|string, commissionPriceData: CommissionPriceData}>}
+     * @return {Promise<MinterFeeEstimationCalculate>}
      */
     async function estimateFeeCalculate(txParams, {needGasCoinFee, needBaseCoinFee, needPriceCoinFee, axiosOptions, extraAxiosOptions}) {
         if (!txParams || typeof txParams !== 'object') {
