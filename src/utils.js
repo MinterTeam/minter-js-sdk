@@ -58,36 +58,45 @@ export function isCoinId(coinIdOrSymbol) {
 
 /**
  * @param {string} coin
+ * @param {object} [options]
+ * @param {boolean} [options.allowVersion = true]
+ * @param {boolean} [options.allowLP = true]
  * @return {boolean}
  */
-export function isCoinSymbol(coin) {
+export function isCoinSymbol(coin, {allowVersion = true, allowLP = true} = {}) {
     if (typeof coin !== 'string') {
         return false;
     }
     const [ticker, version, invalidPart] = coin.split('-');
-    if (version?.length === 0) {
-        // console.debug('empty version, e.g. "ABC-"');
-        return false;
-    }
     if (typeof invalidPart !== 'undefined') {
         // console.debug('invalid part found, e.g. "ABC-12-34"')
         return false;
     }
-    const isLP = ticker === 'LP' && version?.length > 0;
-    if (ticker.length < 3 && !isLP) {
-        // console.log('min length of a ticker');
+    // validate version
+    if (!allowVersion && typeof version !== 'undefined') {
+        // console.debug('version is not allowed');
         return false;
     }
-    if (!/[A-Z]/.test(ticker)) {
-        // console.debug('ticker should have at least one letter');
+    if (version?.length === 0) {
+        // console.debug('empty version, e.g. "ABC-"');
         return false;
     }
     if (version?.length > 0 && !/^\d+$/.test(version)) {
         // console.debug('only digits in version');
         return false;
     }
+    // validate LP
+    const isLP = ticker === 'LP' && version?.length > 0;
+    if (isLP) {
+        return allowLP;
+    }
+    // validate ticker
+    if (!/[A-Z]/.test(ticker)) {
+        // console.debug('ticker should have at least one letter');
+        return false;
+    }
     // only letters and digits in ticker
-    return /^[A-Z0-9]{1,10}$/.test(ticker);
+    return /^[A-Z0-9]{3,10}$/.test(ticker);
 }
 
 /**
@@ -402,7 +411,7 @@ export function validateUintArray(origValue, fieldName) {
 export function validateTicker(value, fieldName) {
     validateNotEmpty(value, fieldName);
 
-    if (typeof value === 'string' && !(/^[A-Z][A-Z0-9]{2,9}$/.test(value))) {
+    if (typeof value === 'string' && !isCoinSymbol(value, {allowVersion: false, allowLP: false})) {
         throw new Error(`Field \`${fieldName}\` is invalid coin ticker string`);
     }
 }

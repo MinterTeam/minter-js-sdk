@@ -1,6 +1,7 @@
 import {prepareSignedTx, prepareTx, decodeTx, decodeLink} from '~/src';
 import {VALID_CHECK} from '~/test/check.test.js';
 
+// Mx7633980c000139dd3bd24a3f54e06474fa941e16
 const SEED_PHRASE = 'exercise fantasy smooth enough arrive steak demise donkey true employ jealous decide blossom bind someone';
 const PRIVATE_KEY = '0x5fa3a8b186f6cc2d748ee2d8c0eb7a905a7b73de0f2c34c5e7857c3b46f187da';
 

@@ -1,4 +1,4 @@
-import {isCoinSymbol, dataToInteger, dataPipToAmount, dataToAddress, dataToPublicKey, dataToBoolean} from '~/src/utils.js';
+import {isCoinSymbol, validateTicker, dataToInteger, dataPipToAmount, dataToAddress, dataToPublicKey, dataToBoolean} from '~/src/utils.js';
 
 describe('isCoinSymbol', () => {
     let validTickers = [
@@ -14,17 +14,32 @@ describe('isCoinSymbol', () => {
     for (let length = 3; length <= 10; length++) {
         validTickers.push(new Array(length).fill('A').join(''));
     }
-    let validSymbols = [];
-    (['', '1', '1234567890123456789012345678901234567890']).forEach((version) => {
+    let validSymbolsWithVersion = [];
+    let validLPs = [];
+    (['1', '1234567890123456789012345678901234567890']).forEach((version) => {
+        const versionString = version ? `-${version}` : '';
+        validLPs.push(`LP${versionString}`);
         validTickers.forEach((ticker) => {
-            const versionString = version ? `-${version}` : '';
             const symbol = ticker + versionString;
-            validSymbols.push(symbol);
+            validSymbolsWithVersion.push(symbol);
         });
     });
 
-    test.each(validSymbols)('valid %s', (symbol) => {
+    test.each([...validTickers, ...validLPs, ...validSymbolsWithVersion])('valid %s', (symbol) => {
         expect(isCoinSymbol(symbol)).toEqual(true);
+    });
+
+    test.each(validTickers)('valid ticker %s', (symbol) => {
+        expect(isCoinSymbol(symbol, {allowLP: false, allowVersion: false})).toEqual(true);
+    });
+    test.each([...validLPs, ...validSymbolsWithVersion])('invalid ticker %s', (symbol) => {
+        expect(isCoinSymbol(symbol, {allowLP: false, allowVersion: false})).toEqual(false);
+    });
+    test.each(validTickers)('validate ticker %s', (symbol) => {
+        expect(() => validateTicker(symbol, '')).not.toThrow();
+    });
+    test.each([...validLPs, ...validSymbolsWithVersion])('validate ticker throw %s', (symbol) => {
+        expect(() => validateTicker(symbol, '')).toThrow();
     });
 
     test('min length 3', () => {

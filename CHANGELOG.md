@@ -1,3 +1,15 @@
+## 0.45.5 - 2022.07.29
+- fix `validateTicker` to accept tickers with digits in any place
+
+## 0.45.4 - 2022.07.12
+- improve jsdoc
+
+## 0.45.3 - 2022.06.06
+- improve jsdoc
+
+## 0.45.3 - 2022.06.03
+- update deps
+
 ## 0.45.1 - 2022.06.02
 - fix `estimateTxCommission` in imprecise mode with empty tx data
 
