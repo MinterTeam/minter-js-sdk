@@ -1,3 +1,7 @@
+## 0.45.6 - 2022.11.17
+- minor fix error handling
+- update deps
+
 ## 0.45.5 - 2022.07.29
 - fix `validateTicker` to accept tickers with digits in any place
 

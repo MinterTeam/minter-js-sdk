@@ -1,5 +1,5 @@
-import {TX_TYPE, txTypeList} from 'minterjs-util';
-import {prepareSignedTx, prepareTx, decodeTx, decodeLink} from '~/src';
+import {TX_TYPE, txTypeList, PAYLOAD_MAX_LENGTH, MULTISIG_SIGNATURE_MAX_COUNT, MULTISEND_RECIPIENT_MAX_COUNT} from 'minterjs-util';
+import {prepareSignedTx, prepareTx, decodeTx, decodeLink, makeSignature} from '~/src';
 import {bufferToInteger} from '~/src/utils.js';
 import {VALID_CHECK, VALID_CHECK_WITH_CUSTOM_GAS_COIN} from '~/test/check.test.js';
 import {testData} from '~/test/test-data.js';
@@ -285,6 +285,38 @@ describe('decodeTx', () => {
             signatureData: '0xf8431ca0133f06b794c07acf1a7663ca0ea996be81c5f94edbf6f7152c06ab57ce71685ca0421b94ac1df5185ed885004edcf5d732ff142688fa63eefb5340f29d6423f310',
         });
     });
+});
+
+test('very large tx', () => {
+    const largeCoin = 0xffffffff;
+    const largeValue = 1e30;
+    const txParams = {
+        type: TX_TYPE.MULTISEND,
+        data: {
+            list: Array.from({length: MULTISEND_RECIPIENT_MAX_COUNT}).fill({
+                to: 'Mx376615b9a3187747dc7c32e51723515ee62e37dc',
+                value: largeValue,
+                coin: largeCoin,
+            }),
+        },
+        gasCoin: largeCoin,
+        gasPrice: 1000,
+        nonce: 1e20,
+        payload: Array.from({length: PAYLOAD_MAX_LENGTH}).fill('0').join(''),
+        signatureType: 2,
+    };
+    let tx = prepareTx(txParams);
+    const signature = makeSignature(tx, testData.txList[0].options.privateKey);
+    tx = prepareTx({
+        ...txParams,
+        signatureData: {
+            multisig: 'Mx376615b9a3187747dc7c32e51723515ee62e37dc',
+            signatures: Array.from({length: MULTISIG_SIGNATURE_MAX_COUNT}).fill(signature),
+        },
+    });
+
+    // console.log(tx.serializeToString());
+    expect(tx.serializeToString().length).toEqual(34152);
 });
 
 function findTxItem(type) {

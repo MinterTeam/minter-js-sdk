@@ -49,7 +49,7 @@ export default function MinterApi(options = {}) {
     // ensure, that error.message exists
     options.transformResponse.push((data) => {
         data = parseData(data);
-        if (data.error?.details) {
+        if (data?.error?.details) {
             data.error.data = data.error.details;
         }
         // transform `result` to `error` if its failed
