@@ -45,4 +45,5 @@ export default {
             babelHelpers: 'runtime',
         }),
     ],
+    strictDeprecations: true,
 };
