@@ -5,6 +5,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import babel from '@rollup/plugin-babel';
+import visualizer from 'rollup-plugin-visualizer'
 
 export default {
     input: 'src/index.js',
@@ -43,6 +44,9 @@ export default {
         babel({
             exclude: 'node_modules/@babel/runtime/**',
             babelHelpers: 'runtime',
+        }),
+        visualizer({
+            filename: 'tmp/stats.html',
         }),
     ],
     strictDeprecations: true,
