@@ -58,7 +58,7 @@ const ENV_SETTINGS = {
 };
 
 // select environment
-const currentEnv = ENV_NEXT_TESTNET;
+const currentEnv = ENV_TESTNET;
 export const ENV_DATA = ENV_SETTINGS[currentEnv];
 
 

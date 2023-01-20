@@ -1,9 +1,9 @@
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
-//@TODO replace with rollup-plugin-polyfill-node when it ready
-import builtins from 'rollup-plugin-node-builtins';
-import globals from 'rollup-plugin-node-globals';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
+// import builtins from 'rollup-plugin-node-builtins';
+// import globals from 'rollup-plugin-node-globals';
 import babel from '@rollup/plugin-babel';
 import visualizer from 'rollup-plugin-visualizer'
 
@@ -17,6 +17,7 @@ export default {
     },
     plugins: [
         // old acorn in rollup-plugin-node-globals doesn't support new syntax
+        /*
         babel({
             babelrc: false,
             configFile: false,
@@ -25,6 +26,7 @@ export default {
                 "@babel/plugin-proposal-numeric-separator",
             ],
         }),
+        */
         commonjs({
             // required to include bip39 wordlists
             ignoreTryCatch: false,
@@ -33,10 +35,11 @@ export default {
             // },
         }),
         json(),
-        globals(),
-        builtins({
-            // crypto: true,
-        }),
+        // globals(),
+        // builtins({
+        //     // crypto: true,
+        // }),
+        nodePolyfills(),
         resolve({
             browser: true,
             preferBuiltins: false,
