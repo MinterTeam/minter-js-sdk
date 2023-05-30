@@ -1,12 +1,10 @@
 /* eslint-disable unicorn/prevent-abbreviations */
 
-import Big from 'big.js';
 import BN from 'bn.js';
 import {padToEven, isHexPrefixed} from 'ethjs-util';
-import {isValidAddress, isValidPublicKeyString, isValidCheck, numberToBig, addressToString, publicToString, toBuffer, convertFromPip, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
+import {Big, isValidAddress, isValidPublicKeyString, isValidCheck, numberToBig, addressToString, publicToString, toBuffer, convertFromPip, COIN_MAX_MAX_SUPPLY, COIN_MIN_MAX_SUPPLY} from 'minterjs-util';
 import {walletFromMnemonic, walletFromMnemonicAsync} from 'minterjs-wallet';
 
-Big.RM = 2;
 
 const BASE_COIN = {
     '0x01': 'BIP',
@@ -68,12 +66,12 @@ export function isCoinSymbol(coin, {allowVersion = true, allowLP = true} = {}) {
         return false;
     }
     const [ticker, version, invalidPart] = coin.split('-');
-    if (typeof invalidPart !== 'undefined') {
+    if (invalidPart !== undefined) {
         // console.debug('invalid part found, e.g. "ABC-12-34"')
         return false;
     }
     // validate version
-    if (!allowVersion && typeof version !== 'undefined') {
+    if (!allowVersion && version !== undefined) {
         // console.debug('version is not allowed');
         return false;
     }
@@ -141,7 +139,7 @@ export function toInteger(num) {
     if (typeof num === 'number') {
         return num.toString();
     }
-    if (typeof num !== 'undefined' && num !== null && num.length > 0) {
+    if (num !== undefined && num !== null && num.length > 0) {
         // handle hex prefixed string
         if (typeof num === 'string' && isHexPrefixed(num)) {
             return bufferToInteger(num);
@@ -421,7 +419,7 @@ export function validateTicker(value, fieldName) {
  * @param {string} fieldName
  */
 function validateNotEmpty(value, fieldName) {
-    if (typeof value === 'undefined') {
+    if (value === undefined) {
         throw new TypeError(`Field \`${fieldName}\` is undefined`);
     }
     if (value === null) {

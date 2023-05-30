@@ -102,14 +102,22 @@ module.exports = {
         'unicorn/no-useless-undefined': 0,
         // allow forEach
         'unicorn/no-array-for-each': 0,
+        // allow negated
+        'unicorn/no-negated-condition': 0,
         'unicorn/prefer-optional-catch-binding': 0,
         'unicorn/prefer-ternary': 0,
+        // available since node@15
+        // @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll#browser_compatibility
+        'unicorn/prefer-string-replace-all': 0,
+        // available since node@16.6
+        // @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at#browser_compatibility
+        'unicorn/prefer-at': 0,
         // waiting `node:` to be backported to node@14
         // @see https://stackoverflow.com/questions/67263317/how-to-fix-eslint-error-when-using-the-node-protocol-when-importing-node-js-bui
         // @see https://github.com/import-js/eslint-plugin-import/issues/2031
         'unicorn/prefer-node-protocol': 0,
         // incorrectly treat `Big` as `Number`
-        // @see https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1463
+        // wontfix https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1463
         'unicorn/require-number-to-fixed-digits-argument': 0,
         // not supported yet
         'unicorn/numeric-separators-style': 0,

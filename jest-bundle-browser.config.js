@@ -18,6 +18,6 @@ module.exports = {
         'jest-bundle-browser-setup\.js$': 'babel-jest',
     },
     transformIgnorePatterns: [
-        'node_modules/(?!(buffer-es6)/)',
+        'node_modules/(?!(buffer-es6|pretty-num)/)',
     ],
 };

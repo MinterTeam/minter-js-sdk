@@ -104,7 +104,7 @@ export function ensureBufferData(txData, txType, options) {
         txData = txData.serialize();
     }
     // make buffer from object
-    if (typeof txData.length === 'undefined') {
+    if (txData.length === undefined) {
         const TxData = getTxData(txType);
         txData = new TxData(txData, options);
         txData = txData.serialize();
@@ -142,7 +142,7 @@ export function fillDefaultData(txType, txData) {
     const defaultData = getTxData(txType).fromBufferFields(defaultBufferData, {disableValidation: true});
     let mergedData = {};
     defaultBufferData._fields.forEach((key) => {
-        if (typeof txData?.[key] !== 'undefined') {
+        if (txData?.[key] !== undefined) {
             mergedData[key] = txData[key];
         } else {
             mergedData[key] = defaultData[key];

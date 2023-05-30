@@ -1,13 +1,10 @@
-import Big from 'big.js';
-import {convertFromPip, convertToPip, FeePrice, TX_TYPE} from 'minterjs-util';
+import {Big, convertFromPip, convertToPip, FeePrice, TX_TYPE} from 'minterjs-util';
 import GetCommissionPrice from './get-commission-price.js';
 import GetPoolInfo from './get-pool-info.js';
 import {GetCoinId, ReplaceCoinSymbol} from './replace-coin.js';
 import {fillDefaultData} from '../tx-data/index.js';
 import {prepareTx} from '../tx.js';
-import {isCoinId, validateUint} from '../utils.js';
-
-Big.RM = 2;
+// import {isCoinId, validateUint} from '../utils.js';
 
 /**
  * @enum {string}
@@ -62,14 +59,14 @@ export default function EstimateTxCommission(apiInstance, factoryAxiosOptions, f
             ...factoryAxiosOptions,
             ...axiosOptions,
         };
-        if (typeof direct !== 'undefined') {
+        if (direct !== undefined) {
             // eslint-disable-next-line no-console
             console.warn('`direct` option in `estimateTxCommission` is deprecated, use `needGasCoinFee`, `needBaseCoinFee`, and `needPriceCoinFee` options instead');
             needGasCoinFee = direct ? PRECISION.PRECISE : PRECISION.IMPRECISE;
             needBaseCoinFee = direct ? PRECISION.OMIT : PRECISION.IMPRECISE;
             needPriceCoinFee = direct ? PRECISION.OMIT : PRECISION.PRECISE;
         }
-        if (typeof loose !== 'undefined') {
+        if (loose !== undefined) {
             // eslint-disable-next-line no-console
             console.warn('`loose` option in `estimateTxCommission` is deprecated, use `needGasCoinFee`, `needBaseCoinFee`, and `needPriceCoinFee` options instead');
             needGasCoinFee = !loose ? PRECISION.PRECISE : PRECISION.IMPRECISE;

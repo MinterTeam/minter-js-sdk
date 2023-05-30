@@ -167,7 +167,7 @@ export function ensureBufferSignature(signatureData, signatureType) {
     }
 
     // make buffer from object
-    if (typeof signatureData.length === 'undefined') {
+    if (signatureData.length === undefined) {
         signatureData = new TxMultisignature(signatureData);
         signatureData = signatureData.serialize();
     }

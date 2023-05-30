@@ -1,10 +1,10 @@
-import baseConfig from './rollup.config';
+import baseConfig from './rollup.config.js';
 
 // uglifyjs alternative with es6 support
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 
-
-const config = Object.assign({}, baseConfig, {output: Object.assign({}, baseConfig.output)});
+const config = Object.assign({}, baseConfig);
+// const config = Object.assign({}, baseConfig, {output: Object.assign({}, baseConfig.output)});
 
 
 if (config.plugins.at(-1).name === 'visualizer') {
@@ -13,6 +13,13 @@ if (config.plugins.at(-1).name === 'visualizer') {
 } else {
     config.plugins.push(terser());
 }
-config.output.file = config.output.file.replace(/\.js$/, '.min.js');
+
+config.output = Array.isArray(config.output) ? config.output : [config.output];
+config.output = config.output.map((item) => {
+    return {
+        ...item,
+        file: item.file.replace(/\.js$/, '.min.js')
+    };
+});
 
 export default config;

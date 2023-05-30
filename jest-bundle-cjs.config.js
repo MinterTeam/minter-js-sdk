@@ -4,5 +4,8 @@ module.exports = {
         '~\/src\/utils\.js$': '<rootDir>/src/utils.js',
         '~\/test\/(.*)$': '<rootDir>/test/$1',
     },
+    transformIgnorePatterns: [
+        'node_modules/(?!(pretty-num)/)',
+    ],
     testEnvironment: 'node',
 };

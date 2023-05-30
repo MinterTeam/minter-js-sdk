@@ -2,7 +2,9 @@ import del from 'rollup-plugin-delete';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import babel from '@rollup/plugin-babel';
-import rename from 'rollup-plugin-rename';
+import _rename from 'rollup-plugin-rename';
+
+const rename = _rename.default || _rename;
 
 
 export default {

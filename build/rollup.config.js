@@ -5,16 +5,24 @@ import nodePolyfills from 'rollup-plugin-polyfill-node';
 // import builtins from 'rollup-plugin-node-builtins';
 // import globals from 'rollup-plugin-node-globals';
 import babel from '@rollup/plugin-babel';
-import visualizer from 'rollup-plugin-visualizer'
+import {visualizer} from 'rollup-plugin-visualizer'
 
 export default {
     input: 'src/index.js',
-    output: {
-        file: 'dist/index.js',
-        format: 'umd',
-        name: 'minterSDK',
-        exports: 'auto',
-    },
+    output: [
+        {
+            file: 'dist/index.js',
+            format: 'umd',
+            name: 'minterSDK',
+            exports: 'auto',
+        },
+        {
+            file: 'dist/index.esm.js',
+            format: 'esm',
+            // name: 'minterSDK',
+            // exports: 'auto',
+        }
+    ],
     plugins: [
         // old acorn in rollup-plugin-node-globals doesn't support new syntax
         /*
