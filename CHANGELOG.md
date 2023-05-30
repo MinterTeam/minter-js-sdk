@@ -1,3 +1,6 @@
+## 0.46.0 - 2023.05.30
+- **BREAKING** `getPoolInfo` not returns values converted from pip
+
 ## 0.45.6 - 2022.11.17
 - minor fix error handling
 - update deps
@@ -35,7 +38,7 @@
 ## 0.43.0 - 2022.04.15
 - `postTx`: add `extraAxiosOptions` param to be passed to secondary requests (for nonce and coin ids)
 - **BREAKING** `estimateTxCommission`: `axiosOptions` param separated to two different params - (1) `axiosOptions` will be passed to main estimation request and (2) `extraAxiosOptions` to secondary requests (commission price data, coin ids, and pool info)
-- `estimateTxCommission`: don't make https request in `loose: true` mode when `gasCoin` same as `priceCoin` (priceCoinValue used directly) 
+- `estimateTxCommission`: don't make https request in `loose: true` mode when `gasCoin` same as `priceCoin` (priceCoinValue used directly)
 
 ## 0.42.1 - 2022.04.13
 - fix direct `estimateTxCommission` to not mutate response
@@ -61,7 +64,7 @@
 
 ## 0.40.0 - 2021.12.14
 - add `AddLimitOrder` gasCoin decorator
-- **BREAKING** released [df1acf0](https://github.com/MinterTeam/minter-js-sdk/commit/df1acf077a0bec51675dacb93668a7f8aa0cb1c4): make `estimateCoinSellAll` actually use sell-all api route 
+- **BREAKING** released [df1acf0](https://github.com/MinterTeam/minter-js-sdk/commit/df1acf077a0bec51675dacb93668a7f8aa0cb1c4): make `estimateCoinSellAll` actually use sell-all api route
 - **BREAKING** rename some internal files
 
 ## 0.39.0 - 2021.12.01
@@ -200,7 +203,7 @@ Support of minter-go-node v1.1 aka Texas
 ## 0.29.0 - 2020-02-14
 - **BREAKING** Change: `decodeLink` 2nd param private key now is object with `privateKey` field
 ```js
-// old 
+// old
 decodeLink('https://bip.to/tx...', 'f812...');
 
 // new

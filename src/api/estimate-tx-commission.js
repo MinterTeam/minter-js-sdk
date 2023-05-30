@@ -1,4 +1,4 @@
-import {Big, convertFromPip, convertToPip, FeePrice, TX_TYPE} from 'minterjs-util';
+import {Big, BIG_ROUND_DOWN, convertFromPip, FeePrice, TX_TYPE} from 'minterjs-util';
 import GetCommissionPrice from './get-commission-price.js';
 import GetPoolInfo from './get-pool-info.js';
 import {GetCoinId, ReplaceCoinSymbol} from './replace-coin.js';
@@ -280,17 +280,17 @@ function getBaseCoinAmountFromPool(priceCoinAmount, pool) {
     // amount of price coin in pool
     const reservePrice = new Big(pool.amount1);
     // amount of price coin in pool
-    const priceCoinAmountPip = new Big(convertToPip(priceCoinAmount));
+    const priceCoinAmountPip = new Big(priceCoinAmount);
 
     // @see https://github.com/MinterTeam/minter-go-node/blob/6e44d5691c9df1a9c725d0f52c5921e8523c7f18/coreV2/state/swap/swap.go#L642
     // reserveBase - (reservePrice * reserveBase) / (priceCoinAmount * 0.997 + reservePrice)
-    let result = reserveBase.minus(reservePrice.times(reserveBase).div(priceCoinAmountPip.times(0.997).plus(reservePrice)));
+    let result = reserveBase.minus(reservePrice.times(reserveBase).div(new Big(priceCoinAmount).times(0.997).plus(reservePrice)));
 
     // received amount from pool rounds down, spent amount to pool rounds up
     // round down
-    result = result.round(undefined, 0);
+    result = result.round(18, BIG_ROUND_DOWN);
 
-    return convertFromPip(result);
+    return result;
 }
 
 /**
