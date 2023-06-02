@@ -1,3 +1,6 @@
+## 0.46.1 - 2023.06.02
+- `getPoolInfo` now accepts coin symbols as params
+
 ## 0.46.0 - 2023.05.30
 - **BREAKING** `getPoolInfo` not returns values converted from pip
 

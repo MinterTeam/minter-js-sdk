@@ -1,20 +1,25 @@
 import {convertFromPip} from 'minterjs-util';
+import {ReplaceCoinSymbolByPath} from './replace-coin.js';
 
 /**
  * @param {MinterApiInstance} apiInstance
  * @param {import('axios').AxiosRequestConfig} [factoryAxiosOptions]
+ * @param {import('axios').AxiosRequestConfig} [factoryExtraAxiosOptions] - options for getting coin id
  * @return {GetPoolInfoInstance}
  */
-export default function GetPoolInfo(apiInstance, factoryAxiosOptions) {
+export default function GetPoolInfo(apiInstance, factoryAxiosOptions, factoryExtraAxiosOptions) {
+    const replaceCoinSymbolByPath = ReplaceCoinSymbolByPath(apiInstance, factoryExtraAxiosOptions);
     /**
      * @typedef {Function} GetPoolInfoInstance
      * @param {number|string} coin0 - first coin id
      * @param {number|string} coin1 - second coin id
      * @param {import('axios').AxiosRequestConfig} [axiosOptions]
+     * @param {import('axios').AxiosRequestConfig} [extraAxiosOptions]
      * @return {Promise<PoolInfo>}
      */
-    return function getPoolInfo(coin0, coin1, axiosOptions) {
-        return apiInstance.get(`swap_pool/${coin0}/${coin1}`, {
+    return async function getPoolInfo(coin0, coin1, axiosOptions, extraAxiosOptions) {
+        const coins = await replaceCoinSymbolByPath([coin0, coin1], ['0', '1'], undefined, extraAxiosOptions);
+        return apiInstance.get(`swap_pool/${coins[0]}/${coins[1]}`, {
             ...factoryAxiosOptions,
             ...axiosOptions,
         })
