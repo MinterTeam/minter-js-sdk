@@ -1,3 +1,6 @@
+## 0.46.2 - 2023.08.13
+- fix axios@1 paramsSerializer
+
 ## 0.46.1 - 2023.06.02
 - `getPoolInfo` now accepts coin symbols as params
 

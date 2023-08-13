@@ -69,7 +69,11 @@ export default function EstimateCoinBuy(apiInstance, factoryAxiosOptions) {
             ...factoryAxiosOptions,
             ...axiosOptions,
             params,
-            paramsSerializer: (query) => qsStringify(query, {arrayFormat: 'repeat'}),
+            // @see https://github.com/axios/axios/issues/5058#issuecomment-1272107602
+            paramsSerializer: {
+                // eslint-disable-next-line unicorn/no-null
+                indexes: null,
+            },
         })
             .then((response) => {
                 const resData = response.data;
